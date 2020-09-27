@@ -86,10 +86,10 @@ class STRFunctionNameInt extends STRInteger{}
 class STRFunctionNameString extends STRString{}
 class STRFunctionNameBoolean extends STRBoolean{}
 
-class STRConstFloat extends STRFloat{ locked = true; }
-class STRConstInt extends STRInteger{ locked = true; }
-class STRConstString extends STRString{ locked = true; }
-class STRConstBoolean extends STRBoolean{ locked = true; }
+class STRConstFloat extends STRFloat{ constructor() { locked = true; }}
+class STRConstInt extends STRInteger{ constructor() { locked = true; }}
+class STRConstString extends STRString{ constructor() { locked = true; }}
+class STRConstBoolean extends STRBoolean{ constructor() { locked = true; }}
 
 // ============
 

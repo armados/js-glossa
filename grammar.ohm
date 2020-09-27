@@ -1,0 +1,145 @@
+OhmGlwssa {
+
+    Application = Program (SubFunction | SubProcedure)*
+ 
+    Program      = "ΠΡΟΓΡΑΜΜΑ" identifier DefDeclarations "ΑΡΧΗ" Block "ΤΕΛΟΣ_ΠΡΟΓΡΑΜΜΑΤΟΣ" 
+
+    SubFunction  = "ΣΥΝΑΡΤΗΣΗ"  identifier "(" AtLeastOneParameters ")" ":" ("ΑΚΕΡΑΙΑ" | "ΠΡΑΓΜΑΤΙΚΗ" | "ΧΑΡΑΚΤΗΡΑΣ" | "ΛΟΓΙΚΗ")  DefDeclarations "ΑΡΧΗ" FuncBlock "ΤΕΛΟΣ_ΣΥΝΑΡΤΗΣΗΣ"
+    SubProcedure = "ΔΙΑΔΙΚΑΣΙΑ" identifier "(" Parameters ")" DefDeclarations "ΑΡΧΗ" Block "ΤΕΛΟΣ_ΔΙΑΔΙΚΑΣΙΑΣ"
+
+    DefDeclarations = ("ΣΤΑΘΕΡΕΣ" DefConstant+)?
+                      ("ΜΕΤΑΒΛΗΤΕΣ" DefVariables*)?
+
+    DefConstant  = identifier "=" Expr
+    DefVariables = ("ΑΚΕΡΑΙΕΣ" | "ΠΡΑΓΜΑΤΙΚΕΣ" | "ΧΑΡΑΚΤΗΡΕΣ" | "ΛΟΓΙΚΕΣ") ":" VarParameters
+
+    AssignExpr   = (TblCellWrite | identifier) "<-" Expr
+    //AssignExpr   = identifier "<-" Expr
+
+    //Expr =    Exp0 | Exp1 | Exp2 | Exp3 | Exp4 | Exp5 | Exp6 | Exp7 | FunCall
+    Expr =      Exp  
+
+    Exp         =  Exp or Exp1                 -- orop
+                |  Exp1
+    Exp1        =  Exp1 and Exp2               -- andop
+                |  Exp2
+    Exp2        =  Exp3 "<" Exp3             -- lt
+                |  Exp3 ">" Exp3             -- gt
+                |  Exp3 "<=" Exp3             -- lte
+                |  Exp3 ">=" Exp3             -- gte
+                |  Exp3 "=" Exp3             -- eq
+                |  Exp3 "<>" Exp3             -- neq
+                |  Exp3
+    Exp3        =  Exp3 "+" Exp4             -- add
+                |  Exp3 "-" Exp4             -- sub
+                |  Exp4
+    Exp4        =  Exp4 "*" Exp5             -- mul
+                |  Exp4 "/" Exp5             -- div
+                |  Exp4 div Exp5             -- intdiv
+                |  Exp4 mod Exp5             -- intmod
+                |  Exp5
+    Exp5        =  Exp5 powop  Exp6            -- powop
+                |  Exp6
+    Exp6        =  not Exp7                    -- not
+                |  neq Exp7                    -- neq
+                |  Exp7
+    Exp7        =  boollit
+                |  floatlit
+                |  intlit
+                |  strlit
+                |  FunCall
+                |  TblCellRead
+                |  identifier
+                |  "(" Exp ")"                -- parens
+
+
+    Block = InnerCommand*
+    FuncBlock = FuncInnerCommand*
+
+    InnerCommand     = ProcedureCall | Stmt_write | Stmt_read | AssignExpr | WhileExpr | DoWhileExpr | ForExpr | IfExpr | comment
+    FuncInnerCommand = Stmt_write | ProcedureCall | AssignExpr | WhileExpr | DoWhileExpr | ForExpr | IfExpr | comment //FIXME: Remove Stmt_write
+
+    Stmt_write = grapse Arguments
+    Stmt_read  = diavase VarParametersWithSaveTblCell
+
+    WhileExpr     = "ΟΣΟ" Expr "ΕΠΑΝΑΛΑΒΕ" Block "ΤΕΛΟΣ_ΕΠΑΝΑΛΗΨΗΣ"
+    DoWhileExpr   = "ΑΡΧΗ_ΕΠΑΝΑΛΗΨΗΣ" Block "ΜΕΧΡΙΣ_ΟΤΟΥ" Expr
+    ForExpr       = "ΓΙΑ" identifier "ΑΠΟ" Expr "ΜΕΧΡΙ" Expr (("ΜΕ_ΒΗΜΑ" | "ΜΕ ΒΗΜΑ") Expr)? lineTerminator* Block "ΤΕΛΟΣ_ΕΠΑΝΑΛΗΨΗΣ"
+
+    IfExpr        = "ΑΝ" Expr "ΤΟΤΕ" Block ("ΑΛΛΙΩΣ_ΑΝ" Expr "ΤΟΤΕ" Block)* ("ΑΛΛΙΩΣ" Block)? "ΤΕΛΟΣ_ΑΝ"
+
+    //function calls and variables
+    FunCall          = identifier "(" Arguments ")"
+    ProcedureCall    = "ΚΑΛΕΣΕ" identifier "(" Arguments ")"
+
+    TblCellWrite         = identifier "[" AtLeastOneArguments "]"
+    TblCellRead          = identifier "[" AtLeastOneArguments "]"
+
+    AtLeastOneArguments = NonemptyListOf<Expr, ",">
+    Arguments           = ListOf<Expr, ",">
+
+    AtLeastOneParameters = NonemptyListOf<identifier, ",">
+    Parameters           = ListOf<identifier, ",">
+
+    VarParameters = NonemptyListOf<(TblCellRead | identifier), ",">   // parameters when define variables
+    VarParametersWithSaveTblCell = NonemptyListOf<(TblCellWrite | identifier), ",">   // parameters when define variables
+  
+
+    reservedWord = grapse | diavase | and | or | not | div | mod | boollit
+
+    grapse       = "ΓΡΑΨΕ" ~idrest
+    diavase      = "ΔΙΑΒΑΣΕ" ~idrest
+
+    true        =  ("ΑΛΗΘΗΣ" | "αληθης" | "αληθής") ~idrest
+    false       =  ("ΨΕΥΔΗΣ" | "ψευδης" | "ψευδής") ~idrest
+    or          =  ("Η" | "Ή" | "ή" | "η") ~idrest
+    and         =  ("ΚΑΙ" | "και") ~idrest
+    not         =  ("ΟΧΙ" | "ΌΧΙ" | "οχι" | "όχι") ~idrest
+
+    div         =  ("DIV" | "div") ~idrest
+    mod         =  ("MOD" | "mod") ~idrest
+
+    /*    function     = "ΣΥΝΑΡΤΗΣΗ" ~idchar
+        if           = "ΑΝ" ~idchar
+        else         = "ΑΛΛΙΩΣ" ~idchar
+        while        = "ΟΣΟ" ~idchar
+    */
+
+    //definition of a symbol
+    identifier = ~reservedWord  letter (letter|digit|"_")* 
+
+    idrest = letter | digit | "_"
+
+    addop       =  "+" | "-"
+    relop       =  "<=" | "<" | "=" | "<>" | ">=" | ">"
+    mulop       =  "*" | "/" | div | mod
+    powop       =  "^"
+    prefixop    =  neq | not
+    neq         =  "-"
+
+    number =   floatlit | intlit
+
+
+    // literals
+    lit         = floatlit | intlit | strlit | boollit
+    floatlit    = digit* "." digit+ exp?
+    exp         = "e" "-"? digit+
+    intlit      = digit+
+    qq          = "\"" | "\'"
+    strlit      = qq (~qq any)+ qq
+    boollit     = true | false
+
+
+    // override space to include slash slash comments
+    // real version needs to support various unicode whitespace forms
+    //space := "\r" | "\t" | " " | "\n" | comment
+    space +=  comment
+
+    comment = "!" (~lineTerminator sourceCharacter)*
+
+    lineTerminator = "\n" | "\r"
+
+    sourceCharacter = any
+    whitespace = "\t" | " "
+    space := whitespace | lineTerminator | comment
+}

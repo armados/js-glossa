@@ -28,34 +28,15 @@ Stathera
 
 */
 
-class STRGlobalScope { constructor(obj) {
-     this.obj = obj;
-    }
-    get() { return this.obj; }
-    set(obj) { this.obj = obj; }
+class STRScope {
+   constructor(obj) { this.obj = obj; }
+   get()    { return this.obj; }
+   set(obj) { this.obj = obj; }
 }
 
-class STRLocalScope {
-    constructor(obj) {
-        this.obj = obj;
-        this.locked = false;
-    }
-      get() { return this.obj; }
-      set(obj) { this.obj = obj; }
+class STRGlobalScope extends STRScope {} 
 
-  /*    getType() {
-        return typeof(this.obj);
-      } */
-      isLocked() {
-        return this.locked;
-      }
-      Lock() {
-        this.locked = true;
-      }
-      Unlock() {
-        this.locked = false;
-      }
-}
+class STRLocalScope extends STRScope {}
 
 class STRReservedName extends STRGlobalScope {}
 
@@ -70,37 +51,58 @@ class STRUserProcedure extends STRProcedureMethod {}
 // ============
 
 class STRNumber   extends STRLocalScope{}
-
 class STRFloat    extends STRNumber {}
-class STRInteger  extends STRFloat {} 
+class STRInt      extends STRFloat {} 
 class STRString   extends STRLocalScope{}
 class STRBoolean  extends STRLocalScope{}
 
-class STRVarFloat extends STRFloat{}
-class STRVarInt extends STRInteger{}
-class STRVarString extends STRString{}
-class STRVarBoolean extends STRBoolean{}
+class STRFuncNameFloat   extends STRFloat {}
+class STRFuncNameInt     extends STRInt {}
+class STRFuncNameString  extends STRString {}
+class STRFuncNameBoolean extends STRBoolean {}
 
-class STRFunctionNameFloat extends STRFloat{}
-class STRFunctionNameInt extends STRInteger{}
-class STRFunctionNameString extends STRString{}
-class STRFunctionNameBoolean extends STRBoolean{}
-
-class STRConstFloat extends STRFloat{ constructor() { locked = true; }}
-class STRConstInt extends STRInteger{ constructor() { locked = true; }}
-class STRConstString extends STRString{ constructor() { locked = true; }}
-class STRConstBoolean extends STRBoolean{ constructor() { locked = true; }}
+class STRTableName {
+  constructor(tblsize) {
+    this.tblsize = tblsize;
+  }
+}
+/*
+class STRTableNameFloat   extends STRTable {}
+class STRTableNameInt     extends STRTable {}
+class STRTableNameString  extends STRTable {}
+class STRTableNameBoolean extends STRTable {}
+*/
 
 // ============
 
+
+/*
 class STRTable {
   constructor( tbldef) {
     this.data = []
     this.tbldef = tbldef;
+    this.locked = false;
 
     this.createTable();
 }
   getDimensions() { return this.tbl_size; }
+
+
+  get(args) { 
+    if (this.getDimensions() == 1) {
+      var d1 =  this.args[0].val;
+      console.log('d1:', d1,' data:', this.data);
+      return this.data[d1];
+    } else if (this.getDimensions() == 2) {
+      var d1 =  this.args[0].val;
+      var d2 =  this.args[1].val;
+      return this.data[d1][d2];
+
+    //return this.obj;
+   }
+  }
+  set(obj) { this.obj = obj; }
+
 
   createTable() {
     var tblDimensions = this.tbldef.length;
@@ -136,15 +138,23 @@ class STRTable {
   }
 
 
-  createTableCell() {
+  createTableCell() { }
 
+
+
+
+
+  isLocked() {
+    return this.locked;
+  }
+  Lock() {
+    this.locked = true;
+  }
+  Unlock() {
+    this.locked = false;
   }
 }
-
-class STRTableFloat extends STRTable{ createTableCell() { return new STRVarFloat(null); }}
-class STRTableInt extends STRTable { createTableCell() { return new STRVarInt(null); }}
-class STRTableString extends STRTable { createTableCell() { return new STRVarString(null); }}
-class STRTableBoolean extends STRTable { createTableCell() { return new STRVarBoolean(null); }}
+*/
 
 
 
@@ -152,6 +162,7 @@ class STRTableBoolean extends STRTable { createTableCell() { return new STRVarBo
 
 
 module.exports = {
+
     STRGlobalScope: STRGlobalScope,
     STRLocalScope: STRLocalScope,
     
@@ -166,32 +177,16 @@ module.exports = {
     STRUserProcedure: STRUserProcedure,
     
     STRNumber: STRNumber,  
-    
     STRFloat: STRFloat,
-    STRInteger: STRInteger, 
+    STRInt: STRInt, 
     STRString: STRString,   
     STRBoolean: STRBoolean, 
+        
+    STRFuncNameFloat: STRFuncNameFloat, 
+    STRFuncNameInt: STRFuncNameInt, 
+    STRFuncNameString: STRFuncNameString, 
+    STRFuncNameBoolean: STRFuncNameBoolean,
     
-    STRVarFloat: STRVarFloat,
-    STRVarInt: STRVarInt, 
-    STRVarString: STRVarString, 
-    STRVarBoolean: STRVarBoolean, 
-    
-    STRFunctionNameFloat: STRFunctionNameFloat, 
-    STRFunctionNameInt: STRFunctionNameInt, 
-    STRFunctionNameString: STRFunctionNameString, 
-    STRFunctionNameBoolean: STRFunctionNameBoolean,
-    
-    STRConstFloat: STRConstFloat, 
-    STRConstInt: STRConstInt, 
-    STRConstString: STRConstString, 
-    STRConstBoolean: STRConstBoolean,
-    
-    STRTable: STRTable,
-    STRTableFloat: STRTableFloat,
-    STRTableInt: STRTableInt,
-    STRTableString: STRTableString,
-    STRTableBoolean: STRTableBoolean,
-
+    STRTableName: STRTableName,
 }
 

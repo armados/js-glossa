@@ -98,18 +98,18 @@ var sem = Semantics.load(gram);
 
 
 
-var filename = "code5.aepp";
+var filename = "code3.aepp";
 var sourceCode = fs.readFileSync(path.join(__dirname, filename)).toString();
 
 
 globalScope.setInputData([ 55, 88 , 90, 67, 80, -12, 45, 9, 33, 23, 67]);
 
-globalScope.setInputData([ 111, 222 , 333 ]);
+//globalScope.setInputData([ 111, 222 , 333 ]);
 
-/*
+
 globalScope.setInputData([ 
-  'Πύργος', 6974042767 , 
-  'Ολυμπια', 2624022566 , 
+  'Πύργος', 560 , 
+  'Ολυμπια', 280 , 
   'Ζαχάρω', 44 , 
   'Αμαλιάδα', 22 , 
   'Πύργος', 6974042767 , 
@@ -122,7 +122,7 @@ globalScope.setInputData([
   'Αθήνα', 22 ,
   'Ολυμπια'
 ]);
-*/
+
 
 console.log("==[ Program started ]=========");
 

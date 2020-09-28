@@ -1,4 +1,4 @@
-OhmGlwssa {
+GlwssaGrammar {
 
     Application = Program (SubFunction | SubProcedure)*
  
@@ -11,12 +11,10 @@ OhmGlwssa {
                       ("ΜΕΤΑΒΛΗΤΕΣ" DefVariables*)?
 
     DefConstant  = identifier "=" Expr
-    DefVariables = ("ΑΚΕΡΑΙΕΣ" | "ΠΡΑΓΜΑΤΙΚΕΣ" | "ΧΑΡΑΚΤΗΡΕΣ" | "ΛΟΓΙΚΕΣ") ":" VarParameters
+    DefVariables = ("ΑΚΕΡΑΙΕΣ" | "ΠΡΑΓΜΑΤΙΚΕΣ" | "ΧΑΡΑΚΤΗΡΕΣ" | "ΛΟΓΙΚΕΣ") ":" VarParametersAssign
 
-    AssignExpr   = (TblCellWrite | identifier) "<-" Expr
-    //AssignExpr   = identifier "<-" Expr
+    AssignExpr   = (IdentifierTblAssign | identifier) "<-" Expr
 
-    //Expr =    Exp0 | Exp1 | Exp2 | Exp3 | Exp4 | Exp5 | Exp6 | Exp7 | FunCall
     Expr =      Exp  
 
     Exp         =  Exp or Exp1                 -- orop
@@ -48,7 +46,7 @@ OhmGlwssa {
                 |  intlit
                 |  strlit
                 |  FunCall
-                |  TblCellRead
+                |  IdentifierTblFetch
                 |  identifier
                 |  "(" Exp ")"                -- parens
 
@@ -56,11 +54,11 @@ OhmGlwssa {
     Block = InnerCommand*
     FuncBlock = FuncInnerCommand*
 
-    InnerCommand     = ProcedureCall | Stmt_write | Stmt_read | AssignExpr | WhileExpr | DoWhileExpr | ForExpr | IfExpr | comment
-    FuncInnerCommand = Stmt_write | ProcedureCall | AssignExpr | WhileExpr | DoWhileExpr | ForExpr | IfExpr | comment //FIXME: Remove Stmt_write
+    InnerCommand     = AssignExpr | WhileExpr | DoWhileExpr | ForExpr | IfExpr | comment | ProcedureCall | Stmt_write | Stmt_read
+    FuncInnerCommand = AssignExpr | WhileExpr | DoWhileExpr | ForExpr | IfExpr | comment
 
     Stmt_write = grapse Arguments
-    Stmt_read  = diavase VarParametersWithSaveTblCell
+    Stmt_read  = diavase VarParametersAssign
 
     WhileExpr     = "ΟΣΟ" Expr "ΕΠΑΝΑΛΑΒΕ" Block "ΤΕΛΟΣ_ΕΠΑΝΑΛΗΨΗΣ"
     DoWhileExpr   = "ΑΡΧΗ_ΕΠΑΝΑΛΗΨΗΣ" Block "ΜΕΧΡΙΣ_ΟΤΟΥ" Expr
@@ -72,8 +70,11 @@ OhmGlwssa {
     FunCall          = identifier "(" Arguments ")"
     ProcedureCall    = "ΚΑΛΕΣΕ" identifier "(" Arguments ")"
 
-    TblCellWrite         = identifier "[" AtLeastOneArguments "]"
-    TblCellRead          = identifier "[" AtLeastOneArguments "]"
+    //TblCellWrite         = identifier "[" AtLeastOneArguments "]"
+    //TblCellRead          = identifier "[" AtLeastOneArguments "]"
+
+    IdentifierTblAssign       = identifier "[" AtLeastOneArguments "]"
+    IdentifierTblFetch       = identifier "[" AtLeastOneArguments "]"
 
     AtLeastOneArguments = NonemptyListOf<Expr, ",">
     Arguments           = ListOf<Expr, ",">
@@ -81,9 +82,9 @@ OhmGlwssa {
     AtLeastOneParameters = NonemptyListOf<identifier, ",">
     Parameters           = ListOf<identifier, ",">
 
-    VarParameters = NonemptyListOf<(TblCellRead | identifier), ",">   // parameters when define variables
-    VarParametersWithSaveTblCell = NonemptyListOf<(TblCellWrite | identifier), ",">   // parameters when define variables
-  
+    VarParameters = NonemptyListOf<(IdentifierTblFetch | identifier), ",">   // parameters when define variables
+    VarParametersAssign = NonemptyListOf<(IdentifierTblAssign | identifier), ",">   // parameters when define variables
+ 
 
     reservedWord = grapse | diavase | and | or | not | div | mod | boollit
 
@@ -122,8 +123,9 @@ OhmGlwssa {
 
     // literals
     lit         = floatlit | intlit | strlit | boollit
-    floatlit    = digit* "." digit+ exp?
-    exp         = "e" "-"? digit+
+    floatlit    = digit* "." digit+ 
+    //floatlit    = digit* "." digit+ //exp?
+    //exp         = "e" "-"? digit+
     intlit      = digit+
     qq          = "\"" | "\'"
     strlit      = qq (~qq any)+ qq

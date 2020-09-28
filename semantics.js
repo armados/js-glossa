@@ -4,7 +4,7 @@ var MO = require('./objects');
 function binop(op,a,b) {  return new MO.BinaryOp(op, a.toAST(), b.toAST()); }
 
 var operation = {
-    floatlit: function (a, _, b, c)   { return new MO.MNumber(parseFloat(this.sourceString, 10));  },
+    floatlit: function (a, _, b)      { return new MO.MNumber(parseFloat(this.sourceString, 10));  },
     intlit:   function (a)            { return new MO.MNumber(parseInt(this.sourceString, 10)); },
     strlit:   function (_l, text, _r) { return new MO.MString(text.sourceString); },
     boollit:  function (a)            { return new MO.MBoolean( this.sourceString == "ΑΛΗΘΗΣ" ? true : false ); },
@@ -48,7 +48,10 @@ var operation = {
 // ==========================
 
 
-    identifier: function (a, b)       { return new MO.MSymbol(this.sourceString, null) },
+    identifier:      function (a, b)         { return new MO.MSymbol(this.sourceString, null) },
+    
+    IdentifierTblAssign: function (a, _l, b, _r) { return new MO.MSymbolTableAssign(a.sourceString, b.toAST()); },
+    IdentifierTblFetch: function (a, _l, b, _r) { return new MO.MSymbolTableFetch(a.sourceString, b.toAST()); },
 
     AssignExpr: (a, _, b) => new MO.Assignment(a.toAST(), b.toAST()),
 
@@ -71,8 +74,8 @@ var operation = {
     FunCall: (a, _1, b, _2) => new MO.FunctionCall(a.toAST(), b.toAST()),
     ProcedureCall: (_1, a, _2, b, _3) => new MO.ProcedureCall(a.toAST(), b.toAST()),
 
-    TblCellWrite: (tblname, _1, tblindex, _2) => new MO.TblCellWrite(tblname.sourceString, tblindex.toAST()),
-    TblCellRead:  (tblname, _1, tblindex, _2) => new MO.TblCellRead(tblname.sourceString, tblindex.toAST()),
+ //   TblCellWrite: (tblname, _1, tblindex, _2) => new MO.TblCellWrite(tblname.sourceString, tblindex.toAST()),
+//    TblCellRead:  (tblname, _1, tblindex, _2) => new MO.TblCellRead(tblname.sourceString, tblindex.toAST()),
 
     Arguments:            (a) => a.asIteration().toAST(),
     AtLeastOneArguments:  (a) => a.asIteration().toAST(),
@@ -81,7 +84,7 @@ var operation = {
     Parameters:           (a) => a.asIteration().toAST(),
     
     VarParameters:         (a) => a.asIteration().toAST(),
-    VarParametersWithSaveTblCell:  (a) => a.asIteration().toAST(),
+    VarParametersAssign:   (a) => a.asIteration().toAST(),
 
     Application: function(mainProg, subPrograms) { return new MO.Application(mainProg.toAST(), subPrograms.toAST()); },
 

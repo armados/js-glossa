@@ -1055,7 +1055,7 @@ class Application {
 
     var newScope = new Scope();
 
-    globalThis.ScreenOutput = [];
+    IO.ScreenOutput = [];
 
     if (this.subPrograms.length)
       this.subPrograms.forEach((e) => e.resolve(scope));
@@ -1064,7 +1064,7 @@ class Application {
 
     this.mainProg.resolve(newScope);
 
-    return globalThis.ScreenOutput.join('\n');;
+    return IO.ScreenOutput.join('\n');;
   }
 }
 

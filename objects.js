@@ -156,15 +156,15 @@ class Scope {
   //makeSubScope() {   return new Scope(this)  }
 
   setInputData(data) {
-    globalThis.inputKeyboardData = data;
+    IO.inputKeyboardData = data;
   }
 
   getSingleInputData() {
 
-    if (!globalThis.inputKeyboardData.length)
+    if (!IO.inputKeyboardData.length)
       throw new Error("No input data left..");
 
-    return globalThis.inputKeyboardData.shift();
+    return IO.inputKeyboardData.shift();
   }
 
   hasSymbol(name) {
@@ -546,7 +546,7 @@ class Stmt_write {
       }
     });
 
-    globalThis.ScreenOutput.push(output.join(" "));
+    IO.ScreenOutput.push(output.join(" "));
 
     return true;
   }
@@ -583,7 +583,7 @@ class Stmt_read {
       scope.setSymbol(param.name, sym);
     });
 
-    globalThis.ScreenOutput.push( inputData.join( "\n" ) );
+    IO.ScreenOutput.push( inputData.join( "\n" ) );
 
     return true;
   }

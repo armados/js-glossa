@@ -7,11 +7,13 @@ var ohm = require("ohm-js");
 var MObjects = require("./objects");
 var Semantics = require("./semantics");
 
-
 var ast = require("./ast");
 
-
 var Storage = require("./storage");
+var IO = require("./io");
+
+
+
 
 var globalScope = new MObjects.Scope();
 /*
@@ -102,12 +104,12 @@ var filename = "code3.aepp";
 var sourceCode = fs.readFileSync(path.join(__dirname, filename)).toString();
 
 
-globalScope.setInputData([ 55, 88 , 90, 67, 80, -12, 45, 9, 33, 23, 67]);
+IO.inputData = [ 55, 88 , 90, 67, 80, -12, 45, 9, 33, 23, 67];
 
 //globalScope.setInputData([ 111, 222 , 333 ]);
 
 
-globalScope.setInputData([ 
+IO.inputData = [ 
   'Πύργος', 560 , 
   'Ολυμπια', 280 , 
   'Ζαχάρω', 44 , 
@@ -121,7 +123,7 @@ globalScope.setInputData([
   'Πάτρα', 11 , 
   'Αθήνα', 22 ,
   'Ολυμπια'
-]);
+];
 
 
 console.log("==[ Program started ]=========");

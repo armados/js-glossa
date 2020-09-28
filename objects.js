@@ -2,6 +2,8 @@
 
 var Storage = require("./storage");
 
+var IO = require("./io");
+
 
 
 
@@ -568,7 +570,7 @@ class Stmt_read {
 
       //console.log("Read from keyboard: ", param.name);
 
-      var data = scope.getSingleInputData();
+      var data = IO.inputData.shift();//scope.getSingleInputData();
 
       inputData.push("*** Εισαγωγή τιμής από πληκτρολόγιο: [" + data + "]");
 

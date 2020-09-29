@@ -1,3 +1,17 @@
+! KEYBOARD_INPUT:   'Πύργος', 560 
+! KEYBOARD_INPUT:   'Ολυμπια', 280 
+! KEYBOARD_INPUT:   'Ζαχάρω', 44 
+! KEYBOARD_INPUT:   'Αμαλιάδα', 22
+! KEYBOARD_INPUT:   'Πύργος', 6974042767 
+! KEYBOARD_INPUT:   'Ολυμπια', 2624022566 
+! KEYBOARD_INPUT:   'Ζαχάρω', 44
+! KEYBOARD_INPUT:   'Αμαλιάδα', 22  
+! KEYBOARD_INPUT:   'Πάτρα', 11  
+! KEYBOARD_INPUT:   'Αθήνα', 22 
+! KEYBOARD_INPUT:   'Πάτρα', 11  
+! KEYBOARD_INPUT:   'Αθήνα', 22 
+! KEYBOARD_INPUT:   'Ολυμπια'
+
 ΠΡΟΓΡΑΜΜΑ δυαδική_αναζήτηση
 ! α) Να γραφτεί πρόγραμμα το οποίο να διαβάζει 10 ονόματα
 !    και τηλέφωνα
@@ -14,7 +28,7 @@
 
 
 ΣΤΑΘΕΡΕΣ
-  Ν = 6
+  Ν = 12
 
 ΜΕΤΑΒΛΗΤΕΣ
   ΧΑΡΑΚΤΗΡΕΣ: Ον[Ν], tempΟν, ζητούμενο

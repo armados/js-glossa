@@ -14,7 +14,6 @@ var IO = require("./io");
 
 
 
-
 var globalScope = new MObjects.Scope();
 /*
 globalScope.addSymbol("testme",  new Storage.STRBuiltinFunction(function (A) {
@@ -65,7 +64,7 @@ globalScope.addSymbol("ΛΟΓ",  new Storage.STRBuiltinFunction(function (A) {
 
 // ========================
 
-function parse(input) {
+function parse(input, inputKeyboardBuffer) {
 
   var match = gram.match(input);
 
@@ -82,13 +81,19 @@ function parse(input) {
   }
 
 
+  var IOKeyboard = new IO.InputDevice();
+
+  if (inputKeyboardBuffer != null && inputKeyboardBuffer.length) {
+    //console.log('>> Setting keyboard buffer from parameters');
+    IOKeyboard.set(inputKeyboardBuffer);
+  }
 
 
   //var tree = new ast.ASTree(result);
   //var treeoutput = tree.generate();
   //console.log('=> ResultAST: ', treeoutput);
 
-  return result.resolve(globalScope, null);
+  return result.resolve(globalScope, IOKeyboard);
 }
 
 
@@ -100,36 +105,14 @@ var sem = Semantics.load(gram);
 
 
 
-var filename = "code3.aepp";
+var filename = "code5.aepp";
 var sourceCode = fs.readFileSync(path.join(__dirname, filename)).toString();
-
-
-IO.inputData = [ 55, 88 , 90, 67, 80, -12, 45, 9, 33, 23, 67];
-
-//globalScope.setInputData([ 111, 222 , 333 ]);
-
-
-IO.inputData = [ 
-  'Πύργος', 560 , 
-  'Ολυμπια', 280 , 
-  'Ζαχάρω', 44 , 
-  'Αμαλιάδα', 22 , 
-  'Πύργος', 6974042767 , 
-  'Ολυμπια', 2624022566 , 
-  'Ζαχάρω', 44 , 
-  'Αμαλιάδα', 22 , 
-  'Πάτρα', 11 , 
-  'Αθήνα', 22 ,
-  'Πάτρα', 11 , 
-  'Αθήνα', 22 ,
-  'Ολυμπια'
-];
 
 
 console.log("==[ Program started ]=========");
 
-var output = parse(sourceCode);
-
+var inputKeyboardBuffer = null;
+var output = parse(sourceCode, inputKeyboardBuffer);
 console.log(output);
 
 console.log("==[ Program terminated code ]=");

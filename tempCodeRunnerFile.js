@@ -1,1 +1,1 @@
-inputData
+var globalScope = new MObjects.Scope();

@@ -55,6 +55,8 @@ var operation = {
 
     AssignExpr: (a, _, b) => new MO.Assignment(a.toAST(), b.toAST()),
 
+    KeyboardData: (_1, a) => new MO.KeyboardDataFromSource(a.toAST()),
+
     
     IfExpr: function (_1, cond, _2, tb, _AlliosAn, condElseIf, _Tote, blockElseIf, _3, eb, _4) {
         var thenBody = tb.toAST();
@@ -85,8 +87,9 @@ var operation = {
     
     VarParameters:         (a) => a.asIteration().toAST(),
     VarParametersAssign:   (a) => a.asIteration().toAST(),
+    
 
-    Application: function(mainProg, subPrograms) { return new MO.Application(mainProg.toAST(), subPrograms.toAST()); },
+    Application: function(keyboardData, mainProg, subPrograms) { return new MO.Application(keyboardData.toAST(), mainProg.toAST(), subPrograms.toAST()); },
 
     Program: function(_1, name, decl, _5, mBlock, _6)  {
         return new MO.Program(name.toAST(), decl.toAST(), mBlock.toAST()); },

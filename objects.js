@@ -1,9 +1,10 @@
 "use strict";
 
 var Storage = require("./storage");
-
 var IO = require("./io");
 
+var IOKeyboard = null;
+var IOScreen = new IO.OutputDevice();
 
 
 
@@ -151,21 +152,14 @@ class Scope {
     if (typeof Scope.globalStorage == "undefined") {
       Scope.globalStorage = {};
     }
+
+
+
+
+
   }
 
   //makeSubScope() {   return new Scope(this)  }
-
-  setInputData(data) {
-    IO.inputKeyboardData = data;
-  }
-
-  getSingleInputData() {
-
-    if (!IO.inputKeyboardData.length)
-      throw new Error("No input data left..");
-
-    return IO.inputKeyboardData.shift();
-  }
 
   hasSymbol(name) {
 
@@ -546,7 +540,7 @@ class Stmt_write {
       }
     });
 
-    IO.ScreenOutput.push(output.join(" "));
+    IOScreen.add( output.join(" ") );
 
     return true;
   }
@@ -570,7 +564,8 @@ class Stmt_read {
 
       //console.log("Read from keyboard: ", param.name);
 
-      var data = IO.inputData.shift();//scope.getSingleInputData();
+      var data = IOKeyboard.getSingleInputData();
+      //console.log("got from keyboard: ", data);
 
       inputData.push("*** Εισαγωγή τιμής από πληκτρολόγιο: [" + data + "]");
 
@@ -578,12 +573,12 @@ class Stmt_read {
       else if (typeof(data) == 'string')  var sym = new MString(data);
       else if (typeof(data) == 'number')  var sym = new MNumber(data);
       else 
-        throw new Error('Error: cannon detect type for the input value');
+        throw new Error('Unknown input value type: ' + data + typeof(data));
             
       scope.setSymbol(param.name, sym);
     });
 
-    IO.ScreenOutput.push( inputData.join( "\n" ) );
+    IOScreen.add( inputData.join( "\n" ) );
 
     return true;
   }
@@ -1047,15 +1042,25 @@ class Program {
 }
 
 class Application {
-  constructor(mainProg, subPrograms) {
+  constructor(keyboardData, mainProg, subPrograms) {
     this.mainProg = mainProg;
     this.subPrograms = subPrograms;
+    this.keyboardData = keyboardData;
   }
-  resolve(scope) {
+  resolve(scope, argIOKeyboard) {
+    
+    if (argIOKeyboard) 
+      IOKeyboard = argIOKeyboard;
+    else
+      IOKeyboard = new IO.InputDevice();
+
+
+    if (IOKeyboard.isEmpty() && this.keyboardData.length) {
+      //console.log('>> Setting keyboard buffer from inline source code');
+      this.keyboardData.forEach((e) => e.addKeyboardInputData(scope));
+    }
 
     var newScope = new Scope();
-
-    IO.ScreenOutput = [];
 
     if (this.subPrograms.length)
       this.subPrograms.forEach((e) => e.resolve(scope));
@@ -1064,7 +1069,7 @@ class Application {
 
     this.mainProg.resolve(newScope);
 
-    return IO.ScreenOutput.join('\n');;
+    return IOScreen.get().join('\n');;
   }
 }
 
@@ -1074,6 +1079,28 @@ function mem(scope) {
   console.log("RAM  Local storage: ", scope.localStorage);
   console.log("\n");
 }
+
+
+class KeyboardDataFromSource {
+  constructor(args) {
+    this.args = args;
+  }
+ 
+  addKeyboardInputData() {
+
+    var argsResolved = this.args.map(function (arg) {
+      return arg.resolve(new Scope());
+    });
+
+    argsResolved.forEach(function (e) {
+      //console.log(' attachInputData KEYBOARD_DATA: ', e.val);
+      IOKeyboard.add(e.val);
+    });
+
+  }
+  }
+
+
 
 module.exports = {
   MNumber: MNumber,
@@ -1116,6 +1143,6 @@ module.exports = {
   SubFunction: SubFunction,
   SubProcedure: SubProcedure,
 
-  //TblCellWrite: TblCellWrite,
-  //TblCellRead: TblCellRead,
+  KeyboardDataFromSource: KeyboardDataFromSource,
+
 };

@@ -1,6 +1,6 @@
 GlwssaGrammar {
 
-    Application = Program (SubFunction | SubProcedure)*
+    Application = KeyboardData* Program (SubFunction | SubProcedure)*
  
     Program      = "ΠΡΟΓΡΑΜΜΑ" identifier DefDeclarations "ΑΡΧΗ" Block "ΤΕΛΟΣ_ΠΡΟΓΡΑΜΜΑΤΟΣ" 
 
@@ -12,7 +12,7 @@ GlwssaGrammar {
 
     DefConstant  = identifier "=" Expr
     DefVariables = ("ΑΚΕΡΑΙΕΣ" | "ΠΡΑΓΜΑΤΙΚΕΣ" | "ΧΑΡΑΚΤΗΡΕΣ" | "ΛΟΓΙΚΕΣ") ":" VarParametersAssign
-
+   
     AssignExpr   = (IdentifierTblAssign | identifier) "<-" Expr
 
     Expr =      Exp  
@@ -85,6 +85,7 @@ GlwssaGrammar {
     VarParameters = NonemptyListOf<(IdentifierTblFetch | identifier), ",">   // parameters when define variables
     VarParametersAssign = NonemptyListOf<(IdentifierTblAssign | identifier), ",">   // parameters when define variables
  
+    KeyboardData = keyboardinput AtLeastOneArguments
 
     reservedWord = grapse | diavase | and | or | not | div | mod | boollit
 
@@ -137,7 +138,9 @@ GlwssaGrammar {
     //space := "\r" | "\t" | " " | "\n" | comment
     space +=  comment
 
-    comment = "!" (~lineTerminator sourceCharacter)*
+    keyboardinput =  "! KEYBOARD_INPUT:"
+
+    comment = ~keyboardinput "!" (~lineTerminator sourceCharacter)*
 
     lineTerminator = "\n" | "\r"
 

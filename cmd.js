@@ -108,14 +108,11 @@ var sem = Semantics.load(gram);
 
 
 var filename = process.argv[2];
-var sourceCode = fs.readFileSync(filename).toString();
-//var sourceCode = fs.readFileSync(path.join(__dirname, filename)).toString();
 
+var sourceCode = fs.readFileSync( filename ).toString();
 
-console.log("==[ Program started ]=========");
 
 var inputKeyboardBuffer = null;
 var output = parse(sourceCode, inputKeyboardBuffer);
 console.log(output);
 
-console.log("==[ Program terminated code ]=");

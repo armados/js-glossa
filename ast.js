@@ -55,7 +55,7 @@ class ASTree {
     Object.keys(node).forEach((key) => {
       const val = this.ref(node[key], entities);
 
-      //if (node instanceof MObjects.WhileLoop) line += `Line Loop ${key}=${val}`;
+      //if (node instanceof MObjects.Stmt_WhileLoop) line += `Line Loop ${key}=${val}`;
         line += node.constructor.name;
         line += val === undefined ? '' : `  ${key}=${val} `;
 /*  

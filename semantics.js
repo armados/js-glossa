@@ -53,7 +53,7 @@ var operation = {
     IdentifierTblAssign: function (a, _l, b, _r) { return new MO.MSymbolTableAssign(a.sourceString, b.toAST()); },
     IdentifierTblFetch: function (a, _l, b, _r) { return new MO.MSymbolTableFetch(a.sourceString, b.toAST()); },
 
-    AssignExpr: (a, _, b) => new MO.Assignment(a.toAST(), b.toAST()),
+    AssignExpr: (a, _, b) => new MO.Stmt_Assignment(a.toAST(), b.toAST()),
 
     KeyboardData: (_1, a) => new MO.KeyboardDataFromSource(a.toAST()),
 
@@ -62,16 +62,16 @@ var operation = {
         var thenBody = tb.toAST();
         var moreBody = blockElseIf.toAST();
         var elseBody = eb ? eb.toAST()[0] : null;
-        return new MO.IfCond(cond.toAST(), thenBody, condElseIf.toAST(), moreBody, elseBody);
+        return new MO.Stmt_IfCond(cond.toAST(), thenBody, condElseIf.toAST(), moreBody, elseBody);
     }, 
 
 
-    WhileExpr:   (_1, cond, _2, body, _3) => new MO.WhileLoop(cond.toAST(), body.toAST()),
+    WhileExpr:   (_1, cond, _2, body, _3) => new MO.Stmt_WhileLoop(cond.toAST(), body.toAST()),
 
-    DoWhileExpr: (_1, body, _2, cond)     => new MO.DoWhileLoop(cond.toAST(), body.toAST()),
+    DoWhileExpr: (_1, body, _2, cond)     => new MO.Stmt_DoStmt_WhileLoop(cond.toAST(), body.toAST()),
 
     ForExpr: (_1, variable, _2, initval, _3, finalval, _4, stepval, _5, body, _6) => 
-    new MO.ForLoop(variable.toAST(), initval.toAST(), finalval.toAST(), stepval.toAST(), body.toAST()),
+    new MO.Stmt_ForLoop(variable.toAST(), initval.toAST(), finalval.toAST(), stepval.toAST(), body.toAST()),
 
     FunCall: (a, _1, b, _2) => new MO.FunctionCall(a.toAST(), b.toAST()),
     ProcedureCall: (_1, a, _2, b, _3) => new MO.ProcedureCall(a.toAST(), b.toAST()),
@@ -114,16 +114,16 @@ var operation = {
         return new MO.Block(commands.toAST());
     },    
 
-    Stmt_write: function(_, tmp) { 
-        //console.log('===> Stmt_write: function');
+    Stmt_Write: function(_, tmp) { 
+        //console.log('===> Stmt_Write: function');
         //console.log(tmp.sourceString);
-        return new MO.Stmt_write(tmp.toAST());
+        return new MO.Stmt_Write(tmp.toAST());
     },
     
-    Stmt_read: function(_, tmp) { 
-        //console.log('===> Stmt_read: function');
+    Stmt_Read: function(_, tmp) { 
+        //console.log('===> Stmt_Read: function');
         //console.log(tmp.sourceString);
-        return new MO.Stmt_read(tmp.toAST());
+        return new MO.Stmt_Read(tmp.toAST());
     }
 
 };

@@ -54,11 +54,11 @@ GlwssaGrammar {
     Block = InnerCommand*
     FuncBlock = FuncInnerCommand*
 
-    InnerCommand     = AssignExpr | WhileExpr | DoWhileExpr | ForExpr | IfExpr | comment | ProcedureCall | Stmt_write | Stmt_read
+    InnerCommand     = AssignExpr | WhileExpr | DoWhileExpr | ForExpr | IfExpr | comment | ProcedureCall | Stmt_Write | Stmt_Read
     FuncInnerCommand = AssignExpr | WhileExpr | DoWhileExpr | ForExpr | IfExpr | comment
 
-    Stmt_write = grapse Arguments
-    Stmt_read  = diavase VarParametersAssign
+    Stmt_Write = grapse Arguments
+    Stmt_Read  = diavase VarParametersAssign
 
     WhileExpr     = "ΟΣΟ" Expr "ΕΠΑΝΑΛΑΒΕ" Block "ΤΕΛΟΣ_ΕΠΑΝΑΛΗΨΗΣ"
     DoWhileExpr   = "ΑΡΧΗ_ΕΠΑΝΑΛΗΨΗΣ" Block "ΜΕΧΡΙΣ_ΟΤΟΥ" Expr

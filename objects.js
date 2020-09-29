@@ -245,7 +245,7 @@ class Scope {
     else if  (this.getSymbolObject(name) instanceof Storage.STRString ||
               this.getSymbolObject(name) instanceof Storage.STRFuncNameString) {
                   if (!(obj instanceof Storage.STRString || obj instanceof MString)) {
-                    console.log('name: ', name, 'obj: ', this.getSymbolObject(name), 'obj2: ', obj);
+                    //console.log('name: ', name, 'obj: ', this.getSymbolObject(name), 'obj2: ', obj);
         throw new Error('Variable type not match - expected string');
                   }
 
@@ -258,7 +258,7 @@ class Scope {
 
     }
     else
-      throw new Error('Unknown symbol type');
+      throw new Error('Unknown symbol type' + this.getSymbol(name));
 
 
     this.localStorage[name].set(obj);
@@ -307,7 +307,7 @@ class Block {
 
 // ===================================
 
-class IfCond {
+class Stmt_IfCond {
   constructor(cond, thenBody, condElseIf, moreBody, elseBody) {
     this.cond = cond;
     this.thenBody = thenBody;
@@ -357,7 +357,7 @@ class IfCond {
   }
 }
 
-class WhileLoop {
+class Stmt_WhileLoop {
   constructor(cond, body) {
     this.cond = cond;
     this.body = body;
@@ -378,7 +378,7 @@ class WhileLoop {
   }
 }
 
-class DoWhileLoop {
+class Stmt_DoStmt_WhileLoop {
   constructor(cond, body) {
     this.cond = cond;
     this.body = body;
@@ -399,7 +399,7 @@ class DoWhileLoop {
   }
 }
 
-class ForLoop {
+class Stmt_ForLoop {
   constructor(variable, initval, finalval, stepval, body) {
     this.variable = variable;
     this.initval = initval;
@@ -433,7 +433,7 @@ class ForLoop {
     var tmp = finalval.resolve(scope);
     var v_final = tmp.val;
 
-    //console.log('FORLOOP: var: ', this.variable, ' initial: ', v_initial,'  final: ', v_final, '  step:', v_step);
+    //console.log('Stmt_ForLoop: var: ', this.variable, ' initial: ', v_initial,'  final: ', v_final, '  step:', v_step);
 
     //console.log('lock state: ', scope.getSymbolObject(this.variable.name).locked);
 
@@ -448,7 +448,7 @@ class ForLoop {
     if (v_initial <= v_final && v_step > 0) {
       while (scope.getSymbol(variable.name).val <= v_final) {
 
-        //console.log('FORLOOP: ', scope.getSymbol(this.variable.name).val,'  got looped once');
+        //console.log('Stmt_ForLoop: ', scope.getSymbol(this.variable.name).val,'  got looped once');
 
         body.resolve(scope);
         //if (val) output.push(val);
@@ -484,16 +484,16 @@ class ForLoop {
   }
 }
 
-class Assignment {
+class Stmt_Assignment {
   constructor(sym, val) {
     this.symbol = sym;
     this.val = val;
   }
   resolve(scope) {
-    //console.log('== Assignment: INIT RESOLVE symbol: ', this.symbol, ' value: ', this.val);
+    //console.log('== Stmt_Assignment: INIT RESOLVE symbol: ', this.symbol, ' value: ', this.val);
     var valResolved = this.val.resolve(scope);
 
-    //console.log('== Assignment: BEFORE RESOLVE symbol: ', this.symbol, ' value: ', valResolved);
+    //console.log('== Stmt_Assignment: BEFORE RESOLVE symbol: ', this.symbol, ' value: ', valResolved);
 
     var sym = this.symbol;
 
@@ -504,7 +504,7 @@ class Assignment {
         sym = this.symbol.resolve(scope);
     }
  
-    //console.log('== Assignment: AFTER RESOLVE symbol: ', sym, ' value: ', valResolved);
+    //console.log('== Stmt_Assignment: AFTER RESOLVE symbol: ', sym, ' value: ', valResolved);
 
     /* ?????????
     if (valResolved instanceof MSymbol) 
@@ -515,14 +515,14 @@ class Assignment {
      
     scope.setSymbol(sym.name, valResolved);
 
-    //console.log('AFTER Assignment: ', sym.name, '  has now value: ', scope.getSymbol(sym.name));
+    //console.log('AFTER Stmt_Assignment: ', sym.name, '  has now value: ', scope.getSymbol(sym.name));
     //mem(scope);
 
     return true;
   }
 }
 
-class Stmt_write {
+class Stmt_Write {
   constructor(args) {
     this.args = args;
   }
@@ -562,7 +562,7 @@ class Stmt_write {
   }
 }
 
-class Stmt_read {
+class Stmt_Read {
   constructor(params) {
     this.params = params;
   }
@@ -745,12 +745,8 @@ class DefVariables {
 
         return true;
       }
-      
 
-
-
-
-      if  (varType == 'ΑΚΕΡΑΙΕΣ')
+      if    (varType == 'ΑΚΕΡΑΙΕΣ')
       var ctype = new Storage.STRInt( null );
     else if (varType == 'ΠΡΑΓΜΑΤΙΚΕΣ')
       var ctype = new Storage.STRFloat( null );
@@ -762,14 +758,6 @@ class DefVariables {
       throw new Error('Cannot detect variable type');
   
       return scope.addSymbol(e.name, ctype);
- 
-
-
-
-
-
-
-
 
     }); 
   }
@@ -805,6 +793,7 @@ class FunctionCall {
   }
 }
 
+
 class ProcedureCall {
   constructor(fun, args) {
     this.fun = fun;
@@ -833,82 +822,27 @@ class ProcedureCall {
 
     this.args.map(function (arg, i) {
 
-      if (arg instanceof MSymbol) {
-        // Return values from procedure
-        // Take care in case of a variable is locked and returned changed value
-        //scope.setSymbol(arg.name, procScope.getSymbol(procParams[i].name));
-        if (true || !scope.getSymbolObject(arg.name).isLocked()) { // FIXME:
-          scope.setSymbol(arg.name, procScope.getSymbol(procParams[i].name));
-        } else {
-          //console.log('check change: ', scope.getSymbol(arg.name), procScope.getSymbol(procParams[i].name));
+      if  (arg instanceof MSymbol) {
 
-          if (scope.getSymbol(arg.name) != procScope.getSymbol(procParams[i].name))
-            throw new Error('Procedure return values try to change ariable which is in use');
-
-        }
+        if (scope.isLocked(arg.name) == true &&
+            scope.getSymbol(arg.name) != procScope.getSymbol(procParams[i].name))
+          throw new Error('Procedure return values try to change ariable which is in use');
+    
+        scope.setSymbol(arg.name, procScope.getSymbol(procParams[i].name));
 
       }
+      else if (arg instanceof MSymbolTableFetch) {
+
+        // Return symbol from arg cell name
+        scope.setSymbol(arg.cellName, procScope.getSymbol(procParams[i].name));
+      }
+
     });
 
     //console.log('P step3 returned  ====: ', procExecArr);
-
     return true;
   }
 }
-/*
-class TblCellWrite {
-  constructor(name, args) {
-    this.name = name;
-    this.args = args;
-  }
-
-  resolve(scope) {
-    console.log("TblCellWrite: Table resolve called ====: ", this.name," with args ", this.args );
-
-    //lookup the real function from the symbol
-    var argsResolved = this.args.map(function (arg) {
-      return arg.resolve(scope);
-    });
-
-    var cellName = this.name;// + "[" + argsResolved[0].val + "]";
-
-    //console.log("Tbl request cellName====: ", cellName);
-
-    if (!scope.hasSymbol(this.name))
-      throw new Error("TblCellWrite: cannot resolve symbol " + cellName);
-    //FIXME: return table value here
-
-    //console.log("tbl write debug: ", scope.getSymbol(cellName));
-    return new MSymbol(cellName); //scope.getSymbol( cellName );
-  }
-}
-
-class TblCellRead {
-    constructor(name, args) {
-      this.name = name;
-      this.args = args;
-    }
-  
-    resolve(scope) {
-      console.log("TblCellRead: Table resolve called ====: ", this.name, " with args ", this.args);
-
-      //lookup the real function from the symbol  
-      var argsResolved = this.args.map(function (arg) {
-        return arg.resolve(scope);
-      });
-  
-      var cellName = this.name + "[" + argsResolved[0].val + "]";
-  
-      //console.log("Tbl request cellName====: ", cellName);
-  
-      if (!scope.hasSymbol(cellName))
-        throw new Error("TblCellRead: cannot resolve symbol " + cellName);
-  
-      //console.log("tbl debug: ", scope.getSymbol(cellName));
-      return scope.getSymbol( cellName );
-    }
-  }
-*/
 
 
 class SubFunction {
@@ -937,8 +871,7 @@ class SubFunction {
 
       var scope2 = new Scope();
 
-      // Crate function name variable in local scope
-      if  (funType == 'ΑΚΕΡΑΙΑ')
+      if      (funType == 'ΑΚΕΡΑΙΑ')
         var ftype = new Storage.STRFuncNameInt( null );
       else if (funType == 'ΠΡΑΓΜΑΤΙΚΗ')
         var ftype = new Storage.STRFuncNameFloat( null );
@@ -949,12 +882,13 @@ class SubFunction {
       else
         throw new Error('Cannot detect function return value type');      
       
-      scope2.addSymbolFuncName(name,  ftype);
-
+      // Crate function name variable in local scope
+      scope2.addSymbolFuncName(name, ftype);
 
       // Declare constants and variables
       decl.resolve(scope2);
 
+      // Sent values to function
       params.forEach(function (param, i) {
         if (!scope2.hasSymbol(param.name))
         throw new Error(
@@ -1007,6 +941,7 @@ class SubProcedure {
       // Declare constants and variables
       decl.resolve(scope2);
 
+      // Sent values to procedure
       params.forEach(function (param, i) {
         if (!scope2.hasSymbol(param.name))
           throw new Error(
@@ -1024,6 +959,7 @@ class SubProcedure {
 
       var procExecArr = [scope2, params];
 
+      // Return scope for precessing 
       return procExecArr;
     }));
 
@@ -1137,20 +1073,20 @@ module.exports = {
 
   Scope: Scope,
 
-  Assignment: Assignment,
+  Stmt_Assignment: Stmt_Assignment,
   
   Block: Block,
 
-  IfCond: IfCond,
-  WhileLoop: WhileLoop,
-  DoWhileLoop: DoWhileLoop,
-  ForLoop: ForLoop,
+  Stmt_IfCond: Stmt_IfCond,
+  Stmt_WhileLoop: Stmt_WhileLoop,
+  Stmt_DoStmt_WhileLoop: Stmt_DoStmt_WhileLoop,
+  Stmt_ForLoop: Stmt_ForLoop,
 
   FunctionCall: FunctionCall,
   ProcedureCall: ProcedureCall,
 
-  Stmt_write: Stmt_write,
-  Stmt_read: Stmt_read,
+  Stmt_Write: Stmt_Write,
+  Stmt_Read: Stmt_Read,
 
   Application: Application,
   Program: Program,

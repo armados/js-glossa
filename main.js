@@ -15,16 +15,7 @@ var IO = require("./io");
 
 
 var globalScope = new MObjects.Scope();
-/*
-globalScope.addSymbol("testme",  new Storage.STRBuiltinFunction(function (A) {
-  return new MObjects.MNumber(Math.trunc(A.val / 1));
-}));
 
-var d1 = globalScope.getSymbol('testme');
-console.log('d1 ', d1);
-d1.set(23);
-console.log('d1 ', d1.get());
-*/
 globalScope.addSymbol("Α_Μ",  new Storage.STRBuiltinFunction(function (A) {
   return new MObjects.MNumber(Math.trunc(A.val / 1));
 }));
@@ -105,14 +96,14 @@ var sem = Semantics.load(gram);
 
 
 
-var filename = "code3.aepp";
+var filename = "code7.aepp";
 var sourceCode = fs.readFileSync(path.join(__dirname, filename)).toString();
 
 
-console.log("==[ Program started ]=========");
+//console.log("==[ Program started ]=========");
 
 var inputKeyboardBuffer = null;
 var output = parse(sourceCode, inputKeyboardBuffer);
 console.log(output);
 
-console.log("==[ Program terminated code ]=");
+//console.log("==[ Program terminated code ]=");

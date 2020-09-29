@@ -143,24 +143,36 @@ class MSymbolTableFetch extends MSymbolTable {
 // ============================
 
 class Scope {
-  constructor(parent) {
+  constructor(){ //parent) {
 
     this.localStorage = {};
+    this.lockedVariables = [];
 
-    this.parent = parent ? parent : null;
+
+   // this.parent = parent ? parent : null;
 
     if (typeof Scope.globalStorage == "undefined") {
       Scope.globalStorage = {};
     }
 
-
-
-
-
   }
 
   //makeSubScope() {   return new Scope(this)  }
 
+  isLocked(name) {
+    return this.lockedVariables.includes(name);
+  }
+
+  addLock(name) {
+      this.lockedVariables.push(name);
+      }
+
+    removeLock(name) {
+        const index = this.lockedVariables.indexOf(name);
+        this.lockedVariables.splice(index, 1);
+  
+    }
+  
   hasSymbol(name) {
 
     if (name in this.localStorage) return true;
@@ -423,18 +435,18 @@ class ForLoop {
 
     //console.log('FORLOOP: var: ', this.variable, ' initial: ', v_initial,'  final: ', v_final, '  step:', v_step);
 
-    //var output = [];
-
     //console.log('lock state: ', scope.getSymbolObject(this.variable.name).locked);
 
-  //  if (scope.getSymbolObject(this.variable.name).isLocked())
- //     throw new Error('Can not use variable - is in use');
+    if (scope.isLocked(variable.name))
+      throw new Error('Can not use variable - is in use');
 
+    scope.addLock(variable.name);
     scope.setSymbol(variable.name, new MNumber(v_initial));
- //   scope.getSymbolObject(this.variable.name).Lock();
+
+    //mem(scope);
 
     if (v_initial <= v_final && v_step > 0) {
-      while (scope.getSymbol(this.variable.name).val <= v_final) {
+      while (scope.getSymbol(variable.name).val <= v_final) {
 
         //console.log('FORLOOP: ', scope.getSymbol(this.variable.name).val,'  got looped once');
 
@@ -444,7 +456,7 @@ class ForLoop {
  //       scope.getSymbolObject(this.variable.name).Unlock();
         scope.setSymbol(
           this.variable.name,
-          new MNumber(scope.getSymbol(this.variable.name).val + v_step)
+          new MNumber(scope.getSymbol(variable.name).val + v_step)
         );
   //      scope.getSymbolObject(this.variable.name).Lock();
 
@@ -460,11 +472,12 @@ class ForLoop {
 
         scope.setSymbol(
           this.variable.name,
-          new MNumber(scope.getSymbol(this.variable.name).val + v_step)
+          new MNumber(scope.getSymbol(variable.name).val + v_step)
         );
       }
     }
 
+    scope.removeLock(variable.name);
     //scope.getSymbolObject(this.variable.name).Unlock();
 
     //return output.join("\n");
@@ -484,7 +497,10 @@ class Assignment {
 
     var sym = this.symbol;
 
-    if (sym instanceof MSymbolTableAssign) { //FIXME: IdentifierTblFetch
+    if (scope.isLocked(sym.name))
+      throw new Error('Can not use variable - is in use');
+
+    if (sym instanceof MSymbolTableAssign) { 
         sym = this.symbol.resolve(scope);
     }
  
@@ -557,6 +573,9 @@ class Stmt_read {
 
     this.params.forEach(function (param) {
       //console.log("param: ", param);
+
+      if (scope.isLocked(param.name))
+        throw new Error('Can not use variable - is in use');
 
       // Check if is a table cell - if true fetch real symbol
       if (param instanceof MSymbolTableAssign)
@@ -1077,6 +1096,7 @@ function mem(scope) {
   console.log("\n============================[ Memory dump  ]");
   console.log("RAM Global storage: ", Scope.globalStorage);
   console.log("RAM  Local storage: ", scope.localStorage);
+  console.log("Local Variables Locked: ", scope.lockedVariables);
   console.log("\n");
 }
 

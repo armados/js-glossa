@@ -57,14 +57,16 @@ class ASTree {
 
       //if (node instanceof MObjects.WhileLoop) line += `Line Loop ${key}=${val}`;
         line += node.constructor.name;
-  
+        line += val === undefined ? '' : `  ${key}=${val} `;
+/*  
       if (node instanceof MObjects.BinaryOp) 
         line += val === undefined ? '' : `BinaryOp ${key}=${val}`;
       else if (node instanceof MObjects.MBoolean) 
         line += val === undefined ? '' : `Boolean  ${key}=${val}`;
         else if (node instanceof MObjects.MSymbol) 
         line += val === undefined ? '' : `MSymbol  ${key}=${val}`;
-    });
+    */
+       });
 
     return line;
   }

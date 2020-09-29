@@ -1,3 +1,6 @@
+#!/usr/bin/env node
+
+
 "use strict";
 
 var fs = require("fs");
@@ -105,7 +108,7 @@ var sem = Semantics.load(gram);
 
 
 
-var filename = "code3.aepp";
+var filename = "code.aepp";
 var sourceCode = fs.readFileSync(path.join(__dirname, filename)).toString();
 
 

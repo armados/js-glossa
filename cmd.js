@@ -107,8 +107,8 @@ var gram = ohm.grammar(
 var sem = Semantics.load(gram);
 
 
+var filename = process.argv[2];
 
-var filename = "code.aepp";
 var sourceCode = fs.readFileSync(path.join(__dirname, filename)).toString();
 
 

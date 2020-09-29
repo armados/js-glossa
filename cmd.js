@@ -10,24 +10,14 @@ var ohm = require("ohm-js");
 var MObjects = require("./objects");
 var Semantics = require("./semantics");
 
-var ast = require("./ast");
-
 var Storage = require("./storage");
 var IO = require("./io");
 
+var parseArgs = require('minimist');
 
 
 var globalScope = new MObjects.Scope();
-/*
-globalScope.addSymbol("testme",  new Storage.STRBuiltinFunction(function (A) {
-  return new MObjects.MNumber(Math.trunc(A.val / 1));
-}));
 
-var d1 = globalScope.getSymbol('testme');
-console.log('d1 ', d1);
-d1.set(23);
-console.log('d1 ', d1.get());
-*/
 globalScope.addSymbol("Α_Μ",  new Storage.STRBuiltinFunction(function (A) {
   return new MObjects.MNumber(Math.trunc(A.val / 1));
 }));
@@ -61,7 +51,6 @@ globalScope.addSymbol("ΕΦ",  new Storage.STRBuiltinFunction(function (A) {
 globalScope.addSymbol("ΛΟΓ",  new Storage.STRBuiltinFunction(function (A) {
   return new MObjects.MNumber( Math.log(A.val) );
 }));
-
 
 
 
@@ -106,6 +95,9 @@ var gram = ohm.grammar(
 );
 var sem = Semantics.load(gram);
 
+
+const args = parseArgs(process.argv);
+console.log(args);
 
 var filename = process.argv[2];
 

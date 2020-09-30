@@ -103,7 +103,7 @@ if (!(args['input']))
 
 //console.log(args);
 
-var filename = args[input];//process.argv[2];
+var filename = args['input'];//process.argv[2];
 
 var sourceCode = fs.readFileSync( filename ).toString();
 

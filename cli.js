@@ -8,7 +8,7 @@ var ohm = require("ohm-js");
 var minimist = require('minimist');
 
 var MObjects   = require("./src/objects");
-var Semantics  = require("./src/grammar/semantics");
+var Semantics  = require("./src/semantics");
 var Storage    = require("./src/storage");
 var IO         = require("./src/io");
 

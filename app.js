@@ -1,19 +1,17 @@
-#!/usr/bin/env node
-
-
 "use strict";
 
 var fs = require("fs");
 var path = require("path");
 var ohm = require("ohm-js");
 
-var MObjects = require("./objects");
-var Semantics = require("./semantics");
+var MObjects = require("./src/objects");
+var Semantics = require("./src/semantics");
 
-var Storage = require("./storage");
-var IO = require("./io");
+var ast = require("./src/ast");
 
-var parseArgs = require('minimist');
+var Storage = require("./src/storage");
+var IO = require("./src/io");
+
 
 
 var globalScope = new MObjects.Scope();
@@ -54,6 +52,7 @@ globalScope.addSymbol("ΛΟΓ",  new Storage.STRBuiltinFunction(function (A) {
 
 
 
+
 // ========================
 
 function parse(input, inputKeyboardBuffer) {
@@ -91,20 +90,20 @@ function parse(input, inputKeyboardBuffer) {
 
 
 var gram = ohm.grammar(
-  fs.readFileSync(path.join(__dirname, "grammar.ohm")).toString()
+  fs.readFileSync(path.join(__dirname, "src", "grammar", "grammar.ohm")).toString()
 );
 var sem = Semantics.load(gram);
 
 
-const args = parseArgs(process.argv);
-console.log(args);
 
-var filename = process.argv[2];
+var filename = "./samples/sample8.glo";
+var sourceCode = fs.readFileSync(path.join(__dirname, filename)).toString();
 
-var sourceCode = fs.readFileSync( filename ).toString();
 
+//console.log("==[ Program started ]=========");
 
 var inputKeyboardBuffer = null;
 var output = parse(sourceCode, inputKeyboardBuffer);
 console.log(output);
 
+//console.log("==[ Program terminated code ]=");

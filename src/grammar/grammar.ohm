@@ -1,4 +1,4 @@
-GlwssaGrammar {
+Glwssa {
 
     Application = KeyboardData* Program (SubFunction | SubProcedure)*
  
@@ -69,9 +69,6 @@ GlwssaGrammar {
     //function calls and variables
     FunCall          = identifier "(" Arguments ")"
     ProcedureCall    = "ΚΑΛΕΣΕ" identifier "(" Arguments ")"
-
-    //TblCellWrite         = identifier "[" AtLeastOneArguments "]"
-    //TblCellRead          = identifier "[" AtLeastOneArguments "]"
 
     IdentifierTblAssign       = identifier "[" AtLeastOneArguments "]"
     IdentifierTblFetch       = identifier "[" AtLeastOneArguments "]"

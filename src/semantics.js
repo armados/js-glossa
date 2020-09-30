@@ -1,7 +1,10 @@
 
 var MO = require('./objects');
 
+
+
 function binop(op,a,b) {  return new MO.BinaryOp(op, a.toAST(), b.toAST()); }
+
 
 var operation = {
     floatlit: function (a, _, b)      { return new MO.MNumber(parseFloat(this.sourceString, 10));  },

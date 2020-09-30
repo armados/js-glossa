@@ -54,7 +54,7 @@ Glwssa {
     Block = InnerCommand*
     FuncBlock = FuncInnerCommand*
 
-    InnerCommand     = AssignExpr | WhileExpr | DoWhileExpr | ForExpr | IfExpr | comment | ProcedureCall | Stmt_Write | Stmt_Read
+    InnerCommand     = AssignExpr | WhileExpr | DoWhileExpr | ForExpr | IfExpr | comment | CallSubProcedure | Stmt_Write | Stmt_Read
     FuncInnerCommand = AssignExpr | WhileExpr | DoWhileExpr | ForExpr | IfExpr | comment
 
     Stmt_Write = grapse Arguments
@@ -68,7 +68,7 @@ Glwssa {
 
     //function calls and variables
     FunCall          = identifier "(" Arguments ")"
-    ProcedureCall    = "ΚΑΛΕΣΕ" identifier "(" Arguments ")"
+    CallSubProcedure    = "ΚΑΛΕΣΕ" identifier "(" Arguments ")"
 
     IdentifierTblAssign       = identifier "[" AtLeastOneArguments "]"
     IdentifierTblFetch       = identifier "[" AtLeastOneArguments "]"

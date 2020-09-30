@@ -76,8 +76,8 @@ var operation = {
     ForExpr: (_1, variable, _2, initval, _3, finalval, _4, stepval, _5, body, _6) => 
     new MO.Stmt_ForLoop(variable.toAST(), initval.toAST(), finalval.toAST(), stepval.toAST(), body.toAST()),
 
-    FunCall: (a, _1, b, _2) => new MO.FunctionCall(a.toAST(), b.toAST()),
-    ProcedureCall: (_1, a, _2, b, _3) => new MO.ProcedureCall(a.toAST(), b.toAST()),
+    FunCall: (a, _1, b, _2) => new MO.CallSubFunction(a.toAST(), b.toAST()),
+    CallSubProcedure: (_1, a, _2, b, _3) => new MO.CallSubProcedure(a.toAST(), b.toAST()),
 
  //   TblCellWrite: (tblname, _1, tblindex, _2) => new MO.TblCellWrite(tblname.sourceString, tblindex.toAST()),
 //    TblCellRead:  (tblname, _1, tblindex, _2) => new MO.TblCellRead(tblname.sourceString, tblindex.toAST()),

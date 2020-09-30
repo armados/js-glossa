@@ -13,7 +13,6 @@ var Storage = require("./src/storage");
 var IO = require("./src/io");
 
 
-
 var globalScope = new MObjects.Scope();
 
 globalScope.addSymbol("Α_Μ",  new Storage.STRBuiltinFunction(function (A) {
@@ -100,7 +99,7 @@ var filename = "./samples/sample8.glo";
 var sourceCode = fs.readFileSync(path.join(__dirname, filename)).toString();
 
 
-//console.log("==[ Program started ]=========");
+console.log("==[ Program started ]=========");
 
 var inputKeyboardBuffer = null;
 var output = parse(sourceCode, inputKeyboardBuffer);

@@ -649,7 +649,9 @@ class DefConstant {
     else
       throw new Error('Unknown constant type');
 
-    return scope.addSymbol(this.sym.name, newObj );
+      scope.addSymbol(this.sym.name, newObj )
+      scope.addLock(this.sym.name);
+    return;
   }
 }
 
@@ -695,7 +697,7 @@ class DefVariables {
 
 
         function helperCreateCellFromType(varType) {
-          if  (varType == 'ΑΚΕΡΑΙΕΣ')
+          if      (varType == 'ΑΚΕΡΑΙΕΣ')
             return new Storage.STRInt( null );
           else if (varType == 'ΠΡΑΓΜΑΤΙΚΕΣ')
             return new Storage.STRFloat( null );
@@ -746,7 +748,7 @@ class DefVariables {
         return true;
       }
 
-      if    (varType == 'ΑΚΕΡΑΙΕΣ')
+    if      (varType == 'ΑΚΕΡΑΙΕΣ')
       var ctype = new Storage.STRInt( null );
     else if (varType == 'ΠΡΑΓΜΑΤΙΚΕΣ')
       var ctype = new Storage.STRFloat( null );
@@ -764,7 +766,7 @@ class DefVariables {
 }
 
 
-class FunctionCall {
+class CallSubFunction {
   constructor(fun, args) {
     this.fun = fun;
     this.args = args;
@@ -774,7 +776,7 @@ class FunctionCall {
 
     //lookup the real function from the symbol
     if (!scope.hasSymbol(this.fun.name))
-      throw new Error("FunctionCall: cannot resolve symbol " + this.fun.name);
+      throw new Error("CallSubFunction: cannot resolve symbol " + this.fun.name);
 
     var argsResolved = this.args.map(function (arg) {
       return arg.resolve(scope);
@@ -794,7 +796,7 @@ class FunctionCall {
 }
 
 
-class ProcedureCall {
+class CallSubProcedure {
   constructor(fun, args) {
     this.fun = fun;
     this.args = args;
@@ -805,7 +807,7 @@ class ProcedureCall {
 
     //lookup the real function from the symbol
     if (!scope.hasSymbol(this.fun.name))
-      throw new Error("ProcedureCall: cannot resolve symbol " + this.fun.name);
+      throw new Error("CallSubProcedure: cannot resolve symbol " + this.fun.name);
 
     var argsResolved = this.args.map(function (arg) {
       return arg.resolve(scope);
@@ -1082,8 +1084,8 @@ module.exports = {
   Stmt_DoStmt_WhileLoop: Stmt_DoStmt_WhileLoop,
   Stmt_ForLoop: Stmt_ForLoop,
 
-  FunctionCall: FunctionCall,
-  ProcedureCall: ProcedureCall,
+  CallSubFunction: CallSubFunction,
+  CallSubProcedure: CallSubProcedure,
 
   Stmt_Write: Stmt_Write,
   Stmt_Read: Stmt_Read,

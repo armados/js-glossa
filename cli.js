@@ -5,8 +5,7 @@
 var fs = require("fs");
 var path = require("path");
 var ohm = require("ohm-js");
-
-var parseArgs = require('minimist');
+var minimist = require('minimist');
 
 var MObjects   = require("./src/objects");
 var Semantics  = require("./src/grammar/semantics");
@@ -89,8 +88,11 @@ var gram = ohm.grammar(
 var sem = Semantics.load(gram);
 
 
-const args = parseArgs(process.argv);
-console.log(args);
+//FIXME: 
+const args = minimist(process.argv);
+var argsarr = args.map(function (e) {
+  console.log(e);
+});//console.log(args);
 
 var filename = process.argv[2];
 

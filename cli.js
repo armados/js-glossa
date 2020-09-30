@@ -90,7 +90,7 @@ var sem = Semantics.load(gram);
 
 //FIXME: 
 const args = minimist(process.argv);
-var argsarr = args.map(function (e) {
+args.forEach(function (e) {
   console.log(e);
 });//console.log(args);
 

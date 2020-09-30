@@ -1,4 +1,4 @@
-#!/usr/bin/env node
+//#!/usr/bin/env node
 
 "use strict";
 
@@ -89,12 +89,21 @@ var sem = Semantics.load(gram);
 
 
 //FIXME: 
-const args = minimist(process.argv);
-args.forEach(function (e) {
-  console.log(e);
-});//console.log(args);
+var args = minimist(process.argv.slice(2), {
+  string: ['input'],           // --lang xml
+  boolean: ['version'],     // --version
+  alias: { v: 'version', i: 'input' },
+  default: {  },
+  stopEarly: true, /* populate _ with first non-option */
+  unknown: function () { throw new Error('Invalid arguments'); }
+});
 
-var filename = process.argv[2];
+if (!(args['input']))
+  throw new Error('Missing input file');
+
+//console.log(args);
+
+var filename = args[input];//process.argv[2];
 
 var sourceCode = fs.readFileSync( filename ).toString();
 

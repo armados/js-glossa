@@ -6,8 +6,9 @@ var ohm = require("ohm-js");
 
 var MObjects = require("./src/objects");
 var Semantics = require("./src/semantics");
+var GE = require("./src/gclasses");
 
-var ast = require("./src/ast");
+//var ast = require("./src/ast");
 
 var Storage = require("./src/storage");
 var IO = require("./src/io");
@@ -25,7 +26,7 @@ globalScope.addSymbol("Α_Τ",  new Storage.STRBuiltinFunction(function (A) {
 }));
 
 globalScope.addSymbol("Τ_Ρ",  new Storage.STRBuiltinFunction(function (A) {
-  if (A.val < 0) throw new Error("Σφάλμα. Δεν ορίζεται ρίζα αρνητικού αριθμού");
+  if (A.val < 0) throw new GE.GError("Σφάλμα. Δεν ορίζεται ρίζα αρνητικού αριθμού");
   return new MObjects.MNumber( Math.sqrt(A.val) );
 }));
 
@@ -60,14 +61,14 @@ function parse(input, inputKeyboardBuffer) {
 
   if (!match.succeeded()) {
     console.log("===> Error");
-    throw new Error(match.message);
+    throw new GE.GError(match.message);
   }
 
   var result = sem(match).toAST();
 
   if (!result) {
     console.log("===> Error!");
-    throw new Error("Error in toAST to give results");
+    throw new GE.GError("Error in toAST to give results");
   }
 
 

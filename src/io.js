@@ -1,5 +1,7 @@
 "use strict";
 
+var GE = require("./gclasses");
+
 class InputDevice {
   constructor() {
     this.data = [];
@@ -18,7 +20,7 @@ class InputDevice {
   }
 
   getSingleInputData() {
-    if (this.isEmpty()) throw new Error("Σφάλμα. Τα δεδομένα εισόδου δεν επαρκούν για την εκτέλεση του προγράμματος.");
+    if (this.isEmpty()) throw new GE.GError("Σφάλμα. Τα δεδομένα εισόδου δεν επαρκούν για την εκτέλεση του προγράμματος.");
 
     return this.data.shift();
   }

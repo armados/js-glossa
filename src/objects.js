@@ -1,5 +1,7 @@
 "use strict";
 
+var GE = require("./gclasses");
+
 var Storage = require("./storage");
 var IO = require("./io");
 
@@ -46,17 +48,17 @@ class BinaryOp {
     if (this.op == "mul") return new MNumber(a * b);
 
     if (this.op == "div") {
-      if (b == 0) throw new Error("Division by zero");
+      if (b == 0) throw new GE.GError("Division by zero");
       return new MNumber(a / b);
     }
 
     if (this.op == "intdiv") {
-      if (b == 0) throw new Error("Division by zero");
+      if (b == 0) throw new GE.GError("Division by zero");
       return new MNumber(Math.floor(a / b));
     }
 
     if (this.op == "intmod") {
-      if (b == 0) throw new Error("Division by zero");
+      if (b == 0) throw new GE.GError("Division by zero");
       return new MNumber(a % b);
     }
 
@@ -120,7 +122,7 @@ class MSymbolTable {
     else if (tblDimensions == 3)
       var cellsymbol = this.name + "[" +  argsResolved[0].val + "][" +  argsResolved[1].val + "][" +  argsResolved[2].val + "]";
     else
-      throw new Error('Unknown table dimensions');
+      throw new GE.GError('Unknown table dimensions');
 
       this.cellName = cellsymbol;
   }
@@ -185,7 +187,7 @@ class Scope {
     // Add new symbol in storage
 
     if (this.hasSymbol(name))
-      throw new Error("addSymbol(): Symbol already exist in memory " + name);
+      throw new GE.GError("addSymbol(): Symbol already exist in memory " + name);
 
     if      (obj instanceof Storage.STRGlobalScope)
         return Scope.globalStorage[name] = obj;
@@ -193,30 +195,30 @@ class Scope {
              obj instanceof Storage.STRTableName)
           return this.localStorage[name] = obj;
     else
-      throw new Error('Unknown storage type');
+      throw new GE.GError('Unknown storage type');
     }
 
   addSymbolFuncName(name, obj) {
     // Special case when symbol has same name with function and variable
     //console.log('=====> Scope Action: setSymbol()', name , ' <- ', obj);
     //if(this.hasSymbol(name))
-    //    throw new Error('addSymbol(): Symbol already exist in memory');
+    //    throw new GE.GError('addSymbol(): Symbol already exist in memory');
     if (obj instanceof Storage.STRLocalScope)
       return this.localStorage[name] = obj;
      else
-      throw new Error('Unknown storage type: ', name, obj);
+      throw new GE.GError('Unknown storage type: ', name, obj);
   }
 
 
   setSymbol(name, obj) {
 
     if (!this.hasSymbol(name))
-        throw new Error('setSymbol(): Symbol missing from memory: ' + name);
+        throw new GE.GError('setSymbol(): Symbol missing from memory: ' + name);
   
 
   
    /* if (this.getSymbolObject(name).isLocked())
-      throw new Error('setSymbol(): Variable is in use: ' + name);
+      throw new GE.GError('setSymbol(): Variable is in use: ' + name);
 */
 
     if (!obj)
@@ -229,16 +231,16 @@ class Scope {
              this.getSymbolObject(name) instanceof Storage.STRFuncNameFloat) {
 
       if (!(obj instanceof Storage.STRFloat || obj instanceof MNumber))
-        throw new Error('Variable type not match - expected float');
+        throw new GE.GError('Variable type not match - expected float');
 
     }
     else if  (this.getSymbolObject(name) instanceof Storage.STRInt ||
               this.getSymbolObject(name) instanceof Storage.STRFuncNameInt) {
                   if (!(obj instanceof Storage.STRInt || obj instanceof MNumber))
-        throw new Error('Variable type not match - expected int');
+        throw new GE.GError('Variable type not match - expected int');
 
       if (!(Number(obj.val) === obj.val && obj.val % 1 === 0))
-        throw new Error('Variable type not match - expected int');
+        throw new GE.GError('Variable type not match - expected int');
 
 
     }
@@ -246,7 +248,7 @@ class Scope {
               this.getSymbolObject(name) instanceof Storage.STRFuncNameString) {
                   if (!(obj instanceof Storage.STRString || obj instanceof MString)) {
                     //console.log('name: ', name, 'obj: ', this.getSymbolObject(name), 'obj2: ', obj);
-        throw new Error('Variable type not match - expected string');
+        throw new GE.GError('Variable type not match - expected string');
                   }
 
 
@@ -254,11 +256,11 @@ class Scope {
     else if  (this.getSymbolObject(name) instanceof Storage.STRBoolean  ||
               this.getSymbolObject(name) instanceof Storage.STRFuncNameBoolean) {
                   if (!(obj instanceof Storage.STRBoolean || obj instanceof MBoolean))
-        throw new Error('Variable type not match - expected boolean');
+        throw new GE.GError('Variable type not match - expected boolean');
 
     }
     else
-      throw new Error('Unknown symbol type' + this.getSymbol(name));
+      throw new GE.GError('Unknown symbol type' + this.getSymbol(name));
 
 
     this.localStorage[name].set(obj);
@@ -273,7 +275,7 @@ class Scope {
     else if (name in Scope.globalStorage)
       return Scope.globalStorage[name].get();
     else 
-      throw new Error('Symbol not found in storage');
+      throw new GE.GError('Symbol not found in storage');
   }
   
   getSymbolObject(name) {
@@ -283,7 +285,7 @@ class Scope {
     else if (name in Scope.globalStorage)
       return Scope.globalStorage[name];
     else
-    throw new Error('Symbol not found in storage');
+    throw new GE.GError('Symbol not found in storage');
   }
 
 }
@@ -328,7 +330,7 @@ class Stmt_IfCond {
     //console.log('===> IF after: ', condResult)
 
     if (!condResult instanceof MBoolean)
-      throw new Error("Condition must be Boolean");
+      throw new GE.GError("Condition must be Boolean");
 
     //console.log('===> IF : ', val)
 
@@ -342,7 +344,7 @@ class Stmt_IfCond {
         var condResult = condElseIf[i].resolve(scope);
 
         if (!condResult instanceof MBoolean)
-          throw new Error("Condition must be Boolean");
+          throw new GE.GError("Condition must be Boolean");
 
         if (condResult.val == true) {
           return moreBody[i].resolve(scope);
@@ -367,7 +369,7 @@ class Stmt_WhileLoop {
       var condResult = this.cond.resolve(scope);
 
       if (!condResult instanceof MBoolean)
-        throw new Error("Condition must be Boolean");
+        throw new GE.GError("Condition must be Boolean");
 
       if (condResult.jsEquals(false)) break;
 
@@ -390,7 +392,7 @@ class Stmt_DoStmt_WhileLoop {
       var condResult = this.cond.resolve(scope);
 
       if (!condResult instanceof MBoolean)
-        throw new Error("Condition must be Boolean");
+        throw new GE.GError("Condition must be Boolean");
 
       if (condResult.jsEquals(true)) break;
     } while (true);
@@ -425,7 +427,7 @@ class Stmt_ForLoop {
     }
 
     if (v_step == 0)
-      throw new Error("If statement with zero step value detected");
+      throw new GE.GError("If statement with zero step value detected");
 
     var tmp = initval.resolve(scope);
     var v_initial = tmp.val;
@@ -438,7 +440,7 @@ class Stmt_ForLoop {
     //console.log('lock state: ', scope.getSymbolObject(this.variable.name).locked);
 
     if (scope.isLocked(variable.name))
-      throw new Error('Can not use variable - is in use');
+      throw new GE.GError('Can not use variable - is in use');
 
     scope.addLock(variable.name);
     scope.setSymbol(variable.name, new MNumber(v_initial));
@@ -498,7 +500,7 @@ class Stmt_Assignment {
     var sym = this.symbol;
 
     if (scope.isLocked(sym.name))
-      throw new Error('Can not use variable - is in use');
+      throw new GE.GError('Can not use variable - is in use');
 
     if (sym instanceof MSymbolTableAssign) { 
         sym = this.symbol.resolve(scope);
@@ -552,7 +554,7 @@ class Stmt_Write {
         }
       } catch (err) {
         console.log('Σφάλμα. Η μεταβλητή δεν έχει αρχικοποιηθεί. ' , argParam.name);
-        //throw new Error("Parameter not initialized: " + argParam.name);
+        //throw new GE.GError("Parameter not initialized: " + argParam.name);
       }
     });
 
@@ -575,7 +577,7 @@ class Stmt_Read {
       //console.log("param: ", param);
 
       if (scope.isLocked(param.name))
-        throw new Error('Can not use variable - is in use');
+        throw new GE.GError('Can not use variable - is in use');
 
       // Check if is a table cell - if true fetch real symbol
       if (param instanceof MSymbolTableAssign)
@@ -592,7 +594,7 @@ class Stmt_Read {
       else if (typeof(data) == 'string')  var sym = new MString(data);
       else if (typeof(data) == 'number')  var sym = new MNumber(data);
       else 
-        throw new Error('Unknown input value type: ' + data + typeof(data));
+        throw new GE.GError('Unknown input value type: ' + data + typeof(data));
             
       scope.setSymbol(param.name, sym);
     });
@@ -647,7 +649,7 @@ class DefConstant {
     else if (typeof(obj.val) == 'boolean')
       var newObj = new Storage.STRBoolean( obj );
     else
-      throw new Error('Unknown constant type');
+      throw new GE.GError('Unknown constant type');
 
       scope.addSymbol(this.sym.name, newObj )
       scope.addLock(this.sym.name);
@@ -688,7 +690,7 @@ class DefVariables {
         else if (varType == 'ΛΟΓΙΚΕΣ')
           var ctype = new Storage.STRTableName( argsResolved );
         else
-          throw new Error('Unknown variable type');
+          throw new GE.GError('Unknown variable type');
     
         // Add to local storage symbol for table name
         scope.addSymbol(e.name, ctype );
@@ -706,7 +708,7 @@ class DefVariables {
           else if (varType == 'ΛΟΓΙΚΕΣ')
             return new Storage.STRBoolean( null );
           else
-            throw new Error('Unknown variable type');
+            throw new GE.GError('Unknown variable type');
         }
       
 
@@ -743,7 +745,7 @@ class DefVariables {
       }
     }
     } else
-        throw new Error('Unsupported table dimensions');
+        throw new GE.GError('Unsupported table dimensions');
 
         return true;
       }
@@ -757,7 +759,7 @@ class DefVariables {
     else if (varType == 'ΛΟΓΙΚΕΣ')
       var ctype = new Storage.STRBoolean( null );
     else
-      throw new Error('Cannot detect variable type');
+      throw new GE.GError('Cannot detect variable type');
   
       return scope.addSymbol(e.name, ctype);
 
@@ -776,7 +778,7 @@ class CallSubFunction {
 
     //lookup the real function from the symbol
     if (!scope.hasSymbol(this.fun.name))
-      throw new Error("CallSubFunction: cannot resolve symbol " + this.fun.name);
+      throw new GE.GError("CallSubFunction: cannot resolve symbol " + this.fun.name);
 
     var argsResolved = this.args.map(function (arg) {
       return arg.resolve(scope);
@@ -807,7 +809,7 @@ class CallSubProcedure {
 
     //lookup the real function from the symbol
     if (!scope.hasSymbol(this.fun.name))
-      throw new Error("CallSubProcedure: cannot resolve symbol " + this.fun.name);
+      throw new GE.GError("CallSubProcedure: cannot resolve symbol " + this.fun.name);
 
     var argsResolved = this.args.map(function (arg) {
       return arg.resolve(scope);
@@ -828,7 +830,7 @@ class CallSubProcedure {
 
         if (scope.isLocked(arg.name) == true &&
             scope.getSymbol(arg.name) != procScope.getSymbol(procParams[i].name))
-          throw new Error('Procedure return values try to change ariable which is in use');
+          throw new GE.GError('Procedure return values try to change ariable which is in use');
     
         scope.setSymbol(arg.name, procScope.getSymbol(procParams[i].name));
 
@@ -867,7 +869,7 @@ class SubFunction {
       //console.log('func called ', name, ' with args: ', args);
 
      if (args.length != params.length)
-        throw new Error(
+        throw new GE.GError(
           "Error different number of parameters for function call"
         );
 
@@ -882,7 +884,7 @@ class SubFunction {
       else if (funType == 'ΛΟΓΙΚΗ')
         var ftype = new Storage.STRFuncNameBoolean( null );
       else
-        throw new Error('Cannot detect function return value type');      
+        throw new GE.GError('Cannot detect function return value type');      
       
       // Crate function name variable in local scope
       scope2.addSymbolFuncName(name, ftype);
@@ -893,7 +895,7 @@ class SubFunction {
       // Sent values to function
       params.forEach(function (param, i) {
         if (!scope2.hasSymbol(param.name))
-        throw new Error(
+        throw new GE.GError(
           "Parameter not declared inside procedure: " + param.name
         );
 
@@ -907,7 +909,7 @@ class SubFunction {
       //mem(scope2);
 
       if (!scope2.getSymbol(name))
-        throw new Error("Function must return a value in the func name");
+        throw new GE.GError("Function must return a value in the func name");
 
       return scope2.getSymbol(name);
     }));
@@ -934,7 +936,7 @@ class SubProcedure {
       //console.log('proc called ', name, ' with args: ', args);
 
       if (args.length != params.length)
-        throw new Error(
+        throw new GE.GError(
           "Error different number of parameters for procedure call"
         );
  
@@ -946,7 +948,7 @@ class SubProcedure {
       // Sent values to procedure
       params.forEach(function (param, i) {
         if (!scope2.hasSymbol(param.name))
-          throw new Error(
+          throw new GE.GError(
             "Parameter not declared inside procedure: " + param.name
           );
 

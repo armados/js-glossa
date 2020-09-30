@@ -9,6 +9,8 @@ var minimist = require('minimist');
 
 var MObjects   = require("./src/objects");
 var Semantics  = require("./src/semantics");
+var GE = require("./src/gclasses");
+
 var Storage    = require("./src/storage");
 var IO         = require("./src/io");
 
@@ -26,7 +28,7 @@ globalScope.addSymbol("Α_Τ",  new Storage.STRBuiltinFunction(function (A) {
 }));
 
 globalScope.addSymbol("Τ_Ρ",  new Storage.STRBuiltinFunction(function (A) {
-  if (A.val < 0) throw new Error("Σφάλμα. Δεν ορίζεται ρίζα αρνητικού αριθμού");
+  if (A.val < 0) throw new GE.GError("Σφάλμα. Δεν ορίζεται ρίζα αρνητικού αριθμού");
   return new MObjects.MNumber( Math.sqrt(A.val) );
 }));
 
@@ -59,14 +61,14 @@ function parse(input, inputKeyboardBuffer) {
 
   if (!match.succeeded()) {
     console.log("===> Error");
-    throw new Error(match.message);
+    throw new GE.GError(match.message);
   }
 
   var result = sem(match).toAST();
 
   if (!result) {
     console.log("===> Error!");
-    throw new Error("Error in toAST to give results");
+    throw new GE.GError("Error in toAST to give results");
   }
 
 
@@ -95,11 +97,11 @@ var args = minimist(process.argv.slice(2), {
   alias: { v: 'version', i: 'input' },
   default: {  },
   stopEarly: true, /* populate _ with first non-option */
-  unknown: function () { throw new Error('Invalid arguments'); }
+  unknown: function () { throw new GE.GError('Invalid arguments'); }
 });
 
 if (!(args['input']))
-  throw new Error('Missing input file');
+  throw new GE.GError('Missing input file');
 
 //console.log(args);
 

@@ -11,14 +11,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/armados/js-aepp.git"
+    "url": "git+https://github.com/armados/js-glossa.git"
   },
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/armados/js-aepp/issues"
+    "url": "https://github.com/armados/js-glossa/issues"
   },
-  "homepage": "https://github.com/armados/js-aepp#readme",
+  "homepage": "https://github.com/armados/js-glossa#readme",
   "dependencies": {
     "minimist": "^1.2.5",
     "ohm-js": "^15.1.0"

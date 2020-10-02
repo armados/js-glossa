@@ -1,7 +1,5 @@
 "use strict";
 
-var fs = require("fs");
-var path = require("path");
 var ohm = require("ohm-js");
 
 var MObjects = require("./src/objects");
@@ -10,7 +8,7 @@ var GE = require("./src/gclasses");
 
 var IO = require("./src/io");
 
-
+var GOhm = require("./src/grammar.js");
 
 
 // ========================
@@ -18,7 +16,7 @@ var IO = require("./src/io");
 function parseGlossaJS(sourceCode, inputKeyboardBuffer) {
 
   var gram = ohm.grammar(
-    fs.readFileSync(path.join(__dirname, "src", "grammar", "grammar.ohm")).toString()
+    new GOhm.GrammarOhm().getGrammar()
   );
   var sem = Semantics.load(gram);
   

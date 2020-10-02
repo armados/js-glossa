@@ -1041,6 +1041,8 @@ class Application {
       this.keyboardData.forEach((e) => e.addKeyboardInputData(scope));
     }
 
+    Scope.globalStorage = {}; //FIXME: 
+    
     var newScope = new Scope();
 
     newScope.addSymbol("Α_Μ",  new Storage.STRBuiltinFunction(function (A) {

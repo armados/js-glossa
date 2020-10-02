@@ -1,9 +1,12 @@
 const path = require("path");
 
 module.exports = {
-    entry: './app.js',
+    entry: {
+        glossajs: './app.js'
+    },
     output: {
         path: path.join(__dirname, 'dist'),
-        filename: 'glossajs.js'
+        filename: 'glossajs.js',
+        library: 'GlossaJS'
     },
 }

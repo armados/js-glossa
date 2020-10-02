@@ -96,7 +96,7 @@ var sem = Semantics.load(gram);
 
 
 
-var filename = "./samples/sample8.glo";
+var filename = "./samples/sample1.glo";
 var sourceCode = fs.readFileSync(path.join(__dirname, filename)).toString();
 
 

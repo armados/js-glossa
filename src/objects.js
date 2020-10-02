@@ -13,6 +13,10 @@ var IOScreen = new IO.OutputDevice();
 class Atom {
   constructor(val) {
     this.val = val;
+
+    if ((typeof(val) == 'number') && 
+      (Number(val) === val && val % 1 !== 0))
+        this.val = parseFloat(val).toFixed(2);
   }
   resolve(scope) {
     return this;
@@ -37,8 +41,20 @@ class BinaryOp {
   }
   resolve(scope) {
 
-    var a = this.A.resolve(scope).val;
-    var b = this.B.resolve(scope).val;
+    var a;
+    var b;
+
+    try {
+      a = this.A.resolve(scope).val;
+    } catch {
+      throw new GE.GError("Null value " + this.A.name);
+    }
+
+    try {
+      b = this.B.resolve(scope).val;
+    } catch {
+      throw new GE.GError("Null value " + this.B.name);
+    }
 
     //console.log('BinOp: ', this.op, ' a=',a, '   b=',b);
 
@@ -85,7 +101,13 @@ class BooleanNotOp {
   resolve(scope) {
     //if (this.A instanceof MSymbolTable) { this.A = this.A.resolve(scope); }
 
-    var a = this.A.resolve(scope).val;
+    var a;
+    try {
+      a = this.A.resolve(scope).val;
+    } catch {
+      throw new GE.GError("Null value " + this.A.name);
+    }
+
     return new MBoolean(!a);
   }
 }

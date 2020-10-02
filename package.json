@@ -12,15 +12,6 @@
   "bin": {
     "glossa-cli": "./cli.js"
   },
-  "browser": {
-    "crypto": false,
-    "fs": false,
-    "path": false,
-    "os": false,
-    "net": false,
-    "stream": false,
-    "tls": false
-    },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/armados/js-glossa.git"

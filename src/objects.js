@@ -1043,6 +1043,43 @@ class Application {
 
     var newScope = new Scope();
 
+    newScope.addSymbol("Α_Μ",  new Storage.STRBuiltinFunction(function (A) {
+      return new MNumber(Math.trunc(A.val / 1));
+    }));
+    
+    newScope.addSymbol("Α_Τ",  new Storage.STRBuiltinFunction(function (A) {
+      if (A.val < 0) return new MNumber(-A.val);
+      return A;
+    }));
+    
+    newScope.addSymbol("Τ_Ρ",  new Storage.STRBuiltinFunction(function (A) {
+      if (A.val < 0) throw new GE.GError("Σφάλμα. Δεν ορίζεται ρίζα αρνητικού αριθμού");
+      return new MNumber( Math.sqrt(A.val) );
+    }));
+    
+    newScope.addSymbol("ΗΜ",  new Storage.STRBuiltinFunction(function (A) {
+      return new MNumber( Math.sin(A.val) );
+    }));
+    
+    newScope.addSymbol("ΣΥΝ",  new Storage.STRBuiltinFunction(function (A) {
+      return new MNumber( Math.cos(A.val) );
+    }));
+    
+    newScope.addSymbol("Ε",  new Storage.STRBuiltinFunction(function (A) {
+      return new MNumber( Math.exp(A.val) );
+    }));
+    
+    newScope.addSymbol("ΕΦ",  new Storage.STRBuiltinFunction(function (A) {
+      return new MNumber( Math.tan(A.val) );
+    }));
+    
+    newScope.addSymbol("ΛΟΓ",  new Storage.STRBuiltinFunction(function (A) {
+      return new MNumber( Math.log(A.val) );
+    }));
+
+
+
+
     if (this.subPrograms.length)
       this.subPrograms.forEach((e) => e.resolve(scope));
 

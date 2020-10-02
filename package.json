@@ -4,11 +4,23 @@
   "description": "js-glossa is an interpreter for programming language Glossa",
   "main": "app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "watch": "webpack --watch --mode=development",
+    "build": "webpack --mode=production",
+    "build:dev": "webpack --mode=development"
   },
   "bin": {
-    "glossa-cli":"./cli.js"
+    "glossa-cli": "./cli.js"
   },
+  "browser": {
+    "crypto": false,
+    "fs": false,
+    "path": false,
+    "os": false,
+    "net": false,
+    "stream": false,
+    "tls": false
+    },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/armados/js-glossa.git"
@@ -22,5 +34,9 @@
   "dependencies": {
     "minimist": "^1.2.5",
     "ohm-js": "^15.1.0"
+  },
+  "devDependencies": {
+    "webpack": "^4.44.2",
+    "webpack-cli": "^3.3.12"
   }
 }

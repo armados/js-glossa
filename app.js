@@ -51,3 +51,8 @@ function parseGlossaJS(sourceCode, inputKeyboardBuffer) {
 
 
 console.log('hello world!');
+
+
+module.exports = {
+  parseGlossaJS: parseGlossaJS
+}

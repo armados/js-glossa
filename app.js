@@ -30,9 +30,10 @@ function parseGlossaJS(sourceCode, inputKeyboardBuffer) {
 
   var IOKeyboard = new IO.InputDevice();
 
-  if (inputKeyboardBuffer != null && inputKeyboardBuffer.length) {
-    //console.log('>> Setting keyboard buffer from parameters');
-    IOKeyboard.set(inputKeyboardBuffer);
+  if (inputKeyboardBuffer != null) {
+    var arrKeyboard = inputKeyboardBuffer.split(',');
+    console.log('Keyboard buffer: ', arrKeyboard);
+    IOKeyboard.set(arrKeyboard);
   }
 
   var globalScope = new MObjects.Scope();

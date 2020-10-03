@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="el">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  <title>GlossaJS</title>
+
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.32.0/codemirror.min.css" />
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/tonsky/FiraCode@4/distr/fira_code.css">
+
+  <link rel="stylesheet" type="text/css" href="style.css">
+
+</head>
+
+<body>
+
+
+  <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <a class="navbar-brand" href="#">GlossaJS</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+  </nav>
+
+
+
+  <div class="container">
+    <div class="row">
+
+
+      <div class="col">
+
+
+        <div class="d-flex justify-content-between">
+          <div class="mr-auto p-2">
+            <h5>Πρόγραμμα σε ΓΛΩΣΣΑ</h5>
+          </div>
+          <div class="p-2">
+
+
+            <div id="spinner" class="spinner-border spinner-border-sm" role="status" aria-hidden="true">
+              <span class="sr-only">Loading...</span>
+            </div>
+
+            <button class="btn btn-success btn-sm" id="run">Εκτέλεση</button>
+
+
+          </div>
+        </div>
+
+      </div>
+
+
+
+    </div>
+ 
+  <div class="row">
+    <div class="col">
+
+      <textarea class="codeMirror" id="code-editor"></textarea>
+      
+      <br>
+
+      <nav>
+  <div class="nav nav-tabs" id="nav-tab" role="tablist">
+    <a class="nav-item nav-link active" id="nav-home-tab" data-toggle="tab" href="#nav-home" role="tab" aria-controls="nav-home" aria-selected="true">Οθόνη εκτέλεσης</a>
+    <a class="nav-item nav-link" id="nav-profile-tab" data-toggle="tab" href="#nav-profile" role="tab" aria-controls="nav-profile" aria-selected="false">Αρχείο εισόδου</a>
+  </div>
+</nav>
+
+<div class="tab-content" id="nav-tabContent">
+  <div class="tab-pane show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
+
+    <pre id="resultpre"><div id="result"></div></pre>
+
+  </div>
+  <div class="tab-pane" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
+    <textarea class="codeMirror" id="code-keyboardinput"></textarea>
+  </div>
+</div>
+</div>
+
+
+
+    </div>
+
+   
+  </div>
+
+
+
+
+
+
+  </div>
+
+
+
+
+
+
+  <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+  <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.32.0/codemirror.min.js"></script>
+
+  <script src='../../dist/glossajs.js'></script>
+  
+  <script src="editor-action.js"></script>
+
+  <script type="text/javascript">
+    // Refresh CodeMirror
+    $('.CodeMirror').each(function(i, el) {
+      el.CodeMirror.refresh();
+    });
+  </script>
+
+</body>
+
+</html>

@@ -1035,11 +1035,12 @@ class Application {
     else
       IOKeyboard = new IO.InputDevice();
 
-
     if (IOKeyboard.isEmpty() && this.keyboardData.length) {
       //console.log('>> Setting keyboard buffer from inline source code');
       this.keyboardData.forEach((e) => e.addKeyboardInputData(scope));
     }
+
+    IOScreen.data = []; // FIXME: 
 
     Scope.globalStorage = {}; //FIXME: 
     

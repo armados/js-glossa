@@ -1,0 +1,45 @@
+.codeMirror  { 
+    height: 240px;
+    font-size: 91%;
+    border: 1px solid #ddd;
+    background-color: #efefef;
+     }
+    
+
+ 
+    #error {
+        display:none;
+        color: #d63f3f;
+    }
+    
+    pre, #code-editor, #code-keyboardinput {
+      font-family: 'Fira Code', monospace;
+    }
+    
+    
+    
+    #resultpre {
+        height: auto;
+        overflow: auto;
+        word-wrap: break-word !important;
+        white-space: pre-wrap;
+        padding: 10px;
+        width: 100%;
+        min-height: 200px;
+        background-color: #222;
+        border: 1px solid #555;
+        color: #efefef;
+    }
+   
+    #code-keyboardinput {
+        height: auto;
+        word-wrap: break-word !important;
+        white-space: pre-wrap;
+        padding: 10px;
+        width: 100%;
+        min-height: 200px;
+        background-color: #999;
+        border: 1px solid #555;
+        color: #111;
+    }    
+    

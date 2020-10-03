@@ -1037,7 +1037,10 @@ class Application {
 
     if (IOKeyboard.isEmpty() && this.keyboardData.length) {
       //console.log('>> Setting keyboard buffer from inline source code');
-      this.keyboardData.forEach((e) => e.addKeyboardInputData(scope));
+      this.keyboardData.forEach(function (e) { 
+        console.log('Add keyboard value: ', e);
+        e.addKeyboardInputData(scope);
+      });
     }
 
     IOScreen.data = []; // FIXME: 

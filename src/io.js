@@ -28,7 +28,7 @@ class InputDevice {
     if (!isNaN(parseFloat(value)))
       return Number(value);
     else
-      return String(value);
+      return String(value.replace(/['"]+/g, ''));
 
   }
 }

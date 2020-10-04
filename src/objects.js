@@ -1053,7 +1053,7 @@ class Application {
     
     if (argIOKeyboard != null && argIOKeyboard != '') {
       IOKeyboard = new IO.InputDevice();
-      console.log('Keyboard buffer argIOKeyboard: ', argIOKeyboard);
+      //console.log('Keyboard buffer argIOKeyboard: ', argIOKeyboard);
       var arrKeyboard = argIOKeyboard.split(',').map(item => item.trim());
       arrKeyboard.forEach( function (e) { IOKeyboard.add(e); })
     }

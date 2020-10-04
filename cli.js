@@ -4,6 +4,8 @@
 
 var GlossaJS = require("./app");
 
+var GE = require("./src/gclasses");
+
 var fs = require("fs");
 var minimist = require("minimist");
 

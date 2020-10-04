@@ -12,9 +12,6 @@
   "bin": {
     "glossa-cli": "./cli.js"
   },
-  "rules": {
-    "no-console": "off"
-},
   "repository": {
     "type": "git",
     "url": "git+https://github.com/armados/js-glossa.git"

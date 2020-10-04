@@ -2,7 +2,7 @@
 
 "use strict";
 
-var GlossaJS = require("../app");
+var GlossaJS = require("./app");
 
 var fs = require("fs");
 var minimist = require("minimist");

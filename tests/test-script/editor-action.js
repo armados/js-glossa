@@ -46,6 +46,7 @@ $(document).ready(function () {
 
     var progoutput = null;
     try {
+      console.log('getvalue: ', editor2.getValue());
       progoutput = GlossaJS.parseGlossaJS(editorCode, editor2.getValue());
     } catch (e) {
       progoutput = e.message;

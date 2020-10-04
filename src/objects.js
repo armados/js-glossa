@@ -210,7 +210,7 @@ class Scope {
 
     if (this.hasSymbol(name))
       throw new GE.GError("addSymbol(): Symbol already exist in memory " + name);
-
+      
     if      (obj instanceof Storage.STRGlobalScope)
         return Scope.globalStorage[name] = obj;
     else if (obj instanceof Storage.STRLocalScope ||
@@ -218,6 +218,7 @@ class Scope {
           return this.localStorage[name] = obj;
     else
       throw new GE.GError('Unknown storage type');
+     
     }
 
   addSymbolFuncName(name, obj) {
@@ -246,17 +247,31 @@ class Scope {
     if (!obj)
         return this.localStorage[name];
 
-    //console.log('Metavliti: ', this.getSymbol(name).constructor.name, ' | Gia eisodo sthn mnimi',  obj.constructor.name);
-    //console.log('setSymbol: name: ', name, ' <--  ',  obj);
+        var symType = null;
+             if (this.getSymbolObject(name) instanceof Storage.STRInt)
+          symType = "ΑΚΕΡΑΙΑ";
+        else if (this.getSymbolObject(name) instanceof Storage.STRFuncNameInt)
+          symType = "ΑΚΕΡΑΙΑ (ονομα συνάρτησης)";
+        else if      (this.getSymbolObject(name) instanceof Storage.STRFloat) 
+          symType = "ΠΡΑΓΜΑΤΙΚΗ";
+        else if (this.getSymbolObject(name) instanceof Storage.STRFuncNameFloat)
+          symType = "ΠΡΑΓΜΑΤΙΚΗ (ονομα συνάρτησης)";
+        else if (this.getSymbolObject(name) instanceof Storage.STRString)
+          symType = "ΧΑΡΑΚΤΗΡΑΣ";
+        else if (this.getSymbolObject(name) instanceof Storage.STRFuncNameString)
+          symType = "ΧΑΡΑΚΤΗΡΑΣ (ονομα συνάρτησης)";
+        else if (this.getSymbolObject(name) instanceof Storage.STRBoolean)
+          symType = "ΛΟΓΙΚΗ";
+        else if (this.getSymbolObject(name) instanceof Storage.STRFuncNameBoolean)
+          symType = "ΛΟΓΙΚΗ (ονομα συνάρτησης)";
+        else
+          throw new GE.GError('Unknown symbol type' + this.getSymbol(name));
+    
 
-    if      (this.getSymbolObject(name) instanceof Storage.STRFloat ||
-             this.getSymbolObject(name) instanceof Storage.STRFuncNameFloat) {
+    //console.log('Metavliti: ', this.getSymbol(name), ' | Gia eisodo sthn mnimi',  obj.constructor.name);
+    //console.log('setSymbol: ', name, symType, ' <--  ',  obj);
 
-      if (!(obj instanceof Storage.STRFloat || obj instanceof MNumber))
-        throw new GE.GError('Variable type not match - expected float');
-
-    }
-    else if  (this.getSymbolObject(name) instanceof Storage.STRInt ||
+     if      (this.getSymbolObject(name) instanceof Storage.STRInt ||
               this.getSymbolObject(name) instanceof Storage.STRFuncNameInt) {
                   if (!(obj instanceof Storage.STRInt || obj instanceof MNumber))
         throw new GE.GError('Variable type not match - expected int');
@@ -264,6 +279,13 @@ class Scope {
       if (!(Number(obj.val) === obj.val && obj.val % 1 === 0))
         throw new GE.GError('Variable type not match - expected int');
 
+
+    }
+    else if (this.getSymbolObject(name) instanceof Storage.STRFloat ||
+             this.getSymbolObject(name) instanceof Storage.STRFuncNameFloat) {
+
+      if (!(obj instanceof Storage.STRFloat || obj instanceof MNumber))
+        throw new GE.GError('Variable type not match - expected float');
 
     }
     else if  (this.getSymbolObject(name) instanceof Storage.STRString ||
@@ -612,8 +634,7 @@ class Stmt_Read {
 
       inputData.push("*** Εισαγωγή τιμής από πληκτρολόγιο: [" + data + "]");
 
-      if      (typeof(data) == 'boolean') var sym = new MBoolean(data);
-      else if (typeof(data) == 'string')  var sym = new MString(data);
+      if      (typeof(data) == 'string')  var sym = new MString(data);
       else if (typeof(data) == 'number')  var sym = new MNumber(data);
       else 
         throw new GE.GError('Unknown input value type: ' + data + typeof(data));
@@ -1030,17 +1051,18 @@ class Application {
   }
   resolve(scope, argIOKeyboard) {
     
-    if (argIOKeyboard) 
-      IOKeyboard = argIOKeyboard;
+    if (argIOKeyboard != null) {
+      IOKeyboard = new IO.InputDevice();
+      console.log('Keyboard buffer argIOKeyboard: ', argIOKeyboard);
+      var arrKeyboard = argIOKeyboard.split(',').map(item => item.trim());
+      arrKeyboard.forEach( function (e) { IOKeyboard.add(e); })
+    }
     else
       IOKeyboard = new IO.InputDevice();
 
     if (IOKeyboard.isEmpty() && this.keyboardData.length) {
       //console.log('>> Setting keyboard buffer from inline source code');
-      this.keyboardData.forEach(function (e) { 
-        console.log('Add keyboard value: ', e);
-        e.addKeyboardInputData(scope);
-      });
+      this.keyboardData.forEach((e) => e.addKeyboardInputData(scope));
     }
 
     IOScreen.data = []; // FIXME: 

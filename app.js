@@ -28,17 +28,15 @@ function parseGlossaJS(sourceCode, inputKeyboardBuffer) {
     throw new GE.GError("Error in toAST to give results");
   }
 
-  var IOKeyboard = new IO.InputDevice();
+/*  var IOKeyboard = new IO.InputDevice();
 
   if (inputKeyboardBuffer != null) {
-    var arrKeyboard = inputKeyboardBuffer.split(',');
-    console.log('Keyboard buffer: ', arrKeyboard);
-    IOKeyboard.set(arrKeyboard);
+    IOKeyboard.set(inputKeyboardBuffer);
   }
-
+*/
   var globalScope = new MObjects.Scope();
 
-  return result.resolve(globalScope, IOKeyboard);
+  return result.resolve(globalScope, inputKeyboardBuffer);
 }
 
 module.exports = {

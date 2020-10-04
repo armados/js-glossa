@@ -1,6 +1,7 @@
 "use strict";
 
 var GE = require("./gclasses");
+var Storage = require("./storage");
 
 class InputDevice {
   constructor() {
@@ -22,7 +23,13 @@ class InputDevice {
   getSingleInputData() {
     if (this.isEmpty()) throw new GE.GError("Σφάλμα. Τα δεδομένα εισόδου δεν επαρκούν για την εκτέλεση του προγράμματος.");
 
-    return this.data.shift();
+    var value = this.data.shift();
+
+    if (!isNaN(parseFloat(value)))
+      return Number(value);
+    else
+      return String(value);
+
   }
 }
 

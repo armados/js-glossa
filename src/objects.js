@@ -1051,7 +1051,7 @@ class Application {
   }
   resolve(scope, argIOKeyboard) {
     
-    if (argIOKeyboard != null) {
+    if (argIOKeyboard != null && argIOKeyboard != '') {
       IOKeyboard = new IO.InputDevice();
       console.log('Keyboard buffer argIOKeyboard: ', argIOKeyboard);
       var arrKeyboard = argIOKeyboard.split(',').map(item => item.trim());

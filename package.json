@@ -23,6 +23,7 @@
   },
   "homepage": "https://github.com/armados/js-glossa#readme",
   "dependencies": {
+    "increase-memory-limit": "^1.0.7",
     "minimist": "^1.2.5",
     "ohm-js": "^15.1.0"
   },

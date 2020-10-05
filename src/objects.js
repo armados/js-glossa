@@ -848,17 +848,21 @@ class CallSubProcedure {
   }
 
   resolve(scope) {
-    //console.log("P step1 called ====: ", this.fun.name, " with args ", this.args);
+    console.log("P step1 called ====: ", this.fun.name, " with args ", this.args);
 
+    mem(scope);
     //lookup the real function from the symbol
     if (!scope.hasSymbol(this.fun.name))
       throw new GE.GError("CallSubProcedure: cannot resolve symbol " + this.fun.name);
 
+    console.log("P step1 called ==mid step");
+
     var argsResolved = this.args.map(function (arg) {
-      return arg.resolve(scope);
+      if (!arg instanceof Storage.STRTableName) return arg.resolve(scope);
+      else return arg; // FIXME:
     });
 
-    //console.log("P step2 calcualted args ====: ", this.fun.name, " with args ", argsResolved);
+    console.log("P step2 calcualted args ====: ", this.fun.name, " with args ", argsResolved);
 
     var fun = scope.getSymbol(this.fun.name);
 
@@ -881,6 +885,7 @@ class CallSubProcedure {
       else if (arg instanceof MSymbolTableFetch) {
 
         // Return symbol from arg cell name
+        console.log('send whole table');
         scope.setSymbol(arg.cellName, procScope.getSymbol(procParams[i].name));
       }
 

@@ -28,12 +28,6 @@ function parseGlossaJS(sourceCode, inputKeyboardBuffer) {
     throw new GE.GError("Error in toAST to give results");
   }
 
-/*  var IOKeyboard = new IO.InputDevice();
-
-  if (inputKeyboardBuffer != null) {
-    IOKeyboard.set(inputKeyboardBuffer);
-  }
-*/
   var globalScope = new MObjects.Scope();
 
   return result.resolve(globalScope, inputKeyboardBuffer);

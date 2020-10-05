@@ -11,9 +11,9 @@ var minimist = require("minimist");
 
 //FIXME:
 var args = minimist(process.argv.slice(2), {
-  string: ["input"], // --lang xml
-  string: ["keyboard"], // --lang xml
-  boolean: ["version"], // --version
+  string: ["input"],
+  string: ["keyboard"],
+  boolean: ["version"],
   alias: { v: "version", i: "input", k: "keyboard" },
   default: {},
   stopEarly: true /* populate _ with first non-option */,
@@ -24,8 +24,12 @@ var args = minimist(process.argv.slice(2), {
 
 if (!args["input"]) throw new GE.GError("Missing input file");
 
-var filename = args["input"];
-var sourceCode = fs.readFileSync(filename).toString();
+var sourceCode = null;
+try {
+  sourceCode = fs.readFileSync(args["input"]).toString();
+} catch (e) {
+  throw new GE.GError("File not found");
+}
 
 var inputKeyboardBuffer = null;
 if (args["keyboard"]) inputKeyboardBuffer = args["keyboard"];

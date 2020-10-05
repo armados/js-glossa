@@ -37,6 +37,7 @@ class STRTableName {
   constructor(tblsize) {
     this.tblsize = tblsize;
   }
+
 }
 
 // ============

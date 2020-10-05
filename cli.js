@@ -1,4 +1,4 @@
-#!/usr/bin/env node --max_old_space_size=400
+#!/usr/bin/env node
 
 "use strict";
 

@@ -71,7 +71,7 @@ var operation = {
 
     WhileExpr:   (_1, cond, _2, body, _3) => new MO.Stmt_WhileLoop(cond.toAST(), body.toAST()),
 
-    DoWhileExpr: (_1, body, _2, cond)     => new MO.Stmt_DoStmt_WhileLoop(cond.toAST(), body.toAST()),
+    DoWhileExpr: (_1, body, _2, cond)     => new MO.Stmt_Do_WhileLoop(cond.toAST(), body.toAST()),
 
     ForExpr: (_1, variable, _2, initval, _3, finalval, _4, stepval, _5, body, _6) => 
     new MO.Stmt_ForLoop(variable.toAST(), initval.toAST(), finalval.toAST(), stepval.toAST(), body.toAST()),

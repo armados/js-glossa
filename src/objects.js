@@ -123,6 +123,8 @@ class MSymbol {
   }
 }
 
+// ========================
+
 class MSymbolTable {
   constructor(name, args) {
     this.name = name;
@@ -269,7 +271,7 @@ class Scope {
     
 
     //console.log('Metavliti: ', this.getSymbol(name), ' | Gia eisodo sthn mnimi',  obj.constructor.name);
-    //console.log('setSymbol: ', name, symType, ' <--  ',  obj);
+    console.log('setSymbol: ', name, symType, ' <--  ',  obj);
 
      if      (this.getSymbolObject(name) instanceof Storage.STRInt ||
               this.getSymbolObject(name) instanceof Storage.STRFuncNameInt) {
@@ -398,8 +400,6 @@ class Stmt_IfCond {
 
     if (elseBody) 
       return elseBody.resolve(scope);
-
-    return true;
   }
 }
 
@@ -419,12 +419,10 @@ class Stmt_WhileLoop {
 
       this.body.resolve(scope);
     }
-
-    return true;
   }
 }
 
-class Stmt_DoStmt_WhileLoop {
+class Stmt_Do_WhileLoop {
   constructor(cond, body) {
     this.cond = cond;
     this.body = body;
@@ -439,9 +437,8 @@ class Stmt_DoStmt_WhileLoop {
         throw new GE.GError("Condition must be Boolean");
 
       if (condResult.jsEquals(true)) break;
-    } while (true);
 
-    return true;
+    } while (true);
   }
 }
 
@@ -536,10 +533,9 @@ class Stmt_Assignment {
     this.val = val;
   }
   resolve(scope) {
-    //console.log('== Stmt_Assignment: INIT RESOLVE symbol: ', this.symbol, ' value: ', this.val);
+    //console.log('== Stmt_Assignment: BEFORE RESOLVE symbol: ', this.symbol, ' value: ', this.val);
     var valResolved = this.val.resolve(scope);
-
-    //console.log('== Stmt_Assignment: BEFORE RESOLVE symbol: ', this.symbol, ' value: ', valResolved);
+    //console.log('== Stmt_Assignment: AFTER RESOLVE symbol: ', this.symbol, ' value: ', valResolved);
 
     var sym = this.symbol;
 
@@ -563,8 +559,6 @@ class Stmt_Assignment {
 
     //console.log('AFTER Stmt_Assignment: ', sym.name, '  has now value: ', scope.getSymbol(sym.name));
     //mem(scope);
-
-    return true;
   }
 }
 
@@ -603,8 +597,6 @@ class Stmt_Write {
     });
 
     IOScreen.add( output.join(" ") );
-
-    return true;
   }
 }
 
@@ -643,8 +635,6 @@ class Stmt_Read {
     });
 
     IOScreen.add( inputData.join( "\n" ) );
-
-    return true;
   }
 }
 
@@ -668,8 +658,6 @@ class DefDeclarations {
     });
 
     //console.log("===> end of declerations");
-
-    return true;
   }
 }
 
@@ -696,7 +684,6 @@ class DefConstant {
 
       scope.addSymbol(this.sym.name, newObj )
       scope.addLock(this.sym.name);
-    return;
   }
 }
 
@@ -721,17 +708,17 @@ class DefVariables {
         //console.log('======> DefVariables: Create variable TABLE symbol name: ', e.name, varType);
 
         var argsResolved = e.args.map(function (arg) {
-          return arg.resolve(scope);
+          return arg.resolve(scope).val;
         });
  
         if  (varType == 'ΑΚΕΡΑΙΕΣ')
-          var ctype = new Storage.STRTableName( argsResolved );
+          var ctype = new Storage.STRTableNameInt( e.name, argsResolved );
         else if (varType == 'ΠΡΑΓΜΑΤΙΚΕΣ')
-          var ctype = new Storage.STRTableName( argsResolved );
+          var ctype = new Storage.STRTableNameFloat( e.name, argsResolved );
         else if (varType == 'ΧΑΡΑΚΤΗΡΕΣ')
-          var ctype = new Storage.STRTableName( argsResolved );
+          var ctype = new Storage.STRTableNameString( e.name, argsResolved );
         else if (varType == 'ΛΟΓΙΚΕΣ')
-          var ctype = new Storage.STRTableName( argsResolved );
+          var ctype = new Storage.STRTableNameBoolean( e.name, argsResolved );
         else
           throw new GE.GError('Unknown variable type');
     
@@ -761,14 +748,14 @@ class DefVariables {
         var tblDimensions = argsResolved.length;
 
         if (tblDimensions == 1) {
-          var tblsize1 = argsResolved[0].val;
+          var tblsize1 = argsResolved[0];
           for (var i = 1; i <= tblsize1; ++i) {
             //console.log('   Create table element : ', i);
             scope.addSymbol(e.name + "[" + i + "]", helperCreateCellFromType(varType));
           }
       } else if (tblDimensions == 2) {
-          var tblsize1 = argsResolved[0].val;
-          var tblsize2 = argsResolved[1].val;
+          var tblsize1 = argsResolved[0];
+          var tblsize2 = argsResolved[1];
           for (var i = 1; i <= tblsize1; ++i) {
             for (var j = 1; j <= tblsize2; ++j) {
               //console.log('   Create table element : ', i, ' ', j);
@@ -776,9 +763,9 @@ class DefVariables {
           }
         }
       } else if (tblDimensions == 3) {
-        var tblsize1 = argsResolved[0].val;
-        var tblsize2 = argsResolved[1].val;
-        var tblsize3 = argsResolved[2].val;
+        var tblsize1 = argsResolved[0];
+        var tblsize2 = argsResolved[1];
+        var tblsize3 = argsResolved[2];
         for (var i = 1; i <= tblsize1; ++i) {
           for (var j = 1; j <= tblsize2; ++j) {
             for (var k = 1; k <= tblsize3; ++k) {
@@ -848,9 +835,11 @@ class CallSubProcedure {
   }
 
   resolve(scope) {
-    console.log("P step1 called ====: ", this.fun.name, " with args ", this.args);
 
     mem(scope);
+
+    console.log("P step1 called ====: ", this.fun.name, " with args ", this.args);
+
     //lookup the real function from the symbol
     if (!scope.hasSymbol(this.fun.name))
       throw new GE.GError("CallSubProcedure: cannot resolve symbol " + this.fun.name);
@@ -858,31 +847,33 @@ class CallSubProcedure {
     console.log("P step1 called ==mid step");
 
     var argsResolved = this.args.map(function (arg) {
-      if (!arg instanceof Storage.STRTableName) return arg.resolve(scope);
-      else return arg; // FIXME:
+      //return arg.resolve(scope);
+
+        return arg.resolve(scope);
+
     });
 
-    console.log("P step2 calcualted args ====: ", this.fun.name, " with args ", argsResolved);
+    console.log("P step2 calcualted args ====: ", this.fun.name, " with argsResolved ", argsResolved);
 
     var fun = scope.getSymbol(this.fun.name);
-
+    console.log('before apply procedure');
     var procExecArr = fun.apply(null, argsResolved);
-
+    console.log('after  apply procedure');
     var procScope  = procExecArr[0];
     var procParams = procExecArr[1];
-
+ 
     this.args.map(function (arg, i) {
-
+      
       if  (arg instanceof MSymbol) {
 
         if (scope.isLocked(arg.name) == true &&
             scope.getSymbol(arg.name) != procScope.getSymbol(procParams[i].name))
-          throw new GE.GError('Procedure return values try to change ariable which is in use');
+          throw new GE.GError('Procedure return values try to change variable which is in use');
     
         scope.setSymbol(arg.name, procScope.getSymbol(procParams[i].name));
 
       }
-      else if (arg instanceof MSymbolTableFetch) {
+      else if (arg instanceof STRTableName) {
 
         // Return symbol from arg cell name
         console.log('send whole table');
@@ -892,7 +883,6 @@ class CallSubProcedure {
     });
 
     //console.log('P step3 returned  ====: ', procExecArr);
-    return true;
   }
 }
 
@@ -961,8 +951,6 @@ class SubFunction {
 
       return scope2.getSymbol(name);
     }));
-
-    return true;
   }
 }
 
@@ -992,15 +980,66 @@ class SubProcedure {
 
       // Declare constants and variables
       decl.resolve(scope2);
-
+console.log('inside procedure ready to start commands');
       // Sent values to procedure
       params.forEach(function (param, i) {
         if (!scope2.hasSymbol(param.name))
           throw new GE.GError(
             "Parameter not declared inside procedure: " + param.name
           );
+        
+          if (!(args[i] instanceof Storage.STRTableName))
+            scope2.setSymbol(param.name, args[i]);
+            else {
+              console.log('Check tables...');
+              console.log(args[i]);
 
-        scope2.setSymbol(param.name, args[i]);
+              if (scope2.getSymbol(param.name).constructor.name != args[i].constructor.name)
+                throw new GE.GError('Tables not same type');
+              
+              if (!scope2.getSymbol(param.name).arraySizeEquals(args[i]))
+                throw new GE.GError('Tables not same size');
+
+                var tblDimensions = scope2.getSymbol(param.name).getSize().length;
+
+                if (tblDimensions == 1) {
+                  var tblsize1 = args[i].getSize()[0];
+                  for (var j = 1; j <= tblsize1; ++j) {
+                    console.log(param.name + "[" + j + "]");
+                    console.log(args[i].tblname + "[" + j + "]");
+                    console.log(scope.getSymbol(args[i].tblname + "[" + j + "]"));
+                    scope2.setSymbol(param.name + "[" + j + "]", scope.getSymbol(args[i].tblname + "[" + j + "]"));
+                  }
+              } else if (tblDimensions == 2) {
+                  var tblsize1 = argsResolved[0];
+                  var tblsize2 = argsResolved[1];
+                  for (var i = 1; i <= tblsize1; ++i) {
+                    for (var j = 1; j <= tblsize2; ++j) {
+                      //console.log('   Create table element : ', i, ' ', j);
+                    scope.addSymbol(e.name + "[" + i + "][" + j + "]", helperCreateCellFromType(varType));
+                  }
+                }
+              } else if (tblDimensions == 3) {
+                var tblsize1 = argsResolved[0];
+                var tblsize2 = argsResolved[1];
+                var tblsize3 = argsResolved[2];
+                for (var i = 1; i <= tblsize1; ++i) {
+                  for (var j = 1; j <= tblsize2; ++j) {
+                    for (var k = 1; k <= tblsize3; ++k) {
+                      //console.log('   Create table element : ', i, ' ', j);
+                  scope.addSymbol(e.name + "[" + i + "][" + j + "][" + k + "]", helperCreateCellFromType(varType));
+                }
+              }
+            }
+            }
+
+
+
+
+
+
+
+            }
       });
 
       //mem(scope2);
@@ -1014,8 +1053,6 @@ class SubProcedure {
       // Return scope for precessing 
       return procExecArr;
     }));
-
-    return true;
   }
 }
 
@@ -1043,8 +1080,6 @@ class Program {
     this.body.resolve(newScope);
 
     //mem(newScope);
-
-    return true;
   }
 }
 
@@ -1124,6 +1159,8 @@ class Application {
   }
 }
 
+
+
 function mem(scope) {
   console.log("\n============================[ Memory dump  ]");
   console.log("RAM Global storage: ", Scope.globalStorage);
@@ -1175,7 +1212,7 @@ module.exports = {
 
   Stmt_IfCond: Stmt_IfCond,
   Stmt_WhileLoop: Stmt_WhileLoop,
-  Stmt_DoStmt_WhileLoop: Stmt_DoStmt_WhileLoop,
+  Stmt_Do_WhileLoop: Stmt_Do_WhileLoop,
   Stmt_ForLoop: Stmt_ForLoop,
 
   CallSubFunction: CallSubFunction,

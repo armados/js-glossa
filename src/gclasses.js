@@ -9,9 +9,11 @@ class GError extends Error {
   
       this.name = this.constructor.name
 
-      console.log('GError: ', message);
+      console.log('Got GError: ', message);
     }
   
   }
   
-  module.exports = { GError: GError };
+  module.exports = { 
+    GError: GError
+  };

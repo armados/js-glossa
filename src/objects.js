@@ -1,116 +1,15 @@
 "use strict";
 
+var Atom = require("./atom");
 var GE = require("./gclasses");
 
-var Storage = require("./storage");
+var STR = require("./storage");
 var IO = require("./io");
 
 var IOKeyboard = null;
 var IOScreen = new IO.OutputDevice();
 
 
-
-class Atom {
-  constructor(val) {
-    this.val = val;
-
-    if ((typeof(val) == 'number') && 
-      (Number(val) === val && val % 1 !== 0))
-        this.val = parseFloat(val).toFixed(2);
-  }
-  resolve(scope) {
-    return this;
-  }
-  jsEquals(jsval) {
-    return this.val == jsval;
-  }
-  getValue() {
-    return this.val;
-  }
-}
-
-class MNumber extends Atom {}
-class MBoolean extends Atom {}
-class MString extends Atom {}
-
-class BinaryOp {
-  constructor(op, A, B) {
-    this.op = op;
-    this.A = A;
-    this.B = B;
-  }
-  resolve(scope) {
-
-    var a;
-    var b;
-
-    try {
-      a = this.A.resolve(scope).val;
-    } catch {
-      throw new GE.GError("Null value " + this.A.name);
-    }
-
-    try {
-      b = this.B.resolve(scope).val;
-    } catch {
-      throw new GE.GError("Null value " + this.B.name);
-    }
-
-    //console.log('BinOp: ', this.op, ' a=',a, '   b=',b);
-
-    if (this.op == "add") return new MNumber(a + b);
-    if (this.op == "sub") return new MNumber(a - b);
-
-    if (this.op == "mul") return new MNumber(a * b);
-
-    if (this.op == "div") {
-      if (b == 0) throw new GE.GError("Division by zero");
-      return new MNumber(a / b);
-    }
-
-    if (this.op == "intdiv") {
-      if (b == 0) throw new GE.GError("Division by zero");
-      return new MNumber(Math.floor(a / b));
-    }
-
-    if (this.op == "intmod") {
-      if (b == 0) throw new GE.GError("Division by zero");
-      return new MNumber(a % b);
-    }
-
-    if (this.op == "pow") return new MNumber(Math.pow(a, b));
-
-    if (this.op == "lt")  return new MBoolean(a < b);
-    if (this.op == "gt")  return new MBoolean(a > b); 
-    if (this.op == "lte") return new MBoolean(a <= b);
-    if (this.op == "gte") return new MBoolean(a >= b);
-    if (this.op == "eq")  return new MBoolean(a == b);
-    if (this.op == "neq") return new MBoolean(a != b);
-
-    if (this.op == "and") return new MBoolean(a && b);
-    
-    if (this.op == "or")  return new MBoolean(a || b);
-    
-  }
-}
-
-class BooleanNotOp {
-  constructor(A) {
-    this.A = A;
-  }
-  resolve(scope) {
-    //if (this.A instanceof MSymbolTable) { this.A = this.A.resolve(scope); }
-
-    var a;
-    try {
-      a = this.A.resolve(scope).val;
-    } catch {
-      throw new GE.GError("Null value " + this.A.name);
-    }
-
-    return new MBoolean(!a);
-  }
-}
 
 // ========================
 
@@ -168,185 +67,15 @@ class MSymbolTableFetch extends MSymbolTable {
 
 // ============================
 
-class Scope {
-  constructor(){ //parent) {
-
-    this.localStorage = {};
-    this.lockedVariables = [];
-
-
-   // this.parent = parent ? parent : null;
-
-    if (typeof Scope.globalStorage == "undefined") {
-      Scope.globalStorage = {};
-    }
-
-  }
-
-  //makeSubScope() {   return new Scope(this)  }
-
-  isLocked(name) {
-    return this.lockedVariables.includes(name);
-  }
-
-  addLock(name) {
-      this.lockedVariables.push(name);
-      }
-
-    removeLock(name) {
-        const index = this.lockedVariables.indexOf(name);
-        this.lockedVariables.splice(index, 1);
-  
-    }
-  
-  hasSymbol(name) {
-
-    if (name in this.localStorage) return true;
-    if (name in Scope.globalStorage) return true;
-
-    return false;
-  }
-
-  addSymbol(name, obj) {
-    // Add new symbol in storage
-
-    if (this.hasSymbol(name))
-      throw new GE.GError("addSymbol(): Symbol already exist in memory " + name);
-      
-    if      (obj instanceof Storage.STRGlobalScope)
-        return Scope.globalStorage[name] = obj;
-    else if (obj instanceof Storage.STRLocalScope ||
-             obj instanceof Storage.STRTableName)
-          return this.localStorage[name] = obj;
-    else
-      throw new GE.GError('Unknown storage type');
-     
-    }
-
-  addSymbolFuncName(name, obj) {
-    // Special case when symbol has same name with function and variable
-    //console.log('=====> Scope Action: setSymbol()', name , ' <- ', obj);
-    //if(this.hasSymbol(name))
-    //    throw new GE.GError('addSymbol(): Symbol already exist in memory');
-    if (obj instanceof Storage.STRLocalScope)
-      return this.localStorage[name] = obj;
-     else
-      throw new GE.GError('Unknown storage type: ', name, obj);
-  }
-
-
-  setSymbol(name, obj) {
-
-    if (!this.hasSymbol(name))
-        throw new GE.GError('setSymbol(): Symbol missing from memory: ' + name);
-  
-
-  
-   /* if (this.getSymbolObject(name).isLocked())
-      throw new GE.GError('setSymbol(): Variable is in use: ' + name);
-*/
-
-    if (!obj)
-        return this.localStorage[name];
-
-        var symType = null;
-             if (this.getSymbolObject(name) instanceof Storage.STRInt)
-          symType = "ΑΚΕΡΑΙΑ";
-        else if (this.getSymbolObject(name) instanceof Storage.STRFuncNameInt)
-          symType = "ΑΚΕΡΑΙΑ (ονομα συνάρτησης)";
-        else if      (this.getSymbolObject(name) instanceof Storage.STRFloat) 
-          symType = "ΠΡΑΓΜΑΤΙΚΗ";
-        else if (this.getSymbolObject(name) instanceof Storage.STRFuncNameFloat)
-          symType = "ΠΡΑΓΜΑΤΙΚΗ (ονομα συνάρτησης)";
-        else if (this.getSymbolObject(name) instanceof Storage.STRString)
-          symType = "ΧΑΡΑΚΤΗΡΑΣ";
-        else if (this.getSymbolObject(name) instanceof Storage.STRFuncNameString)
-          symType = "ΧΑΡΑΚΤΗΡΑΣ (ονομα συνάρτησης)";
-        else if (this.getSymbolObject(name) instanceof Storage.STRBoolean)
-          symType = "ΛΟΓΙΚΗ";
-        else if (this.getSymbolObject(name) instanceof Storage.STRFuncNameBoolean)
-          symType = "ΛΟΓΙΚΗ (ονομα συνάρτησης)";
-        else
-          throw new GE.GError('Unknown symbol type' + this.getSymbol(name));
-    
-
-    //console.log('Metavliti: ', this.getSymbol(name), ' | Gia eisodo sthn mnimi',  obj.constructor.name);
-    console.log('setSymbol: ', name, symType, ' <--  ',  obj);
-
-     if      (this.getSymbolObject(name) instanceof Storage.STRInt ||
-              this.getSymbolObject(name) instanceof Storage.STRFuncNameInt) {
-                  if (!(obj instanceof Storage.STRInt || obj instanceof MNumber))
-        throw new GE.GError('Variable type not match - expected int');
-
-      if (!(Number(obj.val) === obj.val && obj.val % 1 === 0))
-        throw new GE.GError('Variable type not match - expected int');
-
-
-    }
-    else if (this.getSymbolObject(name) instanceof Storage.STRFloat ||
-             this.getSymbolObject(name) instanceof Storage.STRFuncNameFloat) {
-
-      if (!(obj instanceof Storage.STRFloat || obj instanceof MNumber))
-        throw new GE.GError('Variable type not match - expected float');
-
-    }
-    else if  (this.getSymbolObject(name) instanceof Storage.STRString ||
-              this.getSymbolObject(name) instanceof Storage.STRFuncNameString) {
-                  if (!(obj instanceof Storage.STRString || obj instanceof MString)) {
-                    //console.log('name: ', name, 'obj: ', this.getSymbolObject(name), 'obj2: ', obj);
-        throw new GE.GError('Variable type not match - expected string');
-                  }
-
-
-    }
-    else if  (this.getSymbolObject(name) instanceof Storage.STRBoolean  ||
-              this.getSymbolObject(name) instanceof Storage.STRFuncNameBoolean) {
-                  if (!(obj instanceof Storage.STRBoolean || obj instanceof MBoolean))
-        throw new GE.GError('Variable type not match - expected boolean');
-
-    }
-    else
-      throw new GE.GError('Unknown symbol type' + this.getSymbol(name));
-
-
-    this.localStorage[name].set(obj);
-
-    return this.localStorage[name];
-  }
-
-  getSymbol(name) {
-
-    if (name in this.localStorage) 
-      return this.localStorage[name].get();
-    else if (name in Scope.globalStorage)
-      return Scope.globalStorage[name].get();
-    else 
-      throw new GE.GError('Symbol not found in storage');
-  }
-  
-  getSymbolObject(name) {
-
-    if (name in this.localStorage)
-      return this.localStorage[name];
-    else if (name in Scope.globalStorage)
-      return Scope.globalStorage[name];
-    else
-    throw new GE.GError('Symbol not found in storage');
-  }
-
-}
-
-// =======================================
-
 class Block {
   constructor(block) {
     this.statements = block;
   }
   resolve(scope) {
-    this.statements.forEach(function (cmd) {
-      //console.log('Type:', cmd);
-      //mem(scope);
-      cmd.resolve(scope);
+    //mem(scope);
+    this.statements.forEach(function (smtp) {
+      //console.log('==========> User command smtp: ', smtp);
+      smtp.resolve(scope);
     });
 
     return true;
@@ -371,33 +100,26 @@ class Stmt_IfCond {
     var moreBody = this.moreBody;
     var elseBody = this.elseBody;
 
-    //console.log('============> IF before : ', cond)
     var condResult = cond.resolve(scope);
-    //console.log('===> IF after: ', condResult)
 
-    if (!condResult instanceof MBoolean)
+    if (!(condResult instanceof Atom.MBoolean))
       throw new GE.GError("Condition must be Boolean");
 
-    //console.log('===> IF : ', val)
-
-    if (condResult.val == true) {
+    if (condResult.val == true)
       return thenBody.resolve(scope);
-    }
 
-    //console.log('elseif conditions: ', this.condElseIf);
-    if (condElseIf.length) {
+    if (condElseIf.length)
       for (var i = 0; i < condElseIf.length; ++i) {
         var condResult = condElseIf[i].resolve(scope);
 
-        if (!condResult instanceof MBoolean)
+        if (!condResult instanceof Atom.MBoolean)
           throw new GE.GError("Condition must be Boolean");
 
         if (condResult.val == true) {
           return moreBody[i].resolve(scope);
         }
       }
-    }
-
+    
     if (elseBody) 
       return elseBody.resolve(scope);
   }
@@ -412,10 +134,11 @@ class Stmt_WhileLoop {
     while (true) {
       var condResult = this.cond.resolve(scope);
 
-      if (!condResult instanceof MBoolean)
+      if (!condResult instanceof Atom.MBoolean)
         throw new GE.GError("Condition must be Boolean");
 
-      if (condResult.jsEquals(false)) break;
+      if (condResult.jsEquals(false))
+        break;
 
       this.body.resolve(scope);
     }
@@ -433,11 +156,11 @@ class Stmt_Do_WhileLoop {
 
       var condResult = this.cond.resolve(scope);
 
-      if (!condResult instanceof MBoolean)
+      if (!condResult instanceof Atom.MBoolean)
         throw new GE.GError("Condition must be Boolean");
 
-      if (condResult.jsEquals(true)) break;
-
+      if (condResult.jsEquals(true))
+        break;
     } while (true);
   }
 }
@@ -457,9 +180,6 @@ class Stmt_ForLoop {
     var stepval = this.stepval;
     var body = this.body;
 
-
-    //console.log('FOR LOOP CONSTRUCTOR: ', this.variable);
-
     var v_step = 1;
 
     if (stepval != "") {
@@ -468,7 +188,7 @@ class Stmt_ForLoop {
     }
 
     if (v_step == 0)
-      throw new GE.GError("If statement with zero step value detected");
+      throw new GE.GError("If statement with zero value step detected");
 
     var tmp = initval.resolve(scope);
     var v_initial = tmp.val;
@@ -484,7 +204,7 @@ class Stmt_ForLoop {
       throw new GE.GError('Can not use variable - is in use');
 
     scope.addLock(variable.name);
-    scope.setSymbol(variable.name, new MNumber(v_initial));
+    scope.setSymbol(variable.name, new Atom.MNumber(v_initial));
 
     //mem(scope);
 
@@ -499,7 +219,7 @@ class Stmt_ForLoop {
  //       scope.getSymbolObject(this.variable.name).Unlock();
         scope.setSymbol(
           this.variable.name,
-          new MNumber(scope.getSymbol(variable.name).val + v_step)
+          new Atom.MNumber(scope.getSymbol(variable.name).val + v_step)
         );
   //      scope.getSymbolObject(this.variable.name).Lock();
 
@@ -515,15 +235,12 @@ class Stmt_ForLoop {
 
         scope.setSymbol(
           this.variable.name,
-          new MNumber(scope.getSymbol(variable.name).val + v_step)
+          new Atom.MNumber(scope.getSymbol(variable.name).val + v_step)
         );
       }
     }
 
     scope.removeLock(variable.name);
-    //scope.getSymbolObject(this.variable.name).Unlock();
-
-    //return output.join("\n");
   }
 }
 
@@ -567,7 +284,6 @@ class Stmt_Write {
     this.args = args;
   }
   resolve(scope) {
-    //console.log('GRAPSE: ', this.args);
 
     var output = [];
 
@@ -583,7 +299,7 @@ class Stmt_Write {
 
       //mem(scope);
       try {
-        if (arg instanceof MBoolean) {
+        if (arg instanceof Atom.MBoolean) {
           output.push(arg.getValue() ? "ΑΛΗΘΗΣ" : "ΨΕΥΔΗΣ");
           //console.log("OUT1: ", arg.getValue() ? "ΑΛΗΘΗΣ" : "ΨΕΥΔΗΣ");
         } else {
@@ -626,8 +342,8 @@ class Stmt_Read {
 
       inputData.push("*** Εισαγωγή τιμής από πληκτρολόγιο: [" + data + "]");
 
-      if      (typeof(data) == 'string')  var sym = new MString(data);
-      else if (typeof(data) == 'number')  var sym = new MNumber(data);
+      if      (typeof(data) == 'string')  var sym = new Atom.MString(data);
+      else if (typeof(data) == 'number')  var sym = new Atom.MNumber(data);
       else 
         throw new GE.GError('Unknown input value type: ' + data + typeof(data));
             
@@ -647,17 +363,14 @@ class DefDeclarations {
 
     //console.log("===> Declaring constants");
     if (this.statheres[0]) this.statheres[0].forEach(function (e) {
-      // console.log('statheres :', e);
       e.resolve(scope);
     });
 
     //console.log("===> Declaring variables");
     if(this.metavlites[0]) this.metavlites[0].forEach(function (e) {
-      //console.log('var type  varcat:', e);
       e.resolve(scope);
     });
 
-    //console.log("===> end of declerations");
   }
 }
 
@@ -672,13 +385,13 @@ class DefConstant {
     var obj = this.val.resolve(scope);
   
     if      (Number(obj.val) === obj.val && obj.val % 1 === 0)
-      var newObj = new Storage.STRInt( obj );
+      var newObj = new STR.STRInt( obj );
     else if (Number(obj.val) === obj.val && obj.val % 1 !== 0)
-      var newObj = new Storage.STRFloat( obj );
+      var newObj = new STR.STRFloat( obj );
     else if (typeof(obj.val) == 'string')
-      var newObj = new Storage.STRString( obj );
+      var newObj = new STR.STRString( obj );
     else if (typeof(obj.val) == 'boolean')
-      var newObj = new Storage.STRBoolean( obj );
+      var newObj = new STR.STRBoolean( obj );
     else
       throw new GE.GError('Unknown constant type');
 
@@ -686,7 +399,6 @@ class DefConstant {
       scope.addLock(this.sym.name);
   }
 }
-
 
 class DefVariables {
   constructor(varType, sym) {
@@ -711,18 +423,18 @@ class DefVariables {
           return arg.resolve(scope).val;
         });
  
-        if  (varType == 'ΑΚΕΡΑΙΕΣ')
-          var ctype = new Storage.STRTableNameInt( e.name, argsResolved );
+        if      (varType == 'ΑΚΕΡΑΙΕΣ')
+          var ctype = new STR.STRTableNameInt( e.name, argsResolved );
         else if (varType == 'ΠΡΑΓΜΑΤΙΚΕΣ')
-          var ctype = new Storage.STRTableNameFloat( e.name, argsResolved );
+          var ctype = new STR.STRTableNameFloat( e.name, argsResolved );
         else if (varType == 'ΧΑΡΑΚΤΗΡΕΣ')
-          var ctype = new Storage.STRTableNameString( e.name, argsResolved );
+          var ctype = new STR.STRTableNameString( e.name, argsResolved );
         else if (varType == 'ΛΟΓΙΚΕΣ')
-          var ctype = new Storage.STRTableNameBoolean( e.name, argsResolved );
+          var ctype = new STR.STRTableNameBoolean( e.name, argsResolved );
         else
           throw new GE.GError('Unknown variable type');
     
-        // Add to local storage symbol for table name
+        // Add to local STR symbol for table name
         scope.addSymbol(e.name, ctype );
 
 
@@ -730,13 +442,13 @@ class DefVariables {
 
         function helperCreateCellFromType(varType) {
           if      (varType == 'ΑΚΕΡΑΙΕΣ')
-            return new Storage.STRInt( null );
+            return new STR.STRInt( null );
           else if (varType == 'ΠΡΑΓΜΑΤΙΚΕΣ')
-            return new Storage.STRFloat( null );
+            return new STR.STRFloat( null );
           else if (varType == 'ΧΑΡΑΚΤΗΡΕΣ')
-            return new Storage.STRString( null );
+            return new STR.STRString( null );
           else if (varType == 'ΛΟΓΙΚΕΣ')
-            return new Storage.STRBoolean( null );
+            return new STR.STRBoolean( null );
           else
             throw new GE.GError('Unknown variable type');
         }
@@ -781,13 +493,13 @@ class DefVariables {
       }
 
     if      (varType == 'ΑΚΕΡΑΙΕΣ')
-      var ctype = new Storage.STRInt( null );
+      var ctype = new STR.STRInt( null );
     else if (varType == 'ΠΡΑΓΜΑΤΙΚΕΣ')
-      var ctype = new Storage.STRFloat( null );
+      var ctype = new STR.STRFloat( null );
     else if (varType == 'ΧΑΡΑΚΤΗΡΕΣ')
-      var ctype = new Storage.STRString( null );
+      var ctype = new STR.STRString( null );
     else if (varType == 'ΛΟΓΙΚΕΣ')
-      var ctype = new Storage.STRBoolean( null );
+      var ctype = new STR.STRBoolean( null );
     else
       throw new GE.GError('Cannot detect variable type');
   
@@ -836,7 +548,7 @@ class CallSubProcedure {
 
   resolve(scope) {
 
-    mem(scope);
+    //mem(scope);
 
     console.log("P step1 called ====: ", this.fun.name, " with args ", this.args);
 
@@ -859,6 +571,7 @@ class CallSubProcedure {
     console.log('before apply procedure');
     var procExecArr = fun.apply(null, argsResolved);
     console.log('after  apply procedure');
+
     var procScope  = procExecArr[0];
     var procParams = procExecArr[1];
  
@@ -903,7 +616,7 @@ class SubFunction {
     var decl = this.decl;
     var body = this.body;
 
-    scope.addSymbol(name, new Storage.STRUserFunction(function (...args) {
+    scope.addSymbol(name, new STR.STRUserFunction(function (...args) {
       //console.log('func called ', name, ' with args: ', args);
 
      if (args.length != params.length)
@@ -911,16 +624,16 @@ class SubFunction {
           "Error different number of parameters for function call"
         );
 
-      var scope2 = new Scope();
+      var scope2 = scope.makeSubScope();
 
       if      (funType == 'ΑΚΕΡΑΙΑ')
-        var ftype = new Storage.STRFuncNameInt( null );
+        var ftype = new STR.STRFuncNameInt( null );
       else if (funType == 'ΠΡΑΓΜΑΤΙΚΗ')
-        var ftype = new Storage.STRFuncNameFloat( null );
+        var ftype = new STR.STRFuncNameFloat( null );
       else if (funType == 'ΧΑΡΑΚΤΗΡΑΣ')
-        var ftype = new Storage.STRFuncNameString( null );
+        var ftype = new STR.STRFuncNameString( null );
       else if (funType == 'ΛΟΓΙΚΗ')
-        var ftype = new Storage.STRFuncNameBoolean( null );
+        var ftype = new STR.STRFuncNameBoolean( null );
       else
         throw new GE.GError('Cannot detect function return value type');      
       
@@ -968,7 +681,7 @@ class SubProcedure {
     var decl = this.decl;
     var body = this.body;
 
-    scope.addSymbol(name, new Storage.STRUserProcedure(function (...args) {
+    scope.addSymbol(name, new STR.STRUserProcedure(function (...args) {
       //console.log('proc called ', name, ' with args: ', args);
 
       if (args.length != params.length)
@@ -976,7 +689,7 @@ class SubProcedure {
           "Error different number of parameters for procedure call"
         );
  
-      var scope2 = new Scope();
+      var scope2 = scope.makeSubScope();
 
       // Declare constants and variables
       decl.resolve(scope2);
@@ -988,7 +701,7 @@ console.log('inside procedure ready to start commands');
             "Parameter not declared inside procedure: " + param.name
           );
         
-          if (!(args[i] instanceof Storage.STRTableName))
+          if (!(args[i] instanceof STR.STRTableName))
             scope2.setSymbol(param.name, args[i]);
             else {
               console.log('Check tables...');
@@ -1065,12 +778,12 @@ class Program {
 
   resolve(scope) {
 
-    var newScope = new Scope();
+    var newScope = scope.makeSubScope();
 
     //mem(newScope);
 
     // Program name is reserved word in global scope
-    newScope.addSymbol(this.name.name, new Storage.STRReservedName(null));
+    newScope.addSymbol(this.name.name, new STR.STRReservedName(null));
 
     // Declare constants and variables
     this.decl.resolve(newScope);
@@ -1089,7 +802,7 @@ class Application {
     this.subPrograms = subPrograms;
     this.keyboardData = keyboardData;
   }
-  resolve(scope, argIOKeyboard) {
+  resolve(argIOKeyboard) {
     
     if (argIOKeyboard != null && argIOKeyboard != '') {
       IOKeyboard = new IO.InputDevice();
@@ -1100,6 +813,9 @@ class Application {
     else
       IOKeyboard = new IO.InputDevice();
 
+    
+    var scope = new STR.SScope();
+
     if (IOKeyboard.isEmpty() && this.keyboardData.length) {
       //console.log('>> Setting keyboard buffer from inline source code');
       this.keyboardData.forEach((e) => e.addKeyboardInputData(scope));
@@ -1107,53 +823,46 @@ class Application {
 
     IOScreen.data = []; // FIXME: 
 
-    Scope.globalStorage = {}; //FIXME: 
-    
-    var newScope = new Scope();
-
-    newScope.addSymbol("Α_Μ",  new Storage.STRBuiltinFunction(function (A) {
-      return new MNumber(Math.trunc(A.val / 1));
+    scope.addSymbol("Α_Μ",  new STR.STRBuiltinFunction(function (A) {
+      return new Atom.MNumber(Math.trunc(A.val / 1));
     }));
     
-    newScope.addSymbol("Α_Τ",  new Storage.STRBuiltinFunction(function (A) {
-      if (A.val < 0) return new MNumber(-A.val);
+    scope.addSymbol("Α_Τ",  new STR.STRBuiltinFunction(function (A) {
+      if (A.val < 0) return new Atom.MNumber(-A.val);
       return A;
     }));
     
-    newScope.addSymbol("Τ_Ρ",  new Storage.STRBuiltinFunction(function (A) {
+    scope.addSymbol("Τ_Ρ",  new STR.STRBuiltinFunction(function (A) {
       if (A.val < 0) throw new GE.GError("Σφάλμα. Δεν ορίζεται ρίζα αρνητικού αριθμού");
-      return new MNumber( Math.sqrt(A.val) );
+      return new Atom.MNumber( Math.sqrt(A.val) );
     }));
     
-    newScope.addSymbol("ΗΜ",  new Storage.STRBuiltinFunction(function (A) {
-      return new MNumber( Math.sin(A.val) );
+    scope.addSymbol("ΗΜ",  new STR.STRBuiltinFunction(function (A) {
+      return new Atom.MNumber( Math.sin(A.val) );
     }));
     
-    newScope.addSymbol("ΣΥΝ",  new Storage.STRBuiltinFunction(function (A) {
-      return new MNumber( Math.cos(A.val) );
+    scope.addSymbol("ΣΥΝ",  new STR.STRBuiltinFunction(function (A) {
+      return new Atom.MNumber( Math.cos(A.val) );
     }));
     
-    newScope.addSymbol("Ε",  new Storage.STRBuiltinFunction(function (A) {
-      return new MNumber( Math.exp(A.val) );
+    scope.addSymbol("Ε",  new STR.STRBuiltinFunction(function (A) {
+      return new Atom.MNumber( Math.exp(A.val) );
     }));
     
-    newScope.addSymbol("ΕΦ",  new Storage.STRBuiltinFunction(function (A) {
-      return new MNumber( Math.tan(A.val) );
+    scope.addSymbol("ΕΦ",  new STR.STRBuiltinFunction(function (A) {
+      return new Atom.MNumber( Math.tan(A.val) );
     }));
     
-    newScope.addSymbol("ΛΟΓ",  new Storage.STRBuiltinFunction(function (A) {
-      return new MNumber( Math.log(A.val) );
+    scope.addSymbol("ΛΟΓ",  new STR.STRBuiltinFunction(function (A) {
+      return new Atom.MNumber( Math.log(A.val) );
     }));
-
-
-
 
     if (this.subPrograms.length)
       this.subPrograms.forEach((e) => e.resolve(scope));
 
     //mem(scope);
 
-    this.mainProg.resolve(newScope);
+    this.mainProg.resolve(scope);
 
     return IOScreen.get().join('\n');;
   }
@@ -1163,7 +872,7 @@ class Application {
 
 function mem(scope) {
   console.log("\n============================[ Memory dump  ]");
-  console.log("RAM Global storage: ", Scope.globalStorage);
+  console.log("RAM Global storage: ", scope.globalStorage);
   console.log("RAM  Local storage: ", scope.localStorage);
   console.log("Local Variables Locked: ", scope.lockedVariables);
   console.log("\n");
@@ -1175,16 +884,16 @@ class KeyboardDataFromSource {
     this.args = args;
   }
  
-  addKeyboardInputData() {
+  addKeyboardInputData(scope) {
 
     var argsResolved = this.args.map(function (arg) {
-      return arg.resolve(new Scope());
+      return arg.resolve(scope);
     });
 
     argsResolved.forEach(function (e) {
       //console.log(' attachInputData KEYBOARD_DATA: ', e.val);
       IOKeyboard.add(e.val);
-    });
+    }); 
 
   }
   }
@@ -1192,19 +901,11 @@ class KeyboardDataFromSource {
 
 
 module.exports = {
-  MNumber: MNumber,
-  MBoolean: MBoolean,
-  MString: MString,
-
-  BinaryOp: BinaryOp,
-  BooleanNotOp: BooleanNotOp,
 
   MSymbol: MSymbol,
 
   MSymbolTableAssign: MSymbolTableAssign,
   MSymbolTableFetch: MSymbolTableFetch,
-
-  Scope: Scope,
 
   Stmt_Assignment: Stmt_Assignment,
   
@@ -1233,5 +934,4 @@ module.exports = {
   SubProcedure: SubProcedure,
 
   KeyboardDataFromSource: KeyboardDataFromSource,
-
 };

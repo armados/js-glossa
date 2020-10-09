@@ -1,27 +1,16 @@
 
 var MO = require('./objects');
+var Atom = require("./atom");
 
 
-
-function binop(op,a,b) {  return new MO.BinaryOp(op, a.toAST(), b.toAST()); }
-
+function binop(op,a,b) {  return new Atom.BinaryOp(op, a.toAST(), b.toAST()); }
 
 var operation = {
-    floatlit: function (a, _, b)      { return new MO.MNumber(parseFloat(this.sourceString, 10));  },
-    intlit:   function (a)            { return new MO.MNumber(parseInt(this.sourceString, 10)); },
-    strlit:   function (_l, text, _r) { return new MO.MString(text.sourceString); },
-    boollit:  function (a)            { return new MO.MBoolean( this.sourceString == "ΑΛΗΘΗΣ" ? true : false ); },
+    floatlit: function (a, _, b)      { return new Atom.MNumber(parseFloat(this.sourceString, 10));  },
+    intlit:   function (a)            { return new Atom.MNumber(parseInt(this.sourceString, 10)); },
+    strlit:   function (_l, text, _r) { return new Atom.MString(text.sourceString); },
+    boollit:  function (a)            { return new Atom.MBoolean( this.sourceString == "ΑΛΗΘΗΣ" ? true : false ); },
     
-/*
-    Exp:         function(e)         { return e.toAST(); },
-    Exp1:        function(e)         { return e.toAST(); },
-    Exp2:        function(e)         { return e.toAST(); },
-    Exp3:        function(e)         { return e.toAST(); },
-    Exp4:        function(e)         { return e.toAST(); },
-    Exp5:        function(e)         { return e.toAST(); },
-    Exp6:        function(e)         { return e.toAST(); },
-    Exp7:        function(e)         { return e.toAST(); },
-*/
     Exp7_parens:      (_l, e, _r) => e.toAST(),
 
     Exp5_powop:       (x, _, y)   => binop('pow',x,y),
@@ -42,19 +31,16 @@ var operation = {
     Exp2_eq:          (a, _, b)   => binop('eq', a,b),
     Exp2_neq:         (a, _, b)   => binop('neq', a,b),
 
-    Exp6_not:         (_, a)      => new MO.BooleanNotOp(a.toAST() ),
+    Exp6_not:         (_, a)      => new Atom.BooleanNotOp(a.toAST()),
     Exp1_andop:       (a, _, b)   => binop('and',a,b),
     Exp_orop:         (a, _, b)   => binop('or',a,b),
 
-    Exp6_neq:         (_, a)      => new MO.BinaryOp('mul', a.toAST(), new MO.MNumber(-1) ),
-
-// ==========================
-
+    Exp6_neq:         (_, a)      => new Atom.BinaryOp('mul', a.toAST(), new Atom.MNumber(-1)),
 
     identifier:      function (a, b)         { return new MO.MSymbol(this.sourceString, null) },
     
     IdentifierTblAssign: function (a, _l, b, _r) { return new MO.MSymbolTableAssign(a.sourceString, b.toAST()); },
-    IdentifierTblFetch: function (a, _l, b, _r) { return new MO.MSymbolTableFetch(a.sourceString, b.toAST()); },
+    IdentifierTblFetch:  function (a, _l, b, _r) { return new MO.MSymbolTableFetch(a.sourceString, b.toAST()); },
 
     AssignExpr: (a, _, b) => new MO.Stmt_Assignment(a.toAST(), b.toAST()),
 
@@ -82,17 +68,18 @@ var operation = {
  //   TblCellWrite: (tblname, _1, tblindex, _2) => new MO.TblCellWrite(tblname.sourceString, tblindex.toAST()),
 //    TblCellRead:  (tblname, _1, tblindex, _2) => new MO.TblCellRead(tblname.sourceString, tblindex.toAST()),
 
-    Arguments:            (a) => a.asIteration().toAST(),
-    AtLeastOneArguments:  (a) => a.asIteration().toAST(),
+    Arguments:             (a) => a.asIteration().toAST(),
+    AtLeastOneArguments:   (a) => a.asIteration().toAST(),
 
-    AtLeastOneParameters: (a) => a.asIteration().toAST(),
-    Parameters:           (a) => a.asIteration().toAST(),
+    AtLeastOneParameters:  (a) => a.asIteration().toAST(),
+    Parameters:            (a) => a.asIteration().toAST(),
     
     VarParameters:         (a) => a.asIteration().toAST(),
     VarParametersAssign:   (a) => a.asIteration().toAST(),
     
 
-    Application: function(keyboardData, mainProg, subPrograms) { return new MO.Application(keyboardData.toAST(), mainProg.toAST(), subPrograms.toAST()); },
+    Application: function(keyboardData, mainProg, subPrograms) { 
+        return new MO.Application(keyboardData.toAST(), mainProg.toAST(), subPrograms.toAST()); },
 
     Program: function(_1, name, decl, _5, mBlock, _6)  {
         return new MO.Program(name.toAST(), decl.toAST(), mBlock.toAST()); },
@@ -110,24 +97,12 @@ var operation = {
 
     DefVariables: (varType, _2, vars)    => new MO.DefVariables(varType.sourceString , vars.toAST()),
 
-    Block: function(commands)  { 
-        return new MO.Block(commands.toAST());
-    },
-    FuncBlock: function(commands)  { 
-        return new MO.Block(commands.toAST());
-    },    
+    Block: function(commands)      { return new MO.Block(commands.toAST()); },
+    FuncBlock: function(commands)  { return new MO.Block(commands.toAST()); },    
 
-    Stmt_Write: function(_, tmp) { 
-        //console.log('===> Stmt_Write: function');
-        //console.log(tmp.sourceString);
-        return new MO.Stmt_Write(tmp.toAST());
-    },
+    Stmt_Write: function(_, tmp)   { return new MO.Stmt_Write(tmp.toAST()); },
     
-    Stmt_Read: function(_, tmp) { 
-        //console.log('===> Stmt_Read: function');
-        //console.log(tmp.sourceString);
-        return new MO.Stmt_Read(tmp.toAST());
-    }
+    Stmt_Read: function(_, tmp)    { return new MO.Stmt_Read(tmp.toAST()); }
 
 };
 

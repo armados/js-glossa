@@ -5,7 +5,7 @@ var path = require("path");
 
 var GlossaJS = require("../app.js");
 
-var filename = "../samples/sample10.glo";
+var filename = "../samples/sample7.glo";
 var sourceCode = fs.readFileSync(path.join(__dirname, filename)).toString();
 
 var inputKeyboardBuffer = null;

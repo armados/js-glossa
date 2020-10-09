@@ -2,7 +2,7 @@ const path = require("path");
 
 module.exports = {
     entry: {
-        glossajs: './app.js',
+        glossajs: './main.js',
     },
     output: {
         path: path.join(__dirname, 'dist'),

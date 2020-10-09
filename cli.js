@@ -2,11 +2,12 @@
 
 "use strict";
 
-var GlossaJS = require("./app");
+var GLO = require("./main");
 
 var GE = require("./src/gclasses");
 
 var fs = require("fs");
+
 var minimist = require("minimist");
 
 //FIXME:
@@ -31,9 +32,12 @@ try {
   throw new GE.GError("File not found");
 }
 
-var inputKeyboardBuffer = null;
-if (args["keyboard"]) inputKeyboardBuffer = args["keyboard"];
 
-var output = GlossaJS.parseGlossaJS(sourceCode, inputKeyboardBuffer);
+
+var pr1 = new GLO.GlossaJS();
+pr1.setSourceCode(sourceCode);
+if (args["keyboard"]) pr1.setInputBuffer(args["keyboard"]);
+var output = pr1.run();
+
 
 console.log(output);

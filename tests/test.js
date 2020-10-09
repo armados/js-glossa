@@ -3,12 +3,15 @@
 var fs = require("fs");
 var path = require("path");
 
-var GlossaJS = require("../app.js");
+var GLO = require("../main.js");
 
 var filename = "../samples/sample1.glo";
 var sourceCode = fs.readFileSync(path.join(__dirname, filename)).toString();
 
-var inputKeyboardBuffer = null;
-var output = GlossaJS.parseGlossaJS(sourceCode, inputKeyboardBuffer);
+var pr1 = new GLO.GlossaJS();
+pr1.setSourceCode(sourceCode);
+pr1.setInputBuffer(null);
+var output = pr1.run();
+
 
 console.log(output);

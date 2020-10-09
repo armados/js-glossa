@@ -97,8 +97,8 @@ var operation = {
 
     DefVariables: (varType, _2, vars)    => new MO.DefVariables(varType.sourceString , vars.toAST()),
 
-    Block: function(commands)      { return new MO.Block(commands.toAST()); },
-    FuncBlock: function(commands)  { return new MO.Block(commands.toAST()); },    
+    Block: function(commands)      { return new MO.Stmt_Block(commands.toAST()); },
+    FuncBlock: function(commands)  { return new MO.Stmt_Block(commands.toAST()); },    
 
     Stmt_Write: function(_, tmp)   { return new MO.Stmt_Write(tmp.toAST()); },
     

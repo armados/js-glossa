@@ -64,26 +64,16 @@ class STRTableNameBoolean extends STRTableName {}
 
 class SScope {
   constructor(parent) {
-
     this.localStorage = {};
     this.lockedVariables = [];
 
-
-    //this.parent = parent ? parent : null;
-
-    //if (typeof Scope.globalStorage == "undefined") {
-    //  Scope.globalStorage = {};
-    //}
     if (typeof this.globalStorage == "undefined") {
-      //console.log('Init for the first time this.globalStorage');
       this.globalStorage = {};
     }
 
     if (parent) {
-      //console.log('Copy global storage from parent');
       this.globalStorage = parent.globalStorage;
     }
-    
 
   }
 

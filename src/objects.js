@@ -67,7 +67,7 @@ class MSymbolTableFetch extends MSymbolTable {
 
 // ============================
 
-class Block {
+class Stmt_Block {
   constructor(block) {
     this.statements = block;
   }
@@ -203,8 +203,6 @@ class Stmt_ForLoop {
 
     scope.setSymbol(variable.name, new Atom.MNumber(v_initial));
     scope.addLock(variable.name);
-
-    //mem(scope);
 
     if (v_initial <= v_final && v_step > 0) {
       while (scope.getSymbol(variable.name).val <= v_final) {
@@ -898,7 +896,7 @@ module.exports = {
 
   Stmt_Assignment: Stmt_Assignment,
   
-  Block: Block,
+  Stmt_Block: Stmt_Block,
 
   Stmt_IfCond: Stmt_IfCond,
   Stmt_WhileLoop: Stmt_WhileLoop,

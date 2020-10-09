@@ -24,8 +24,6 @@ class STRBuiltinFunction extends STRFunctionMethod {}
 class STRUserFunction  extends STRFunctionMethod {}
 class STRUserProcedure extends STRProcedureMethod {}
 
-// ============
-
 class STRNumber   extends STRLocalScope{}
 class STRFloat    extends STRNumber {}
 class STRInt      extends STRFloat {} 
@@ -67,99 +65,89 @@ class SScope {
     this.localStorage = {};
     this.lockedVariables = [];
 
-    if (typeof this.globalStorage == "undefined") {
+    if (typeof this.globalStorage == "undefined")
       this.globalStorage = {};
-    }
 
-    if (parent) {
+    if (parent)
       this.globalStorage = parent.globalStorage;
-    }
-
   }
 
-  makeSubScope() {   return new SScope(this)  }
+  makeSubScope() {   
+    return new SScope(this);
+  }
 
   isLocked(name) {
     return this.lockedVariables.includes(name);
   }
 
   addLock(name) {
-      this.lockedVariables.push(name);
-      }
+    if (this.isLocked(name)) throw new GE.GError('Already locked symbol ' + name);
+
+    this.lockedVariables.push(name);
+  }
 
   removeLock(name) {
-        const index = this.lockedVariables.indexOf(name);
-        this.lockedVariables.splice(index, 1);
+    if (!this.isLocked(name)) throw new GE.GError('Symbol not locked ' + name);
+
+    const index = this.lockedVariables.indexOf(name);
+    this.lockedVariables.splice(index, 1);
   }
   
   hasSymbol(name) {
-
-    if (name in this.localStorage) return true;
-    if (name in this.globalStorage) return true;
-
-    return false;
+    return (name in this.localStorage) || (name in this.globalStorage);
   }
 
   addSymbol(name, obj) {
-    // Add new symbol in storage
-
     if (this.hasSymbol(name))
-      throw new GE.GError("addSymbol(): Symbol already exist in memory " + name);
+      throw new GE.GError("addSymbol(): Symbol already exist " + name);
       
-    if      (obj instanceof STRGlobalScope)
-        return this.globalStorage[name] = obj;
-    else if (obj instanceof STRLocalScope ||
-             obj instanceof STRTableName)
-          return this.localStorage[name] = obj;
-    else
-      throw new GE.GError('Unknown storage type');
-     
+    if (obj instanceof STRGlobalScope)
+      return this.globalStorage[name] = obj;
+    
+    if (obj instanceof STRLocalScope || obj instanceof STRTableName)
+      return this.localStorage[name] = obj;
+    
+    throw new GE.GError('Unknown storage type');
     }
 
   addSymbolFuncName(name, obj) {
-    // Special case when symbol has same name with function and variable
-    //console.log('=====> Scope Action: setSymbol()', name , ' <- ', obj);
-    //if(this.hasSymbol(name))
-    //    throw new GE.GError('addSymbol(): Symbol already exist in memory');
     if (obj instanceof STRLocalScope)
       return this.localStorage[name] = obj;
-     else
-      throw new GE.GError('Unknown storage type: ', name, obj);
+    
+    throw new GE.GError('Unknown storage type: ', name, obj);
   }
-
 
   setSymbol(name, obj) {
 
     if (!this.hasSymbol(name))
         throw new GE.GError('setSymbol(): Symbol missing from memory: ' + name);
-  
-
-  
-   /* if (this.getSymbolObject(name).isLocked())
-      throw new GE.GError('setSymbol(): Variable is in use: ' + name);
-*/
 
     if (!obj)
-        return this.localStorage[name];
-        var symType = null;
-             if (this.getSymbolObject(name) instanceof STRInt)
-          symType = "ΑΚΕΡΑΙΑ";
-        else if (this.getSymbolObject(name) instanceof STRFuncNameInt)
-          symType = "ΑΚΕΡΑΙΑ (ονομα συνάρτησης)";
-        else if      (this.getSymbolObject(name) instanceof STRFloat) 
-          symType = "ΠΡΑΓΜΑΤΙΚΗ";
-        else if (this.getSymbolObject(name) instanceof STRFuncNameFloat)
-          symType = "ΠΡΑΓΜΑΤΙΚΗ (ονομα συνάρτησης)";
-        else if (this.getSymbolObject(name) instanceof STRString)
-          symType = "ΧΑΡΑΚΤΗΡΑΣ";
-        else if (this.getSymbolObject(name) instanceof STRFuncNameString)
-          symType = "ΧΑΡΑΚΤΗΡΑΣ (ονομα συνάρτησης)";
-        else if (this.getSymbolObject(name) instanceof STRBoolean)
-          symType = "ΛΟΓΙΚΗ";
-        else if (this.getSymbolObject(name) instanceof STRFuncNameBoolean)
-          symType = "ΛΟΓΙΚΗ (ονομα συνάρτησης)";
-        else
-          throw new GE.GError('Unknown symbol type' + this.getSymbol(name));
+        return;
+
+    /* if (this.getSymbolObject(name).isLocked())
+      throw new GE.GError('setSymbol(): Variable is in use: ' + name);
+    */
+
+    var symType = null;
+    if      (this.getSymbolObject(name) instanceof STRInt)
+      symType = "ΑΚΕΡΑΙΑ";
+    else if (this.getSymbolObject(name) instanceof STRFuncNameInt)
+      symType = "ΑΚΕΡΑΙΑ (ονομα συνάρτησης)";
+    else if (this.getSymbolObject(name) instanceof STRFloat) 
+      symType = "ΠΡΑΓΜΑΤΙΚΗ";
+    else if (this.getSymbolObject(name) instanceof STRFuncNameFloat)
+      symType = "ΠΡΑΓΜΑΤΙΚΗ (ονομα συνάρτησης)";
+    else if (this.getSymbolObject(name) instanceof STRString)
+      symType = "ΧΑΡΑΚΤΗΡΑΣ";
+    else if (this.getSymbolObject(name) instanceof STRFuncNameString)
+      symType = "ΧΑΡΑΚΤΗΡΑΣ (ονομα συνάρτησης)";
+    else if (this.getSymbolObject(name) instanceof STRBoolean)
+      symType = "ΛΟΓΙΚΗ";
+    else if (this.getSymbolObject(name) instanceof STRFuncNameBoolean)
+      symType = "ΛΟΓΙΚΗ (ονομα συνάρτησης)";
+    else
+      throw new GE.GError('Unknown symbol type' + this.getSymbol(name));
     
 
     //console.log('setSymbol: ', name, symType, ' <--  ',  obj, obj.constructor.name);
@@ -201,27 +189,27 @@ class SScope {
 
 
     this.localStorage[name].set(obj);
-
-    return this.localStorage[name];
   }
 
   getSymbol(name) {
 
     if (name in this.localStorage) 
       return this.localStorage[name].get();
-    else if (name in this.globalStorage)
-      return this.globalStorage[name].get(); //FIXME: return Scope.globalStorage[name].get();
-    else 
-      throw new GE.GError('Symbol not found in storage');
+    
+    if (name in this.globalStorage)
+      return this.globalStorage[name].get();
+     
+    throw new GE.GError('Symbol not found in storage');
   }
   
   getSymbolObject(name) {
 
     if (name in this.localStorage)
       return this.localStorage[name];
-    else if (name in this.globalStorage)
-      return this.globalStorage[name]; //FIXME:  return Scope.globalStorage[name];
-    else
+    
+    if (name in this.globalStorage)
+      return this.globalStorage[name];
+    
     throw new GE.GError('Symbol not found in storage');
   }
 

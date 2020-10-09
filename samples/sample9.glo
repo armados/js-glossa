@@ -1,4 +1,4 @@
-! KEYBOARD_INPUT: 10,20,30
+! KEYBOARD_INPUT: 'hello'
 
 ΠΡΟΓΡΑΜΜΑ AskisiCode
 ΣΤΑΘΕΡΕΣ

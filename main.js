@@ -2,13 +2,13 @@
 
 var ohm = require("ohm-js");
 
-var STR = require("./src/storage");
+var GOhm = require("./src/grammar.js");
 var Semantics = require("./src/semantics");
+
 var GE = require("./src/gclasses");
 
 //var IO = require("./src/io");
 
-var GOhm = require("./src/grammar.js");
 
 
 class GlossaJS {

@@ -198,45 +198,38 @@ class Stmt_ForLoop {
 
     //console.log('Stmt_ForLoop: var: ', this.variable, ' initial: ', v_initial,'  final: ', v_final, '  step:', v_step);
 
-    //console.log('lock state: ', scope.getSymbolObject(this.variable.name).locked);
-
     if (scope.isLocked(variable.name))
       throw new GE.GError('Can not use variable - is in use');
 
-    scope.addLock(variable.name);
     scope.setSymbol(variable.name, new Atom.MNumber(v_initial));
+    scope.addLock(variable.name);
 
     //mem(scope);
 
     if (v_initial <= v_final && v_step > 0) {
       while (scope.getSymbol(variable.name).val <= v_final) {
 
-        //console.log('Stmt_ForLoop: ', scope.getSymbol(this.variable.name).val,'  got looped once');
-
         body.resolve(scope);
-        //if (val) output.push(val);
 
- //       scope.getSymbolObject(this.variable.name).Unlock();
+        scope.removeLock(variable.name);
         scope.setSymbol(
           this.variable.name,
           new Atom.MNumber(scope.getSymbol(variable.name).val + v_step)
         );
-  //      scope.getSymbolObject(this.variable.name).Lock();
+        scope.addLock(variable.name);
 
       }
     } else if (v_initial >= v_final && v_step < 0) {
       while (scope.getSymbol(variable.name).val >= v_final) {
-        //console.log('  got looped once var value: ', scope.getSymbol(this.variable.name).val);
-
-        
+    
         body.resolve(scope);
         
-        //if (val) output.push(val);
-
+        scope.removeLock(variable.name);
         scope.setSymbol(
           this.variable.name,
           new Atom.MNumber(scope.getSymbol(variable.name).val + v_step)
         );
+        scope.addLock(variable.name);
       }
     }
 
@@ -308,7 +301,7 @@ class Stmt_Write {
         }
       } catch (err) {
         console.log('Σφάλμα. Η μεταβλητή δεν έχει αρχικοποιηθεί. ' , argParam.name);
-        //throw new GE.GError("Parameter not initialized: " + argParam.name);
+        throw new GE.GError("Parameter not initialized: " + argParam.name);
       }
     });
 
@@ -550,13 +543,13 @@ class CallSubProcedure {
 
     //mem(scope);
 
-    console.log("P step1 called ====: ", this.fun.name, " with args ", this.args);
+    //console.log("P step1 called ====: ", this.fun.name, " with args ", this.args);
 
     //lookup the real function from the symbol
     if (!scope.hasSymbol(this.fun.name))
       throw new GE.GError("CallSubProcedure: cannot resolve symbol " + this.fun.name);
 
-    console.log("P step1 called ==mid step");
+    //console.log("P step1 called ==mid step");
 
     var argsResolved = this.args.map(function (arg) {
       //return arg.resolve(scope);
@@ -565,12 +558,12 @@ class CallSubProcedure {
 
     });
 
-    console.log("P step2 calcualted args ====: ", this.fun.name, " with argsResolved ", argsResolved);
+    //console.log("P step2 calcualted args ====: ", this.fun.name, " with argsResolved ", argsResolved);
 
     var fun = scope.getSymbol(this.fun.name);
-    console.log('before apply procedure');
+    //console.log('before apply procedure');
     var procExecArr = fun.apply(null, argsResolved);
-    console.log('after  apply procedure');
+    //console.log('after  apply procedure');
 
     var procScope  = procExecArr[0];
     var procParams = procExecArr[1];
@@ -780,8 +773,6 @@ class Program {
 
     var newScope = scope.makeSubScope();
 
-    //mem(newScope);
-
     // Program name is reserved word in global scope
     newScope.addSymbol(this.name.name, new STR.STRReservedName(null));
 
@@ -791,8 +782,6 @@ class Program {
     //mem(newScope);
 
     this.body.resolve(newScope);
-
-    //mem(newScope);
   }
 }
 

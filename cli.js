@@ -29,7 +29,7 @@ var sourceCode = null;
 try {
   sourceCode = fs.readFileSync(args["input"]).toString();
 } catch (e) {
-  throw new GE.GError("File not found");
+  throw new GE.GError("Input file not found");
 }
 
 

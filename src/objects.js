@@ -857,15 +857,6 @@ class Application {
 
 
 
-function mem(scope) {
-  console.log("\n============================[ Memory dump  ]");
-  console.log("RAM Global storage: ", scope.globalStorage);
-  console.log("RAM  Local storage: ", scope.localStorage);
-  console.log("Local Variables Locked: ", scope.lockedVariables);
-  console.log("\n");
-}
-
-
 class KeyboardDataFromSource {
   constructor(args) {
     this.args = args;
@@ -887,6 +878,15 @@ class KeyboardDataFromSource {
 
 
 
+  function mem(scope) {
+    console.log("\n============================[ Memory dump  ]");
+    console.log("RAM Global storage: ", scope.globalStorage);
+    console.log("RAM  Local storage: ", scope.localStorage);
+    console.log("Local Variables Locked: ", scope.lockedVariables);
+    console.log("\n");
+  }
+  
+
 module.exports = {
 
   MSymbol: MSymbol,
@@ -894,20 +894,18 @@ module.exports = {
   MSymbolTableAssign: MSymbolTableAssign,
   MSymbolTableFetch: MSymbolTableFetch,
 
+  Stmt_Block: Stmt_Block,
+  
   Stmt_Assignment: Stmt_Assignment,
   
-  Stmt_Block: Stmt_Block,
+  Stmt_Write: Stmt_Write,
+  Stmt_Read: Stmt_Read,
 
   Stmt_IfCond: Stmt_IfCond,
+
   Stmt_WhileLoop: Stmt_WhileLoop,
   Stmt_Do_WhileLoop: Stmt_Do_WhileLoop,
   Stmt_ForLoop: Stmt_ForLoop,
-
-  CallSubFunction: CallSubFunction,
-  CallSubProcedure: CallSubProcedure,
-
-  Stmt_Write: Stmt_Write,
-  Stmt_Read: Stmt_Read,
 
   Application: Application,
   Program: Program,
@@ -916,6 +914,9 @@ module.exports = {
 
   DefConstant: DefConstant,
   DefVariables: DefVariables,
+
+  CallSubFunction: CallSubFunction,
+  CallSubProcedure: CallSubProcedure,
 
   SubFunction: SubFunction,
   SubProcedure: SubProcedure,

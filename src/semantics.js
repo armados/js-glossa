@@ -15,11 +15,11 @@ var operation = {
 
     Exp5_powop:       (x, _, y)   => binop('pow',x,y),
 
-    Exp4_mul:         (x, op, y)  => binop('mul',x,y),
-    Exp4_div:         (x, op, y)  => binop('div',x,y),
+    Exp4_mul:         (x, _, y)   => binop('mul',x,y),
+    Exp4_div:         (x, _, y)   => binop('div',x,y),
 
-    Exp4_intdiv:      (x, op, y)  => binop('intdiv',x,y),
-    Exp4_intmod:      (x, op, y)  => binop('intmod',x,y),
+    Exp4_intdiv:      (x, _, y)   => binop('intdiv',x,y),
+    Exp4_intmod:      (x, _, y)   => binop('intmod',x,y),
 
     Exp3_add:         (x, _, y)   => binop('add',x,y),
     Exp3_sub:         (x, _, y)   => binop('sub',x,y),

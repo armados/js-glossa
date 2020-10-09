@@ -44,14 +44,18 @@ $(document).ready(function () {
     $("#run").removeClass("disabled");
     $("#run").prop("disabled", false);
 
-    var progoutput = null;
+    var output = null;
     try {
-      console.log('getvalue: ', editor2.getValue());
-      progoutput = GlossaJS.parseGlossaJS(editorCode, editor2.getValue());
+
+      var pr1 = new GLO.GlossaJS();
+      pr1.setSourceCode(editorCode);
+      if ( editor2.getValue() != '') pr1.setInputBuffer(editor2.getValue());
+      output = pr1.run();
+
     } catch (e) {
-      progoutput = e.message;
+      output = e.message;
     }
 
-    $("#result").html(progoutput);
+    $("#result").html(output);
   });
 });

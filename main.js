@@ -17,8 +17,8 @@ class GlossaJS {
     this.inputBuffer = null;
   }
 
-  setSourceCode(data) { this.sourceCode = data; }
-  getSourceCode()     { return this.sourceCode; }
+  setSourceCode(data)  { this.sourceCode = data; }
+  getSourceCode()      { return this.sourceCode; }
 
   setInputBuffer(data) { this.inputBuffer = data; }
   getInputBuffer()     { return this.inputBuffer; }
@@ -41,7 +41,6 @@ class GlossaJS {
       console.log("===> Error!");
       throw new GE.GError("Error in toAST to give results");
     }
-
 
     return result.resolve(this.inputBuffer);
   }

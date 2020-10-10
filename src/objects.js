@@ -112,7 +112,7 @@ class Stmt_IfCond {
       for (var i = 0; i < condElseIf.length; ++i) {
         var condResult = condElseIf[i].resolve(scope);
 
-        if (!condResult instanceof Atom.MBoolean)
+        if (!(condResult instanceof Atom.MBoolean))
           throw new GE.GError("Condition must be Boolean");
 
         if (condResult.val == true) {
@@ -134,7 +134,7 @@ class Stmt_WhileLoop {
     while (true) {
       var condResult = this.cond.resolve(scope);
 
-      if (!condResult instanceof Atom.MBoolean)
+      if (!(condResult instanceof Atom.MBoolean))
         throw new GE.GError("Condition must be Boolean");
 
       if (condResult.jsEquals(false))
@@ -156,7 +156,7 @@ class Stmt_Do_WhileLoop {
 
       var condResult = this.cond.resolve(scope);
 
-      if (!condResult instanceof Atom.MBoolean)
+      if (!(condResult instanceof Atom.MBoolean))
         throw new GE.GError("Condition must be Boolean");
 
       if (condResult.jsEquals(true))
@@ -198,8 +198,8 @@ class Stmt_ForLoop {
 
     //console.log('Stmt_ForLoop: var: ', this.variable, ' initial: ', v_initial,'  final: ', v_final, '  step:', v_step);
 
-    if (scope.isLocked(variable.name))
-      throw new GE.GError('Can not use variable - is in use');
+    //if (scope.isLocked(variable.name))
+    //  throw new GE.GError('Can not use variable - is in use');
 
     scope.setSymbol(variable.name, new Atom.MNumber(v_initial));
     scope.addLock(variable.name);
@@ -241,32 +241,14 @@ class Stmt_Assignment {
     this.val = val;
   }
   resolve(scope) {
-    //console.log('== Stmt_Assignment: BEFORE RESOLVE symbol: ', this.symbol, ' value: ', this.val);
-    var valResolved = this.val.resolve(scope);
-    //console.log('== Stmt_Assignment: AFTER RESOLVE symbol: ', this.symbol, ' value: ', valResolved);
-
     var sym = this.symbol;
 
-    if (scope.isLocked(sym.name))
-      throw new GE.GError('Can not use variable - is in use');
-
-    if (sym instanceof MSymbolTableAssign) { 
+    if (sym instanceof MSymbolTableAssign)
         sym = this.symbol.resolve(scope);
-    }
- 
-    //console.log('== Stmt_Assignment: AFTER RESOLVE symbol: ', sym, ' value: ', valResolved);
 
-    /* ?????????
-    if (valResolved instanceof MSymbol) 
-      valResolved = valResolved.resolve(scope);
-    else if (valResolved instanceof MSymbolTable) 
-      valResolved = valResolved.resolve(scope);
-      */
-     
+    var valResolved = this.val.resolve(scope);
+
     scope.setSymbol(sym.name, valResolved);
-
-    //console.log('AFTER Stmt_Assignment: ', sym.name, '  has now value: ', scope.getSymbol(sym.name));
-    //scope.printMemory();
   }
 }
 
@@ -299,7 +281,7 @@ class Stmt_Write {
         }
       } catch (err) {
         console.log('Σφάλμα. Η μεταβλητή δεν έχει αρχικοποιηθεί. ' , argParam.name);
-        throw new GE.GError("Parameter not initialized: " + argParam.name);
+        throw new GE.GError("Σφάλμα. Η μεταβλητή δεν έχει αρχικοποιηθεί. " + argParam.name);
       }
     });
 
@@ -314,29 +296,20 @@ class Stmt_Read {
   resolve(scope) {
     var inputData = [];
 
-    //console.log("read params: ", this.params);
-
     this.params.forEach(function (param) {
-      //console.log("param: ", param);
 
-      if (scope.isLocked(param.name))
-        throw new GE.GError('Can not use variable - is in use');
-
-      // Check if is a table cell - if true fetch real symbol
+      // Check if is a table cell fetch real symbol
       if (param instanceof MSymbolTableAssign)
           param = param.resolve(scope);
 
-      //console.log("Read from keyboard: ", param.name);
-
       var data = IOKeyboard.getSingleInputData();
-      //console.log("got from keyboard: ", data);
 
       inputData.push("*** Εισαγωγή τιμής από πληκτρολόγιο: [" + data + "]");
 
       if      (typeof(data) == 'string')  var sym = new Atom.MString(data);
       else if (typeof(data) == 'number')  var sym = new Atom.MNumber(data);
       else 
-        throw new GE.GError('Unknown input value type: ' + data + typeof(data));
+        throw new GE.GError('Unknown input value type: ' + data);
             
       scope.setSymbol(param.name, sym);
     });
@@ -346,22 +319,15 @@ class Stmt_Read {
 }
 
 class DefDeclarations {
-  constructor(statheres, metavlites) {
-    this.statheres = statheres;
-    this.metavlites = metavlites;
+  constructor(consts, vars) {
+    this.consts = consts;
+    this.vars = vars;
   }
   resolve(scope) {
 
-    //console.log("===> Declaring constants");
-    if (this.statheres[0]) this.statheres[0].forEach(function (e) {
-      e.resolve(scope);
-    });
+    if (this.consts[0]) this.consts[0].forEach( (e) => e.resolve(scope));
 
-    //console.log("===> Declaring variables");
-    if(this.metavlites[0]) this.metavlites[0].forEach(function (e) {
-      e.resolve(scope);
-    });
-
+    if (this.vars[0])   this.vars[0].forEach( (e) => e.resolve(scope));
   }
 }
 
@@ -371,7 +337,6 @@ class DefConstant {
     this.val = val;
   }
   resolve(scope) {
-    //console.log('===> DefConstant: Create constants symbol name: ', this.sym.name, ' with value: ', this.val.resolve(scope));
 
     var obj = this.val.resolve(scope);
   
@@ -386,8 +351,8 @@ class DefConstant {
     else
       throw new GE.GError('Unknown constant type');
 
-      scope.addSymbol(this.sym.name, newObj )
-      scope.addLock(this.sym.name);
+    scope.addSymbol(this.sym.name, newObj )
+    scope.addLock(this.sym.name);
   }
 }
 
@@ -456,27 +421,27 @@ class DefVariables {
             //console.log('   Create table element : ', i);
             scope.addSymbol(e.name + "[" + i + "]", helperCreateCellFromType(varType));
           }
-      } else if (tblDimensions == 2) {
+        } else if (tblDimensions == 2) {
+            var tblsize1 = argsResolved[0];
+            var tblsize2 = argsResolved[1];
+            for (var i = 1; i <= tblsize1; ++i) {
+              for (var j = 1; j <= tblsize2; ++j) {
+                //console.log('   Create table element : ', i, ' ', j);
+              scope.addSymbol(e.name + "[" + i + "][" + j + "]", helperCreateCellFromType(varType));
+            }
+          }
+        } else if (tblDimensions == 3) {
           var tblsize1 = argsResolved[0];
           var tblsize2 = argsResolved[1];
+          var tblsize3 = argsResolved[2];
           for (var i = 1; i <= tblsize1; ++i) {
             for (var j = 1; j <= tblsize2; ++j) {
-              //console.log('   Create table element : ', i, ' ', j);
-            scope.addSymbol(e.name + "[" + i + "][" + j + "]", helperCreateCellFromType(varType));
+              for (var k = 1; k <= tblsize3; ++k) {
+                //console.log('   Create table element : ', i, ' ', j);
+            scope.addSymbol(e.name + "[" + i + "][" + j + "][" + k + "]", helperCreateCellFromType(varType));
           }
         }
-      } else if (tblDimensions == 3) {
-        var tblsize1 = argsResolved[0];
-        var tblsize2 = argsResolved[1];
-        var tblsize3 = argsResolved[2];
-        for (var i = 1; i <= tblsize1; ++i) {
-          for (var j = 1; j <= tblsize2; ++j) {
-            for (var k = 1; k <= tblsize3; ++k) {
-              //console.log('   Create table element : ', i, ' ', j);
-          scope.addSymbol(e.name + "[" + i + "][" + j + "][" + k + "]", helperCreateCellFromType(varType));
-        }
       }
-    }
     } else
         throw new GE.GError('Unsupported table dimensions');
 
@@ -495,7 +460,6 @@ class DefVariables {
       throw new GE.GError('Cannot detect variable type');
   
       return scope.addSymbol(e.name, ctype);
-
     }); 
   }
 }
@@ -509,24 +473,18 @@ class CallSubFunction {
   resolve(scope) {
     //console.log("F step1 called ====: ", this.fun.name, " with args ", this.args);
 
-    //lookup the real function from the symbol
     if (!scope.hasSymbol(this.fun.name))
       throw new GE.GError("CallSubFunction: cannot resolve symbol " + this.fun.name);
 
-    var argsResolved = this.args.map(function (arg) {
-      return arg.resolve(scope);
-    });
+    var argsResolved = this.args.map((arg) => arg.resolve(scope));
 
-    //console.log("F step2 calcualted args ====: ", this.fun.name, " with args ", argsResolved);
+    var sendData = [];
+    sendData[0] = argsResolved;
+    sendData[1] = scope;
 
     var fun = scope.getSymbol(this.fun.name);
 
-    var retValue = fun.apply(this, argsResolved);
-
-    //console.log('F step3 returned  ====: ', retValue);
-
-    // Return function value
-    return retValue;
+    return fun.apply(this, sendData);
   }
 }
 
@@ -547,46 +505,54 @@ class CallSubProcedure {
     if (!scope.hasSymbol(this.fun.name))
       throw new GE.GError("CallSubProcedure: cannot resolve symbol " + this.fun.name);
 
-    //console.log("P step1 called ==mid step");
-
-    var argsResolved = this.args.map(function (arg) {
-      //return arg.resolve(scope);
-
-        return arg.resolve(scope);
-
-    });
-
-    //console.log("P step2 calcualted args ====: ", this.fun.name, " with argsResolved ", argsResolved);
+    var argsResolved = this.args.map((arg) => arg.resolve(scope));
 
     var fun = scope.getSymbol(this.fun.name);
-    //console.log('before apply procedure');
-    var procExecArr = fun.apply(null, argsResolved);
-    //console.log('after  apply procedure');
 
-    var procScope  = procExecArr[0];
-    var procParams = procExecArr[1];
- 
+    var sendData = [];
+    sendData[0] = argsResolved;
+    sendData[1] = scope;
+
+    var recvData = fun.apply(null, sendData);
+
+    var procScope  = recvData[0];
+    var procParams = recvData[1];
+
     this.args.map(function (arg, i) {
-      
-      if  (arg instanceof MSymbol) {
+      if (argsResolved[i] instanceof STR.STRTableName) {
+        //console.log('detected table arg is : ', arg);
+
+        // Return symbol from arg cell name
+        var tblDimensions = scope.getSymbol(arg.name).getSize().length;
+
+        if (tblDimensions == 1) {
+          var tblsize1 = scope.getSymbol(arg.name).getSize()[0];
+          for (var j = 1; j <= tblsize1; ++j) {
+            scope.setSymbol(arg.name + "[" + j + "]", procScope.getSymbol(procParams[i].name + "[" + j + "]"));
+          }
+        } else if (tblDimensions == 2) {
+            var tblsize1 = scope.getSymbol(arg.name).getSize()[0];
+            var tblsize2 = scope.getSymbol(arg.name).getSize()[1];
+            for (var i = 1; i <= tblsize1; ++i) {
+              for (var j = 1; j <= tblsize2; ++j) {
+              scope.addSymbol(arg.name + "[" + i + "][" + j + "]", procScope.getSymbol(procParams[i].name + "[" + i + "][" + j + "]"));
+            }
+          }
+        }
+
+
+      }
+      else if  (arg instanceof MSymbol) {
 
         if (scope.isLocked(arg.name) == true &&
             scope.getSymbol(arg.name) != procScope.getSymbol(procParams[i].name))
           throw new GE.GError('Procedure return values try to change variable which is in use');
     
         scope.setSymbol(arg.name, procScope.getSymbol(procParams[i].name));
-
-      }
-      else if (arg instanceof STRTableName) {
-
-        // Return symbol from arg cell name
-        console.log('send whole table');
-        scope.setSymbol(arg.cellName, procScope.getSymbol(procParams[i].name));
       }
 
     });
 
-    //console.log('P step3 returned  ====: ', procExecArr);
   }
 }
 
@@ -607,9 +573,12 @@ class SubFunction {
     var decl = this.decl;
     var body = this.body;
 
-    scope.addSymbol(name, new STR.STRUserFunction(function (...args) {
+    scope.addSymbol(name, new STR.STRUserFunction(function (...arrargs) {
       //console.log('func called ', name, ' with args: ', args);
 
+      var args  = arrargs[0];
+      var parentScope = arrargs[1];
+   
      if (args.length != params.length)
         throw new GE.GError(
           "Error different number of parameters for function call"
@@ -617,41 +586,67 @@ class SubFunction {
 
       var scope2 = scope.makeSubScope();
 
-      if      (funType == 'ΑΚΕΡΑΙΑ')
-        var ftype = new STR.STRFuncNameInt( null );
-      else if (funType == 'ΠΡΑΓΜΑΤΙΚΗ')
-        var ftype = new STR.STRFuncNameFloat( null );
-      else if (funType == 'ΧΑΡΑΚΤΗΡΑΣ')
-        var ftype = new STR.STRFuncNameString( null );
-      else if (funType == 'ΛΟΓΙΚΗ')
-        var ftype = new STR.STRFuncNameBoolean( null );
-      else
-        throw new GE.GError('Cannot detect function return value type');      
+      var ftype = null;
+
+      switch (funType) {
+        case 'ΑΚΕΡΑΙΑ':    ftype = new STR.STRFuncNameInt( null ); break;
+        case 'ΠΡΑΓΜΑΤΙΚΗ': ftype = new STR.STRFuncNameFloat( null ); break;
+        case 'ΧΑΡΑΚΤΗΡΑΣ': ftype = new STR.STRFuncNameString( null ); break;
+        case 'ΛΟΓΙΚΗ':     ftype = new STR.STRFuncNameBoolean( null ); break;
+        default:
+          throw new GE.GError('Cannot detect function return value type');
+
+      }
+    
       
-      // Crate function name variable in local scope
+      // Add function name as a variable
       scope2.addSymbolFuncName(name, ftype);
 
       // Declare constants and variables
       decl.resolve(scope2);
 
-      // Sent values to function
+      // Sent values to procedure
       params.forEach(function (param, i) {
         if (!scope2.hasSymbol(param.name))
-        throw new GE.GError(
-          "Parameter not declared inside procedure: " + param.name
-        );
+          throw new GE.GError(
+            "Parameter not declared inside procedure: " + param.name
+          );
+        
+        if (!(args[i] instanceof STR.STRTableName))
+          scope2.setSymbol(param.name, args[i]);
+        else {
 
-        scope2.setSymbol(param.name, args[i]);
+          if (scope2.getSymbol(param.name).constructor.name != args[i].constructor.name)
+            throw new GE.GError('Tables not same type');
+          
+          if (!scope2.getSymbol(param.name).arraySizeEquals(args[i]))
+            throw new GE.GError('Tables not same size');
+
+          var tblDimensions = scope2.getSymbol(param.name).getSize().length;
+
+          if (tblDimensions == 1) {
+            var tblsize1 = args[i].getSize()[0];
+            for (var k = 1; k <= tblsize1; ++k) {
+              scope2.setSymbol(param.name + "[" + k + "]", parentScope.getSymbol(args[i].tblname + "[" + k + "]"));
+            }
+          } else if (tblDimensions == 2) {
+              var tblsize1 = argsResolved[0];
+              var tblsize2 = argsResolved[1];
+              for (var k = 1; k <= tblsize1; ++k) {
+                for (var l = 1; l <= tblsize2; ++l) {
+                  scope2.setSymbol(param.name + "[" + k + "][" + l + "]", parentScope.getSymbol(args[i].tblname + "[" + k + "][" + l + "]"));
+                }
+            }
+          }
+
+        }
       });
 
-      //scope2.printMemory();
 
       body.resolve(scope2);
 
-      //scope2.printMemory();
-
       if (!scope2.getSymbol(name))
-        throw new GE.GError("Function must return a value in the func name");
+        throw new GE.GError("Σφάλμα. Η συνάρτηση δεν επέστρεψε κάποια τιμή με το όνομά της");
 
       return scope2.getSymbol(name);
     }));
@@ -672,8 +667,11 @@ class SubProcedure {
     var decl = this.decl;
     var body = this.body;
 
-    scope.addSymbol(name, new STR.STRUserProcedure(function (...args) {
+    scope.addSymbol(name, new STR.STRUserProcedure(function (...arrargs) {
       //console.log('proc called ', name, ' with args: ', args);
+
+      var args  = arrargs[0];
+      var parentScope = arrargs[1];
 
       if (args.length != params.length)
         throw new GE.GError(
@@ -684,7 +682,7 @@ class SubProcedure {
 
       // Declare constants and variables
       decl.resolve(scope2);
-console.log('inside procedure ready to start commands');
+
       // Sent values to procedure
       params.forEach(function (param, i) {
         if (!scope2.hasSymbol(param.name))
@@ -692,69 +690,40 @@ console.log('inside procedure ready to start commands');
             "Parameter not declared inside procedure: " + param.name
           );
         
-          if (!(args[i] instanceof STR.STRTableName))
-            scope2.setSymbol(param.name, args[i]);
-            else {
-              console.log('Check tables...');
-              console.log(args[i]);
+        if (!(args[i] instanceof STR.STRTableName))
+          scope2.setSymbol(param.name, args[i]);
+        else {
 
-              if (scope2.getSymbol(param.name).constructor.name != args[i].constructor.name)
-                throw new GE.GError('Tables not same type');
-              
-              if (!scope2.getSymbol(param.name).arraySizeEquals(args[i]))
-                throw new GE.GError('Tables not same size');
+          if (scope2.getSymbol(param.name).constructor.name != args[i].constructor.name)
+            throw new GE.GError('Tables not same type');
+          
+          if (!scope2.getSymbol(param.name).arraySizeEquals(args[i]))
+            throw new GE.GError('Tables not same size');
 
-                var tblDimensions = scope2.getSymbol(param.name).getSize().length;
+          var tblDimensions = scope2.getSymbol(param.name).getSize().length;
 
-                if (tblDimensions == 1) {
-                  var tblsize1 = args[i].getSize()[0];
-                  for (var j = 1; j <= tblsize1; ++j) {
-                    console.log(param.name + "[" + j + "]");
-                    console.log(args[i].tblname + "[" + j + "]");
-                    console.log(scope.getSymbol(args[i].tblname + "[" + j + "]"));
-                    scope2.setSymbol(param.name + "[" + j + "]", scope.getSymbol(args[i].tblname + "[" + j + "]"));
-                  }
-              } else if (tblDimensions == 2) {
-                  var tblsize1 = argsResolved[0];
-                  var tblsize2 = argsResolved[1];
-                  for (var i = 1; i <= tblsize1; ++i) {
-                    for (var j = 1; j <= tblsize2; ++j) {
-                      //console.log('   Create table element : ', i, ' ', j);
-                    scope.addSymbol(e.name + "[" + i + "][" + j + "]", helperCreateCellFromType(varType));
-                  }
+          if (tblDimensions == 1) {
+            var tblsize1 = args[i].getSize()[0];
+            for (var k = 1; k <= tblsize1; ++k) {
+              scope2.setSymbol(param.name + "[" + k + "]", parentScope.getSymbol(args[i].tblname + "[" + k + "]"));
+            }
+          } else if (tblDimensions == 2) {
+              var tblsize1 = argsResolved[0];
+              var tblsize2 = argsResolved[1];
+              for (var k = 1; k <= tblsize1; ++k) {
+                for (var l = 1; l <= tblsize2; ++l) {
+                  scope2.setSymbol(param.name + "[" + k + "][" + l + "]", parentScope.getSymbol(args[i].tblname + "[" + k + "][" + l + "]"));
                 }
-              } else if (tblDimensions == 3) {
-                var tblsize1 = argsResolved[0];
-                var tblsize2 = argsResolved[1];
-                var tblsize3 = argsResolved[2];
-                for (var i = 1; i <= tblsize1; ++i) {
-                  for (var j = 1; j <= tblsize2; ++j) {
-                    for (var k = 1; k <= tblsize3; ++k) {
-                      //console.log('   Create table element : ', i, ' ', j);
-                  scope.addSymbol(e.name + "[" + i + "][" + j + "][" + k + "]", helperCreateCellFromType(varType));
-                }
-              }
             }
-            }
+          }
 
-
-
-
-
-
-
-            }
+        }
       });
-
-      //scope2.printMemory();
 
       body.resolve(scope2);
 
-      //scope2.printMemory();
-
       var procExecArr = [scope2, params];
 
-      // Return scope for precessing 
       return procExecArr;
     }));
   }
@@ -771,13 +740,9 @@ class Program {
 
     var newScope = scope.makeSubScope();
 
-    // Program name is reserved word in global scope
     newScope.addSymbol(this.name.name, new STR.STRReservedName(null));
 
-    // Declare constants and variables
     this.decl.resolve(newScope);
-
-    //newScope.printMemory();
 
     this.body.resolve(newScope);
   }
@@ -847,11 +812,9 @@ class Application {
     if (this.subPrograms.length)
       this.subPrograms.forEach((e) => e.resolve(scope));
 
-    //scope.printMemory();
-
     this.mainProg.resolve(scope);
 
-    return IOScreen.get().join('\n');;
+    return IOScreen.get().join('\n');
   }
 }
 
@@ -864,17 +827,11 @@ class KeyboardDataFromSource {
  
   addKeyboardInputData(scope) {
 
-    var argsResolved = this.args.map(function (arg) {
-      return arg.resolve(scope);
-    });
+    var argsResolved = this.args.map((arg) => arg.resolve(scope));
 
-    argsResolved.forEach(function (e) {
-      //console.log(' attachInputData KEYBOARD_DATA: ', e.val);
-      IOKeyboard.add(e.val);
-    }); 
-
+    argsResolved.forEach((e) => IOKeyboard.add(e.val)); 
   }
-  }
+}
 
 
   

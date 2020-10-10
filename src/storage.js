@@ -179,7 +179,7 @@ class SScope {
     else if  (this.getSymbolObject(name) instanceof STRString ||
               this.getSymbolObject(name) instanceof STRFuncNameString) {
                   if (!(obj instanceof STRString || obj instanceof Atom.MString)) {
-                    //console.log('name: ', name, 'obj: ', this.getSymbolObject(name), 'obj2: ', obj);
+                    console.log('name: ', name, 'obj: ', this.getSymbolObject(name), 'obj2 value: ', obj);
         throw new GE.GError('Variable type not match - expected string');
                   }
 

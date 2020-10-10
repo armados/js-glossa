@@ -743,37 +743,45 @@ class Application {
 
     IOScreen.data = []; // FIXME: 
 
-    scope.addSymbol("Α_Μ",  new STR.STRBuiltinFunction(function (A) {
-      return new Atom.MNumber(Math.trunc(A.val / 1));
+    scope.addSymbol("Α_Μ",  new STR.STRBuiltinFunction(function (arrArgs) {
+      var A = arrArgs[0];
+      return new Atom.MNumber(Math.trunc(A.val /1));
     }));
     
-    scope.addSymbol("Α_Τ",  new STR.STRBuiltinFunction(function (A) {
+    scope.addSymbol("Α_Τ",  new STR.STRBuiltinFunction(function (arrArgs) {
+      var A = arrArgs[0];
       if (A.val < 0) return new Atom.MNumber(-A.val);
       return A;
     }));
     
-    scope.addSymbol("Τ_Ρ",  new STR.STRBuiltinFunction(function (A) {
+    scope.addSymbol("Τ_Ρ",  new STR.STRBuiltinFunction(function (arrArgs) {
+      var A = arrArgs[0];
       if (A.val < 0) throw new GE.GError("Δεν ορίζεται ρίζα αρνητικού αριθμού");
       return new Atom.MNumber( Math.sqrt(A.val) );
     }));
     
-    scope.addSymbol("ΗΜ",  new STR.STRBuiltinFunction(function (A) {
+    scope.addSymbol("ΗΜ",  new STR.STRBuiltinFunction(function (arrArgs) {
+      var A = arrArgs[0];
       return new Atom.MNumber( Math.sin(A.val) );
     }));
     
-    scope.addSymbol("ΣΥΝ",  new STR.STRBuiltinFunction(function (A) {
+    scope.addSymbol("ΣΥΝ",  new STR.STRBuiltinFunction(function (arrArgs) {
+      var A = arrArgs[0];
       return new Atom.MNumber( Math.cos(A.val) );
     }));
     
-    scope.addSymbol("Ε",  new STR.STRBuiltinFunction(function (A) {
+    scope.addSymbol("Ε",  new STR.STRBuiltinFunction(function (arrArgs) {
+      var A = arrArgs[0];
       return new Atom.MNumber( Math.exp(A.val) );
     }));
     
-    scope.addSymbol("ΕΦ",  new STR.STRBuiltinFunction(function (A) {
+    scope.addSymbol("ΕΦ",  new STR.STRBuiltinFunction(function (arrArgs) {
+      var A = arrArgs[0];
       return new Atom.MNumber( Math.tan(A.val) );
     }));
     
-    scope.addSymbol("ΛΟΓ",  new STR.STRBuiltinFunction(function (A) {
+    scope.addSymbol("ΛΟΓ",  new STR.STRBuiltinFunction(function (arrArgs) {
+      var A = arrArgs[0];
       return new Atom.MNumber( Math.log(A.val) );
     }));
 

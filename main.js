@@ -9,7 +9,6 @@ var GE = require("./src/gclasses");
 
 //var IO = require("./src/io");
 
-
 class GlossaJS {
   constructor() {
     this.sourceCode = null;

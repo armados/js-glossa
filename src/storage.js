@@ -62,11 +62,9 @@ class STRTableNameBoolean extends STRTableName {}
 
 class SScope {
   constructor(parent) {
-    this.localStorage = {};
+    this.globalStorage = {};
+    this.localStorage  = {};
     this.lockedVariables = [];
-
-    if (typeof this.globalStorage == "undefined")
-      this.globalStorage = {};
 
     if (parent)
       this.globalStorage = parent.globalStorage;
@@ -92,6 +90,16 @@ class SScope {
     const index = this.lockedVariables.indexOf(name);
     this.lockedVariables.splice(index, 1);
   }
+
+  
+  printMemory() {
+    console.log("\n============================[ Memory dump  ]");
+    console.log("RAM Global storage: ", this.globalStorage);
+    console.log("RAM  Local storage: ", this.localStorage);
+    console.log("Local Variables Locked: ", this.lockedVariables);
+    console.log("\n");
+  }
+  
   
   hasSymbol(name) {
     return (name in this.localStorage) || (name in this.globalStorage);
@@ -125,11 +133,11 @@ class SScope {
     if (!obj)
         return;
 
-    /* if (this.getSymbolObject(name).isLocked())
-      throw new GE.GError('setSymbol(): Variable is in use: ' + name);
-    */
+    if (this.isLocked(name))
+      throw new GE.GError('setSymbol(): Locked variable. In use: ' + name);
 
     var symType = null;
+
     if      (this.getSymbolObject(name) instanceof STRInt)
       symType = "ΑΚΕΡΑΙΑ";
     else if (this.getSymbolObject(name) instanceof STRFuncNameInt)
@@ -145,7 +153,7 @@ class SScope {
     else if (this.getSymbolObject(name) instanceof STRBoolean)
       symType = "ΛΟΓΙΚΗ";
     else if (this.getSymbolObject(name) instanceof STRFuncNameBoolean)
-      symType = "ΛΟΓΙΚΗ (ονομα συνάρτησης)";
+      symType = "ΛΟΓΙΚΗ (όνομα συνάρτησης)";
     else
       throw new GE.GError('Unknown symbol type' + this.getSymbol(name));
     
@@ -159,7 +167,6 @@ class SScope {
 
       if (!(Number(obj.val) === obj.val && obj.val % 1 === 0))
         throw new GE.GError('Variable type not match - expected int');
-
 
     }
     else if (this.getSymbolObject(name) instanceof STRFloat ||
@@ -176,7 +183,6 @@ class SScope {
         throw new GE.GError('Variable type not match - expected string');
                   }
 
-
     }
     else if  (this.getSymbolObject(name) instanceof STRBoolean  ||
               this.getSymbolObject(name) instanceof STRFuncNameBoolean) {
@@ -186,7 +192,6 @@ class SScope {
     }
     else
       throw new GE.GError('Unknown symbol type' + this.getSymbol(name));
-
 
     this.localStorage[name].set(obj);
   }

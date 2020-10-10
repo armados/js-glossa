@@ -72,7 +72,7 @@ class Stmt_Block {
     this.statements = block;
   }
   resolve(scope) {
-    //mem(scope);
+    //scope.printMemory();
     this.statements.forEach(function (smtp) {
       //console.log('==========> User command smtp: ', smtp);
       smtp.resolve(scope);
@@ -266,7 +266,7 @@ class Stmt_Assignment {
     scope.setSymbol(sym.name, valResolved);
 
     //console.log('AFTER Stmt_Assignment: ', sym.name, '  has now value: ', scope.getSymbol(sym.name));
-    //mem(scope);
+    //scope.printMemory();
   }
 }
 
@@ -288,7 +288,7 @@ class Stmt_Write {
 
       //console.log('write: after resolve: ', arg);
 
-      //mem(scope);
+      //scope.printMemory();
       try {
         if (arg instanceof Atom.MBoolean) {
           output.push(arg.getValue() ? "ΑΛΗΘΗΣ" : "ΨΕΥΔΗΣ");
@@ -539,7 +539,7 @@ class CallSubProcedure {
 
   resolve(scope) {
 
-    //mem(scope);
+    //scope.printMemory();
 
     //console.log("P step1 called ====: ", this.fun.name, " with args ", this.args);
 
@@ -644,11 +644,11 @@ class SubFunction {
         scope2.setSymbol(param.name, args[i]);
       });
 
-      //mem(scope2);
+      //scope2.printMemory();
 
       body.resolve(scope2);
 
-      //mem(scope2);
+      //scope2.printMemory();
 
       if (!scope2.getSymbol(name))
         throw new GE.GError("Function must return a value in the func name");
@@ -746,11 +746,11 @@ console.log('inside procedure ready to start commands');
             }
       });
 
-      //mem(scope2);
+      //scope2.printMemory();
 
       body.resolve(scope2);
 
-      //mem(scope2);
+      //scope2.printMemory();
 
       var procExecArr = [scope2, params];
 
@@ -777,7 +777,7 @@ class Program {
     // Declare constants and variables
     this.decl.resolve(newScope);
 
-    //mem(newScope);
+    //newScope.printMemory();
 
     this.body.resolve(newScope);
   }
@@ -847,7 +847,7 @@ class Application {
     if (this.subPrograms.length)
       this.subPrograms.forEach((e) => e.resolve(scope));
 
-    //mem(scope);
+    //scope.printMemory();
 
     this.mainProg.resolve(scope);
 
@@ -877,14 +877,6 @@ class KeyboardDataFromSource {
   }
 
 
-
-  function mem(scope) {
-    console.log("\n============================[ Memory dump  ]");
-    console.log("RAM Global storage: ", scope.globalStorage);
-    console.log("RAM  Local storage: ", scope.localStorage);
-    console.log("Local Variables Locked: ", scope.lockedVariables);
-    console.log("\n");
-  }
   
 
 module.exports = {

@@ -72,13 +72,10 @@ class Stmt_Block {
     this.statements = block;
   }
   resolve(scope) {
-    //scope.printMemory();
     this.statements.forEach(function (smtp) {
       //console.log('==========> User command smtp: ', smtp);
       smtp.resolve(scope);
     });
-
-    return true;
   }
 }
 
@@ -558,11 +555,11 @@ class CallSubProcedure {
 
 
 class SubFunction {
-  constructor(name, params, funType, decl, body) {
+  constructor(name, params, funType, declarations, body) {
     this.name = name;
     this.params = params;
     this.funType = funType;
-    this.decl = decl;
+    this.declarations = declarations;
     this.body = body;
   }
 
@@ -570,7 +567,7 @@ class SubFunction {
     var name = this.name.name;
     var params = this.params;
     var funType = this.funType;
-    var decl = this.decl;
+    var declarations = this.declarations;
     var body = this.body;
 
     scope.addSymbol(name, new STR.STRUserFunction(function (...arrargs) {
@@ -602,8 +599,7 @@ class SubFunction {
       // Add function name as a variable
       scope2.addSymbolFuncName(name, ftype);
 
-      // Declare constants and variables
-      decl.resolve(scope2);
+      declarations.resolve(scope2);
 
       // Sent values to procedure
       params.forEach(function (param, i) {
@@ -654,17 +650,17 @@ class SubFunction {
 }
 
 class SubProcedure {
-  constructor(name, params, decl, body) {
+  constructor(name, params, declarations, body) {
     this.name = name;
     this.params = params;
-    this.decl = decl;
+    this.declarations = declarations;
     this.body = body;
   }
 
   resolve(scope) {
     var name = this.name.name;
     var params = this.params;
-    var decl = this.decl;
+    var declarations = this.declarations;
     var body = this.body;
 
     scope.addSymbol(name, new STR.STRUserProcedure(function (...arrargs) {
@@ -681,7 +677,7 @@ class SubProcedure {
       var scope2 = scope.makeSubScope();
 
       // Declare constants and variables
-      decl.resolve(scope2);
+      declarations.resolve(scope2);
 
       // Sent values to procedure
       params.forEach(function (param, i) {
@@ -730,9 +726,9 @@ class SubProcedure {
 }
 
 class Program {
-  constructor(name, decl, body) {
+  constructor(name, declarations, body) {
     this.name = name;
-    this.decl = decl;
+    this.declarations = declarations;
     this.body = body;
   }
 
@@ -742,7 +738,7 @@ class Program {
 
     newScope.addSymbol(this.name.name, new STR.STRReservedName(null));
 
-    this.decl.resolve(newScope);
+    this.declarations.resolve(newScope);
 
     this.body.resolve(newScope);
   }

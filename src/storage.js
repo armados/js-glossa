@@ -90,8 +90,7 @@ class SScope {
     const index = this.lockedVariables.indexOf(name);
     this.lockedVariables.splice(index, 1);
   }
-
-  
+ 
   printMemory() {
     console.log("\n============================[ Memory dump  ]");
     console.log("RAM Global storage: ", this.globalStorage);
@@ -99,7 +98,6 @@ class SScope {
     console.log("Local Variables Locked: ", this.lockedVariables);
     console.log("\n");
   }
-  
   
   hasSymbol(name) {
     return (name in this.localStorage) || (name in this.globalStorage);

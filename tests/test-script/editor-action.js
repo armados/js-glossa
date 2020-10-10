@@ -15,11 +15,11 @@ $(document).ready(function () {
     "ΠΡΟΓΡΑΜΜΑ Άσκηση\n\n\nΑΡΧΗ\n\n  ΓΡΑΨΕ 'Καλημέρα κόσμε'\n\nΤΕΛΟΣ_ΠΡΟΓΡΑΜΜΑΤΟΣ\n"
   );
 
-  var codeEditorElement2 = document.getElementById("code-keyboardinput");
+  var codeEditorElement2 = document.getElementById("codekeyboardinput");
 
   var editor2 = CodeMirror.fromTextArea(codeEditorElement2, {
-    lineNumbers: true,
-    matchBrackets: true,
+    lineNumbers: false,
+    matchBrackets: false,
     theme: "default",
     lineWiseCopyCut: true,
     undoDepth: 200,

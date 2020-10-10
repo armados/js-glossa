@@ -100,7 +100,7 @@ class Stmt_IfCond {
     var condResult = cond.resolve(scope);
 
     if (!(condResult instanceof Atom.MBoolean))
-      throw new GE.GError("Condition must be Boolean");
+      throw new GE.GError("Η συγκεκριμένη συνθήκη δεν αποτελέι λογική έκφραση");
 
     if (condResult.val == true)
       return thenBody.resolve(scope);
@@ -110,7 +110,7 @@ class Stmt_IfCond {
         var condResult = condElseIf[i].resolve(scope);
 
         if (!(condResult instanceof Atom.MBoolean))
-          throw new GE.GError("Condition must be Boolean");
+          throw new GE.GError("Η συγκεκριμένη συνθήκη δεν αποτελέι λογική έκφραση");
 
         if (condResult.val == true) {
           return moreBody[i].resolve(scope);
@@ -132,7 +132,7 @@ class Stmt_WhileLoop {
       var condResult = this.cond.resolve(scope);
 
       if (!(condResult instanceof Atom.MBoolean))
-        throw new GE.GError("Condition must be Boolean");
+        throw new GE.GError("Η συγκεκριμένη συνθήκη δεν αποτελέι λογική έκφραση");
 
       if (condResult.jsEquals(false))
         break;
@@ -154,7 +154,7 @@ class Stmt_Do_WhileLoop {
       var condResult = this.cond.resolve(scope);
 
       if (!(condResult instanceof Atom.MBoolean))
-        throw new GE.GError("Condition must be Boolean");
+        throw new GE.GError("Η συγκεκριμένη συνθήκη δεν αποτελέι λογική έκφραση");
 
       if (condResult.jsEquals(true))
         break;
@@ -185,18 +185,13 @@ class Stmt_ForLoop {
     }
 
     if (v_step == 0)
-      throw new GE.GError("If statement with zero value step detected");
+      throw new GE.GError("Το βήμα στην εντολή ΓΙΑ έλαβε την τιμή μηδέν");
 
     var tmp = initval.resolve(scope);
     var v_initial = tmp.val;
 
     var tmp = finalval.resolve(scope);
     var v_final = tmp.val;
-
-    //console.log('Stmt_ForLoop: var: ', this.variable, ' initial: ', v_initial,'  final: ', v_final, '  step:', v_step);
-
-    //if (scope.isLocked(variable.name))
-    //  throw new GE.GError('Can not use variable - is in use');
 
     scope.setSymbol(variable.name, new Atom.MNumber(v_initial));
     scope.addLock(variable.name);
@@ -258,27 +253,21 @@ class Stmt_Write {
     var output = [];
 
     this.args.forEach(function (argParam) {
-      //console.log('write: before resolve: ', argParam);
 
       if (argParam instanceof MSymbolTableFetch)
           argParam = argParam.resolve(scope);
 
+      if (argParam.resolve(scope) == null)
+        throw new GE.GError('Το αναγνωριστικό δεν έχει αρχικοποιηθεί: ' + argParam.name);
+  
       var arg = argParam.resolve(scope);
 
-      //console.log('write: after resolve: ', arg);
-
-      //scope.printMemory();
-      try {
-        if (arg instanceof Atom.MBoolean) {
-          output.push(arg.getValue() ? "ΑΛΗΘΗΣ" : "ΨΕΥΔΗΣ");
-          //console.log("OUT1: ", arg.getValue() ? "ΑΛΗΘΗΣ" : "ΨΕΥΔΗΣ");
-        } else {
-          output.push(arg.getValue());
-          //console.log("OUT2: ", arg.getValue());
-        }
-      } catch (err) {
-        console.log('Σφάλμα. Η μεταβλητή δεν έχει αρχικοποιηθεί. ' , argParam.name);
-        throw new GE.GError("Σφάλμα. Η μεταβλητή δεν έχει αρχικοποιηθεί. " + argParam.name);
+      if (arg instanceof Atom.MBoolean) {
+        output.push(arg.getValue() ? "ΑΛΗΘΗΣ" : "ΨΕΥΔΗΣ");
+        //console.log("OUT1: ", arg.getValue() ? "ΑΛΗΘΗΣ" : "ΨΕΥΔΗΣ");
+      } else {
+        output.push(arg.getValue());
+        //console.log("OUT2: ", arg.getValue());
       }
     });
 
@@ -427,18 +416,6 @@ class DefVariables {
               scope.addSymbol(e.name + "[" + i + "][" + j + "]", helperCreateCellFromType(varType));
             }
           }
-        } else if (tblDimensions == 3) {
-          var tblsize1 = argsResolved[0];
-          var tblsize2 = argsResolved[1];
-          var tblsize3 = argsResolved[2];
-          for (var i = 1; i <= tblsize1; ++i) {
-            for (var j = 1; j <= tblsize2; ++j) {
-              for (var k = 1; k <= tblsize3; ++k) {
-                //console.log('   Create table element : ', i, ' ', j);
-            scope.addSymbol(e.name + "[" + i + "][" + j + "][" + k + "]", helperCreateCellFromType(varType));
-          }
-        }
-      }
     } else
         throw new GE.GError('Unsupported table dimensions');
 
@@ -471,7 +448,7 @@ class CallSubFunction {
     //console.log("F step1 called ====: ", this.fun.name, " with args ", this.args);
 
     if (!scope.hasSymbol(this.fun.name))
-      throw new GE.GError("CallSubFunction: cannot resolve symbol " + this.fun.name);
+      throw new GE.GError("Η συνάρτηση δεν βρέθηκε " + this.fun.name);
 
     var argsResolved = this.args.map((arg) => arg.resolve(scope));
 
@@ -500,7 +477,7 @@ class CallSubProcedure {
 
     //lookup the real function from the symbol
     if (!scope.hasSymbol(this.fun.name))
-      throw new GE.GError("CallSubProcedure: cannot resolve symbol " + this.fun.name);
+      throw new GE.GError("Η διαδικασία δεν βρέθηκε " + this.fun.name);
 
     var argsResolved = this.args.map((arg) => arg.resolve(scope));
 
@@ -540,11 +517,6 @@ class CallSubProcedure {
 
       }
       else if  (arg instanceof MSymbol) {
-
-        if (scope.isLocked(arg.name) == true &&
-            scope.getSymbol(arg.name) != procScope.getSymbol(procParams[i].name))
-          throw new GE.GError('Procedure return values try to change variable which is in use');
-    
         scope.setSymbol(arg.name, procScope.getSymbol(procParams[i].name));
       }
 
@@ -578,7 +550,7 @@ class SubFunction {
    
      if (args.length != params.length)
         throw new GE.GError(
-          "Error different number of parameters for function call"
+          "Λάθος αριθμός παραμέτρων κατά την κλήση της συνάρτησης"
         );
 
       var scope2 = scope.makeSubScope();
@@ -605,7 +577,7 @@ class SubFunction {
       params.forEach(function (param, i) {
         if (!scope2.hasSymbol(param.name))
           throw new GE.GError(
-            "Parameter not declared inside procedure: " + param.name
+            "Η παράμετρος δεν έχει δηλωθεί στο τμήμα δηλώσεων " + param.name
           );
         
         if (!(args[i] instanceof STR.STRTableName))
@@ -613,10 +585,10 @@ class SubFunction {
         else {
 
           if (scope2.getSymbol(param.name).constructor.name != args[i].constructor.name)
-            throw new GE.GError('Tables not same type');
+            throw new GE.GError('Οι πίνακες έχουν διαφορετικό τύπο');
           
           if (!scope2.getSymbol(param.name).arraySizeEquals(args[i]))
-            throw new GE.GError('Tables not same size');
+            throw new GE.GError('Οι πίνακες έχουν διαφορετικό μέγεθος');
 
           var tblDimensions = scope2.getSymbol(param.name).getSize().length;
 
@@ -642,7 +614,7 @@ class SubFunction {
       body.resolve(scope2);
 
       if (!scope2.getSymbol(name))
-        throw new GE.GError("Σφάλμα. Η συνάρτηση δεν επέστρεψε κάποια τιμή με το όνομά της");
+        throw new GE.GError("Η συνάρτηση δεν επέστρεψε τιμή με το όνομά της");
 
       return scope2.getSymbol(name);
     }));
@@ -671,7 +643,7 @@ class SubProcedure {
 
       if (args.length != params.length)
         throw new GE.GError(
-          "Error different number of parameters for procedure call"
+          "Λάθος αριθμός παραμέτρων κατά την κλήση της διαδικασίας"
         );
  
       var scope2 = scope.makeSubScope();
@@ -683,7 +655,7 @@ class SubProcedure {
       params.forEach(function (param, i) {
         if (!scope2.hasSymbol(param.name))
           throw new GE.GError(
-            "Parameter not declared inside procedure: " + param.name
+            "Η παράμετρος δεν έχει δηλωθεί στο τμήμα δηλώσεων " + param.name
           );
         
         if (!(args[i] instanceof STR.STRTableName))
@@ -691,10 +663,10 @@ class SubProcedure {
         else {
 
           if (scope2.getSymbol(param.name).constructor.name != args[i].constructor.name)
-            throw new GE.GError('Tables not same type');
+            throw new GE.GError('Οι πίνακες έχουν διαφορετικό τύπο');
           
           if (!scope2.getSymbol(param.name).arraySizeEquals(args[i]))
-            throw new GE.GError('Tables not same size');
+            throw new GE.GError('Οι πίνακες έχουν διαφορετικό μέγεθος');
 
           var tblDimensions = scope2.getSymbol(param.name).getSize().length;
 
@@ -781,7 +753,7 @@ class Application {
     }));
     
     scope.addSymbol("Τ_Ρ",  new STR.STRBuiltinFunction(function (A) {
-      if (A.val < 0) throw new GE.GError("Σφάλμα. Δεν ορίζεται ρίζα αρνητικού αριθμού");
+      if (A.val < 0) throw new GE.GError("Δεν ορίζεται ρίζα αρνητικού αριθμού");
       return new Atom.MNumber( Math.sqrt(A.val) );
     }));
     

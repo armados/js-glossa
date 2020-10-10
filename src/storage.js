@@ -105,7 +105,7 @@ class SScope {
 
   addSymbol(name, obj) {
     if (this.hasSymbol(name))
-      throw new GE.GError("addSymbol(): Symbol already exist " + name);
+      throw new GE.GError("Χρησιμοποιείται ήδη το αναγνωριστικό " + name);
       
     if (obj instanceof STRGlobalScope)
       return this.globalStorage[name] = obj;
@@ -120,19 +120,19 @@ class SScope {
     if (obj instanceof STRLocalScope)
       return this.localStorage[name] = obj;
     
-    throw new GE.GError('Unknown storage type: ', name, obj);
+    throw new GE.GError('Unknown storage type');
   }
 
   setSymbol(name, obj) {
 
     if (!this.hasSymbol(name))
-        throw new GE.GError('setSymbol(): Symbol missing from memory: ' + name);
+        throw new GE.GError('Δεν βρέθηκε το αναγνωριστικό ' + name);
 
     if (!obj)
         return;
 
     if (this.isLocked(name))
-      throw new GE.GError('setSymbol(): Locked variable. In use: ' + name);
+      throw new GE.GError('Το αναγνωριστικό είναι δεσμευμένο ' + name);
 
     var symType = null;
 
@@ -202,7 +202,7 @@ class SScope {
     if (name in this.globalStorage)
       return this.globalStorage[name].get();
      
-    throw new GE.GError('Symbol not found in storage');
+    throw new GE.GError('Μη δηλωμένο αναγνωριστικό με όνομα ' + name);
   }
   
   getSymbolObject(name) {
@@ -213,7 +213,7 @@ class SScope {
     if (name in this.globalStorage)
       return this.globalStorage[name];
     
-    throw new GE.GError('Symbol not found in storage');
+    throw new GE.GError('Μη δηλωμένο αναγνωριστικό με όνομα ' + name);
   }
 
 }

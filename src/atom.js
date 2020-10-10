@@ -33,45 +33,39 @@ class Atom {
       this.B = B;
     }
     resolve(scope) {
+
+      if (this.A.resolve(scope) == null)
+        throw new GE.GError('Το αναγνωριστικό δεν έχει αρχικοποιηθεί: ' + this.A.name);
+
+      if (this.B.resolve(scope) == null)
+        throw new GE.GError('Το αναγνωριστικό δεν έχει αρχικοποιηθεί: ' + this.B.name);
+
+      var a = this.A.resolve(scope).val;
+      var b = this.B.resolve(scope).val;
   
-      var a;
-      var b;
+      if (this.op == "pow")    return new MNumber(Math.pow(a, b));
   
-      try {
-        a = this.A.resolve(scope).val;
-      } catch {
-        throw new GE.GError("Null value " + this.A.name);
-      }
-  
-      try {
-        b = this.B.resolve(scope).val;
-      } catch {
-        throw new GE.GError("Null value " + this.B.name);
-      }
-  
-      if (this.op == "pow") return new MNumber(Math.pow(a, b));
-  
-      if (this.op == "mul") return new MNumber(a * b);
+      if (this.op == "mul")    return new MNumber(a * b);
   
       if ((this.op == "div" || this.op == "intdiv" || this.op == "intmod") && (b == 0)) 
-        throw new GE.GError("Division by zero");
+        throw new GE.GError("Η διαίρεση με το μηδέν δεν ορίζεται");
 
       if (this.op == "div")    return new MNumber(a / b);
       if (this.op == "intdiv") return new MNumber(Math.floor(a / b));
       if (this.op == "intmod") return new MNumber(a % b);
  
-      if (this.op == "add") return new MNumber(a + b);
-      if (this.op == "sub") return new MNumber(a - b);
+      if (this.op == "add")    return new MNumber(a + b);
+      if (this.op == "sub")    return new MNumber(a - b);
 
-      if (this.op == "lt")  return new MBoolean(a < b);
-      if (this.op == "gt")  return new MBoolean(a > b); 
-      if (this.op == "lte") return new MBoolean(a <= b);
-      if (this.op == "gte") return new MBoolean(a >= b);
-      if (this.op == "eq")  return new MBoolean(a == b);
-      if (this.op == "neq") return new MBoolean(a != b);
+      if (this.op == "lt")     return new MBoolean(a < b);
+      if (this.op == "gt")     return new MBoolean(a > b); 
+      if (this.op == "lte")    return new MBoolean(a <= b);
+      if (this.op == "gte")    return new MBoolean(a >= b);
+      if (this.op == "eq")     return new MBoolean(a == b);
+      if (this.op == "neq")    return new MBoolean(a != b);
   
-      if (this.op == "and") return new MBoolean(a && b);
-      if (this.op == "or")  return new MBoolean(a || b);
+      if (this.op == "and")    return new MBoolean(a && b);
+      if (this.op == "or")     return new MBoolean(a || b);
       
     }
   }
@@ -81,14 +75,11 @@ class Atom {
       this.A = A;
     }
     resolve(scope) {
-      //if (this.A instanceof MSymbolTable) { this.A = this.A.resolve(scope); }
-  
-      var a;
-      try {
-        a = this.A.resolve(scope).val;
-      } catch {
-        throw new GE.GError("Null value " + this.A.name);
-      }
+
+      if (this.A.resolve(scope) == null)
+        throw new GE.GError('Το αναγνωριστικό δεν έχει αρχικοποιηθεί: ' + this.A.name);
+
+      var a = this.A.resolve(scope).val;
   
       return new MBoolean(!a);
     }

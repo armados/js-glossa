@@ -73,7 +73,7 @@ class GrammarOhm {
         
             //function calls and variables
             FunCall          = identifier "(" Arguments ")"
-            CallSubProcedure    = "ΚΑΛΕΣΕ" identifier "(" Arguments ")"
+            CallSubProcedure = "ΚΑΛΕΣΕ" identifier "(" Arguments ")"
         
             IdentifierTblAssign       = identifier "[" AtLeastOneArguments "]"
             IdentifierTblFetch       = identifier "[" AtLeastOneArguments "]"

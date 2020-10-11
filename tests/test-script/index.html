@@ -52,7 +52,8 @@
             <textarea id="codeeditor"></textarea>
 
             <div class="controls">
-              <div
+
+             <div
                 class="btn-toolbar"
                 role="toolbar"
                 aria-label="Toolbar with button groups"
@@ -73,22 +74,22 @@
                   data-toggle="buttons"
                   aria-label="Second group"
                 >
-                  <label class="btn btn-info btn-sm active">
+                  <label class="btn btn-info btn-sm">
                     <input
                       type="radio"
                       name="options"
                       id="option1"
                       class="btnShowInput"
-                      checked
                     />
                     Είσοδος
                   </label>
-                  <label class="btn btn-info btn-sm">
+                  <label class="btn btn-info btn-sm active">
                     <input
                       type="radio"
                       name="options"
                       id="option2"
                       class="btnShowOutput"
+                      checked
                     />
                     Έξοδος
                   </label>
@@ -107,7 +108,7 @@
 
             <div class="tab-content" id="nav-tabContent">
               <div
-                class="tab-pane show active"
+                class="tab-pane"
                 id="inputTab"
                 role="tabpanel"
                 aria-labelledby="inputTab"
@@ -119,7 +120,7 @@
                 ></textarea>
               </div>
               <div
-                class="tab-pane"
+                class="tab-pane show active"
                 id="outputTab"
                 role="tabpanel"
                 aria-labelledby="outputTab"

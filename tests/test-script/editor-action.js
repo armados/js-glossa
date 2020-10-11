@@ -1,7 +1,5 @@
 $(document).ready(function () {
-  $("#spinner").hide();
-
-
+ 
   $(".btnShowInput").click(function (e) {
     e.preventDefault();
     $('#outputTab').hide();
@@ -13,6 +11,10 @@ $(document).ready(function () {
     $('#inputTab').hide();
     $('#outputTab').show();
   });
+
+
+  $("#spinner").hide();
+  
 
 
   var codeEditorElement = document.getElementById("codeeditor");
@@ -35,15 +37,15 @@ $(document).ready(function () {
 
     $("#spinner").show();
 
-    $(".btnShowOutput").click();
-
-    $("#error").html("").hide();
-
-    $("#result").html("");
-
     $("#run").addClass("disabled");
     $("#run").prop("disabled", true);
 
+
+    $(".btnShowOutput").click();
+
+    $("#result").html("Περιμένετε....");    
+
+    $("#error").html("").hide();
 
     var editorCode = editor1.getValue();
 

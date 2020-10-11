@@ -1,32 +1,41 @@
 $(document).ready(function () {
   $("#spinner").hide();
 
+
+  $(".btnShowInput").click(function (e) {
+    e.preventDefault();
+    $('#outputTab').hide();
+    $('#inputTab').show();
+  });
+
+  $(".btnShowOutput").click(function (e) {
+    e.preventDefault();
+    $('#inputTab').hide();
+    $('#outputTab').show();
+  });
+
+
   var codeEditorElement = document.getElementById("codeeditor");
 
   var editor1 = CodeMirror.fromTextArea(codeEditorElement, {
     mode: "application/x-httpd-php",
     lineNumbers: true,
     matchBrackets: true,
-    theme: "default",
+    theme: "mbo",
     lineWiseCopyCut: true,
     undoDepth: 200,
   });
   editor1.setValue(
-    "ΠΡΟΓΡΑΜΜΑ Άσκηση\n\n\nΑΡΧΗ\n\n  ΓΡΑΨΕ 'Καλημέρα κόσμε'\n\nΤΕΛΟΣ_ΠΡΟΓΡΑΜΜΑΤΟΣ\n"
+    "ΠΡΟΓΡΑΜΜΑ Άσκηση\n\nΜΕΤΑΒΛΗΤΕΣ\nΑΚΕΡΑΙΕΣ: α\n\nΑΡΧΗ\n\nΓΙΑ α ΑΠΟ 1 ΜΕΧΡΙ 100\n  ΓΡΑΨΕ 'Καλημέρα κόσμε', α\nΤΕΛΟΣ_ΕΠΑΝΑΛΗΨΗΣ\n\nΤΕΛΟΣ_ΠΡΟΓΡΑΜΜΑΤΟΣ\n"
   );
 
-  var codeEditorElement2 = document.getElementById("codekeyboardinput");
-
-  var editor2 = CodeMirror.fromTextArea(codeEditorElement2, {
-    lineNumbers: false,
-    matchBrackets: false,
-    theme: "default",
-    lineWiseCopyCut: true,
-    undoDepth: 200,
-  });
 
   $("#run").click(function (e) {
     e.preventDefault();
+
+    $("#spinner").show();
+
+    $(".btnShowOutput").click();
 
     $("#error").html("").hide();
 
@@ -35,27 +44,31 @@ $(document).ready(function () {
     $("#run").addClass("disabled");
     $("#run").prop("disabled", true);
 
-    $("#spinner").show();
 
     var editorCode = editor1.getValue();
-
-    $("#spinner").hide();
-
-    $("#run").removeClass("disabled");
-    $("#run").prop("disabled", false);
 
     var output = null;
     try {
 
       var pr1 = new GLO.GlossaJS();
       pr1.setSourceCode(editorCode);
-      if ( editor2.getValue() != '') pr1.setInputBuffer(editor2.getValue());
+      if ( $("#codekeyboardinput").val() != '') pr1.setInputBuffer($("#codekeyboardinput").val());
       output = pr1.run();
 
     } catch (e) {
       output = e.message;
     }
 
+    $("#spinner").hide();
+
     $("#result").html(output);
-  });
+  
+    $("#run").removeClass("disabled");
+    $("#run").prop("disabled", false);
+
+
+    $('#resultpre').animate({
+      scrollTop: $('#resultpre').get(0).scrollHeight
+    }, 400);
+    });
 });

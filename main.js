@@ -40,6 +40,12 @@ class GlossaJS {
       throw new GE.GError("Error in toAST to give results");
     }
 
+    var AST = require("./src/ast");
+    var astree = new AST.ASTree(result);
+    var outast = astree.generate();
+
+    console.log(outast);
+
     return result.resolve(this.inputBuffer);
   }
 

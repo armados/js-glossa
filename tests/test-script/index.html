@@ -10,6 +10,10 @@
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
 
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.32.0/codemirror.min.css" />
+  <link rel="stylesheet" href="https://codemirror.net/theme/mbo.css" />
+
+  <!-- Add icon library -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/tonsky/FiraCode@4/distr/fira_code.css">
 
@@ -20,69 +24,68 @@
 <body>
 
 
-  <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
-    <a class="navbar-brand" href="#">GlossaJS</a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-  </nav>
-
-
-
   <div class="container">
     <div class="row">
-
-
       <div class="col">
-
-
-        <div class="d-flex justify-content-between">
-          <div class="mr-auto p-2">
-            <h5>Πρόγραμμα σε ΓΛΩΣΣΑ</h5>
-          </div>
-          <div class="p-2">
-
-
-            <div id="spinner" class="spinner-border spinner-border-sm" role="status" aria-hidden="true">
-              <span class="sr-only">Loading...</span>
-            </div>
-
-            <button class="btn btn-success btn-sm" id="run">Εκτέλεση</button>
-
-
-          </div>
-        </div>
-
+            <p>Βιβλιοθήκη GlossaJS<br><a href="https://github.com/armados/js-glossa/">https://github.com/armados/js-glossa/</a></p>
       </div>
-
-
-
     </div>
  
   <div class="row">
     <div class="col">
 
-      <textarea class="codeMirror" id="codeeditor"></textarea>
-      
-      <br>
+      <div class="tabHeader editorHeader">Πρόγραμμα σε ΓΛΩΣΣΑ</div>
+      <textarea id="codeeditor"></textarea>
+    
+    </div>
+  </div> 
 
-      <nav>
-  <div class="nav nav-tabs" id="nav-tab" role="tablist">
-    <a class="nav-item nav-link active" id="nav-home-tab" data-toggle="tab" href="#nav-home" role="tab" aria-controls="nav-home" aria-selected="true">Οθόνη εκτέλεσης</a>
-    <a class="nav-item nav-link" id="nav-profile-tab" data-toggle="tab" href="#nav-profile" role="tab" aria-controls="nav-profile" aria-selected="false">Αρχείο εισόδου</a>
-  </div>
-</nav>
+  <div class="row">
+    <div class="col">
+
+      <div class="controls">
+
+          <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
+            
+            <div class="btn-group mr-2" role="group" aria-label="First group">
+              <button class="btn btn-success btn-sm" id="run"><i class="fa fa-play"></i> Εκτέλεση</button>
+            </div>
+
+            <div class="btn-group btn-group-toggle mr-2 " role="group"  data-toggle="buttons" aria-label="Second group">
+                <label class="btn btn-info btn-sm active">
+                  <input type="radio" name="options" id="option1" class="btnShowInput" checked> Είσοδος
+                </label>
+                <label class="btn btn-info btn-sm">
+                  <input type="radio" name="options" id="option2" class="btnShowOutput" > Έξοδος
+                </label>
+            </div>
+
+            <div id="spinner" class="spinner-border spinner-border-sm" role="status" aria-hidden="true">
+              <span class="sr-only">Loading...</span>
+            </div>  
+
+          </div>
+
+      </div>
+
+    </div>
+  </div> 
+
+  <div class="row">
+    <div class="col">
 
 <div class="tab-content" id="nav-tabContent">
-  <div class="tab-pane show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
-
+  <div class="tab-pane show active" id="inputTab" role="tabpanel" aria-labelledby="inputTab">
+    <div class="tabHeader inputHeader">Είσοδος</div>
+    <textarea id="codekeyboardinput" placeholder="Το κείμενο που θα εισαχθεί εδώ θα δωθεί ως είσοδος στο πρόγραμμα" ></textarea>
+  </div>
+  <div class="tab-pane" id="outputTab" role="tabpanel" aria-labelledby="outputTab">
+    <div class="tabHeader outputHeader">Έξοδος</div>
     <pre id="resultpre"><div id="result"></div></pre>
+  </div>
 
-  </div>
-  <div class="tab-pane" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
-    <textarea class="codeMirror" id="codekeyboardinput"></textarea>
-  </div>
 </div>
+
 </div>
 
 

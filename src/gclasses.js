@@ -7,8 +7,7 @@ class GError extends Error {
 
       this.name = this.constructor.name
       console.log('Σφάλμα: ', message);
-      //Error.captureStackTrace(this, this.constructor);
-
+      Error.captureStackTrace(this, this.constructor);
     }
   
   }

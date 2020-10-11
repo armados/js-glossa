@@ -1,7 +1,7 @@
 $(document).ready(function () {
   $("#spinner").hide();
 
-  var codeEditorElement = document.getElementById("code-editor");
+  var codeEditorElement = document.getElementById("codeeditor");
 
   var editor1 = CodeMirror.fromTextArea(codeEditorElement, {
     mode: "application/x-httpd-php",

@@ -1,4 +1,8 @@
-
+.glossaBox {
+  border: 1px solid #ddd;
+  margin-top: 20px;
+  margin-bottom: 50px;
+}
 
 .CodeMirror {
   height: 250px;
@@ -19,11 +23,11 @@
 }
 
 .inputHeader {
-  background-color: rgba(92, 184, 92, 0.7);
+  background-color: rgba(91, 192, 222, 0.7);
 }
 
 .outputHeader {
-  background-color: rgba(91, 192, 222, 0.7);
+  background-color: rgba(92, 184, 92, 0.7);
 }
 
 .editorHeader {
@@ -46,11 +50,12 @@ pre,
   overflow: auto;
   word-wrap: break-word !important;
   white-space: pre-wrap;
+  margin: 0px;
   padding: 15px;
   width: 100%;
   height: 200px;
   background-color: #fff;
-  border: 1px solid #ddd;
+  border: 0px solid #ddd;
   color: #111;
   font-size: 80%;
 }
@@ -63,9 +68,10 @@ textarea#codekeyboardinput {
   overflow: auto;
   word-wrap: break-word !important;
   white-space: pre-wrap;
+  margin: 0px;
   padding: 15px;
   background-color: #fff;
-  border: 1px solid #ddd;
+  border: 0px solid #ddd;
   color: #111;
   font-size: 80%;
 }

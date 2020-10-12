@@ -124,7 +124,7 @@ class SScope {
   }
 
   setSymbol(name, obj) {
-
+//console.log("setSymbol(): ", name, " obj: ", obj);
     if (!this.hasSymbol(name))
         throw new GE.GError('Δεν βρέθηκε το αναγνωριστικό ' + name);
 

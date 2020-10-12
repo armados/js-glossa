@@ -99,7 +99,7 @@ define('ace/mode/glossa', function(require, exports, module) {
                 regex: '\\+|\\-|\\*|\\^|\\/|\\=|\\<|\\>|\\<\\=|\\>\\=|\\<\\>'
             }, {
                 token : "paren.lparen",
-                regex : "[[({]"
+                regex : "[\\[({]"
             }, {
                 token : "paren.rparen",
                 regex : "[\\])}]"

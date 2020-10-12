@@ -486,7 +486,7 @@ class CallSubProcedure {
     var sendData = [];
     sendData[0] = argsResolved;
     sendData[1] = scope;
-
+ 
     var recvData = fun.apply(null, sendData);
 
     var procScope  = recvData[0];
@@ -501,19 +501,24 @@ class CallSubProcedure {
 
         if (tblDimensions == 1) {
           var tblsize1 = scope.getSymbol(arg.name).getSize()[0];
-          for (var j = 1; j <= tblsize1; ++j) {
+          for (var j = 1; j <= tblsize1; ++j) { 
             scope.setSymbol(arg.name + "[" + j + "]", procScope.getSymbol(procParams[i].name + "[" + j + "]"));
           }
         } else if (tblDimensions == 2) {
             var tblsize1 = scope.getSymbol(arg.name).getSize()[0];
             var tblsize2 = scope.getSymbol(arg.name).getSize()[1];
-            for (var i = 1; i <= tblsize1; ++i) {
-              for (var j = 1; j <= tblsize2; ++j) {
-              scope.addSymbol(arg.name + "[" + i + "][" + j + "]", procScope.getSymbol(procParams[i].name + "[" + i + "][" + j + "]"));
+            for (var j = 1; j <= tblsize1; ++j) {
+              for (var l = 1; l <= tblsize2; ++l) {
+              scope.setSymbol(arg.name + "[" + j + "][" + l + "]", procScope.getSymbol(procParams[i].name + "[" + j + "][" + l + "]"));
             }
           }
         }
 
+
+      }
+      else if (arg instanceof MSymbolTableFetch ) {
+        //console.log('detected table CELL arg is : ', arg);
+        scope.setSymbol(arg.cellName, procScope.getSymbol(procParams[i].name));
 
       }
       else if  (arg instanceof MSymbol) {

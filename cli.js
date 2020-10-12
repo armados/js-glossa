@@ -31,9 +31,17 @@ try {
   throw new GE.GError("Input file not found");
 }
 
+if (args["keyboard"])
+  var keyboardInput = null;
+  try {
+    keyboardInput = fs.readFileSync(args["keyboard"]).toString();
+  } catch (e) {
+    throw new GE.GError("Keyboard input file not found");
+  }
+
 var pr1 = new GLO.GlossaJS();
 pr1.setSourceCode(sourceCode);
-if (args["keyboard"]) pr1.setInputBuffer(args["keyboard"]);
+if (keyboardInput) pr1.setInputBuffer(keyboardInput);
 var output = pr1.run();
 
 console.log(output);

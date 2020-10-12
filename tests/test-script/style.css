@@ -1,13 +1,13 @@
 .glossaBox {
   border: 1px solid #ddd;
-  margin-top: 20px;
-  margin-bottom: 50px;
+  margin-top: 10px;
+  margin-bottom: 20px;
 }
 
-.CodeMirror {
-  height: 250px;
+#aceeditor {
+  min-height: 260px;
   font-family: "Fira Code", monospace;
-  font-size: 70%;
+  font-size: 80%;
 }
 
 .controls {

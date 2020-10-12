@@ -49,7 +49,7 @@
 
           <div class="glossaBox">
             <!-- <div class="tabHeader editorHeader">Πρόγραμμα σε ΓΛΩΣΣΑ</div> -->
-            <textarea id="codeeditor"></textarea>
+            <div id="aceeditor"></div>
 
             <div class="controls">
 
@@ -141,16 +141,25 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.32.0/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.12/ace.min.js"></script>
 
     <script src="../../dist/glossajs.js"></script>
 
     <script src="editor-action.js"></script>
 
     <script type="text/javascript">
-      // Refresh CodeMirror
-      $(".CodeMirror").each(function (i, el) {
-        el.CodeMirror.refresh();
-      });
+
+      var editor = ace.edit("aceeditor");
+      require("ace/config").setModuleUrl("ace/theme/gruvbox", "https://ajaxorg.github.io/ace-builds/src/theme-gruvbox.js")
+      editor.setTheme("ace/theme/gruvbox");
+      require("ace/config").setModuleUrl("ace/mode/glossa", "acemodeglo.js");
+      editor.session.setMode("ace/mode/glossa");
+      editor.setDisplayIndentGuides(false);
+      editor.setShowPrintMargin(false);
+      editor.setHighlightActiveLine(false);
+      editor.renderer.setShowGutter(false);
+      editor.clearSelection();
+
     </script>
   </body>
 </html>

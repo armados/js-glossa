@@ -79,7 +79,7 @@ class SScope {
   }
 
   addLock(name) {
-    if (this.isLocked(name)) throw new GE.GError('Already locked symbol ' + name);
+    if (this.isLocked(name)) throw new GE.GError('Το αναγνωριστικό ' + name + ' δεν μπορεί να χρησιμοποιηθεί');
 
     this.lockedVariables.push(name);
   }
@@ -160,32 +160,30 @@ class SScope {
 
      if      (this.getSymbolObject(name) instanceof STRInt ||
               this.getSymbolObject(name) instanceof STRFuncNameInt) {
-                  if (!(obj instanceof STRInt || obj instanceof Atom.MNumber))
-        throw new GE.GError('Variable type not match - expected int');
+      if (!(obj instanceof STRInt || obj instanceof Atom.MNumber))
+        throw new GE.GError('Το αναγνωριστικό ' + name + ' λαμβάνει μόνο ΑΚΕΡΑΙΕΣ τιμές');
 
       if (!(Number(obj.val) === obj.val && obj.val % 1 === 0))
-        throw new GE.GError('Variable type not match - expected int');
+        throw new GE.GError('Το αναγνωριστικό ' + name + ' λαμβάνει μόνο ΑΚΕΡΑΙΕΣ τιμές');
 
     }
     else if (this.getSymbolObject(name) instanceof STRFloat ||
              this.getSymbolObject(name) instanceof STRFuncNameFloat) {
 
       if (!(obj instanceof STRFloat || obj instanceof Atom.MNumber))
-        throw new GE.GError('Variable type not match - expected float');
+        throw new GE.GError('Το αναγνωριστικό ' + name + ' λαμβάνει μόνο ΠΡΑΓΜΑΤΙΚΕΣ τιμές');
 
     }
     else if  (this.getSymbolObject(name) instanceof STRString ||
               this.getSymbolObject(name) instanceof STRFuncNameString) {
-                  if (!(obj instanceof STRString || obj instanceof Atom.MString)) {
-                    console.log('name: ', name, 'obj: ', this.getSymbolObject(name), 'obj2 value: ', obj);
-        throw new GE.GError('Variable type not match - expected string');
-                  }
-
+      if (!(obj instanceof STRString || obj instanceof Atom.MString)) 
+        throw new GE.GError('Το αναγνωριστικό ' + name + ' λαμβάνει μόνο ΑΛΦΑΡΙΘΜΗΤΙΚΕΣ τιμές');
+ 
     }
     else if  (this.getSymbolObject(name) instanceof STRBoolean  ||
               this.getSymbolObject(name) instanceof STRFuncNameBoolean) {
-                  if (!(obj instanceof STRBoolean || obj instanceof Atom.MBoolean))
-        throw new GE.GError('Variable type not match - expected boolean');
+      if (!(obj instanceof STRBoolean || obj instanceof Atom.MBoolean))
+        throw new GE.GError('Το αναγνωριστικό ' + name + ' λαμβάνει μόνο ΛΟΓΙΚΕΣ τιμές');
 
     }
     else

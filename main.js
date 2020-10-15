@@ -46,7 +46,15 @@ class GlossaJS {
 
     //console.log(outast);
 
-    return result.resolve(this.inputBuffer);
+    var output = null;
+
+    try {
+      output = result.resolve(this.inputBuffer)
+    } catch (e) {
+      output = e.message;
+    }
+
+    return output;
   }
 
 }

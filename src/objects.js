@@ -290,7 +290,7 @@ class Stmt_Read {
 
       var data = IOKeyboard.getSingleInputData();
 
-      inputData.push("*** Εισαγωγή τιμής από πληκτρολόγιο: [" + data + "]");
+      //inputData.push("*** Εισαγωγή τιμής από πληκτρολόγιο: [" + data + "]");
 
       if      (typeof(data) == 'string')  var sym = new Atom.MString(data);
       else if (typeof(data) == 'number')  var sym = new Atom.MNumber(data);

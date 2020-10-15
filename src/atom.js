@@ -14,9 +14,6 @@ class Atom {
     resolve(scope) {
       return this;
     }
-    jsEquals(jsval) {
-      return this.val == jsval;
-    }
     getValue() {
       return this.val;
     }

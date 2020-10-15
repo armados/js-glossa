@@ -134,7 +134,7 @@ class Stmt_WhileLoop {
       if (!(condResult instanceof Atom.MBoolean))
         throw new GE.GError('Η συνθήκη της ΟΣΟ δεν αποτελέι λογική έκφραση.');
 
-      if (condResult.jsEquals(false))
+      if (condResult == false)
         break;
 
       this.body.resolve(scope);
@@ -156,7 +156,7 @@ class Stmt_Do_WhileLoop {
       if (!(condResult instanceof Atom.MBoolean))
         throw new GE.GError('Η συνθήκη της ΜΕΧΡΙΣ_ΟΤΟΥ δεν αποτελέι λογική έκφραση.');
 
-      if (condResult.jsEquals(true))
+      if (condResult == true)
         break;
     } while (true);
   }

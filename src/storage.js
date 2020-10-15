@@ -105,7 +105,7 @@ class SScope {
 
   addSymbol(name, obj) {
     if (this.hasSymbol(name))
-      throw new GE.GError('Critical: Symbol already used ' + name);
+      throw new GE.GError('Critical: addSymbol(): Symbol already used ' + name);
       
     if (obj instanceof STRGlobalScope)
       return this.globalStorage[name] = obj;
@@ -113,14 +113,14 @@ class SScope {
     if (obj instanceof STRLocalScope || obj instanceof STRTableName)
       return this.localStorage[name] = obj;
     
-    throw new GE.GError('Unknown storage type');
+    throw new GE.GError('Critical: Unknown storage type');
     }
 
   addSymbolFuncName(name, obj) {
     if (obj instanceof STRLocalScope)
       return this.localStorage[name] = obj;
     
-    throw new GE.GError('Unknown storage type');
+    throw new GE.GError('Critical: addSymbolFuncName(): Unknown storage type');
   }
 
   setSymbol(name, obj) {

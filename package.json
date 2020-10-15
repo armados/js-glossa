@@ -10,7 +10,7 @@
     "build:dev": "webpack --mode=development"
   },
   "bin": {
-    "glossa-cli": "./cli.js"
+    "glossa-cli": "bin/glossa-cli.js"
   },
   "repository": {
     "type": "git",

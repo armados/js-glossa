@@ -300,7 +300,7 @@ class Stmt_Read {
       scope.setSymbol(param.name, sym);
     });
 
-    IOScreen.add( inputData.join( "\n" ) );
+    //IOScreen.add( inputData.join( "\n" ) );
   }
 }
 

@@ -10,7 +10,7 @@ class GError extends Error {
       //this.message = 'Προέκυψε σφάλμα. ';
 
       //console.log(message);
-      Error.stackTraceLimit = 0;
+      //Error.stackTraceLimit = 0;
 
       Error.captureStackTrace(this, this.constructor);
     }

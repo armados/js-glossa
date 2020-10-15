@@ -29,15 +29,13 @@ class GlossaJS {
     var match = gram.match(this.sourceCode);
   
     if (!match.succeeded()) {
-      console.log("===> Error");
-      throw new GE.GError(match.message);
+      return match.message;
     }
   
     var result = sem(match).toAST();
   
     if (!result) {
-      console.log("===> Error!");
-      throw new GE.GError("Error in toAST to give results");
+       return 'Error in toAST to give results';
     }
 
     //var AST = require("./src/ast");
@@ -47,11 +45,10 @@ class GlossaJS {
     //console.log(outast);
 
     var output = null;
-
     try {
       output = result.resolve(this.inputBuffer)
     } catch (e) {
-      output = e.message;
+      return e.message;
     }
 
     return output;

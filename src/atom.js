@@ -9,7 +9,7 @@ class Atom {
   
       if ((typeof(val) == 'number') && 
          (Number(val) === val && val % 1 !== 0))
-          this.val = parseFloat(val).toFixed(2);
+          this.val = +parseFloat(val).toFixed(2);
     }
     resolve(scope) {
       return this;

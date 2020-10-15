@@ -167,6 +167,7 @@ $(document).ready(function () {
     try {
       var pr1 = new GLO.GlossaJS();
       pr1.setSourceCode(editorCode);
+      
       if ($("#codekeyboardinput").val() != "")
         pr1.setInputBuffer($("#codekeyboardinput").val());
       output = pr1.run();

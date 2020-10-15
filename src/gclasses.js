@@ -10,9 +10,8 @@ class GError extends Error {
       //this.message = 'Προέκυψε σφάλμα. ';
 
       //console.log(message);
-      console.log('Environment: ', process.env.NODE_ENV);
       
-      Error.captureStackTrace(this, this.constructor);
+      //Error.captureStackTrace(this, this.constructor);
     }
   
   }

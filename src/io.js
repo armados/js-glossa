@@ -21,7 +21,7 @@ class InputDevice {
   }
 
   getSingleInputData() {
-    if (this.isEmpty()) throw new GE.GError("Τα δεδομένα εισόδου δεν επαρκούν για την εκτέλεση του προγράμματος.");
+    if (this.isEmpty()) throw new GE.GError('Τα δεδομένα εισόδου δεν επαρκούν για την εκτέλεση του προγράμματος.');
 
     var value = this.data.shift();
 

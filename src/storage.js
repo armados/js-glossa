@@ -79,13 +79,13 @@ class SScope {
   }
 
   addLock(name) {
-    if (this.isLocked(name)) throw new GE.GError('Το αναγνωριστικό ' + name + ' δεν μπορεί να χρησιμοποιηθεί');
+    if (this.isLocked(name)) throw new GE.GError('Critical: addLock() Symbol already locked ' + name);
 
     this.lockedVariables.push(name);
   }
 
   removeLock(name) {
-    if (!this.isLocked(name)) throw new GE.GError('Symbol not locked ' + name);
+    if (!this.isLocked(name)) throw new GE.GError('Critical: removeLock() Symbol not locked ' + name);
 
     const index = this.lockedVariables.indexOf(name);
     this.lockedVariables.splice(index, 1);
@@ -105,7 +105,7 @@ class SScope {
 
   addSymbol(name, obj) {
     if (this.hasSymbol(name))
-      throw new GE.GError("Χρησιμοποιείται ήδη το αναγνωριστικό " + name);
+      throw new GE.GError('Critical: Symbol already used ' + name);
       
     if (obj instanceof STRGlobalScope)
       return this.globalStorage[name] = obj;
@@ -126,13 +126,13 @@ class SScope {
   setSymbol(name, obj) {
 //console.log("setSymbol(): ", name, " obj: ", obj);
     if (!this.hasSymbol(name))
-        throw new GE.GError('Δεν βρέθηκε το αναγνωριστικό ' + name);
+        throw new GE.GError('Το αναγνωριστικό ' + name + ' δεν βρέθηκε.');
 
     if (!obj)
         return;
 
     if (this.isLocked(name))
-      throw new GE.GError('Το αναγνωριστικό είναι δεσμευμένο ' + name);
+      throw new GE.GError('Το αναγνωριστικό ' + name + ' δεν μπορεί να χρησιμοποιηθεί.');
 
     var symType = null;
 
@@ -153,7 +153,7 @@ class SScope {
     else if (this.getSymbolObject(name) instanceof STRFuncNameBoolean)
       symType = "ΛΟΓΙΚΗ (όνομα συνάρτησης)";
     else
-      throw new GE.GError('Unknown symbol type' + this.getSymbol(name));
+      throw new GE.GError('Critical: Unknown symbol type' + this.getSymbol(name));
     
 
     //console.log('setSymbol: ', name, symType, ' <--  ',  obj, obj.constructor.name);
@@ -161,33 +161,33 @@ class SScope {
      if      (this.getSymbolObject(name) instanceof STRInt ||
               this.getSymbolObject(name) instanceof STRFuncNameInt) {
       if (!(obj instanceof STRInt || obj instanceof Atom.MNumber))
-        throw new GE.GError('Το αναγνωριστικό ' + name + ' λαμβάνει μόνο ΑΚΕΡΑΙΕΣ τιμές');
+        throw new GE.GError('Το αναγνωριστικό ' + name + ' λαμβάνει μόνο ΑΚΕΡΑΙΕΣ τιμές.');
 
       if (!(Number(obj.val) === obj.val && obj.val % 1 === 0))
-        throw new GE.GError('Το αναγνωριστικό ' + name + ' λαμβάνει μόνο ΑΚΕΡΑΙΕΣ τιμές');
+        throw new GE.GError('Το αναγνωριστικό ' + name + ' λαμβάνει μόνο ΑΚΕΡΑΙΕΣ τιμές.');
 
     }
     else if (this.getSymbolObject(name) instanceof STRFloat ||
              this.getSymbolObject(name) instanceof STRFuncNameFloat) {
 
       if (!(obj instanceof STRFloat || obj instanceof Atom.MNumber))
-        throw new GE.GError('Το αναγνωριστικό ' + name + ' λαμβάνει μόνο ΠΡΑΓΜΑΤΙΚΕΣ τιμές');
+        throw new GE.GError('Το αναγνωριστικό ' + name + ' λαμβάνει μόνο ΠΡΑΓΜΑΤΙΚΕΣ τιμές.');
 
     }
     else if  (this.getSymbolObject(name) instanceof STRString ||
               this.getSymbolObject(name) instanceof STRFuncNameString) {
       if (!(obj instanceof STRString || obj instanceof Atom.MString)) 
-        throw new GE.GError('Το αναγνωριστικό ' + name + ' λαμβάνει μόνο ΑΛΦΑΡΙΘΜΗΤΙΚΕΣ τιμές');
+        throw new GE.GError('Το αναγνωριστικό ' + name + ' λαμβάνει μόνο ΑΛΦΑΡΙΘΜΗΤΙΚΕΣ τιμές.');
  
     }
     else if  (this.getSymbolObject(name) instanceof STRBoolean  ||
               this.getSymbolObject(name) instanceof STRFuncNameBoolean) {
       if (!(obj instanceof STRBoolean || obj instanceof Atom.MBoolean))
-        throw new GE.GError('Το αναγνωριστικό ' + name + ' λαμβάνει μόνο ΛΟΓΙΚΕΣ τιμές');
+        throw new GE.GError('Το αναγνωριστικό ' + name + ' λαμβάνει μόνο ΛΟΓΙΚΕΣ τιμές.');
 
     }
     else
-      throw new GE.GError('Unknown symbol type' + this.getSymbol(name));
+      throw new GE.GError('Critical: Unknown symbol type' + this.getSymbol(name));
 
     this.localStorage[name].set(obj);
   }
@@ -200,7 +200,7 @@ class SScope {
     if (name in this.globalStorage)
       return this.globalStorage[name].get();
      
-    throw new GE.GError('Μη δηλωμένο αναγνωριστικό με όνομα ' + name);
+    throw new GE.GError('Το αναγνωριστικό ' + name + ' δεν έχει δηλωθεί.');
   }
   
   getSymbolObject(name) {
@@ -211,7 +211,7 @@ class SScope {
     if (name in this.globalStorage)
       return this.globalStorage[name];
     
-    throw new GE.GError('Μη δηλωμένο αναγνωριστικό με όνομα ' + name);
+    throw new GE.GError('Το αναγνωριστικό ' + name + ' δεν έχει δηλωθεί.');
   }
 
 }

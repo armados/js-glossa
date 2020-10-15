@@ -35,10 +35,10 @@ class Atom {
     resolve(scope) {
 
       if (this.A.resolve(scope) == null)
-        throw new GE.GError('Το αναγνωριστικό δεν έχει αρχικοποιηθεί: ' + this.A.name);
+        throw new GE.GError('Το αναγνωριστικό ' + this.A.name + 'δεν έχει αρχικοποιηθεί.');
 
       if (this.B.resolve(scope) == null)
-        throw new GE.GError('Το αναγνωριστικό δεν έχει αρχικοποιηθεί: ' + this.B.name);
+        throw new GE.GError('Το αναγνωριστικό ' + this.B.name + 'δεν έχει αρχικοποιηθεί.');
 
       var a = this.A.resolve(scope).val;
       var b = this.B.resolve(scope).val;
@@ -48,7 +48,7 @@ class Atom {
       if (this.op == "mul")    return new MNumber(a * b);
   
       if ((this.op == "div" || this.op == "intdiv" || this.op == "intmod") && (b == 0)) 
-        throw new GE.GError("Η διαίρεση με το μηδέν δεν ορίζεται");
+        throw new GE.GError('Η διαίρεση με το μηδέν δεν ορίζεται.');
 
       if (this.op == "div")    return new MNumber(a / b);
       if (this.op == "intdiv") return new MNumber(Math.floor(a / b));
@@ -77,7 +77,7 @@ class Atom {
     resolve(scope) {
 
       if (this.A.resolve(scope) == null)
-        throw new GE.GError('Το αναγνωριστικό δεν έχει αρχικοποιηθεί: ' + this.A.name);
+        throw new GE.GError('Το αναγνωριστικό ' + this.A.name + 'δεν έχει αρχικοποιηθεί.');
 
       var a = this.A.resolve(scope).val;
   

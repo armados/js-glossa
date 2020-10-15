@@ -100,7 +100,7 @@ class Stmt_IfCond {
     var condResult = cond.resolve(scope);
 
     if (!(condResult instanceof Atom.MBoolean))
-      throw new GE.GError('Η συνθήκη της ΑΝ δεν αποτελέι λογική έκφραση.');
+      throw new GE.GError('Η συνθήκη της ΑΝ δεν αποτελεί λογική έκφραση.');
 
     if (condResult.val == true)
       return thenBody.resolve(scope);
@@ -110,7 +110,7 @@ class Stmt_IfCond {
         var condResult = condElseIf[i].resolve(scope);
 
         if (!(condResult instanceof Atom.MBoolean))
-          throw new GE.GError('Η συνθήκη της ΑΛΛΙΩΣ_ΑΝ δεν αποτελέι λογική έκφραση.');
+          throw new GE.GError('Η συνθήκη της ΑΛΛΙΩΣ_ΑΝ δεν αποτελεί λογική έκφραση.');
 
         if (condResult.val == true) {
           return moreBody[i].resolve(scope);
@@ -132,7 +132,7 @@ class Stmt_WhileLoop {
       var condResult = this.cond.resolve(scope);
 
       if (!(condResult instanceof Atom.MBoolean))
-        throw new GE.GError('Η συνθήκη της ΟΣΟ δεν αποτελέι λογική έκφραση.');
+        throw new GE.GError('Η συνθήκη της ΟΣΟ δεν αποτελεί λογική έκφραση.');
 
       if (condResult == false)
         break;
@@ -154,7 +154,7 @@ class Stmt_Do_WhileLoop {
       var condResult = this.cond.resolve(scope);
 
       if (!(condResult instanceof Atom.MBoolean))
-        throw new GE.GError('Η συνθήκη της ΜΕΧΡΙΣ_ΟΤΟΥ δεν αποτελέι λογική έκφραση.');
+        throw new GE.GError('Η συνθήκη της ΜΕΧΡΙΣ_ΟΤΟΥ δεν αποτελεί λογική έκφραση.');
 
       if (condResult == true)
         break;

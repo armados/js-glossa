@@ -5,7 +5,7 @@ var path = require("path");
 
 var GLO = require("../main.js");
 
-var filename = "../samples-dev/sample6.glo";
+var filename = "../samples-dev/sample2.glo";
 var sourceCode = fs.readFileSync(path.join(__dirname, filename)).toString();
 
 var pr1 = new GLO.GlossaJS();

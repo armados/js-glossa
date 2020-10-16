@@ -1,7 +1,6 @@
 "use strict";
 
 var GE = require("./gclasses");
-var Storage = require("./storage");
 
 class InputDevice {
   constructor() {

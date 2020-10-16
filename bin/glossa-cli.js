@@ -37,9 +37,8 @@ try {
   throw new GE.GError("Input file not found");
 }
 
+var keyboardInput = null;
 if (args["keyboard"]) {
-  console.log('keyboard arg: ', args["keyboard"]);
-  var keyboardInput = null;
   try {
     keyboardInput = fs.readFileSync(args["keyboard"]).toString();
   } catch (e) {
@@ -47,11 +46,19 @@ if (args["keyboard"]) {
   }
 }
 
+
 var pr1 = new GLO.GlossaJS();
 
 
 if (args["removeAT"])
   pr1.removeGlobalFunction('Α_Τ');
+
+if (args["removeAM"])
+  pr1.removeGlobalFunction('Α_Μ');
+
+if (args["removeATP"])
+  pr1.removeGlobalFunction('Τ_Ρ');
+
 
 pr1.setSourceCode(sourceCode);
 if (keyboardInput) pr1.setInputBuffer(keyboardInput);

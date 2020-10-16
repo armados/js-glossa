@@ -170,7 +170,8 @@ $(document).ready(function () {
       
       if ($("#codekeyboardinput").val() != "")
         pr1.setInputBuffer($("#codekeyboardinput").val());
-      output = pr1.run();
+        pr1.run();
+        output = pr1.getOutput()
     } catch (e) {
       output = e.message;
     }

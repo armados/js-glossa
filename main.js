@@ -90,13 +90,17 @@ class GlossaJS {
     var match = gram.match(this.sourceCode);
   
     if (!match.succeeded()) {
-      return match.message;
+      this.io.outputAdd(match.message);
+      this.io.outputAddDetails(match.message);
+       return false;
     }
   
     var result = sem(match).toAST();
   
     if (!result) {
-       return 'Error in toAST to give results';
+      this.io.outputAdd('Error in toAST to give results' + result);
+      this.io.outputAddDetails('Error in toAST to give results' + result);
+       return false;
     }
 
     //var AST = require("./src/ast");

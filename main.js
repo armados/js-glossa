@@ -14,7 +14,6 @@ var IO = require("./src/io");
 class GlossaJS {
   constructor() {
     this.sourceCode = null;
-    this.inputBuffer = null;
 
     this.io    = new IO.IOBuffer();
 
@@ -27,8 +26,14 @@ class GlossaJS {
   setSourceCode(data)  { this.sourceCode = data; }
   getSourceCode()      { return this.sourceCode; }
 
-  setInputBuffer(data) { this.inputBuffer = data; }
-  getInputBuffer()     { return this.inputBuffer; }
+  setInputBuffer(data) {
+    if (data != null && data != '') {
+      //console.log('Keyboard buffer argIOKeyboard: ', argIOKeyboard);
+      var arrKeyboard = data.split(',').map(item => item.trim());
+      arrKeyboard.forEach( (e) => this.scope.io.inputAddToBuffer(e) );
+    }
+  }
+
 
 
   initGlobalFunction() {
@@ -108,8 +113,9 @@ class GlossaJS {
     //var outast = astree.generate();
     //console.log(outast);
 
+
     try {
-      result.resolve(this.scope, this.inputBuffer, this.io)
+      result.resolve(this.scope)
     } catch (e) {
       //console.log('ErrorMsg: ', e.message);
       //console.log(e);

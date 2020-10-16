@@ -1,8 +1,8 @@
 "use strict";
 
 var Atom = require("./atom");
-var GE = require("./gclasses");
-var STR = require("./storage");
+var GE   = require("./gclasses");
+var STR  = require("./storage");
 
 // ========================
 
@@ -64,7 +64,6 @@ class Stmt_Block {
   }
   resolve(scope) {
     this.statements.forEach(function (smtp) {
-      //console.log('==========> User command smtp: ', smtp);
       smtp.resolve(scope);
     });
   }
@@ -157,7 +156,7 @@ class Stmt_Do_WhileLoop {
       scope.io.outputAddDetails("Η συνθήκη της ΜΕΧΡΙΣ_ΟΤΟΥ " +  this.condstr + " έχει τιμή " + condResult.val);
 
       if (condResult.val)
-      break;
+        break;
 
     } while (true);
   }
@@ -311,9 +310,7 @@ class DefDeclarations {
     this.vars = vars;
   }
   resolve(scope) {
-
     if (this.consts[0]) this.consts[0].forEach( (e) => e.resolve(scope));
-
     if (this.vars[0])   this.vars[0].forEach(   (e) => e.resolve(scope));
   }
 }
@@ -445,8 +442,6 @@ class CallSubFunction {
     this.args = args;
   }
   resolve(scope) {
-    //console.log("F step1 called ====: ", this.fun.name, " with args ", this.args);
-
     scope.io.outputAddDetails("Κλήση της συνάρτησης " + this.fun.name);
 
     if (!scope.hasSymbol(this.fun.name))
@@ -461,9 +456,11 @@ class CallSubFunction {
  
     var fun = scope.getSymbol(this.fun.name);
 
-    scope.io.outputAddDetails("Επιστροφή από την συνάρτηση " + this.fun.name);
+    var valReturned = fun.apply(this, sendData);
+
+    scope.io.outputAddDetails('Επιστροφή από την συνάρτηση ' + this.fun.name + ' με τιμή επιστροφής ' + valReturned);
   
-    return fun.apply(this, sendData);
+    return valReturned;
   }
 }
 
@@ -474,13 +471,8 @@ class CallSubProcedure {
     this.args = args;
   }
   resolve(scope) {
-
-    //scope.printMemory();
-
-    //console.log("P step1 called ====: ", this.fun.name, " with args ", this.args);
     scope.io.outputAddDetails("Κλήση της διαδικασίας " + this.fun.name);
 
-    //lookup the real function from the symbol
     if (!scope.hasSymbol(this.fun.name))
       throw new GE.GError('Η διαδικασία ' + this.fun.name + 'δεν βρέθηκε.');
 
@@ -554,8 +546,6 @@ class SubFunction {
     var body = this.body;
 
     scope.addSymbol(name, new STR.STRUserFunction(function (...arrargs) {
-      //console.log('func called ', name, ' with args: ', args);
-
       var args  = arrargs[0];
       var parentScope = arrargs[1];
      
@@ -578,13 +568,11 @@ class SubFunction {
 
       }
     
-      
       // Add function name as a variable
       scope2.addSymbolFuncName(name, ftype);
 
       declarations.resolve(scope2);
 
-      // Sent values to procedure
       params.forEach(function (param, i) {
         if (!scope2.hasSymbol(param.name))
           throw new GE.GError(
@@ -625,7 +613,7 @@ class SubFunction {
       body.resolve(scope2);
 
       if (!scope2.getSymbol(name))
-        throw new GE.GError('Η συνάρτηση δεν επέστρεψε τιμή στο όνομά της.');
+        throw new GE.GError('Η συνάρτηση δεν επέστρεψε τιμή με το όνομά της.');
 
       return scope2.getSymbol(name);
     }));
@@ -647,8 +635,6 @@ class SubProcedure {
     var body = this.body;
 
     scope.addSymbol(name, new STR.STRUserProcedure(function (...arrargs) {
-      //console.log('proc called ', name, ' with args: ', args);
-
       var args  = arrargs[0];
       var parentScope = arrargs[1];
 
@@ -715,7 +701,7 @@ class Program {
     this.body = body;
   }
 
-  resolve(scope, io) {
+  resolve(scope) {
 
     var newScope = scope.makeSubScope();
 
@@ -733,13 +719,7 @@ class Application {
     this.subPrograms = subPrograms;
     this.keyboardData = keyboardData;
   }
-  resolve(scope, argIOKeyboard) {
-    
-    if (argIOKeyboard != null && argIOKeyboard != '') {
-      //console.log('Keyboard buffer argIOKeyboard: ', argIOKeyboard);
-      var arrKeyboard = argIOKeyboard.split(',').map(item => item.trim());
-      arrKeyboard.forEach( function (e) { scope.io.inputAddToBuffer(e); })
-    }
+  resolve(scope) {
     
     if (scope.io.inputIsEmptyBuffer() && this.keyboardData.length) {
       //console.log('>> Setting keyboard buffer from inline source code');

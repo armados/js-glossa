@@ -2,7 +2,6 @@
 
 var Atom = require("./atom");
 var GE = require("./gclasses");
-
 var STR = require("./storage");
 var IO = require("./io");
 
@@ -727,7 +726,7 @@ class Application {
     this.subPrograms = subPrograms;
     this.keyboardData = keyboardData;
   }
-  resolve(argIOKeyboard) {
+  resolve(scope, argIOKeyboard) {
     
     if (argIOKeyboard != null && argIOKeyboard != '') {
       IOKeyboard = new IO.InputDevice();
@@ -739,56 +738,12 @@ class Application {
       IOKeyboard = new IO.InputDevice();
 
     
-    var scope = new STR.SScope();
-
     if (IOKeyboard.isEmpty() && this.keyboardData.length) {
       //console.log('>> Setting keyboard buffer from inline source code');
       this.keyboardData.forEach((e) => e.addKeyboardInputData(scope));
     }
 
     IOScreen.data = []; // FIXME: 
-
-    scope.addSymbol("Α_Μ",  new STR.STRBuiltinFunction(function (arrArgs) {
-      var A = arrArgs[0];
-      return new Atom.MNumber(Math.trunc(A.val /1));
-    }));
-    
-    scope.addSymbol("Α_Τ",  new STR.STRBuiltinFunction(function (arrArgs) {
-      var A = arrArgs[0];
-      if (A.val < 0) return new Atom.MNumber(-A.val);
-      return A;
-    }));
-    
-    scope.addSymbol("Τ_Ρ",  new STR.STRBuiltinFunction(function (arrArgs) {
-      var A = arrArgs[0];
-      if (A.val < 0) throw new GE.GError('Δεν ορίζεται ρίζα αρνητικού αριθμού.');
-      return new Atom.MNumber( Math.sqrt(A.val) );
-    }));
-    
-    scope.addSymbol("ΗΜ",  new STR.STRBuiltinFunction(function (arrArgs) {
-      var A = arrArgs[0];
-      return new Atom.MNumber( Math.sin(A.val) );
-    }));
-    
-    scope.addSymbol("ΣΥΝ",  new STR.STRBuiltinFunction(function (arrArgs) {
-      var A = arrArgs[0];
-      return new Atom.MNumber( Math.cos(A.val) );
-    }));
-    
-    scope.addSymbol("Ε",  new STR.STRBuiltinFunction(function (arrArgs) {
-      var A = arrArgs[0];
-      return new Atom.MNumber( Math.exp(A.val) );
-    }));
-    
-    scope.addSymbol("ΕΦ",  new STR.STRBuiltinFunction(function (arrArgs) {
-      var A = arrArgs[0];
-      return new Atom.MNumber( Math.tan(A.val) );
-    }));
-    
-    scope.addSymbol("ΛΟΓ",  new STR.STRBuiltinFunction(function (arrArgs) {
-      var A = arrArgs[0];
-      return new Atom.MNumber( Math.log(A.val) );
-    }));
 
     if (this.subPrograms.length)
       this.subPrograms.forEach((e) => e.resolve(scope));

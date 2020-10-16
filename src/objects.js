@@ -8,8 +8,6 @@ var IO = require("./io");
 var IOKeyboard = null;
 var IOScreen = new IO.OutputDevice();
 
-
-
 // ========================
 
 class MSymbol {
@@ -28,9 +26,7 @@ class MSymbolTable {
     this.name = name;
     this.args = args;
   }
-
   fetchCellName(scope) {
-
     var argsResolved = this.args.map(function (arg) {
       return arg.resolve(scope);
     });
@@ -346,7 +342,6 @@ class DefVariables {
     this.varType = varType;
     this.sym = sym;
   }
-
   resolve(scope) {
 
     var varType = this.varType;
@@ -467,7 +462,6 @@ class CallSubProcedure {
     this.fun = fun;
     this.args = args;
   }
-
   resolve(scope) {
 
     //scope.printMemory();
@@ -528,7 +522,6 @@ class CallSubProcedure {
 
   }
 }
-
 
 class SubFunction {
   constructor(name, params, funType, declarations, body) {
@@ -754,23 +747,17 @@ class Application {
   }
 }
 
-
-
 class KeyboardDataFromSource {
   constructor(args) {
     this.args = args;
   }
  
   addKeyboardInputData(scope) {
-
     var argsResolved = this.args.map((arg) => arg.resolve(scope));
-
     argsResolved.forEach((e) => IOKeyboard.add(e.val)); 
   }
 }
 
-
-  
 
 module.exports = {
 

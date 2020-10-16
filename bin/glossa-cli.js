@@ -10,10 +10,16 @@ var minimist = require("minimist");
 
 //FIXME:
 var args = minimist(process.argv.slice(2), {
-  string: ["input"],
-  string: ["keyboard"],
-  boolean: ["version"],
-  alias: { v: "version", i: "input", k: "keyboard" },
+  string: ["input", "keyboard"],
+  boolean: ["version", "removeAT", "removeAM", "removeTR"],
+  alias: { 
+    v: "version", 
+    i: "input", 
+    k: "keyboard",
+    rmAT: "removeAT", 
+    rmAM: "removeAM",
+    rmTR: "removeTR",  
+  },
   default: {},
   stopEarly: true /* populate _ with first non-option */,
   unknown: function () {
@@ -40,6 +46,11 @@ if (args["keyboard"])
   }
 
 var pr1 = new GLO.GlossaJS();
+
+
+if (args["removeAT"])
+  pr1.removeGlobalFunction('Α_Τ');
+
 pr1.setSourceCode(sourceCode);
 if (keyboardInput) pr1.setInputBuffer(keyboardInput);
 var output = pr1.run();

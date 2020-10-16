@@ -72,6 +72,12 @@ class GlossaJS {
     }));
   }
 
+  removeGlobalFunction(name) {
+    if (!this.scope.globalStorage.hasOwnProperty(name))
+      throw new GE.GError('Critical: removeGlobalFunction(): Global function not exist ' + name);
+
+    delete this.scope.globalStorage[name];
+  }
 
   run() {
 
@@ -107,7 +113,6 @@ class GlossaJS {
   }
 
 }
-
 
 module.exports = {
   GlossaJS: GlossaJS

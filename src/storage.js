@@ -124,7 +124,7 @@ class SScope {
   }
 
   setSymbol(name, obj) {
-//console.log("setSymbol(): ", name, " obj: ", obj);
+    //console.log("setSymbol(): ", name, " obj: ", obj);
     if (!this.hasSymbol(name))
         throw new GE.GError('Το αναγνωριστικό ' + name + ' δεν βρέθηκε.');
 
@@ -156,7 +156,7 @@ class SScope {
       throw new GE.GError('Critical: Unknown symbol type' + this.getSymbol(name));
     
 
-    //console.log('setSymbol: ', name, symType, ' <--  ',  obj, obj.constructor.name);
+     //console.log('setSymbol: ', name, symType, ' <--  ',  obj, obj.constructor.name);
 
      if      (this.getSymbolObject(name) instanceof STRInt ||
               this.getSymbolObject(name) instanceof STRFuncNameInt) {
@@ -193,7 +193,6 @@ class SScope {
   }
 
   getSymbol(name) {
-
     if (name in this.localStorage) 
       return this.localStorage[name].get();
     
@@ -204,7 +203,6 @@ class SScope {
   }
   
   getSymbolObject(name) {
-
     if (name in this.localStorage)
       return this.localStorage[name];
     
@@ -215,10 +213,6 @@ class SScope {
   }
 
 }
-
-
-
-
 
 module.exports = {
 

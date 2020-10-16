@@ -2,7 +2,6 @@
 
 var GE = require("./gclasses");
 
-
 class Atom {
     constructor(val) {
       this.val = val;
@@ -30,7 +29,6 @@ class Atom {
       this.B = B;
     }
     resolve(scope) {
-
       if (this.A.resolve(scope) == null)
         throw new GE.GError('Το αναγνωριστικό ' + this.A.name + 'δεν έχει αρχικοποιηθεί.');
 
@@ -62,8 +60,7 @@ class Atom {
       if (this.op == "neq")    return new MBoolean(a != b);
   
       if (this.op == "and")    return new MBoolean(a && b);
-      if (this.op == "or")     return new MBoolean(a || b);
-      
+      if (this.op == "or")     return new MBoolean(a || b);  
     }
   }
   
@@ -81,9 +78,6 @@ class Atom {
       return new MBoolean(!a);
     }
   }
-  
-
-  
 
 module.exports = {
     MNumber: MNumber,

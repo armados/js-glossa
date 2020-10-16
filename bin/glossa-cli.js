@@ -62,6 +62,8 @@ if (args["removeATP"])
 
 pr1.setSourceCode(sourceCode);
 if (keyboardInput) pr1.setInputBuffer(keyboardInput);
-var output = pr1.run();
 
-console.log(output);
+
+pr1.run();
+
+console.log(pr1.getOutput());

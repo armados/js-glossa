@@ -51,13 +51,13 @@ var operation = {
         var thenBody = tb.toAST();
         var moreBody = blockElseIf.toAST();
         var elseBody = eb ? eb.toAST()[0] : null;
-        return new MO.Stmt_IfCond(cond.toAST(), thenBody, condElseIf.toAST(), moreBody, elseBody);
+        return new MO.Stmt_IfCond(cond.toAST(), cond.sourceString, thenBody, condElseIf.toAST(), moreBody, elseBody);
     }, 
 
 
-    WhileExpr:   (_1, cond, _2, body, _3) => new MO.Stmt_WhileLoop(cond.toAST(), body.toAST()),
+    WhileExpr:   (_1, cond, _2, body, _3) => new MO.Stmt_WhileLoop(cond.toAST(), cond.sourceString, body.toAST()),
 
-    DoWhileExpr: (_1, body, _2, cond)     => new MO.Stmt_Do_WhileLoop(cond.toAST(), body.toAST()),
+    DoWhileExpr: (_1, body, _2, cond)     => new MO.Stmt_Do_WhileLoop(cond.toAST(), cond.sourceString, body.toAST()),
 
     ForExpr: (_1, variable, _2, initval, _3, finalval, _4, stepval, _5, body, _6) => 
     new MO.Stmt_ForLoop(variable.toAST(), initval.toAST(), finalval.toAST(), stepval.toAST(), body.toAST()),

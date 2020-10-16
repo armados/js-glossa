@@ -194,7 +194,8 @@ class SScope {
       throw new GE.GError('Critical: Unknown symbol type' + this.getSymbol(name));
 
     //console.log("Θέσε στο " +  name + " την τιμή " + obj.val);
-this.io.outputAddDetails("Θέσε στο " +  name + " την τιμή " + obj.val);
+    this.io.outputAddDetails("Θέσε στο " +  name + " την τιμή " + obj.val);
+    
     this.localStorage[name].set(obj);
   }
 

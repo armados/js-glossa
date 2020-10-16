@@ -16,13 +16,12 @@ class GlossaJS {
     this.sourceCode = null;
     this.inputBuffer = null;
 
-    this.scope = new STR.SScope();
     this.io    = new IO.IOBuffer();
-    
+
+    this.scope = new STR.SScope();    
     this.scope.io = this.io;
 
     this.initGlobalFunction();
-
   }
 
   setSourceCode(data)  { this.sourceCode = data; }

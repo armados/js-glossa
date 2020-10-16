@@ -308,7 +308,7 @@ class DefDeclarations {
 
     if (this.consts[0]) this.consts[0].forEach( (e) => e.resolve(scope));
 
-    if (this.vars[0])   this.vars[0].forEach( (e) => e.resolve(scope));
+    if (this.vars[0])   this.vars[0].forEach(   (e) => e.resolve(scope));
   }
 }
 
@@ -574,7 +574,7 @@ class SubFunction {
       params.forEach(function (param, i) {
         if (!scope2.hasSymbol(param.name))
           throw new GE.GError(
-            'Η παράμετρος ' + + param.name + 'δεν έχει δηλωθεί στο τμήμα δηλώσεων.'
+            'Η παράμετρος ' + param.name + 'δεν έχει δηλωθεί στο τμήμα δηλώσεων.'
           );
         
         if (!(args[i] instanceof STR.STRTableName))

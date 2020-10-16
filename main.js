@@ -9,14 +9,18 @@ var Atom = require("./src/atom");
 var GE = require("./src/gclasses");
 var STR = require("./src/storage");
 
-//var IO = require("./src/io");
+var IO = require("./src/io");
 
 class GlossaJS {
   constructor() {
     this.sourceCode = null;
     this.inputBuffer = null;
+
     this.scope = new STR.SScope();
+    this.io    = new IO.IOBuffer();
     
+    this.scope.io = this.io;
+
     this.initGlobalFunction();
 
   }
@@ -101,17 +105,24 @@ class GlossaJS {
     //var outast = astree.generate();
     //console.log(outast);
 
-    var output = null;
-
     try {
-      output = result.resolve(this.scope, this.inputBuffer)
+      result.resolve(this.scope, this.inputBuffer, this.io)
     } catch (e) {
-      return e.message;
+      console.log('ErrorMsg: ', e.message);
+      console.log(e);
+      this.io.outputAdd(e.message);
+      this.io.outputAddDetails(e.message);
     }
 
-    return output;
+    //console.log('IO: ', this.io);
+
+    //return this.io.getOutput().join('\n');
+    return true;
   }
 
+
+  getOutput()        { return this.io.getOutput().join('\n') }
+  getOutputDetails() { return this.io.getOutputDetails().join('\n') }
 }
 
 module.exports = {

@@ -65,10 +65,14 @@ class SScope {
     this.globalStorage = {};
     this.localStorage  = {};
     this.lockedVariables = [];
+    this.io = null;
 
     if (parent)
       this.globalStorage = parent.globalStorage;
-  }
+
+    if (parent)
+    this.io = parent.io;
+}
 
   makeSubScope() {   
     return new SScope(this);
@@ -189,6 +193,8 @@ class SScope {
     else
       throw new GE.GError('Critical: Unknown symbol type' + this.getSymbol(name));
 
+    //console.log("Θέσε στο " +  name + " την τιμή " + obj.val);
+this.io.outputAddDetails("Θέσε στο " +  name + " την τιμή " + obj.val);
     this.localStorage[name].set(obj);
   }
 

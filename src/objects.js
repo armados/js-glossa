@@ -66,10 +66,10 @@ class Stmt_Block {
   constructor(block) {
     this.statements = block;
   }
-  resolve(scope) {
+  resolve(scope, io) {
     this.statements.forEach(function (smtp) {
       //console.log('==========> User command smtp: ', smtp);
-      smtp.resolve(scope);
+      smtp.resolve(scope, io);
     });
   }
 }
@@ -85,7 +85,7 @@ class Stmt_IfCond {
     this.elseBody = elseBody;
   }
 
-  resolve(scope) {
+  resolve(scope, io) {
     var cond = this.cond;
     var thenBody = this.thenBody;
     var condElseIf = this.condElseIf;
@@ -98,7 +98,7 @@ class Stmt_IfCond {
       throw new GE.GError('Η συνθήκη της ΑΝ δεν αποτελεί λογική έκφραση.');
 
     if (condResult.val == true)
-      return thenBody.resolve(scope);
+      return thenBody.resolve(scope, io);
 
     if (condElseIf.length)
       for (var i = 0; i < condElseIf.length; ++i) {
@@ -108,12 +108,12 @@ class Stmt_IfCond {
           throw new GE.GError('Η συνθήκη της ΑΛΛΙΩΣ_ΑΝ δεν αποτελεί λογική έκφραση.');
 
         if (condResult.val == true) {
-          return moreBody[i].resolve(scope);
+          return moreBody[i].resolve(scope, io);
         }
       }
     
     if (elseBody) 
-      return elseBody.resolve(scope);
+      return elseBody.resolve(scope, io);
   }
 }
 
@@ -122,7 +122,7 @@ class Stmt_WhileLoop {
     this.cond = cond;
     this.body = body;
   }
-  resolve(scope) {
+  resolve(scope, io) {
     while (true) {
       var condResult = this.cond.resolve(scope);
 
@@ -132,7 +132,7 @@ class Stmt_WhileLoop {
       if (!condResult.val == false)
         break;
 
-      this.body.resolve(scope);
+      this.body.resolve(scope, io);
     }
   }
 }
@@ -142,9 +142,9 @@ class Stmt_Do_WhileLoop {
     this.cond = cond;
     this.body = body;
   }
-  resolve(scope) {
+  resolve(scope, io) {
     do {
-      this.body.resolve(scope);
+      this.body.resolve(scope, io);
 
       var condResult = this.cond.resolve(scope);
 
@@ -165,7 +165,7 @@ class Stmt_ForLoop {
     this.stepval = stepval;
     this.body = body;
   }
-  resolve(scope) {
+  resolve(scope, io) {
     var variable = this.variable;
     var initval = this.initval;
     var finalval = this.finalval;
@@ -194,7 +194,7 @@ class Stmt_ForLoop {
     if (v_initial <= v_final && v_step > 0) {
       while (scope.getSymbol(variable.name).val <= v_final) {
 
-        body.resolve(scope);
+        body.resolve(scope, io);
 
         scope.removeLock(variable.name);
         scope.setSymbol(
@@ -207,7 +207,7 @@ class Stmt_ForLoop {
     } else if (v_initial >= v_final && v_step < 0) {
       while (scope.getSymbol(variable.name).val >= v_final) {
     
-        body.resolve(scope);
+        body.resolve(scope, io);
         
         scope.removeLock(variable.name);
         scope.setSymbol(
@@ -227,14 +227,14 @@ class Stmt_Assignment {
     this.symbol = sym;
     this.val = val;
   }
-  resolve(scope) {
+  resolve(scope, io) {
     var sym = this.symbol;
 
     if (sym instanceof MSymbolTableAssign)
         sym = this.symbol.resolve(scope);
 
     var valResolved = this.val.resolve(scope);
-
+    
     scope.setSymbol(sym.name, valResolved);
   }
 }
@@ -243,7 +243,7 @@ class Stmt_Write {
   constructor(args) {
     this.args = args;
   }
-  resolve(scope) {
+  resolve(scope, io) {
 
     var output = [];
 
@@ -266,7 +266,8 @@ class Stmt_Write {
       }
     });
 
-    IOScreen.add( output.join(" ") );
+    io.outputAdd( output.join(" ") );
+    io.outputAddDetails( output.join(" ") );
   }
 }
 
@@ -274,8 +275,7 @@ class Stmt_Read {
   constructor(params) {
     this.params = params;
   }
-  resolve(scope) {
-    var inputData = [];
+  resolve(scope, io) {
 
     this.params.forEach(function (param) {
 
@@ -285,8 +285,8 @@ class Stmt_Read {
 
       var data = IOKeyboard.getSingleInputData();
 
-      //inputData.push("*** Εισαγωγή τιμής από πληκτρολόγιο: [" + data + "]");
-      
+      io.outputAddDetails( "*** Εισαγωγή τιμής από πληκτρολόγιο: [" + data + "]" );
+
       if      (typeof(data) == 'string')  var sym = new Atom.MString(data);
       else if (typeof(data) == 'number')  var sym = new Atom.MNumber(data);
       else 
@@ -295,7 +295,6 @@ class Stmt_Read {
       scope.setSymbol(param.name, sym);
     });
 
-    //IOScreen.add( inputData.join( "\n" ) );
   }
 }
 
@@ -304,11 +303,11 @@ class DefDeclarations {
     this.consts = consts;
     this.vars = vars;
   }
-  resolve(scope) {
+  resolve(scope, io) {
 
-    if (this.consts[0]) this.consts[0].forEach( (e) => e.resolve(scope));
+    if (this.consts[0]) this.consts[0].forEach( (e) => e.resolve(scope, io));
 
-    if (this.vars[0])   this.vars[0].forEach(   (e) => e.resolve(scope));
+    if (this.vars[0])   this.vars[0].forEach(   (e) => e.resolve(scope, io));
   }
 }
 
@@ -317,7 +316,7 @@ class DefConstant {
     this.sym = sym;
     this.val = val;
   }
-  resolve(scope) {
+  resolve(scope, io) {
 
     var obj = this.val.resolve(scope);
   
@@ -342,7 +341,7 @@ class DefVariables {
     this.varType = varType;
     this.sym = sym;
   }
-  resolve(scope) {
+  resolve(scope, io) {
 
     var varType = this.varType;
     //console.log('======> DefVariables: : ', varType);
@@ -438,8 +437,10 @@ class CallSubFunction {
     this.fun = fun;
     this.args = args;
   }
-  resolve(scope) {
+  resolve(scope, io) {
     //console.log("F step1 called ====: ", this.fun.name, " with args ", this.args);
+
+    io.outputAddDetails("Κλήση της συνάρτησης " + this.fun.name);
 
     if (!scope.hasSymbol(this.fun.name))
       throw new GE.GError('Η συνάρτηση ' + this.fun.name + ' δεν βρέθηκε.');
@@ -448,10 +449,13 @@ class CallSubFunction {
 
     var sendData = [];
     sendData[0] = argsResolved;
-    sendData[1] = scope;
-
+    sendData[1] = io;
+    sendData[2] = scope;
+ 
     var fun = scope.getSymbol(this.fun.name);
 
+    io.outputAddDetails("Επιστροφή από την συνάρτηση " + this.fun.name);
+  
     return fun.apply(this, sendData);
   }
 }
@@ -462,11 +466,12 @@ class CallSubProcedure {
     this.fun = fun;
     this.args = args;
   }
-  resolve(scope) {
+  resolve(scope, io) {
 
     //scope.printMemory();
 
     //console.log("P step1 called ====: ", this.fun.name, " with args ", this.args);
+    io.outputAddDetails("Κλήση της διαδικασίας " + this.fun.name);
 
     //lookup the real function from the symbol
     if (!scope.hasSymbol(this.fun.name))
@@ -482,6 +487,8 @@ class CallSubProcedure {
  
     var recvData = fun.apply(null, sendData);
 
+    io.outputAddDetails("Επιστροφή από την διαδικασία " + this.fun.name);
+   
     var procScope  = recvData[0];
     var procParams = recvData[1];
 
@@ -532,7 +539,7 @@ class SubFunction {
     this.body = body;
   }
 
-  resolve(scope) {
+  resolve(scope, io) {
     var name = this.name.name;
     var params = this.params;
     var funType = this.funType;
@@ -544,7 +551,7 @@ class SubFunction {
 
       var args  = arrargs[0];
       var parentScope = arrargs[1];
-   
+     
      if (args.length != params.length)
         throw new GE.GError(
           'Λάθος αριθμός παραμέτρων κατά την κλήση της συνάρτησης.'
@@ -568,7 +575,7 @@ class SubFunction {
       // Add function name as a variable
       scope2.addSymbolFuncName(name, ftype);
 
-      declarations.resolve(scope2);
+      declarations.resolve(scope2, io);
 
       // Sent values to procedure
       params.forEach(function (param, i) {
@@ -608,7 +615,7 @@ class SubFunction {
       });
 
 
-      body.resolve(scope2);
+      body.resolve(scope2, io);
 
       if (!scope2.getSymbol(name))
         throw new GE.GError('Η συνάρτηση δεν επέστρεψε τιμή στο όνομά της.');
@@ -626,7 +633,7 @@ class SubProcedure {
     this.body = body;
   }
 
-  resolve(scope) {
+  resolve(scope, io) {
     var name = this.name.name;
     var params = this.params;
     var declarations = this.declarations;
@@ -646,7 +653,7 @@ class SubProcedure {
       var scope2 = scope.makeSubScope();
 
       // Declare constants and variables
-      declarations.resolve(scope2);
+      declarations.resolve(scope2, io);
 
       // Sent values to procedure
       params.forEach(function (param, i) {
@@ -685,7 +692,7 @@ class SubProcedure {
         }
       });
 
-      body.resolve(scope2);
+      body.resolve(scope2, io);
 
       var procExecArr = [scope2, params];
 
@@ -701,15 +708,15 @@ class Program {
     this.body = body;
   }
 
-  resolve(scope) {
+  resolve(scope, io) {
 
     var newScope = scope.makeSubScope();
 
     newScope.addSymbol(this.name.name, new STR.STRReservedName(null));
 
-    this.declarations.resolve(newScope);
+    this.declarations.resolve(newScope, io);
 
-    this.body.resolve(newScope);
+    this.body.resolve(newScope, io);
   }
 }
 
@@ -719,13 +726,13 @@ class Application {
     this.subPrograms = subPrograms;
     this.keyboardData = keyboardData;
   }
-  resolve(scope, argIOKeyboard) {
+  resolve(scope, argIOKeyboard, io) {
     
     if (argIOKeyboard != null && argIOKeyboard != '') {
       IOKeyboard = new IO.InputDevice();
       //console.log('Keyboard buffer argIOKeyboard: ', argIOKeyboard);
       var arrKeyboard = argIOKeyboard.split(',').map(item => item.trim());
-      arrKeyboard.forEach( function (e) { IOKeyboard.add(e); })
+      arrKeyboard.forEach( function (e) { io.inputAddToBuffer(e); IOKeyboard.add(e); })
     }
     else
       IOKeyboard = new IO.InputDevice();
@@ -733,17 +740,14 @@ class Application {
     
     if (IOKeyboard.isEmpty() && this.keyboardData.length) {
       //console.log('>> Setting keyboard buffer from inline source code');
-      this.keyboardData.forEach((e) => e.addKeyboardInputData(scope));
+      this.keyboardData.forEach((e) => e.addKeyboardInputData(scope, io));
     }
 
-    IOScreen.data = []; // FIXME: 
 
     if (this.subPrograms.length)
-      this.subPrograms.forEach((e) => e.resolve(scope));
+      this.subPrograms.forEach((e) => e.resolve(scope, io));
 
-    this.mainProg.resolve(scope);
-
-    return IOScreen.get().join('\n');
+    this.mainProg.resolve(scope, io);
   }
 }
 
@@ -752,9 +756,12 @@ class KeyboardDataFromSource {
     this.args = args;
   }
  
-  addKeyboardInputData(scope) {
+  addKeyboardInputData(scope, io) {
     var argsResolved = this.args.map((arg) => arg.resolve(scope));
-    argsResolved.forEach((e) => IOKeyboard.add(e.val)); 
+    argsResolved.forEach(function (e) { 
+      io.inputAddToBuffer(e.val); 
+      IOKeyboard.add(e.val);
+    }); 
   }
 }
 

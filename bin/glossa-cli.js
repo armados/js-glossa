@@ -38,6 +38,7 @@ try {
 }
 
 if (args["keyboard"])
+  console.log('keyboard arg: ', args["keyboard"]);
   var keyboardInput = null;
   try {
     keyboardInput = fs.readFileSync(args["keyboard"]).toString();

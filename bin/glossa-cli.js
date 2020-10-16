@@ -37,7 +37,7 @@ try {
   throw new GE.GError("Input file not found");
 }
 
-if (args["keyboard"])
+if (args["keyboard"]) {
   console.log('keyboard arg: ', args["keyboard"]);
   var keyboardInput = null;
   try {
@@ -45,6 +45,7 @@ if (args["keyboard"])
   } catch (e) {
     throw new GE.GError("Keyboard input file not found");
   }
+}
 
 var pr1 = new GLO.GlossaJS();
 

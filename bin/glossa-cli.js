@@ -58,34 +58,34 @@ if (args["keyboard"]) {
 }
 
 
-var pr1 = new GLO.GlossaJS();
+var app = new GLO.GlossaJS();
 
 if (args["rmfuncat"])
-  pr1.removeGlobalFunction('Α_Τ');
+  app.removeGlobalFunction('Α_Τ');
 
 if (args["rmfuncam"])
-  pr1.removeGlobalFunction('Α_Μ');
+  app.removeGlobalFunction('Α_Μ');
 
 if (args["rmfunctr"])
-  pr1.removeGlobalFunction('Τ_Ρ');
+  app.removeGlobalFunction('Τ_Ρ');
 
 if (args["rmfunchm"])
-  pr1.removeGlobalFunction('ΗΜ');
+  app.removeGlobalFunction('ΗΜ');
 
 if (args["rmfuncsyn"])
-  pr1.removeGlobalFunction('ΣΥΝ');
+  app.removeGlobalFunction('ΣΥΝ');
 
 if (args["rmfuncef"])
-  pr1.removeGlobalFunction('ΕΦ');
+  app.removeGlobalFunction('ΕΦ');
 
 if (args["rmfunce"])
-  pr1.removeGlobalFunction('Ε');
+  app.removeGlobalFunction('Ε');
 
 if (args["rmfunclog"])
-  pr1.removeGlobalFunction('ΛΟΓ');
+  app.removeGlobalFunction('ΛΟΓ');
   
-pr1.setSourceCode(sourceCode);
-if (keyboardInput) pr1.setInputBuffer(keyboardInput);
-pr1.run();
+app.setSourceCode(sourceCode);
+if (keyboardInput) app.setInputBuffer(keyboardInput);
+app.run();
 
-console.log(pr1.getOutput());
+console.log(app.getOutput());

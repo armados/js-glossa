@@ -182,14 +182,14 @@ $(document).ready(function () {
     var output1 = null;
     var output2 = null;
     try {
-      var pr1 = new GLO.GlossaJS();
-      pr1.setSourceCode(editorCode);
+      var app = new GLO.GlossaJS();
+      app.setSourceCode(editorCode);
       
       if ($("#codekeyboardinput").val() != "")
-        pr1.setInputBuffer($("#codekeyboardinput").val());
-        pr1.run();
-        output1 = pr1.getOutput();
-        output2 = pr1.getOutputDetails();
+        app.setInputBuffer($("#codekeyboardinput").val());
+        app.run();
+        output1 = app.getOutput();
+        output2 = app.getOutputDetails();
       } catch (e) {
       output1 = e.message;
       output2 = e.message;

@@ -8,13 +8,13 @@ var GLO = require("../main.js");
 var filename = "../samples-dev/sample2.glo";
 var sourceCode = fs.readFileSync(path.join(__dirname, filename)).toString();
 
-var pr1 = new GLO.GlossaJS();
+var app = new GLO.GlossaJS();
 
-pr1.setSourceCode(sourceCode);
-pr1.setInputBuffer(null);
+app.setSourceCode(sourceCode);
+app.setInputBuffer(null);
 
-pr1.run();
+app.run();
 
-//console.log(pr1.getOutput());
+//console.log(app.getOutput());
 //console.log('=========================');
-console.log(pr1.getOutputDetails());
+console.log(app.getOutputDetails());

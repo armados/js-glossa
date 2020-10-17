@@ -288,6 +288,8 @@ class Stmt_Read {
   }
   resolve(scope) {
 
+    scope.io.outputAddDetails( 'Διάβασε από το πληκτρολόγιο' );
+
     this.params.forEach(function (param) {
 
       // Check if is a table cell fetch real symbol

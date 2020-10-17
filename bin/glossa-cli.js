@@ -8,7 +8,7 @@ var GE = require("../src/gclasses");
 var fs = require("fs");
 var minimist = require("minimist");
 
-//FIXME:
+
 var args = minimist(process.argv.slice(2), {
   string: ["input", "keyboard"],
   boolean: ["version", "rmfuncat", "rmfuncam", "rmfunctr", "rmfunchm", "rmfuncsyn", "rmfuncef", "rmfunce", "rmfunclog"],

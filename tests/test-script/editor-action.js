@@ -122,6 +122,12 @@ $(document).ready(function () {
   
   CodeMirror.defineMIME("text/x-glossa", "glossa");
 
+
+  $("h4").click(function (e) {
+    e.preventDefault();
+    editor.setTheme("ace/theme/gruvbox");
+  });
+
   $(".btnShowInput").click(function (e) {
     e.preventDefault();
     $("#outputTab").hide();

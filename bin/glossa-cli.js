@@ -27,6 +27,12 @@ var args = minimist(process.argv.slice(2), {
   },
 });
 
+if (args["version"]) {
+  console.log('0.0.1');
+  return;
+}
+
+
 if (!args["input"])
   throw new GE.GError("Missing input file");
 

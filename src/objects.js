@@ -297,7 +297,7 @@ class Stmt_Read {
       //var data = IOKeyboard.getSingleInputData();
       var data = scope.io.inputFetchValueFromBuffer();
 
-      scope.io.outputAddDetails( "*** Εισαγωγή τιμής από πληκτρολόγιο: [" + data + "]" );
+      scope.io.outputAddDetails( 'Εισαγωγή τιμής από το πληκτρολόγιο: ' + data );
 
       if      (typeof(data) == 'string')  var sym = new Atom.MString(data);
       else if (typeof(data) == 'number')  var sym = new Atom.MNumber(data);
@@ -448,7 +448,7 @@ class CallSubFunction {
     this.args = args;
   }
   resolve(scope) {
-    scope.io.outputAddDetails("Κλήση της συνάρτησης " + this.fun.name);
+    scope.io.outputAddDetails('Κλήση της Συνάρτησης ' + this.fun.name);
 
     if (!scope.hasSymbol(this.fun.name))
       throw new GE.GError('Η συνάρτηση ' + this.fun.name + ' δεν βρέθηκε.');
@@ -477,7 +477,7 @@ class CallSubProcedure {
     this.args = args;
   }
   resolve(scope) {
-    scope.io.outputAddDetails("Κλήση της διαδικασίας " + this.fun.name);
+    scope.io.outputAddDetails('Κλήση της Διαδικασίας ' + this.fun.name);
 
     if (!scope.hasSymbol(this.fun.name))
       throw new GE.GError('Η διαδικασία ' + this.fun.name + 'δεν βρέθηκε.');
@@ -492,7 +492,7 @@ class CallSubProcedure {
  
     var recvData = fun.apply(null, sendData);
 
-    scope.io.outputAddDetails("Επιστροφή από την διαδικασία " + this.fun.name);
+    scope.io.outputAddDetails('Επιστροφή από την διαδικασία ' + this.fun.name);
    
     var procScope  = recvData[0];
     var procParams = recvData[1];

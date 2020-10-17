@@ -59,6 +59,8 @@ if (args["keyboard"]) {
 
 
 var app = new GLO.GlossaJS();
+app.setSourceCode(sourceCode);
+app.setInputBuffer(keyboardInput);
 
 if (args["rmfuncat"])
   app.removeGlobalFunction('Α_Τ');
@@ -83,9 +85,7 @@ if (args["rmfunce"])
 
 if (args["rmfunclog"])
   app.removeGlobalFunction('ΛΟΓ');
-  
-app.setSourceCode(sourceCode);
-if (keyboardInput) app.setInputBuffer(keyboardInput);
+
 app.run();
 
 console.log(app.getOutput());

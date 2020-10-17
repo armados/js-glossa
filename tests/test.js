@@ -9,10 +9,8 @@ var filename = "../samples-dev/sample2.glo";
 var sourceCode = fs.readFileSync(path.join(__dirname, filename)).toString();
 
 var app = new GLO.GlossaJS();
-
 app.setSourceCode(sourceCode);
 app.setInputBuffer(null);
-
 app.run();
 
 //console.log(app.getOutput());

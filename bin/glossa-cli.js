@@ -55,13 +55,13 @@ if (args["keyboard"]) {
 
 var pr1 = new GLO.GlossaJS();
 
-if (args["removeAT"])
+if (args["rmfuncat"])
   pr1.removeGlobalFunction('Α_Τ');
 
-if (args["removeAM"])
+if (args["rmfuncam"])
   pr1.removeGlobalFunction('Α_Μ');
 
-if (args["removeATP"])
+if (args["rmfunctr"])
   pr1.removeGlobalFunction('Τ_Ρ');
 
 pr1.setSourceCode(sourceCode);

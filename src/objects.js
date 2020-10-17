@@ -711,13 +711,11 @@ class Program {
 
   resolve(scope) {
 
-    var newScope = scope.makeSubScope();
+    scope.addSymbol(this.name.name, new STR.STRReservedName(null));
 
-    newScope.addSymbol(this.name.name, new STR.STRReservedName(null));
+    this.declarations.resolve(scope);
 
-    this.declarations.resolve(newScope);
-
-    this.body.resolve(newScope);
+    this.body.resolve(scope);
   }
 }
 
@@ -733,7 +731,6 @@ class Application {
       //console.log('>> Setting keyboard buffer from inline source code');
       this.keyboardData.forEach((e) => e.addKeyboardInputData(scope));
     }
-
 
     if (this.subPrograms.length)
       this.subPrograms.forEach((e) => e.resolve(scope));

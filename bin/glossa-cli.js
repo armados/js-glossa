@@ -11,14 +11,14 @@ var minimist = require("minimist");
 //FIXME:
 var args = minimist(process.argv.slice(2), {
   string: ["input", "keyboard"],
-  boolean: ["version", "removeAT", "removeAM", "removeTR"],
+  boolean: ["version", "rmfuncat", "rmfuncam", "rmfunctr"],
   alias: { 
     v: "version", 
     i: "input", 
     k: "keyboard",
-    rmAT: "removeAT", 
-    rmAM: "removeAM",
-    rmTR: "removeTR",  
+    rmat: "rmfuncat", 
+    rmam: "rmfuncam",
+    rmtr: "rmfunctr",  
   },
   default: {},
   stopEarly: true /* populate _ with first non-option */,

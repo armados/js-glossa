@@ -710,7 +710,6 @@ class Program {
   }
 
   resolve(scope) {
-
     scope.addSymbol(this.name.name, new STR.STRReservedName(null));
 
     this.declarations.resolve(scope);

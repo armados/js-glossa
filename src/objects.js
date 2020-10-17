@@ -93,7 +93,7 @@ class Stmt_IfCond {
     if (!(condResult instanceof Atom.MBoolean))
       throw new GE.GError('Η συνθήκη της ΑΝ δεν αποτελεί λογική έκφραση.');
 
-    scope.io.outputAddDetails("Η συνθήκη " +  this.condstr + " έχει τιμή " + condResult.val);
+    scope.io.outputAddDetails('Η συνθήκη της ΑΝ ' +  this.condstr + ' έχει τιμή ' + condResult.val);
 
     if (condResult.val == true)
       return thenBody.resolve(scope);
@@ -128,7 +128,7 @@ class Stmt_WhileLoop {
       if (!(condResult instanceof Atom.MBoolean))
         throw new GE.GError('Η συνθήκη της ΟΣΟ δεν αποτελεί λογική έκφραση.');
 
-      scope.io.outputAddDetails("Η συνθήκη της ΟΣΟ " +  this.condstr + " έχει τιμή " + condResult.val);
+      scope.io.outputAddDetails('Η συνθήκη της ΟΣΟ ' +  this.condstr + ' έχει τιμή ' + condResult.val);
 
       if (!condResult.val)
         break;
@@ -146,6 +146,7 @@ class Stmt_Do_WhileLoop {
   }
   resolve(scope) {
     do {
+
       this.body.resolve(scope);
 
       var condResult = this.cond.resolve(scope);
@@ -153,7 +154,7 @@ class Stmt_Do_WhileLoop {
       if (!(condResult instanceof Atom.MBoolean))
         throw new GE.GError('Η συνθήκη της ΜΕΧΡΙΣ_ΟΤΟΥ δεν αποτελεί λογική έκφραση.');
 
-      scope.io.outputAddDetails("Η συνθήκη της ΜΕΧΡΙΣ_ΟΤΟΥ " +  this.condstr + " έχει τιμή " + condResult.val);
+      scope.io.outputAddDetails('Η συνθήκη της ΜΕΧΡΙΣ_ΟΤΟΥ ' +  this.condstr + ' έχει τιμή ' + condResult.val);
 
       if (condResult.val)
         break;
@@ -198,7 +199,8 @@ class Stmt_ForLoop {
 
     if (v_initial <= v_final && v_step > 0) {
       while (scope.getSymbol(variable.name).val <= v_final) {
-
+        scope.io.outputAddDetails('Η συνθήκη της ΓΙΑ ' + variable.name + '<=' + v_final + ' είναι ΑΛΗΘΗΣ');
+   
         body.resolve(scope);
 
         scope.removeLock(variable.name);
@@ -207,10 +209,12 @@ class Stmt_ForLoop {
           new Atom.MNumber(scope.getSymbol(variable.name).val + v_step)
         );
         scope.addLock(variable.name);
-
       }
+      scope.io.outputAddDetails('Η συνθήκη της ΓΙΑ ' + variable.name + '<=' + v_final + ' είναι ΨΕΥΔΗΣ');
+
     } else if (v_initial >= v_final && v_step < 0) {
       while (scope.getSymbol(variable.name).val >= v_final) {
+        scope.io.outputAddDetails('Η συνθήκη της ΓΙΑ ' + variable.name + '>=' + v_final + ' είναι ΑΛΗΘΗΣ');
     
         body.resolve(scope);
         
@@ -221,6 +225,8 @@ class Stmt_ForLoop {
         );
         scope.addLock(variable.name);
       }
+      scope.io.outputAddDetails('Η συνθήκη της ΓΙΑ ' + variable.name + '>=' + v_final + ' είναι ΨΕΥΔΗΣ');
+
     }
 
     scope.removeLock(variable.name);
@@ -272,7 +278,7 @@ class Stmt_Write {
     });
 
     scope.io.outputAdd( output.join(" ") );
-    scope.io.outputAddDetails( output.join(" ") );
+    scope.io.outputAddDetails( 'Δείξε στην οθόνη: ' + output.join(" ") );
   }
 }
 
@@ -458,7 +464,7 @@ class CallSubFunction {
 
     var valReturned = fun.apply(this, sendData);
 
-    scope.io.outputAddDetails('Επιστροφή από την συνάρτηση ' + this.fun.name + ' με τιμή επιστροφής ' + valReturned);
+    scope.io.outputAddDetails('Επιστροφή από την συνάρτηση ' + this.fun.name + ' με τιμή επιστροφής ' + valReturned.val);
   
     return valReturned;
   }

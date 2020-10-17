@@ -125,6 +125,7 @@ $(document).ready(function () {
   $(".btnShowInput").click(function (e) {
     e.preventDefault();
     $("#outputTab").hide();
+    $("#outputTabDetails").hide();
     $("#inputTab").show();
   });
 
@@ -132,6 +133,14 @@ $(document).ready(function () {
     e.preventDefault();
     $("#inputTab").hide();
     $("#outputTab").show();
+    $("#outputTabDetails").hide();
+  });
+
+  $(".btnShowOutputDetails").click(function (e) {
+    e.preventDefault();
+    $("#inputTab").hide();
+    $("#outputTab").hide();
+    $("#outputTabDetails").show();
   });
 
   $("#spinner").hide();
@@ -158,12 +167,14 @@ $(document).ready(function () {
     $(".btnShowOutput").click();
 
     $("#result").html("Περιμένετε....");
+    $("#resultDetails").html("Περιμένετε....");
 
     $("#error").html("").hide();
 
     var editorCode = editor.getValue();
 
-    var output = null;
+    var output1 = null;
+    var output2 = null;
     try {
       var pr1 = new GLO.GlossaJS();
       pr1.setSourceCode(editorCode);
@@ -171,14 +182,17 @@ $(document).ready(function () {
       if ($("#codekeyboardinput").val() != "")
         pr1.setInputBuffer($("#codekeyboardinput").val());
         pr1.run();
-        output = pr1.getOutput()
-    } catch (e) {
-      output = e.message;
+        output1 = pr1.getOutput();
+        output2 = pr1.getOutputDetails();
+      } catch (e) {
+      output1 = e.message;
+      output2 = e.message;
     }
 
     $("#spinner").hide();
 
-    $("#result").html(output);
+    $("#result").html(output1);
+    $("#resultDetails").html(output2);
 
     $("#run").removeClass("disabled");
     $("#run").prop("disabled", false);

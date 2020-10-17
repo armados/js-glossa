@@ -71,7 +71,6 @@ class IOBuffer {
       return this.outputDataDetails;
     }
 
-
     inputAddToBuffer(val) {
       this.inputData.push(val);
     }

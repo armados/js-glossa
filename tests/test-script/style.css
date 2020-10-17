@@ -30,6 +30,10 @@
   background-color: rgba(92, 184, 92, 0.7);
 }
 
+.outputHeaderDetails {
+  background-color: rgb(236, 154, 30);
+}
+
 .editorHeader {
   background-color: rgb(69, 140, 161);
   text-align: center;

@@ -93,6 +93,15 @@
                     />
                     Έξοδος
                   </label>
+                  <label class="btn btn-outline-info btn-sm">
+                    <input
+                      type="radio"
+                      name="options"
+                      id="option2"
+                      class="btnShowOutputDetails"
+                    />
+                    Αναλυτική Έξοδος
+                  </label>
                 </div>
 
                 <div
@@ -119,6 +128,7 @@
                   placeholder="Το κείμενο που θα εισαχθεί εδώ θα δωθεί ως είσοδος στο πρόγραμμα. Αν έχουν δηλωθεί τιμές εισόδου εντός του πηγαίου προγράμματος αυτές δεν θα ληφθούν υπόψη."
                 ></textarea>
               </div>
+
               <div
                 class="tab-pane show active"
                 id="outputTab"
@@ -128,6 +138,17 @@
                 <div class="tabHeader outputHeader">Έξοδος</div>
                 <pre id="resultpre"><div id="result"></div></pre>
               </div>
+                            
+              <div
+                class="tab-pane"
+                id="outputTabDetails"
+                role="tabpanel"
+                aria-labelledby="outputTabDetails"
+              >
+                <div class="tabHeader outputHeaderDetails">Έξοδος με αναλυτική περιγραφή των βημάτων</div>
+                <pre id="resultpre"><div id="resultDetails"></div></pre>
+              </div>
+
             </div>
           </div>
         </div>

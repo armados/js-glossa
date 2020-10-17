@@ -49,7 +49,6 @@ if (args["keyboard"]) {
 
 var pr1 = new GLO.GlossaJS();
 
-
 if (args["removeAT"])
   pr1.removeGlobalFunction('Α_Τ');
 
@@ -59,11 +58,8 @@ if (args["removeAM"])
 if (args["removeATP"])
   pr1.removeGlobalFunction('Τ_Ρ');
 
-
 pr1.setSourceCode(sourceCode);
 if (keyboardInput) pr1.setInputBuffer(keyboardInput);
-
-
 pr1.run();
 
 console.log(pr1.getOutput());

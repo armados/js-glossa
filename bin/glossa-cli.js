@@ -11,7 +11,7 @@ var minimist = require("minimist");
 //FIXME:
 var args = minimist(process.argv.slice(2), {
   string: ["input", "keyboard"],
-  boolean: ["version", "rmfuncat", "rmfuncam", "rmfunctr"],
+  boolean: ["version", "rmfuncat", "rmfuncam", "rmfunctr", "rmfunchm", "rmfuncsyn", "rmfuncef", "rmfunce", "rmfunclog"],
   alias: { 
     v: "version", 
     i: "input", 
@@ -19,7 +19,12 @@ var args = minimist(process.argv.slice(2), {
     rmat: "rmfuncat", 
     rmam: "rmfuncam",
     rmtr: "rmfunctr",  
-  },
+    rmhm: "rmfunchm",  
+    rmsyn: "rmfuncsyn",  
+    rmef: "rmfuncef",  
+    rme: "rmfunce",  
+    rmlog: "rmfunclog",  
+    },
   default: {},
   stopEarly: true /* populate _ with first non-option */,
   unknown: function () {
@@ -64,6 +69,21 @@ if (args["rmfuncam"])
 if (args["rmfunctr"])
   pr1.removeGlobalFunction('Τ_Ρ');
 
+if (args["rmfunchm"])
+  pr1.removeGlobalFunction('ΗΜ');
+
+if (args["rmfuncsyn"])
+  pr1.removeGlobalFunction('ΣΥΝ');
+
+if (args["rmfuncef"])
+  pr1.removeGlobalFunction('ΕΦ');
+
+if (args["rmfunce"])
+  pr1.removeGlobalFunction('Ε');
+
+if (args["rmfunclog"])
+  pr1.removeGlobalFunction('ΛΟΓ');
+  
 pr1.setSourceCode(sourceCode);
 if (keyboardInput) pr1.setInputBuffer(keyboardInput);
 pr1.run();

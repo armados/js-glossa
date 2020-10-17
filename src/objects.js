@@ -93,7 +93,7 @@ class Stmt_IfCond {
     if (!(condResult instanceof Atom.MBoolean))
       throw new GE.GError('Η συνθήκη της ΑΝ δεν αποτελεί λογική έκφραση.');
 
-    scope.io.outputAddDetails('Η συνθήκη της ΑΝ ' +  this.condstr + ' έχει τιμή ' + condResult.val);
+    scope.io.outputAddDetails('Η συνθήκη της ΑΝ ' +  this.condstr + ' έχει τιμή ' +  (condResult.val ? 'ΑΛΗΘΗΣ':'ΨΕΥΔΗΣ'));
 
     if (condResult.val == true)
       return thenBody.resolve(scope);
@@ -128,7 +128,7 @@ class Stmt_WhileLoop {
       if (!(condResult instanceof Atom.MBoolean))
         throw new GE.GError('Η συνθήκη της ΟΣΟ δεν αποτελεί λογική έκφραση.');
 
-      scope.io.outputAddDetails('Η συνθήκη της ΟΣΟ ' +  this.condstr + ' έχει τιμή ' + condResult.val);
+      scope.io.outputAddDetails('Η συνθήκη της ΟΣΟ ' +  this.condstr + ' έχει τιμή ' + (condResult.val ? 'ΑΛΗΘΗΣ':'ΨΕΥΔΗΣ'));
 
       if (!condResult.val)
         break;
@@ -154,7 +154,7 @@ class Stmt_Do_WhileLoop {
       if (!(condResult instanceof Atom.MBoolean))
         throw new GE.GError('Η συνθήκη της ΜΕΧΡΙΣ_ΟΤΟΥ δεν αποτελεί λογική έκφραση.');
 
-      scope.io.outputAddDetails('Η συνθήκη της ΜΕΧΡΙΣ_ΟΤΟΥ ' +  this.condstr + ' έχει τιμή ' + condResult.val);
+      scope.io.outputAddDetails('Η συνθήκη της ΜΕΧΡΙΣ_ΟΤΟΥ ' +  this.condstr + ' έχει τιμή ' +  (condResult.val ? 'ΑΛΗΘΗΣ':'ΨΕΥΔΗΣ'));
 
       if (condResult.val)
         break;

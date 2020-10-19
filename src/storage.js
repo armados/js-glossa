@@ -71,7 +71,7 @@ class SScope {
       this.globalStorage = parent.globalStorage;
 
     if (parent)
-    this.io = parent.io;
+      this.io = parent.io;
 }
 
   makeSubScope() {   

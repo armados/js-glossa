@@ -5,6 +5,14 @@ var Atom = require("./atom");
 
 function binop(op,a,b) {  return new Atom.BinaryOp(op, a.toAST(), b.toAST()); }
 
+function getLineNo(cmd) {
+    var scode = cmd.source.sourceString;
+    var endChar = cmd.source.startIdx;
+    var res = scode.substring(0, endChar-1); 
+    var lineNo = res.split(/\r\n|\r|\n/).length;
+    return lineNo; 
+}
+
 var operation = {
     floatlit: function (a, _, b)      { return new Atom.MNumber(parseFloat(this.sourceString, 10));  },
     intlit:   function (a)            { return new Atom.MNumber(parseInt(this.sourceString, 10)); },
@@ -42,12 +50,20 @@ var operation = {
     IdentifierTblAssign: function (a, _l, b, _r) { return new MO.MSymbolTableAssign(a.sourceString, b.toAST()); },
     IdentifierTblFetch:  function (a, _l, b, _r) { return new MO.MSymbolTableFetch(a.sourceString, b.toAST()); },
 
-    AssignExpr: (a, _, b) => new MO.Stmt_Assignment(a.toAST(), b.toAST()),
+    AssignExpr: (a, _, b) => new MO.Stmt_Assignment(a.toAST(), b.toAST(), a.sourceString, b.sourceString, getLineNo(a)),
 
     KeyboardData: (_1, a) => new MO.KeyboardDataFromSource(a.toAST()),
 
     
-    IfExpr: function (_1, cond, _2, tb, _AlliosAn, condElseIf, _Tote, blockElseIf, _3, eb, _4) {
+    IfExpr: function (_1, cond, _2, tb, _AlliosAn, condElseIf, _Tote, blockElseIf, _Allios, eb, _TelosAn) {
+
+            if (condElseIf.numChildren) {
+                //console.log(blockElseIf.children);
+                condElseIf.children.forEach(function(entry) {
+                    //console.log('LineNo: ', getLineNo(entry)); 
+            });
+        }
+
         var thenBody = tb.toAST();
         var moreBody = blockElseIf.toAST();
         var elseBody = eb ? eb.toAST()[0] : null;
@@ -55,15 +71,15 @@ var operation = {
     }, 
 
 
-    WhileExpr:   (_1, cond, _2, body, _3) => new MO.Stmt_WhileLoop(cond.toAST(), cond.sourceString, body.toAST()),
+    WhileExpr:   (_1, cond, _2, body, _3) => new MO.Stmt_WhileLoop(cond.toAST(), cond.sourceString, body.toAST(), getLineNo(cond)),
 
-    DoWhileExpr: (_1, body, _2, cond)     => new MO.Stmt_Do_WhileLoop(cond.toAST(), cond.sourceString, body.toAST()),
+    DoWhileExpr: (_1, body, _2, cond)     => new MO.Stmt_Do_WhileLoop(cond.toAST(), cond.sourceString, body.toAST(), getLineNo(cond)),
 
     ForExpr: (_1, variable, _2, initval, _3, finalval, _4, stepval, _5, body, _6) => 
-    new MO.Stmt_ForLoop(variable.toAST(), initval.toAST(), finalval.toAST(), stepval.toAST(), body.toAST()),
+    new MO.Stmt_ForLoop(variable.toAST(), initval.toAST(), finalval.toAST(), stepval.toAST(), body.toAST(), getLineNo(variable)),
 
-    FunCall: (a, _1, b, _2) => new MO.CallSubFunction(a.toAST(), b.toAST()),
-    CallSubProcedure: (_1, a, _2, b, _3) => new MO.CallSubProcedure(a.toAST(), b.toAST()),
+    FunCall: (a, _1, b, _2) => new MO.CallSubFunction(a.toAST(), b.toAST(), getLineNo(a)),
+    CallSubProcedure: (_1, a, _2, b, _3) => new MO.CallSubProcedure(a.toAST(), b.toAST(), getLineNo(_1)),
 
  //   TblCellWrite: (tblname, _1, tblindex, _2) => new MO.TblCellWrite(tblname.sourceString, tblindex.toAST()),
 //    TblCellRead:  (tblname, _1, tblindex, _2) => new MO.TblCellRead(tblname.sourceString, tblindex.toAST()),
@@ -100,9 +116,9 @@ var operation = {
     Block: function(commands)      { return new MO.Stmt_Block(commands.toAST()); },
     FuncBlock: function(commands)  { return new MO.Stmt_Block(commands.toAST()); },    
 
-    Stmt_Write: function(_, tmp)   { return new MO.Stmt_Write(tmp.toAST()); },
+    Stmt_Write: function(_, cmd)   { return new MO.Stmt_Write(cmd.toAST(), getLineNo(cmd)); },
     
-    Stmt_Read: function(_, tmp)    { return new MO.Stmt_Read(tmp.toAST()); }
+    Stmt_Read: function(_, cmd)    { return new MO.Stmt_Read(cmd.toAST(), getLineNo(cmd)); }
 
 };
 

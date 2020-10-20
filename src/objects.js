@@ -468,7 +468,7 @@ class CallSubFunction {
     scope.io.outputAddDetails('Γραμμή ' + this.cmdLineNo + ': ' + 'Κλήση της Συνάρτησης ' + this.fun.name);
 
     if (!scope.hasSymbol(this.fun.name))
-      throw new GE.GError('Η συνάρτηση ' + this.fun.name + ' δεν βρέθηκε.');
+      throw new GE.GError('Γραμμή ' + this.cmdLineNo + ': ' + 'Η συνάρτηση ' + this.fun.name + ' δεν βρέθηκε.');
 
     var argsResolved = this.args.map((arg) => arg.resolve(scope));
 
@@ -498,7 +498,7 @@ class CallSubProcedure {
     scope.io.outputAddDetails('Γραμμή ' + this.cmdLineNo + ': ' + 'Κλήση της Διαδικασίας ' + this.fun.name);
 
     if (!scope.hasSymbol(this.fun.name))
-      throw new GE.GError('Η διαδικασία ' + this.fun.name + 'δεν βρέθηκε.');
+      throw new GE.GError('Γραμμή ' + this.cmdLineNo + ': ' + 'Η διαδικασία ' + this.fun.name + 'δεν βρέθηκε.');
 
     var argsResolved = this.args.map((arg) => arg.resolve(scope));
 

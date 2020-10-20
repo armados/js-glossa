@@ -476,7 +476,6 @@ class CallSubFunction {
 
     var sendData = [];
     sendData[0] = argsResolved;
-   // sendData[1] = io;
     sendData[1] = scope;
  
     var fun = scope.getSymbol(this.fun.name);
@@ -543,7 +542,8 @@ class CallSubProcedure {
       }
       else if (arg instanceof MSymbolTableFetch ) {
         //console.log('detected table CELL arg is : ', arg);
-        scope.setSymbol(arg.cellName, procScope.getSymbol(procParams[i].name));
+        if (scope.getSymbol(arg.cellName) != procScope.getSymbol(procParams[i].name))
+          scope.setSymbol(arg.cellName, procScope.getSymbol(procParams[i].name));
 
       }
       else if  (arg instanceof MSymbol) {
@@ -722,18 +722,29 @@ class SubProcedure {
 }
 
 class Program {
-  constructor(name, declarations, body) {
-    this.name = name;
+  constructor(progname, declarations, body) {
+    this.progname = progname;
     this.declarations = declarations;
     this.body = body;
   }
 
   resolve(scope) {
-    scope.addSymbol(this.name.name, new STR.STRReservedName(null));
+    scope.addSymbol(this.progname.name, new STR.STRReservedName(null));
 
     this.declarations.resolve(scope);
 
     this.body.resolve(scope);
+  }
+}
+
+class KeyboardDataFromSource {
+  constructor(args) {
+    this.args = args;
+  }
+ 
+  addKeyboardInputData(scope) {
+    var argsResolved = this.args.map((arg) => arg.resolve(scope));
+    argsResolved.forEach( (e) => scope.io.inputAddToBuffer(e.val) ); 
   }
 }
 
@@ -745,28 +756,13 @@ class Application {
   }
   resolve(scope) {
     
-    if (scope.io.inputIsEmptyBuffer() && this.keyboardData.length) {
-      //console.log('>> Setting keyboard buffer from inline source code');
+    if (scope.io.inputIsEmptyBuffer() && this.keyboardData.length)
       this.keyboardData.forEach((e) => e.addKeyboardInputData(scope));
-    }
 
     if (this.subPrograms.length)
       this.subPrograms.forEach((e) => e.resolve(scope));
 
     this.mainProg.resolve(scope);
-  }
-}
-
-class KeyboardDataFromSource {
-  constructor(args) {
-    this.args = args;
-  }
- 
-  addKeyboardInputData(scope) {
-    var argsResolved = this.args.map((arg) => arg.resolve(scope));
-    argsResolved.forEach(function (e) { 
-      scope.io.inputAddToBuffer(e.val); 
-    }); 
   }
 }
 

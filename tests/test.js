@@ -13,8 +13,8 @@ app.setSourceCode(sourceCode);
 app.setInputBuffer(null);
 app.run();
 
-//console.log(app.getOutput());
+console.log(app.getOutput());
 //console.log('=========================');
-console.log(app.getOutputDetails());
+//console.log(app.getOutputDetails());
 
 console.log('Total commands: ', app.getStats());

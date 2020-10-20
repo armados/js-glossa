@@ -215,7 +215,7 @@ class SScope {
     if (name in this.globalStorage)
       return this.globalStorage[name].get();
      
-    throw new GE.GError('getSymbol() Το αναγνωριστικό ' + name + ' δεν έχει δηλωθεί.');
+    throw new GE.GError('Το αναγνωριστικό ' + name + ' δεν έχει δηλωθεί.');
   }
   
   getSymbolObject(name) {

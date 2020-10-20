@@ -265,24 +265,26 @@ class Stmt_Write {
   }
   resolve(scope) {
 
+    var cmdLineNo = this.cmdLineNo;
+
     var output = [];
+
     this.args.forEach(function (argParam) {
 
       if (argParam instanceof MSymbolTableFetch)
           argParam = argParam.resolve(scope);
 
-      if (argParam.resolve(scope) == null)
-        throw new GE.GError('Γραμμή ' + this.cmdLineNo + ': ' + 'Το αναγνωριστικό ' + argParam.name + ' δεν έχει αρχικοποιηθεί.');
-  
       var arg = argParam.resolve(scope);
 
-      if (arg instanceof Atom.MBoolean) {
-        var out = arg.getValue() ? "ΑΛΗΘΗΣ" : "ΨΕΥΔΗΣ";
-      } else {
-        var out = arg.getValue();
-      }
+      if (arg == null)
+        throw new GE.GError('Γραμμή ' + cmdLineNo + ': ' + 'Το αναγνωριστικό ' + argParam.name + ' δεν έχει αρχικοποιηθεί.');
+  
+      var out = arg.getValue();
 
-        output.push(out);
+      if (arg instanceof Atom.MBoolean)
+        out = arg.getValue() ? "ΑΛΗΘΗΣ" : "ΨΕΥΔΗΣ";
+
+      output.push(out);
     });
 
     scope.io.outputAdd( output.join(" ") );
@@ -466,7 +468,7 @@ class CallSubFunction {
   }
   resolve(scope) {
     scope.io.outputAddDetails('Γραμμή ' + this.cmdLineNo + ': ' + 'Κλήση της Συνάρτησης ' + this.fun.name);
-
+    
     if (!scope.hasSymbol(this.fun.name))
       throw new GE.GError('Γραμμή ' + this.cmdLineNo + ': ' + 'Η συνάρτηση ' + this.fun.name + ' δεν βρέθηκε.');
 
@@ -545,7 +547,8 @@ class CallSubProcedure {
 
       }
       else if  (arg instanceof MSymbol) {
-        scope.setSymbol(arg.name, procScope.getSymbol(procParams[i].name));
+        if (scope.getSymbol(arg.name) != procScope.getSymbol(procParams[i].name))
+          scope.setSymbol(arg.name, procScope.getSymbol(procParams[i].name));
       }
 
     });
@@ -592,12 +595,12 @@ class SubFunction {
 
       }
     
-      // Add function name as a variable
+      // Add function name as variable
       scope2.addSymbolFuncName(name, ftype);
 
       declarations.resolve(scope2);
 
-      params.forEach(function (param, i) {
+      params.forEach(function (param, i) {    
         if (!scope2.hasSymbol(param.name))
           throw new GE.GError(
             'Η παράμετρος ' + param.name + 'δεν έχει δηλωθεί στο τμήμα δηλώσεων.'
@@ -635,7 +638,7 @@ class SubFunction {
 
 
       body.resolve(scope2);
-
+      
       if (!scope2.getSymbol(name))
         throw new GE.GError('Η συνάρτηση δεν επέστρεψε τιμή με το όνομά της.');
 

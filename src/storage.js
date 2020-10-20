@@ -67,12 +67,19 @@ class SScope {
     this.lockedVariables = [];
     this.io = null;
 
+    this.statistics = {}
+    this.statistics['totalAssignCommands'] = 0;
+
     if (parent)
       this.globalStorage = parent.globalStorage;
 
     if (parent)
       this.io = parent.io;
-}
+
+    if (parent)
+      this.statistics = parent.statistics;
+
+    }
 
   makeSubScope() {   
     return new SScope(this);
@@ -197,6 +204,8 @@ class SScope {
     //this.io.outputAddDetails('[#] Θέσε στο ' +  name + ' την τιμή ' + obj.val);
     
     this.localStorage[name].set(obj);
+
+    this.statistics['totalAssignCommands'] = this.statistics['totalAssignCommands'] + 1;
   }
 
   getSymbol(name) {
@@ -206,7 +215,7 @@ class SScope {
     if (name in this.globalStorage)
       return this.globalStorage[name].get();
      
-    throw new GE.GError('Το αναγνωριστικό ' + name + ' δεν έχει δηλωθεί.');
+    throw new GE.GError('getSymbol() Το αναγνωριστικό ' + name + ' δεν έχει δηλωθεί.');
   }
   
   getSymbolObject(name) {

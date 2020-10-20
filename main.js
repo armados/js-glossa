@@ -23,6 +23,9 @@ class GlossaJS {
     this.initGlobalFunction();
   }
 
+  getStats() { return this.scope.statistics['totalAssignCommands']; }
+
+
   setSourceCode(data)  { this.sourceCode = data; }
   getSourceCode()      { return this.sourceCode; }
 

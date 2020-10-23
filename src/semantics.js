@@ -18,7 +18,7 @@ var operation = {
     intlit:   function (a)            { return new Atom.MNumber(parseInt(this.sourceString, 10)); },
     strlit:   function (_l, text, _r) { return new Atom.MString(text.sourceString); },
     boollit:  function (a)            { return new Atom.MBoolean( this.sourceString == "ΑΛΗΘΗΣ" ? true : false ); },
-    
+
     Exp7_parens:      (_l, e, _r) => e.toAST(),
 
     Exp5_powop:       (x, _, y)   => binop('pow',x,y),

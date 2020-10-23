@@ -135,7 +135,7 @@ class GrammarOhm {
             boollit     = true | false
         
         
-            space +=  comment
+            //space +=  comment
         
             keyboardinput =  "! KEYBOARD_INPUT:"
         

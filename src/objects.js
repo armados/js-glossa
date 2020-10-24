@@ -95,6 +95,8 @@ class Stmt_IfCond {
 
     scope.io.outputAddDetails('Η συνθήκη της ΑΝ ' +  this.condstr + ' έχει τιμή ' +  (condResult.val ? 'ΑΛΗΘΗΣ':'ΨΕΥΔΗΣ'));
 
+    scope.incrCmdCounter();
+    
     if (condResult.val == true)
       return thenBody.resolve(scope);
 
@@ -135,6 +137,8 @@ class Stmt_WhileLoop {
         break;
 
       this.body.resolve(scope);
+
+      scope.incrCmdCounter();
     }
   }
 }
@@ -150,6 +154,8 @@ class Stmt_Do_WhileLoop {
     do {
 
       this.body.resolve(scope);
+      
+      scope.incrCmdCounter();
 
       var condResult = this.cond.resolve(scope);
 
@@ -206,6 +212,8 @@ class Stmt_ForLoop {
    
         body.resolve(scope);
 
+        scope.incrCmdCounter();
+
         scope.removeLock(variable.name);
         scope.setSymbol(
           this.variable.name,
@@ -220,6 +228,8 @@ class Stmt_ForLoop {
         scope.io.outputAddDetails('Γραμμή ' + this.cmdLineNo + ': ' + 'Η συνθήκη της ΓΙΑ ' + variable.name + '>=' + v_final + ' είναι ΑΛΗΘΗΣ');
     
         body.resolve(scope);
+
+        scope.incrCmdCounter();
         
         scope.removeLock(variable.name);
         scope.setSymbol(
@@ -255,6 +265,8 @@ class Stmt_Assignment {
     scope.io.outputAddDetails('Γραμμή ' + this.cmdLineNo + ': ' + this.cmdStrA + ' <- ' + this.cmdStrB);
 
     scope.setSymbol(sym.name, valResolved);
+
+    scope.incrCmdCounter();
   }
 }
 
@@ -264,6 +276,8 @@ class Stmt_Write {
     this.cmdLineNo = cmdLineNo;
   }
   resolve(scope) {
+
+    scope.incrCmdCounter();
 
     var cmdLineNo = this.cmdLineNo;
 
@@ -299,6 +313,7 @@ class Stmt_Read {
   }
   resolve(scope) {
 
+    scope.incrCmdCounter();
     //scope.io.outputAddDetails( 'Διάβασε από το πληκτρολόγιο' );
 
     var output = [];

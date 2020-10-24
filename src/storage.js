@@ -69,6 +69,8 @@ class SScope {
 
     this.statistics = {}
     this.statistics['totalAssignCommands'] = 0;
+    this.config = {}
+    this.config['maxAssignCommands'] = 100000;
 
     if (parent)
       this.globalStorage = parent.globalStorage;
@@ -78,6 +80,9 @@ class SScope {
 
     if (parent)
       this.statistics = parent.statistics;
+
+      if (parent)
+      this.config = parent.config;
 
     }
 
@@ -102,6 +107,14 @@ class SScope {
     this.lockedVariables.splice(index, 1);
   }
  
+  
+  incrCmdCounter() {
+    this.statistics['totalAssignCommands'] = this.statistics['totalAssignCommands'] + 1;
+
+    if (this.statistics['totalAssignCommands'] >=  this.config['maxAssignCommands'])
+      throw new GE.GError('Το πρόγραμμα εκτέλεσε το μέγιστο επιτρεπτό όριο των ' + this.config['maxAssignCommands'] + ' εντολών.');
+  }
+
   printMemory() {
     console.log("\n============================[ Memory dump  ]");
     console.log("RAM Global storage: ", this.globalStorage);
@@ -205,7 +218,7 @@ class SScope {
     
     this.localStorage[name].set(obj);
 
-    this.statistics['totalAssignCommands'] = this.statistics['totalAssignCommands'] + 1;
+    //FIXME: oxi edw mono tis entoles this.incrCmdCounter();
   }
 
   getSymbol(name) {

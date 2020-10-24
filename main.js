@@ -19,6 +19,8 @@ class GlossaJS {
 
     this.scope = new STR.SScope();    
     this.scope.io = this.io;
+    this.scope.config['maxAssignCommands'] = 100000;
+
 
     this.initGlobalFunction();
   }

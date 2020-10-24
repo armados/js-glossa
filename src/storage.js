@@ -68,21 +68,18 @@ class SScope {
     this.io = null;
 
     this.statistics = {}
-    this.statistics['totalAssignCommands'] = 0;
+    this.statistics['totalAssignCmd'] = 0;
+    this.statistics['totalLogicalComp'] = 0;
     this.config = {}
-    this.config['maxAssignCommands'] = 100000;
+    this.config['maxExecutionCmd'] = 10000;
+    this.config['maxLogicalComp'] = 5000;
 
-    if (parent)
+    if (parent) {
       this.globalStorage = parent.globalStorage;
-
-    if (parent)
       this.io = parent.io;
-
-    if (parent)
       this.statistics = parent.statistics;
-
-      if (parent)
       this.config = parent.config;
+    }
 
     }
 
@@ -107,12 +104,19 @@ class SScope {
     this.lockedVariables.splice(index, 1);
   }
  
-  
-  incrCmdCounter() {
-    this.statistics['totalAssignCommands'] = this.statistics['totalAssignCommands'] + 1;
+  incrAssignCounter() {
+    this.statistics['totalAssignCmd'] = this.statistics['totalAssignCmd'] + 1;
 
-    if (this.statistics['totalAssignCommands'] >=  this.config['maxAssignCommands'])
-      throw new GE.GError('Το πρόγραμμα εκτέλεσε το μέγιστο επιτρεπτό όριο των ' + this.config['maxAssignCommands'] + ' εντολών.');
+    if (this.statistics['totalAssignCmd'] >=  this.config['maxExecutionCmd'])
+      throw new GE.GError('Το πρόγραμμα έφτασε το μέγιστο επιτρεπτό όριο των ' + this.config['maxExecutionCmd'] + ' εντολών εκχώρησης.');
+  }
+
+   
+  incrLogicalCounter() {
+    this.statistics['totalLogicalComp'] = this.statistics['totalLogicalComp'] + 1;
+
+    if (this.statistics['totalLogicalComp'] >=  this.config['maxLogicalComp'])
+      throw new GE.GError('Το πρόγραμμα έφτασε το μέγιστο επιτρεπτό όριο των ' + this.config['maxLogicalComp'] + ' ελέγχων συνθηκών.');
   }
 
   printMemory() {
@@ -218,7 +222,7 @@ class SScope {
     
     this.localStorage[name].set(obj);
 
-    //FIXME: oxi edw mono tis entoles this.incrCmdCounter();
+    //FIXME: oxi edw mono tis entoles this.incrAssignCounter();
   }
 
   getSymbol(name) {

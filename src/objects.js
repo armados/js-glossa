@@ -95,7 +95,7 @@ class Stmt_IfCond {
 
     scope.io.outputAddDetails('Η συνθήκη της ΑΝ ' +  this.condstr + ' έχει τιμή ' +  (condResult.val ? 'ΑΛΗΘΗΣ':'ΨΕΥΔΗΣ'));
 
-    scope.incrCmdCounter();
+    scope.incrLogicalCounter();
     
     if (condResult.val == true)
       return thenBody.resolve(scope);
@@ -107,6 +107,8 @@ class Stmt_IfCond {
         if (!(condResult instanceof Atom.MBoolean))
           throw new GE.GError('Η συνθήκη της ΑΛΛΙΩΣ_ΑΝ δεν αποτελεί λογική έκφραση.');
 
+          scope.incrLogicalCounter();
+          
           if (condResult.val == true) {
           return moreBody[i].resolve(scope);
         }
@@ -135,10 +137,11 @@ class Stmt_WhileLoop {
 
       if (!condResult.val)
         break;
-
+        
+      scope.incrLogicalCounter();
+        
       this.body.resolve(scope);
 
-      scope.incrCmdCounter();
     }
   }
 }
@@ -154,8 +157,6 @@ class Stmt_Do_WhileLoop {
     do {
 
       this.body.resolve(scope);
-      
-      scope.incrCmdCounter();
 
       var condResult = this.cond.resolve(scope);
 
@@ -163,6 +164,8 @@ class Stmt_Do_WhileLoop {
         throw new GE.GError('Γραμμή ' + this.cmdLineNo + ': ' + 'Η συνθήκη της ΜΕΧΡΙΣ_ΟΤΟΥ δεν αποτελεί λογική έκφραση.');
 
       scope.io.outputAddDetails('Γραμμή ' + this.cmdLineNo + ': ' + 'Η συνθήκη της ΜΕΧΡΙΣ_ΟΤΟΥ ' +  this.condstr + ' έχει τιμή ' +  (condResult.val ? 'ΑΛΗΘΗΣ':'ΨΕΥΔΗΣ'));
+
+      scope.incrLogicalCounter();
 
       if (condResult.val)
         break;
@@ -210,9 +213,9 @@ class Stmt_ForLoop {
       while (scope.getSymbol(variable.name).val <= v_final) {
         scope.io.outputAddDetails('Γραμμή ' + this.cmdLineNo + ': ' + 'Η συνθήκη της ΓΙΑ ' + variable.name + '<=' + v_final + ' είναι ΑΛΗΘΗΣ');
    
-        body.resolve(scope);
+        scope.incrLogicalCounter();
 
-        scope.incrCmdCounter();
+        body.resolve(scope);
 
         scope.removeLock(variable.name);
         scope.setSymbol(
@@ -226,11 +229,11 @@ class Stmt_ForLoop {
     } else if (v_initial >= v_final && v_step < 0) {
       while (scope.getSymbol(variable.name).val >= v_final) {
         scope.io.outputAddDetails('Γραμμή ' + this.cmdLineNo + ': ' + 'Η συνθήκη της ΓΙΑ ' + variable.name + '>=' + v_final + ' είναι ΑΛΗΘΗΣ');
-    
+        
+        scope.incrLogicalCounter();
+
         body.resolve(scope);
 
-        scope.incrCmdCounter();
-        
         scope.removeLock(variable.name);
         scope.setSymbol(
           this.variable.name,
@@ -266,7 +269,7 @@ class Stmt_Assignment {
 
     scope.setSymbol(sym.name, valResolved);
 
-    scope.incrCmdCounter();
+    scope.incrAssignCounter();
   }
 }
 
@@ -276,8 +279,6 @@ class Stmt_Write {
     this.cmdLineNo = cmdLineNo;
   }
   resolve(scope) {
-
-    scope.incrCmdCounter();
 
     var cmdLineNo = this.cmdLineNo;
 
@@ -313,7 +314,6 @@ class Stmt_Read {
   }
   resolve(scope) {
 
-    scope.incrCmdCounter();
     //scope.io.outputAddDetails( 'Διάβασε από το πληκτρολόγιο' );
 
     var output = [];

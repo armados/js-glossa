@@ -19,13 +19,13 @@ class GlossaJS {
 
     this.scope = new STR.SScope();    
     this.scope.io = this.io;
-    this.scope.config['maxAssignCommands'] = 100000;
-
+    this.scope.config['maxExecutionCmd'] = 100000;
+    this.scope.config['maxLogicalComp'] = 500000;
 
     this.initGlobalFunction();
   }
 
-  getStats() { return this.scope.statistics['totalAssignCommands']; }
+  getStats() { return this.scope.statistics; }
 
 
   setSourceCode(data)  { this.sourceCode = data; }

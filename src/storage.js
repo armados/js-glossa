@@ -116,7 +116,7 @@ class SScope {
     this.statistics['totalLogicalComp'] = this.statistics['totalLogicalComp'] + 1;
 
     if (this.statistics['totalLogicalComp'] >=  this.config['maxLogicalComp'])
-      throw new GE.GError('Το πρόγραμμα έφτασε το μέγιστο επιτρεπτό όριο των ' + this.config['maxLogicalComp'] + ' ελέγχων συνθηκών.');
+      throw new GE.GError('Το πρόγραμμα έφτασε το μέγιστο επιτρεπτό όριο των ' + this.config['maxLogicalComp'] + ' συνθηκών.');
   }
 
   printMemory() {

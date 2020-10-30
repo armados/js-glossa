@@ -20,7 +20,7 @@ class GlossaJS {
     this.scope = new STR.SScope();    
     this.scope.io = this.io;
     this.scope.config['maxExecutionCmd'] = 100000;
-    this.scope.config['maxLogicalComp']  = 500000;
+    this.scope.config['maxLogicalComp']  = 100000;
 
     this.initGlobalFunction();
   }

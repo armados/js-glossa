@@ -60,7 +60,7 @@ class GrammarOhm {
             FuncBlock = FuncInnerCommand*
         
             InnerCommand     = AssignExpr | WhileExpr | DoWhileExpr | ForExpr | IfExpr | comment | CallSubProcedure | Stmt_Write | Stmt_Read
-            FuncInnerCommand = AssignExpr | WhileExpr | DoWhileExpr | ForExpr | IfExpr | comment | Stmt_Write
+            FuncInnerCommand = AssignExpr | WhileExpr | DoWhileExpr | ForExpr | IfExpr | comment 
         
             Stmt_Write = grapse Arguments
             Stmt_Read  = diavase VarParametersAssign

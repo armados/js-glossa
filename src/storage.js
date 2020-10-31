@@ -229,12 +229,19 @@ class SScope {
     if (name in this.localStorage) 
       return this.localStorage[name].get();
     
+    //if (name in this.globalStorage) FIXME: 
+    //  return this.globalStorage[name].get();
+     
+    throw new GE.GError('Το αναγνωριστικό ' + name + ' δεν έχει δηλωθεί.');
+  }
+
+  getGlobalSymbol(name) {
+
     if (name in this.globalStorage)
       return this.globalStorage[name].get();
      
     throw new GE.GError('Το αναγνωριστικό ' + name + ' δεν έχει δηλωθεί.');
-  }
-  
+  }  
   getSymbolObject(name) {
     if (name in this.localStorage)
       return this.localStorage[name];

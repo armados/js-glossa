@@ -493,7 +493,7 @@ class CallSubFunction {
     sendData[0] = argsResolved;
     sendData[1] = scope;
  
-    var fun = scope.getSymbol(this.fun.name);
+    var fun = scope.getGlobalSymbol(this.fun.name);
 
     var valReturned = fun.apply(this, sendData);
 
@@ -518,7 +518,7 @@ class CallSubProcedure {
 
     var argsResolved = this.args.map((arg) => arg.resolve(scope));
 
-    var fun = scope.getSymbol(this.fun.name);
+    var fun = scope.getGlobalSymbol(this.fun.name);
 
     var sendData = [];
     sendData[0] = argsResolved;

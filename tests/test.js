@@ -5,8 +5,15 @@ var path = require("path");
 
 var GLO = require("../main.js");
 
-var filename = "../samples-dev/sample3.glo";
-var sourceCode = fs.readFileSync(path.join(__dirname, filename)).toString();
+var filename = "../samples-dev/sample10.glo";
+var sourceCode = null;
+try {
+    sourceCode = fs.readFileSync(path.join(__dirname, filename)).toString();
+} catch (e) {
+    console.log('Το αρχείο δεν βρέθηκε');
+    return;
+}
+
 
 var app = new GLO.GlossaJS();
 app.setSourceCode(sourceCode);

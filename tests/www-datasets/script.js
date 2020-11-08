@@ -86,7 +86,7 @@ $(document).ready(function () {
     $('#sortable').on('click', '.liBtn-char-flnames', function() {
         var list = $(this).closest('li').find('ul.sortable2');
         list.append(`
-        <li class="ui-state-default dataRecordBox">
+        <li class="ui-state-default dataRecordBox dataRecordBoxTypeChars">
             <p class="bTitle chars">Όνομα και Επώνυμο</p>
             <span class="boxRemove">remove</span></span>
             
@@ -103,7 +103,7 @@ $(document).ready(function () {
      $('#sortable').on('click', '.liBtn-number-general', function() {
         var list = $(this).closest('li').find('ul.sortable2');
         list.append(`
-        <li class="ui-state-default dataRecordBox">
+        <li class="ui-state-default dataRecordBox dataRecordBoxTypeNumbers">
           <p class="bTitle numbers">Αριθμός</p>
           <span class="boxRemove">remove</span></span>
 
@@ -147,10 +147,21 @@ $(document).ready(function () {
         var mlist = $('ul#sortable');
 
         mlist.find('.dataRecordLine').each(function(i, li) {
-            console.log('@Line rec: ', i);
+            //console.log('@Line rec: ', i);
 
             $(this).find('.dataRecordBox').each(function(j, li) {
-                console.log('@Box: ', j);
+                var box=$(this);
+                //console.log('@Box: ', j);
+                //console.log($(this).prop('outerHTML'));
+
+                if       (box.hasClass('dataRecordBoxTypeChars')) {
+                    console.log('@Chars Characters');
+                }
+                else if  (box.hasClass('dataRecordBoxTypeNumbers')) {
+                    console.log('@Chars Numbers');
+                }
+
+
             });
     
         });

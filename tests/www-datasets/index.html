@@ -12,105 +12,69 @@
     <link
       rel="stylesheet"
       href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
-      integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh"
-      crossorigin="anonymous"
+    />
+
+    <link
+      rel="stylesheet"
+      href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css"
     />
 
     <link rel="stylesheet" type="text/css" href="style.css" />
   </head>
 
   <body>
-
     <div class="container">
-
       <div class="row">
         <div class="col">
           <h4>Dataset</h4>
         </div>
 
-        <div class="col"><p>
-          <a href="https://github.com/armados/js-glossa/"
-            >https://github.com/armados/js-glossa/</a
-          >
-        </p>
+        <div class="col">
+          <p>
+            <a href="https://github.com/armados/js-glossa/"
+              >https://github.com/armados/js-glossa/</a
+            >
+          </p>
         </div>
-
       </div>
 
       <div class="row">
         <div class="col">
+          <ul id="sortable"></ul>
 
-
-
-
-          <div class="btn-group" role="group" aria-label="Button group with nested dropdown">
-
-            <div class="btn-group" role="group">
-              <button id="btnGroupDrop1" type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                Αριθμοί
-              </button>
-              <div class="dropdown-menu" aria-labelledby="btnGroupDrop1">
-                <a class="dropdown-item" href="#">Τυχαίοι ακέραιοι</a>
-                <a class="dropdown-item" href="#">Ονόματα (αντρικά)</a>
-                <a class="dropdown-item" href="#">Ονόματα (γυναικεία)</a>
-                <a class="dropdown-item" href="#">Ονόματα (μικτά)</a>
-                <a class="dropdown-item" href="#">Επώνυμα (αντρικά)</a>
-                <a class="dropdown-item" href="#">Επώνυμα (γυναικεία)</a>
-                <a class="dropdown-item" href="#">Επώνυμα (μικτά)</a>
-                <a class="dropdown-item" href="#">Πόλεις</a>
-                <a class="dropdown-item" href="#">Χώρες</a>
-                <a class="dropdown-item" href="#">Νομοί</a>
-                <a class="dropdown-item" href="#">Ναι/Όχι</a>
-                <a class="dropdown-item" href="#">Άντρας/Γυναίκα</a>
-                <a class="dropdown-item" href="#">Α/Γ</a>
-              </div>
-            </div>
-            
-
-            <button type="button" class="btn btn-secondary">2</button>
-          
-            <div class="btn-group" role="group">
-              <button id="btnGroupDrop1" type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                Χαρακτήρες
-              </button>
-              <div class="dropdown-menu" aria-labelledby="btnGroupDrop1">
-                <a class="dropdown-item" href="#">Ονοματεπώνυμα</a>
-                <a class="dropdown-item" href="#">Ονόματα (αντρικά)</a>
-                <a class="dropdown-item" href="#">Ονόματα (γυναικεία)</a>
-                <a class="dropdown-item" href="#">Ονόματα (μικτά)</a>
-                <a class="dropdown-item" href="#">Επώνυμα (αντρικά)</a>
-                <a class="dropdown-item" href="#">Επώνυμα (γυναικεία)</a>
-                <a class="dropdown-item" href="#">Επώνυμα (μικτά)</a>
-                <a class="dropdown-item" href="#">Πόλεις</a>
-                <a class="dropdown-item" href="#">Χώρες</a>
-                <a class="dropdown-item" href="#">Νομοί</a>
-                <a class="dropdown-item" href="#">Ναι/Όχι</a>
-                <a class="dropdown-item" href="#">Άντρας/Γυναίκα</a>
-                <a class="dropdown-item" href="#">Α/Γ</a>
-              </div>
-            </div>
-          </div>
-
-
-
-
-
-
-
-
-
-
-        </div>         
+          <button
+            id="btnAddNewMBox"
+            type="button"
+            class="btn btn-primary btn-sm"
+          >
+            Προσθήκη γραμμής
+          </button>
+        </div>
       </div>
 
+      <div class="row">
+        <div class="col">
+          <div class="form-group">
+            <p>&nbsp;</p>
+            <button
+              id="btnGenerateData"
+              type="button"
+              class="btn btn-success btn-sm"
+            >
+              Δημιουργία δεδομένων
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
+    <!-- end of container -->
 
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
 
     <script src="script.js"></script>
-
   </body>
 </html>

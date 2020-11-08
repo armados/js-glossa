@@ -1,0 +1,14 @@
+#sortable, #sortable2 { font-size: 85%; }
+
+#sortable { list-style-type: none; margin: 0; padding: 0; width: 100%; }
+#sortable li { margin: 5px 0px; padding: 5px 0; vertical-align: top; background-color: #fff;  }
+
+
+#sortable li .sortable2 { display: inline-block; list-style-type: none; margin: 0; padding: 0; background-color: #fff;}
+#sortable li .sortable2 li { display: inline-block; margin: 2px; padding: 3px;  }
+
+.sortable2 p.bTitle { margin: 0; padding: 4px 5px; font-weight: bold; }
+.sortable2 p.bTitle.chars   { background-color: pink; color: #222; }
+.sortable2 p.bTitle.numbers { background-color: rgb(169, 204, 233); color: #222; }
+
+.sortable2 .ui-state-highlight { display: inline-block; width: 100px;}

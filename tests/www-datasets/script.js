@@ -23,19 +23,7 @@ $(document).ready(function () {
                                 Εισαγωγή
                             </button>
                             <div class="dropdown-menu" aria-labelledby="btnGroupDrop1">
-                                <button class="dropdown-item btn-sm liBtn-char-flnames" type="button">Ονοματεπώνυμα</button>
-                                <button class="dropdown-item btn-sm liBtn-char-fnamesm" type="button">Ονόματα (αντρικά)</button>
-                                <button class="dropdown-item btn-sm liBtn-char-fnamesf" type="button">Ονόματα (γυναικεία)</button>
-                                <button class="dropdown-item btn-sm liBtn-char-fnames" type="button">Ονόματα (μικτά)</button>
-                                <button class="dropdown-item btn-sm liBtn-char-lnamesm" type="button">Επώνυμα (αντρικά)</button>
-                                <button class="dropdown-item btn-sm liBtn-char-lnamef" type="button">Επώνυμα (γυναικεία)</button>
-                                <button class="dropdown-item btn-sm liBtn-char-lnames" type="button">Επώνυμα (μικτά)</button>
-                                <button class="dropdown-item btn-sm liBtn-char-cities" type="button">Πόλεις</button>
-                                <button class="dropdown-item btn-sm liBtn-char-countries" type="button">Χώρες</button>
-                                <button class="dropdown-item btn-sm liBtn-char-states" type="button">Νομοί</button>
-                                <button class="dropdown-item btn-sm liBtn-char-yesno" type="button">Ναι/Όχι</button>
-                                <button class="dropdown-item btn-sm liBtn-char-malefemale" type="button">Άντρας/Γυναίκα</button>
-                                <button class="dropdown-item btn-sm liBtn-char-malefemaleshort" type="button">Α/Γ</button>
+                                <button class="dropdown-item btn-sm liBtn-char-flnames" type="button">Κείμενο</button>
                                 <button class="dropdown-item btn-sm liBtn-number-general" type="button">Αριθμός</button>
                             </div>
                         </div>
@@ -87,34 +75,67 @@ $(document).ready(function () {
         var list = $(this).closest('li').find('ul.sortable2');
         list.append(`
         <li class="ui-state-default dataRecordBox dataRecordBoxTypeChars">
-            <p class="bTitle chars">Όνομα και Επώνυμο</p>
+            <p class="bTitle chars">Κείμενο</p>
             <span class="boxRemove">remove</span></span>
-            
+                    
+            <div class="form-group">
+                <label for="dataBoxHowMany">Πλήθος στη σειρά:</label>
+                <input type="number" class="form-control form-control-sm dataBoxHowMany" value="1">
+            </div>
+
             <div class="form-check">
                 <input class="form-check-input dataBoxUnique" type="checkbox" checked>
                 <label class="form-check-label">
-                Μοναδικοί
+                Μοναδικές εγγραφές
                 </label>
             </div>
 
             <div class="form-check">
             <input class="form-check-input dataBoxRandom" type="checkbox" checked>
             <label class="form-check-label">
-              Τυχαίοι
+              Τυχαία σειρά
             </label>
           </div> 
 
           <div class="form-check">
             <input class="form-check-input dataBoxSorted" type="checkbox">
             <label class="form-check-label">
-              Ταξινομημένοι
+            Ταξινόμηση
             </label>
           </div> 
-        
-            <div class="form-group">
-                <label for="dataBoxHowMany">Πλήθος στη σειρά:</label>
-                <input type="number" class="form-control form-control-sm dataBoxHowMany" value="1">
-            </div>
+
+          <form>
+          <div class="form-check">
+            <input class="form-check-input" type="radio" name="dataBoxSortedType" value="0" checked>
+            <label class="form-check-label">Αύξουσα</label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" type="radio" name="dataBoxSortedType" value="1">
+            <label class="form-check-label">Φθίνουσα</label>
+          </div>
+          </form>
+
+          <div class="form-group">
+          <label>Επιλογή Λίστας:</label>
+          <select class="form-control form-control-sm dataBoxTextList">
+            <option value="name-full-lf" selected>Ονοματεπώνυμο</option>
+            <option value="name-f">Όνομα</option>
+            <option value="name-l">Επίθετο</option>
+            <option value="name-ff">Όνομα (μόνο γυναικεία)</option>
+            <option value="name-fm">Όνομα (μόνο αντρικά)</option>
+            <option value="name-lf">Επίθετο (μόνο γυναικεία)</option>
+            <option value="name-lm">Επίθετο (μόνο αντρικά)</option>
+            <option value="countries-eu">Ευρωπαικές Χώρες</option>
+            <option value="custom">Λίστα χρήστη</option>
+                        </select>
+        </div>
+
+        <div class="form-group">
+        <label>Λίστα χρήστη:</label>
+        <textarea class="form-control form-control-sm dataBoxTextListCustom rows="2"></textarea>
+      </div>
+
+      
 
         </li>`);
         return false;
@@ -127,27 +148,43 @@ $(document).ready(function () {
           <p class="bTitle numbers">Αριθμός</p>
           <span class="boxRemove">remove</span></span>
 
+          <div class="form-group">
+              <label for="dataBoxHowMany">Πλήθος στη σειρά:</label>
+              <input type="number" class="form-control form-control-sm dataBoxHowMany" value="1">
+          </div>
 
           <div class="form-check">
             <input class="form-check-input dataBoxUnique" type="checkbox" checked>
             <label class="form-check-label">
-              Μοναδικοί
+              Μοναδικές εγγραφές
             </label>
           </div>
 
           <div class="form-check">
             <input class="form-check-input dataBoxRandom" type="checkbox" checked>
             <label class="form-check-label">
-              Τυχαίοι
+             Τυχαία σειρά
             </label>
           </div> 
 
           <div class="form-check">
             <input class="form-check-input dataBoxSorted" type="checkbox">
             <label class="form-check-label">
-              Ταξινομημένοι
+              Ταξινόμηση
             </label>
           </div> 
+
+          <form>
+          <div class="form-check">
+            <input class="form-check-input" type="radio" name="dataBoxSortedType" value="0" checked>
+            <label class="form-check-label">Αύξουσα</label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" type="radio" name="dataBoxSortedType" value="1">
+            <label class="form-check-label">Φθίνουσα</label>
+          </div>
+          </form>
+
 
           <label for="dataBoxNumFrom">Από:</label>
           <input type="number" class="form-control form-control-sm dataBoxNumFrom" value="1">
@@ -156,10 +193,9 @@ $(document).ready(function () {
           <input type="number" class="form-control form-control-sm dataBoxNumTo" value="10">
 
           <div class="form-group">
-              <label for="dataBoxHowMany">Πλήθος στη σειρά:</label>
-              <input type="number" class="form-control form-control-sm dataBoxHowMany" value="1">
+              <label for="dataBoxHowMany">Πλήθος δεκαδικών ψηφίων:</label>
+              <input type="number" min="0" max="2" class="form-control form-control-sm dataBoxDecPlaces" value="0">
           </div>
-
 
 
 
@@ -168,11 +204,18 @@ $(document).ready(function () {
         return false;
      });
 
-     function getRndInteger(min, max) {
-        min = Math.ceil(min);
-        max = Math.floor(max);
-        return (Math.floor(Math.random() * (max - min + 1) ) + min);
-      }
+
+
+      function randomNumberGenerator(min = 0, max = 1, fractionDigits = 0, inclusive = true) {
+        const precision = Math.pow(10, Math.max(fractionDigits, 0));
+        const scaledMax = max * precision;
+        const scaledMin = min * precision;
+        const offset = inclusive ? 1 : 0;
+        const num = Math.floor(Math.random() * (scaledMax - scaledMin + offset)) + scaledMin;
+      
+        return num / precision;
+      };
+
 
      $('#btnGenerateData').click(function() {
         var mlist = $('ul#sortable');
@@ -195,21 +238,47 @@ $(document).ready(function () {
                     var sresult=[];
 
                     mbox.find('.dataRecordBox').each(function(j, li) {
+                        var aresult=[];
+
                         var box=$(this);
 
                         var howMany  = box.find('.dataBoxHowMany').val();
                         var isUnique = box.find('.dataBoxUnique').is(":checked");
                         var isRandom = box.find('.dataBoxRandom').is(":checked");
                         var isSorted = box.find('.dataBoxSorted').is(":checked");
+                        var isSortedType = $('input[name="dataBoxSortedType"]:checked').val();
+
 
                         if       (box.hasClass('dataRecordBoxTypeChars')) {
                             console.log('@Chars Characters');
 
-                            const arr = ["January", "February", "March", "April", "May", "June", "July"];
+                            var dataBoxTextList = box.find('.dataBoxTextList').find(":selected").val();
+                            console.log(dataBoxTextList);
 
-                            console.log(arr.length, howMany);
+                            var arr = null;
+
+                            switch(dataBoxTextList) {
+                                case 'name-full-lf': var arr = arrNamesFullnamelf.slice(0); break;
+                                case 'name-f'      : var arr = arrNamesFirst.slice(0); break;
+                                case 'name-l'      : var arr = arrNamesLast.slice(0); break;
+                                case 'name-ff'     : var arr = arrNamesFirstFemale.slice(0); break;
+                                case 'name-fm'     : var arr = arrNamesFirstMale.slice(0); break;
+                                case 'name-lf'     : var arr = arrNamesLastFemale.slice(0); break;
+                                case 'name-lm'     : var arr = arrNamesLastMale.slice(0); break;
+                                case 'countries-eu': var arr = arrCountriesEurope.slice(0); break;
+                                case 'custom':
+                                    var txtList  = box.find('.dataBoxTextListCustom').val();
+                                    var arr= txtList.split(',');
+                                    console.log(txtList);
+                                    break;
+                                default:
+                                  throw Error('Μη αποδεκτή τιμή λίστας');
+                              }
 
                             if (isUnique && (howMany > arr.length))
+                                throw Error('Το πλήθος ξεπερνά το μέγεθος της διαθέσιμης λίστας.');
+    
+                            if (!isUnique && !isRandom && (howMany > arr.length))
                                 throw Error('Το πλήθος ξεπερνά το μέγεθος της διαθέσιμης λίστας.');
 
                             if (isRandom) {
@@ -217,54 +286,69 @@ $(document).ready(function () {
                                     var random;
                                     do {
                                         random = Math.floor(Math.random() * arr.length);
-                                    } while (isUnique && sresult.includes(arr[random]));
-                                    sresult.push(arr[random]);
+                                    } while (isUnique && aresult.includes('\'' + arr[i] + '\''));
+                                    
+                                    aresult.push( '\'' + arr[random] + '\'' );
                                 }
         
                             } else {
                                 for (var i=0; i<howMany; ++i) {
-                                    sresult.push(arr[i]);
+                                    aresult.push( '\'' + arr[i] + '\'' );
                             }
 
                         }
 
-                        if (isSorted)
-                            sresult.sort();                            
+                        if (isSorted) {
+                            aresult.sort();    
+                            if (isSortedType==1) aresult.reverse();
+                        }                        
                     
                             
                         } else if  (box.hasClass('dataRecordBoxTypeNumbers')) {
                             console.log('@Numbers Numbers');
 
-                            var numFrom  = box.find('.dataBoxNumFrom').val();
-                            var numTo    = box.find('.dataBoxNumTo').val();
+                            var numFrom   = box.find('.dataBoxNumFrom').val();
+                            var numTo     = box.find('.dataBoxNumTo').val();
+                            var decPlaces = box.find('.dataBoxDecPlaces').val();
 
-                            if (isUnique && (howMany > Math.abs(numTo-numFrom)+1))
+
+                            console.log('allcomb:', (Math.abs(numTo-numFrom))* Math.pow( 10, decPlaces) +1);
+
+                            if (isUnique && (howMany > ((Math.abs(numTo-numFrom))* Math.pow( 10, decPlaces))+1))
                                 throw Error('Το πλήθος ξεπερνά το μέγεθος της διαθέσιμης λίστας.');
 
                             if (isRandom) {
                                 for (var i=0; i<howMany; ++i) {
                                     do {
-                                        var num = getRndInteger(numFrom, numTo);
-                                    } while (isUnique && sresult.includes(num));
-                                    sresult.push(num);
+                                        var num = randomNumberGenerator(numFrom, numTo, decPlaces);
+                                    } while (isUnique && aresult.includes(num));
+                                    aresult.push(num);
                                 }
                             } else {
                                 num = numFrom;
                                 for (var i=0; i<howMany; ++i) {
-                                    sresult.push(num);
+                                    aresult.push(num);
                                     (numFrom<=numTo)? ++num : --num;
                                 }
 
                             }
 
-                            if (isSorted)
-                                sresult.sort((a, b) => a - b);                            
+                            if (isSorted) {
+                                if (isSortedType==0)
+                                    aresult.sort((a, b) => a - b); 
+                                else
+                                    aresult.sort((a, b) => b - a);
+                            }                          
                         }
 
-                        sresult.join(', ');
+                        aresult.join(', ');
+
+                        if (aresult.length > 0) 
+                            sresult.push(aresult);
                     });
 
-                    result.push(sresult);
+                    if (sresult.length > 0) 
+                        result.push(sresult);
                 }
             });
 
@@ -273,6 +357,7 @@ $(document).ready(function () {
         } catch (e) {
             finalOutput = 'Σφάλμα: ' + e.message;
         }
+
 
 
         $('#result').html(finalOutput);

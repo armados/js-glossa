@@ -126,6 +126,7 @@ $(document).ready(function () {
             <option value="name-lf">Επίθετο (μόνο γυναικεία)</option>
             <option value="name-lm">Επίθετο (μόνο αντρικά)</option>
             <option value="countries-eu">Ευρωπαικές Χώρες</option>
+            <option value="cities-gr">Πόλεις (ελληνικές)</option>
             <option value="custom">Λίστα χρήστη</option>
                         </select>
         </div>
@@ -266,6 +267,7 @@ $(document).ready(function () {
                                 case 'name-lf'     : var arr = arrNamesLastFemale.slice(0); break;
                                 case 'name-lm'     : var arr = arrNamesLastMale.slice(0); break;
                                 case 'countries-eu': var arr = arrCountriesEurope.slice(0); break;
+                                case 'cities-gr'   : var arr = arrCitiesGr.slice(0); break;
                                 case 'custom':
                                     var txtList  = box.find('.dataBoxTextListCustom').val();
                                     var arr= txtList.split(',');
@@ -286,7 +288,7 @@ $(document).ready(function () {
                                     var random;
                                     do {
                                         random = Math.floor(Math.random() * arr.length);
-                                    } while (isUnique && aresult.includes('\'' + arr[i] + '\''));
+                                    } while (isUnique && aresult.includes('\'' + arr[random] + '\''));
                                     
                                     aresult.push( '\'' + arr[random] + '\'' );
                                 }

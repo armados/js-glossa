@@ -5,7 +5,7 @@ var path = require("path");
 
 var GLO = require("../main.js");
 
-var filename = "../samples-dev/sample10.glo";
+var filename = "../samples-dev/sample6.glo";
 var sourceCode = null;
 try {
     sourceCode = fs.readFileSync(path.join(__dirname, filename)).toString();

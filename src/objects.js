@@ -33,8 +33,6 @@ class MSymbolTable {
       var cellsymbol = this.name + "[" +  argsResolved[0].val + "]";
     else if (tblDimensions == 2)
       var cellsymbol = this.name + "[" +  argsResolved[0].val + "][" +  argsResolved[1].val + "]";
-    else if (tblDimensions == 3)
-      var cellsymbol = this.name + "[" +  argsResolved[0].val + "][" +  argsResolved[1].val + "][" +  argsResolved[2].val + "]";
     else
       throw new GE.GError('Critical: Unknown table dimensions');
 

@@ -784,37 +784,37 @@ class Application {
 
 module.exports = {
 
-  MSymbol: MSymbol,
+  MSymbol,
 
-  MSymbolTableAssign: MSymbolTableAssign,
-  MSymbolTableFetch: MSymbolTableFetch,
+  MSymbolTableAssign,
+  MSymbolTableFetch,
 
-  Stmt_Block: Stmt_Block,
+  Stmt_Block,
   
-  Stmt_Assignment: Stmt_Assignment,
+  Stmt_Assignment,
   
-  Stmt_Write: Stmt_Write,
-  Stmt_Read: Stmt_Read,
+  Stmt_Write,
+  Stmt_Read,
 
-  Stmt_IfCond: Stmt_IfCond,
+  Stmt_IfCond,
 
-  Stmt_WhileLoop: Stmt_WhileLoop,
-  Stmt_Do_WhileLoop: Stmt_Do_WhileLoop,
-  Stmt_ForLoop: Stmt_ForLoop,
+  Stmt_WhileLoop,
+  Stmt_Do_WhileLoop,
+  Stmt_ForLoop,
 
-  Application: Application,
-  Program: Program,
+  Application,
+  Program,
 
-  DefDeclarations: DefDeclarations,
+  DefDeclarations,
 
-  DefConstant: DefConstant,
-  DefVariables: DefVariables,
+  DefConstant,
+  DefVariables,
 
-  CallSubFunction: CallSubFunction,
-  CallSubProcedure: CallSubProcedure,
+  CallSubFunction,
+  CallSubProcedure,
 
-  SubFunction: SubFunction,
-  SubProcedure: SubProcedure,
+  SubFunction,
+  SubProcedure,
 
-  KeyboardDataFromSource: KeyboardDataFromSource,
+  KeyboardDataFromSource,
 };

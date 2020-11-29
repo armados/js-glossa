@@ -127,8 +127,6 @@ class GrammarOhm {
             // literals
             lit         = floatlit | intlit | strlit | boollit
             floatlit    = digit* "." digit+ 
-            //floatlit    = digit* "." digit+ //exp?
-            //exp         = "e" "-"? digit+
             intlit      = digit+
             qq          = "'"
             strlit      = qq (~qq any)+ qq
@@ -145,7 +143,8 @@ class GrammarOhm {
         
             sourceCharacter = any
             whitespace = "\t" | " "
-            space := whitespace | lineTerminator | comment
+            breakLine = "&"
+            space := whitespace | lineTerminator | comment | breakLine  
         }
                 
         `;

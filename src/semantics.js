@@ -3,8 +3,6 @@ const MO = require('./objects');
 const Atom = require("./atom");
 
 
-function binop(op,a,b) {  return new Atom.BinaryOp(op, a.toAST(), b.toAST()); }
-
 function getLineNo(cmd) {
     var scode = cmd.source.sourceString;
     var endChar = cmd.source.startIdx;
@@ -13,11 +11,18 @@ function getLineNo(cmd) {
     return lineNo; 
 }
 
+
+function binop(op,a,b) {  return new Atom.BinaryOp(op, a.toAST(), b.toAST()); }
+
+
 var operation = {
     floatlit: function (a, _, b)      { return new Atom.MNumber(parseFloat(this.sourceString, 10));  },
     intlit:   function (a)            { return new Atom.MNumber(parseInt(this.sourceString, 10)); },
     strlit:   function (_l, a, _r)    { return new Atom.MString(a.sourceString); },
-    boollit:  function (a)            { return new Atom.MBoolean( this.sourceString == "ΑΛΗΘΗΣ" ? true : false ); },
+    //boollit:  function (a)            { return new Atom.MBoolean( this.sourceString == "ΑΛΗΘΗΣ" ? true : false ); },
+
+    true:   function (a)            { return new Atom.MBoolean( true );  },
+    false:  function (a)            { return new Atom.MBoolean( false ); },
 
     Exp7_parens:      function (_l, e, _r) { return e.toAST(); },
 

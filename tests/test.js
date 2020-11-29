@@ -5,7 +5,7 @@ const path = require("path");
 
 const GLO = require("../main.js");
 
-const filename = "../samples-dev/sample18.glo";
+const filename = "../samples-dev/sample10.glo";
 
 var sourceCode = null;
 try {
@@ -25,4 +25,4 @@ console.log(app.getOutput());
 //console.log('=========================');
 //console.log(app.getOutputDetails());
 
-console.log('Total commands: ', app.getStats());
+//console.log('Total commands: ', app.getStats());

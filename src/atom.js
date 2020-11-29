@@ -1,6 +1,6 @@
 "use strict";
 
-var GE = require("./gclasses");
+const GE = require("./gclasses");
 
 class Atom {
     constructor(val) {

@@ -1,7 +1,7 @@
 "use strict";
 
-var Atom = require("./atom");
-var GE = require("./gclasses");
+const Atom = require("./atom");
+const GE = require("./gclasses");
 
 
 class STRScope {

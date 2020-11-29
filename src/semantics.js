@@ -1,6 +1,6 @@
 
-var MO = require('./objects');
-var Atom = require("./atom");
+const MO = require('./objects');
+const Atom = require("./atom");
 
 
 function binop(op,a,b) {  return new Atom.BinaryOp(op, a.toAST(), b.toAST()); }
@@ -16,7 +16,7 @@ function getLineNo(cmd) {
 var operation = {
     floatlit: function (a, _, b)      { return new Atom.MNumber(parseFloat(this.sourceString, 10));  },
     intlit:   function (a)            { return new Atom.MNumber(parseInt(this.sourceString, 10)); },
-    strlit:   function (_l, text, _r) { return new Atom.MString(text.sourceString); },
+    strlit:   function (_l, a, _r)    { return new Atom.MString(a.sourceString); },
     boollit:  function (a)            { return new Atom.MBoolean( this.sourceString == "ΑΛΗΘΗΣ" ? true : false ); },
 
     Exp7_parens:      (_l, e, _r) => e.toAST(),

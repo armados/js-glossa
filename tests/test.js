@@ -1,11 +1,12 @@
 "use strict";
 
-var fs = require("fs");
-var path = require("path");
+const fs = require("fs");
+const path = require("path");
 
-var GLO = require("../main.js");
+const GLO = require("../main.js");
 
-var filename = "../samples-dev/sample6.glo";
+const filename = "../samples-dev/sample3.glo";
+
 var sourceCode = null;
 try {
     sourceCode = fs.readFileSync(path.join(__dirname, filename)).toString();
@@ -24,4 +25,4 @@ console.log(app.getOutput());
 //console.log('=========================');
 //console.log(app.getOutputDetails());
 
-//console.log('Total commands: ', app.getStats());
+console.log('Total commands: ', app.getStats());

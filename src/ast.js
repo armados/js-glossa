@@ -1,7 +1,4 @@
 "use strict";
-
-var MObjects = require("./objects");
-
 const util = require('util');
 
 class ASTree {
@@ -17,7 +14,7 @@ class ASTree {
 
     var myTree = [...entities]
       .map( ([node, index]) => this.detailLine(node, index, entities) )
-      .join("\n");
+      .join('\n');
 
     return myTree;
   }

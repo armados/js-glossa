@@ -1,8 +1,8 @@
 "use strict";
 
-var Atom = require("./atom");
-var GE   = require("./gclasses");
-var STR  = require("./storage");
+const Atom = require("./atom");
+const GE   = require("./gclasses");
+const STR  = require("./storage");
 
 // ========================
 
@@ -300,8 +300,8 @@ class Stmt_Write {
       output.push(out);
     });
 
-    scope.io.outputAdd( output.join(" ") );
-    scope.io.outputAddDetails( 'Γραμμή ' + this.cmdLineNo + ': ' + 'Δείξε στην οθόνη: ' + output.join(" ") );
+    scope.io.outputAdd( output.join(' ') );
+    scope.io.outputAddDetails( 'Γραμμή ' + cmdLineNo + ': ' + 'Εμφάνισε στην οθόνη το μήνυμα: ' + output.join(" ") );
   }
 }
 
@@ -312,7 +312,9 @@ class Stmt_Read {
   }
   resolve(scope) {
 
-    //scope.io.outputAddDetails( 'Διάβασε από το πληκτρολόγιο' );
+    var cmdLineNo = this.cmdLineNo;
+
+    scope.io.outputAddDetails('Γραμμή ' + cmdLineNo + ': ' + 'Διάβασε από το πληκτρολόγιο');
 
     var output = [];
     this.args.forEach(function (arg) {
@@ -324,7 +326,7 @@ class Stmt_Read {
       //var data = IOKeyboard.getSingleInputData();
       var data = scope.io.inputFetchValueFromBuffer();
 
-      //scope.io.outputAddDetails( 'Εισαγωγή τιμής από το πληκτρολόγιο: ' + data );
+      scope.io.outputAddDetails( 'Γραμμή ' + cmdLineNo + ': ' +  'Εισαγωγή τιμής από το πληκτρολόγιο: ' + data + ' στο αναγνωριστικό ' + arg.name);
       output.push(data);
 
       if      (typeof(data) == 'string')  var sym = new Atom.MString(data);
@@ -336,7 +338,7 @@ class Stmt_Read {
     });
 
 
-    scope.io.outputAddDetails( 'Γραμμή ' + this.cmdLineNo + ': ' + 'Εισαγωγή από το πληκτρολόγιο: ' + output.join(" ") );
+    //scope.io.outputAddDetails( 'Γραμμή ' + this.cmdLineNo + ': ' + 'Εισαγωγή από το πληκτρολόγιο: ' + output.join(" ") );
 
   }
 }

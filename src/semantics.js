@@ -19,40 +19,40 @@ var operation = {
     strlit:   function (_l, a, _r)    { return new Atom.MString(a.sourceString); },
     boollit:  function (a)            { return new Atom.MBoolean( this.sourceString == "ΑΛΗΘΗΣ" ? true : false ); },
 
-    Exp7_parens:      (_l, e, _r) => e.toAST(),
+    Exp7_parens:      function (_l, e, _r) { return e.toAST(); },
 
-    Exp5_powop:       (x, _, y)   => binop('pow',x,y),
+    Exp5_powop:       function (x, _, y)   { return binop('pow',x,y) },
 
-    Exp4_mul:         (x, _, y)   => binop('mul',x,y),
-    Exp4_div:         (x, _, y)   => binop('div',x,y),
+    Exp4_mul:         function (x, _, y)   { return binop('mul',x,y) },
+    Exp4_div:         function (x, _, y)   { return binop('div',x,y) },
 
-    Exp4_intdiv:      (x, _, y)   => binop('intdiv',x,y),
-    Exp4_intmod:      (x, _, y)   => binop('intmod',x,y),
+    Exp4_intdiv:      function (x, _, y)   { return binop('intdiv',x,y) },
+    Exp4_intmod:      function (x, _, y)   { return binop('intmod',x,y) },
 
-    Exp3_add:         (x, _, y)   => binop('add',x,y),
-    Exp3_sub:         (x, _, y)   => binop('sub',x,y),
+    Exp3_add:         function (x, _, y)   { return binop('add',x,y) },
+    Exp3_sub:         function (x, _, y)   { return binop('sub',x,y) },
 
-    Exp2_lt:          (a, _, b)   => binop('lt', a,b),
-    Exp2_gt:          (a, _, b)   => binop('gt', a,b),
-    Exp2_lte:         (a, _, b)   => binop('lte',a,b),
-    Exp2_gte:         (a, _, b)   => binop('gte',a,b),
-    Exp2_eq:          (a, _, b)   => binop('eq', a,b),
-    Exp2_neq:         (a, _, b)   => binop('neq', a,b),
+    Exp2_lt:          function (a, _, b)   { return binop('lt', a,b) },
+    Exp2_gt:          function (a, _, b)   { return binop('gt', a,b) },
+    Exp2_lte:         function (a, _, b)   { return binop('lte',a,b) },
+    Exp2_gte:         function (a, _, b)   { return binop('gte',a,b) },
+    Exp2_eq:          function (a, _, b)   { return binop('eq', a,b) },
+    Exp2_neq:         function (a, _, b)   { return binop('neq', a,b) },
 
-    Exp6_not:         (_, a)      => new Atom.BooleanNotOp(a.toAST()),
-    Exp1_andop:       (a, _, b)   => binop('and',a,b),
-    Exp_orop:         (a, _, b)   => binop('or',a,b),
+    Exp6_not:         function (_, a)      { return new Atom.BooleanNotOp(a.toAST()) },
+    Exp1_andop:       function (a, _, b)   { return binop('and',a,b) },
+    Exp_orop:         function (a, _, b)   { return binop('or',a,b) },
 
-    Exp6_neq:         (_, a)      => new Atom.BinaryOp('mul', a.toAST(), new Atom.MNumber(-1)),
+    Exp6_neq:         function (_, a)      { return new Atom.BinaryOp('mul', a.toAST(), new Atom.MNumber(-1)) },
 
     identifier:      function (a, b)         { return new MO.MSymbol(this.sourceString, null) },
     
     IdentifierTblAssign: function (a, _l, b, _r) { return new MO.MSymbolTableAssign(a.sourceString, b.toAST()); },
     IdentifierTblFetch:  function (a, _l, b, _r) { return new MO.MSymbolTableFetch(a.sourceString, b.toAST()); },
 
-    AssignExpr: (a, _, b) => new MO.Stmt_Assignment(a.toAST(), b.toAST(), a.sourceString, b.sourceString, getLineNo(a)),
+    AssignExpr: function (a, _, b) { return new MO.Stmt_Assignment(a.toAST(), b.toAST(), a.sourceString, b.sourceString, getLineNo(a)) },
 
-    KeyboardData: (_1, a) => new MO.KeyboardDataFromSource(a.toAST()),
+    KeyboardData: function (_1, a) { return new MO.KeyboardDataFromSource(a.toAST()) },
 
     
     IfExpr: function (_1, cond, _2, tb, _AlliosAn, condElseIf, _Tote, blockElseIf, _Allios, eb, _TelosAn) {
@@ -81,9 +81,6 @@ var operation = {
     FunCall: (a, _1, b, _2) => new MO.CallSubFunction(a.toAST(), b.toAST(), getLineNo(a)),
     CallSubProcedure: (_1, a, _2, b, _3) => new MO.CallSubProcedure(a.toAST(), b.toAST(), getLineNo(_1)),
 
- //   TblCellWrite: (tblname, _1, tblindex, _2) => new MO.TblCellWrite(tblname.sourceString, tblindex.toAST()),
-//    TblCellRead:  (tblname, _1, tblindex, _2) => new MO.TblCellRead(tblname.sourceString, tblindex.toAST()),
-
     Arguments:             (a) => a.asIteration().toAST(),
     AtLeastOneArguments:   (a) => a.asIteration().toAST(),
 
@@ -109,9 +106,9 @@ var operation = {
     DefDeclarations: function(_1, statheres, _2, metavlites) {       
         return new MO.DefDeclarations(statheres.toAST(), metavlites.toAST()); },
 
-    DefConstant:  (constid, _, constval) => new MO.DefConstant(constid.toAST(), constval.toAST()),
+    DefConstant:  function(constid, _, constval) { return new MO.DefConstant(constid.toAST(), constval.toAST()); },
 
-    DefVariables: (varType, _2, vars)    => new MO.DefVariables(varType.sourceString , vars.toAST()),
+    DefVariables: function(varType, _2, vars)    { return new MO.DefVariables(varType.sourceString , vars.toAST()) },
 
     Block: function(commands)      { return new MO.Stmt_Block(commands.toAST()); },
     FuncBlock: function(commands)  { return new MO.Stmt_Block(commands.toAST()); },    

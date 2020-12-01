@@ -55,7 +55,7 @@ var operation = {
 
     KeyboardData: function (_1, a) { return new MO.KeyboardDataFromSource(a.toAST()) },
 
-    
+    // Normal block
     IfExpr: function (_1, cond, _2, tb, _AlliosAn, condElseIf, _Tote, blockElseIf, _Allios, eb, _TelosAn) {
 
             if (condElseIf.numChildren) {
@@ -71,13 +71,40 @@ var operation = {
         return new MO.Stmt_IfCond(cond.toAST(), cond.sourceString, thenBody, condElseIf.toAST(), moreBody, elseBody);
     }, 
 
-
+    
     WhileExpr:   function (_1, cond, _2, body, _3) { return new MO.Stmt_WhileLoop(cond.toAST(), cond.sourceString, body.toAST(), getLineNo(cond)) },
 
     DoWhileExpr: function (_1, body, _2, cond)     { return new MO.Stmt_Do_WhileLoop(cond.toAST(), cond.sourceString, body.toAST(), getLineNo(cond)) },
 
     ForExpr: function (_1, variable, _2, initval, _3, finalval, _4, stepval, _5, body, _6) {  
     return new MO.Stmt_ForLoop(variable.toAST(), initval.toAST(), finalval.toAST(), stepval.toAST(), body.toAST(), getLineNo(variable)) },
+
+
+    // Function block
+    IfExprFunction: function (_1, cond, _2, tb, _AlliosAn, condElseIf, _Tote, blockElseIf, _Allios, eb, _TelosAn) {
+
+        if (condElseIf.numChildren) {
+            //console.log(blockElseIf.children);
+            condElseIf.children.forEach(function(entry) {
+                //console.log('LineNo: ', getLineNo(entry)); 
+        });
+    }
+
+    var thenBody = tb.toAST();
+    var moreBody = blockElseIf.toAST();
+    var elseBody = eb ? eb.toAST()[0] : null;
+    return new MO.Stmt_IfCond(cond.toAST(), cond.sourceString, thenBody, condElseIf.toAST(), moreBody, elseBody);
+    }, 
+
+
+    WhileExprFunction:   function (_1, cond, _2, body, _3) { return new MO.Stmt_WhileLoop(cond.toAST(), cond.sourceString, body.toAST(), getLineNo(cond)) },
+
+    DoWhileExprFunction: function (_1, body, _2, cond)     { return new MO.Stmt_Do_WhileLoop(cond.toAST(), cond.sourceString, body.toAST(), getLineNo(cond)) },
+
+    ForExprFunction: function (_1, variable, _2, initval, _3, finalval, _4, stepval, _5, body, _6) {  
+    return new MO.Stmt_ForLoop(variable.toAST(), initval.toAST(), finalval.toAST(), stepval.toAST(), body.toAST(), getLineNo(variable)) },
+
+
 
     FunCall: function (a, _1, b, _2) { return new MO.CallSubFunction(a.toAST(), b.toAST(), getLineNo(a)) },
     CallSubProcedure: function (_1, a, _2, b, _3) { return new MO.CallSubProcedure(a.toAST(), b.toAST(), getLineNo(_1)) },
@@ -111,11 +138,10 @@ var operation = {
 
     DefVariables: function(varType, _2, vars)    { return new MO.DefVariables(varType.sourceString , vars.toAST()) },
 
-    Block:     function(commands)  { return new MO.Stmt_Block(commands.toAST()) },
-    FuncBlock: function(commands)  { return new MO.Stmt_Block(commands.toAST()) },    
+    Block:         function(commands)  { return new MO.Stmt_Block(commands.toAST()) },
+    BlockFunction: function(commands)  { return new MO.Stmt_Block(commands.toAST()) },    
 
     Stmt_Write: function(_, cmd)   { return new MO.Stmt_Write(cmd.toAST(), getLineNo(cmd)) },
-    
     Stmt_Read:  function(_, cmd)   { return new MO.Stmt_Read (cmd.toAST(), getLineNo(cmd)) }
 
 };

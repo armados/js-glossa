@@ -9,7 +9,7 @@ class GrammarOhm {
          
             Program      = "ΠΡΟΓΡΑΜΜΑ" identifier DefDeclarations "ΑΡΧΗ" Block "ΤΕΛΟΣ_ΠΡΟΓΡΑΜΜΑΤΟΣ" 
         
-            SubFunction  = "ΣΥΝΑΡΤΗΣΗ"  identifier "(" AtLeastOneParameters ")" ":" ("ΑΚΕΡΑΙΑ" | "ΠΡΑΓΜΑΤΙΚΗ" | "ΧΑΡΑΚΤΗΡΑΣ" | "ΛΟΓΙΚΗ")  DefDeclarations "ΑΡΧΗ" FuncBlock "ΤΕΛΟΣ_ΣΥΝΑΡΤΗΣΗΣ"
+            SubFunction  = "ΣΥΝΑΡΤΗΣΗ"  identifier "(" AtLeastOneParameters ")" ":" ("ΑΚΕΡΑΙΑ" | "ΠΡΑΓΜΑΤΙΚΗ" | "ΧΑΡΑΚΤΗΡΑΣ" | "ΛΟΓΙΚΗ")  DefDeclarations "ΑΡΧΗ" BlockFunction "ΤΕΛΟΣ_ΣΥΝΑΡΤΗΣΗΣ"
             SubProcedure = "ΔΙΑΔΙΚΑΣΙΑ" identifier "(" Parameters ")" DefDeclarations "ΑΡΧΗ" Block "ΤΕΛΟΣ_ΔΙΑΔΙΚΑΣΙΑΣ"
         
             DefDeclarations = ("ΣΤΑΘΕΡΕΣ" DefConstant+)?
@@ -57,10 +57,10 @@ class GrammarOhm {
         
         
             Block = InnerCommand*
-            FuncBlock = FuncInnerCommand*
+            BlockFunction = InnerCommandFunction*
         
-            InnerCommand     = AssignExpr | WhileExpr | DoWhileExpr | ForExpr | IfExpr | comment | CallSubProcedure | Stmt_Write | Stmt_Read
-            FuncInnerCommand = AssignExpr | WhileExpr | DoWhileExpr | ForExpr | IfExpr | comment 
+            InnerCommand         = AssignExpr | WhileExpr | DoWhileExpr | ForExpr | IfExpr | comment | CallSubProcedure | Stmt_Write | Stmt_Read
+            InnerCommandFunction = AssignExpr | WhileExprFunction | DoWhileExprFunction | ForExprFunction | IfExprFunction | comment 
         
             Stmt_Write = grapse Arguments
             Stmt_Read  = diavase VarParametersAssign
@@ -68,9 +68,18 @@ class GrammarOhm {
             WhileExpr     = "ΟΣΟ" Expr "ΕΠΑΝΑΛΑΒΕ" Block "ΤΕΛΟΣ_ΕΠΑΝΑΛΗΨΗΣ"
             DoWhileExpr   = "ΑΡΧΗ_ΕΠΑΝΑΛΗΨΗΣ" Block "ΜΕΧΡΙΣ_ΟΤΟΥ" Expr
             ForExpr       = "ΓΙΑ" identifier "ΑΠΟ" Expr "ΜΕΧΡΙ" Expr (("ΜΕ_ΒΗΜΑ" | "ΜΕ ΒΗΜΑ") Expr)? lineTerminator* Block "ΤΕΛΟΣ_ΕΠΑΝΑΛΗΨΗΣ"
-        
             IfExpr        = "ΑΝ" Expr "ΤΟΤΕ" Block ("ΑΛΛΙΩΣ_ΑΝ" Expr "ΤΟΤΕ" Block)* ("ΑΛΛΙΩΣ" Block)? "ΤΕΛΟΣ_ΑΝ"
         
+            WhileExprFunction     = "ΟΣΟ" Expr "ΕΠΑΝΑΛΑΒΕ" BlockFunction "ΤΕΛΟΣ_ΕΠΑΝΑΛΗΨΗΣ"
+            DoWhileExprFunction   = "ΑΡΧΗ_ΕΠΑΝΑΛΗΨΗΣ" BlockFunction "ΜΕΧΡΙΣ_ΟΤΟΥ" Expr
+            ForExprFunction       = "ΓΙΑ" identifier "ΑΠΟ" Expr "ΜΕΧΡΙ" Expr (("ΜΕ_ΒΗΜΑ" | "ΜΕ ΒΗΜΑ") Expr)? lineTerminator* BlockFunction "ΤΕΛΟΣ_ΕΠΑΝΑΛΗΨΗΣ"
+            IfExprFunction        = "ΑΝ" Expr "ΤΟΤΕ" BlockFunction ("ΑΛΛΙΩΣ_ΑΝ" Expr "ΤΟΤΕ" BlockFunction)* ("ΑΛΛΙΩΣ" BlockFunction)? "ΤΕΛΟΣ_ΑΝ"
+        
+
+
+
+
+
             //function calls and variables
             FunCall          = identifier "(" Arguments ")"
             CallSubProcedure = "ΚΑΛΕΣΕ" identifier "(" Arguments ")"

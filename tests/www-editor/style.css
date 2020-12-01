@@ -6,8 +6,8 @@
 
 #aceeditor {
   min-height: 260px;
-  font-family: "Fira Code", monospace;
-  font-size: 80%;
+  font-family: "Fira Mono", monospace;
+  font-size: 85%;
 }
 
 .controls {
@@ -17,7 +17,7 @@
 
 .tabHeader {
   padding: 3px 7px;
-  font-family: "Fira Code", monospace;
+  font-family: "Fira Mono", monospace;
   font-size: 80%;
   color: #fff;
 }
@@ -47,7 +47,7 @@
 pre,
 #codeeditor,
 #codekeyboardinput {
-  font-family: "Fira Code", monospace;
+  font-family: "Fira Mono", monospace;
 }
 
 #resultpre {

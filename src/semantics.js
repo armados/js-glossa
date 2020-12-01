@@ -111,12 +111,12 @@ var operation = {
 
     DefVariables: function(varType, _2, vars)    { return new MO.DefVariables(varType.sourceString , vars.toAST()) },
 
-    Block: function(commands)      { return new MO.Stmt_Block(commands.toAST()) },
+    Block:     function(commands)  { return new MO.Stmt_Block(commands.toAST()) },
     FuncBlock: function(commands)  { return new MO.Stmt_Block(commands.toAST()) },    
 
     Stmt_Write: function(_, cmd)   { return new MO.Stmt_Write(cmd.toAST(), getLineNo(cmd)) },
     
-    Stmt_Read: function(_, cmd)    { return new MO.Stmt_Read(cmd.toAST(), getLineNo(cmd)) }
+    Stmt_Read:  function(_, cmd)   { return new MO.Stmt_Read (cmd.toAST(), getLineNo(cmd)) }
 
 };
 

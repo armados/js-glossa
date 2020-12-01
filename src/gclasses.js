@@ -2,13 +2,13 @@
 
 
 class GError extends Error {  
-    constructor (message) {
+    constructor (message, line=null) {
       super(message);
 
       Error.captureStackTrace(this, this.constructor);
 
       this.name = this.constructor.name
-      this.message = 'Σφάλμα. ' + this.message;
+      this.message = 'Σφάλμα.' + (line != null ? ' Γραμμή ' + line + '. ': ' ') + this.message;
     }
   
   }

@@ -12,43 +12,39 @@ function getLineNo(cmd) {
 }
 
 
-function binop(op,a,b) {  return new Atom.BinaryOp(op, a.toAST(), b.toAST()); }
-
 
 var operation = {
-    floatlit: function (a, _, b)      { return new Atom.MNumber(parseFloat(this.sourceString, 10));  },
-    intlit:   function (a)            { return new Atom.MNumber(parseInt(this.sourceString, 10)); },
-    strlit:   function (_l, a, _r)    { return new Atom.MString(a.sourceString); },
-    //boollit:  function (a)            { return new Atom.MBoolean( this.sourceString == "ΑΛΗΘΗΣ" ? true : false ); },
+    floatlit: function (a, _, b)      { return new Atom.MNumber(parseFloat(this.sourceString, 10))  },
+    intlit:   function (a)            { return new Atom.MNumber(parseInt(this.sourceString, 10)) },
+    strlit:   function (_l, a, _r)    { return new Atom.MString(a.sourceString) },
+    true:     function (a)            { return new Atom.MBoolean( true )  },
+    false:    function (a)            { return new Atom.MBoolean( false ) },
 
-    true:   function (a)            { return new Atom.MBoolean( true );  },
-    false:  function (a)            { return new Atom.MBoolean( false ); },
+    Exp7_parens:      function (_l, a, _r) { return a.toAST() },
 
-    Exp7_parens:      function (_l, e, _r) { return e.toAST(); },
+    Exp5_powop:       function (a, _, b)   { return new Atom.MathOpPow(a.toAST(), b.toAST(), getLineNo(a)) },
 
-    Exp5_powop:       function (x, _, y)   { return binop('pow',x,y) },
+    Exp4_mul:         function (a, _, b)   { return new Atom.MathOpMul(a.toAST(), b.toAST(), getLineNo(a)) },
+    Exp4_div:         function (a, _, b)   { return new Atom.MathOpDiv(a.toAST(), b.toAST(), getLineNo(a)) },
 
-    Exp4_mul:         function (x, _, y)   { return binop('mul',x,y) },
-    Exp4_div:         function (x, _, y)   { return binop('div',x,y) },
+    Exp4_intdiv:      function (a, _, b)   { return new Atom.MathOpDivInt(a.toAST(), b.toAST(), getLineNo(a)) },
+    Exp4_intmod:      function (a, _, b)   { return new Atom.MathOpModInt(a.toAST(), b.toAST(), getLineNo(a)) },
 
-    Exp4_intdiv:      function (x, _, y)   { return binop('intdiv',x,y) },
-    Exp4_intmod:      function (x, _, y)   { return binop('intmod',x,y) },
+    Exp3_add:         function (a, _, b)   { return new Atom.MathOpAdd(a.toAST(), b.toAST(), getLineNo(a)) },
+    Exp3_sub:         function (a, _, b)   { return new Atom.MathOpSub(a.toAST(), b.toAST(), getLineNo(a)) },
 
-    Exp3_add:         function (x, _, y)   { return binop('add',x,y) },
-    Exp3_sub:         function (x, _, y)   { return binop('sub',x,y) },
+    Exp2_lt:          function (a, _, b)   { return new Atom.MathOpRelLt(a.toAST(), b.toAST(), getLineNo(a)) },
+    Exp2_gt:          function (a, _, b)   { return new Atom.MathOpRelGt(a.toAST(), b.toAST(), getLineNo(a)) },
+    Exp2_lte:         function (a, _, b)   { return new Atom.MathOpRelLte(a.toAST(), b.toAST(), getLineNo(a)) },
+    Exp2_gte:         function (a, _, b)   { return new Atom.MathOpRelGte(a.toAST(), b.toAST(), getLineNo(a)) },
+    Exp2_eq:          function (a, _, b)   { return new Atom.MathOpRelEq(a.toAST(), b.toAST(), getLineNo(a)) },
+    Exp2_neq:         function (a, _, b)   { return new Atom.MathOpRelNeq(a.toAST(), b.toAST(), getLineNo(a)) },
 
-    Exp2_lt:          function (a, _, b)   { return binop('lt', a,b) },
-    Exp2_gt:          function (a, _, b)   { return binop('gt', a,b) },
-    Exp2_lte:         function (a, _, b)   { return binop('lte',a,b) },
-    Exp2_gte:         function (a, _, b)   { return binop('gte',a,b) },
-    Exp2_eq:          function (a, _, b)   { return binop('eq', a,b) },
-    Exp2_neq:         function (a, _, b)   { return binop('neq', a,b) },
+    Exp6_not:         function (_, a)      { return new Atom.MathOpLogNot(a.toAST(), getLineNo(a)) },
+    Exp1_andop:       function (a, _, b)   { return new Atom.MathOpLogAnd(a.toAST(), b.toAST(), getLineNo(a)) },
+    Exp_orop:         function (a, _, b)   { return new Atom.MathOpLogOr(a.toAST(), b.toAST(), getLineNo(a)) },
 
-    Exp6_not:         function (_, a)      { return new Atom.BooleanNotOp(a.toAST()) },
-    Exp1_andop:       function (a, _, b)   { return binop('and',a,b) },
-    Exp_orop:         function (a, _, b)   { return binop('or',a,b) },
-
-    Exp6_neq:         function (_, a)      { return new Atom.BinaryOp('mul', a.toAST(), new Atom.MNumber(-1)) },
+    Exp6_neq:         function (_, a)      { return new Atom.MathOpMul(a.toAST(), new Atom.MNumber(-1), getLineNo(a)) },
 
     identifier:      function (a, b)         { return new MO.MSymbol(this.sourceString, null) },
     

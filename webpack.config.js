@@ -1,6 +1,7 @@
 const path = require("path");
 
 module.exports = {
+
     entry: {
         glossajs: './main.js',
     },

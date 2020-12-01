@@ -61,8 +61,8 @@ class Stmt_Block {
     this.statements = block;
   }
   resolve(scope) {
-    this.statements.forEach(function (smtp) {
-      smtp.resolve(scope);
+    this.statements.forEach(function (statement) {
+      statement.resolve(scope);
     });
   }
 }
@@ -279,6 +279,8 @@ class Stmt_Write {
   resolve(scope) {
 
     var cmdLineNo = this.cmdLineNo;
+    scope.cmdLineNo = this.cmdLineNo; //FIXME:
+  
 
     var output = [];
 

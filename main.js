@@ -23,6 +23,7 @@ class GlossaJS {
     this.scope.config['maxLogicalComp']  = 100000;
 
     this.initGlobalFunction();
+
   }
 
   getStats() { return this.scope.statistics; }

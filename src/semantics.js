@@ -46,7 +46,7 @@ var operation = {
 
     Exp6_neq:         function (_, a)      { return new Atom.MathOpMul(a.toAST(), new Atom.MNumber(-1), getLineNo(a)) },
 
-    identifier:      function (a, b)         { return new MO.MSymbol(this.sourceString, null) },
+    identifier:       function (a, b)         { return new MO.MSymbol(this.sourceString, null) },
     
     IdentifierTblAssign: function (a, _l, b, _r) { return new MO.MSymbolTableAssign(a.sourceString, b.toAST()); },
     IdentifierTblFetch:  function (a, _l, b, _r) { return new MO.MSymbolTableFetch(a.sourceString, b.toAST()); },
@@ -72,15 +72,15 @@ var operation = {
     }, 
 
 
-    WhileExpr:   (_1, cond, _2, body, _3) => new MO.Stmt_WhileLoop(cond.toAST(), cond.sourceString, body.toAST(), getLineNo(cond)),
+    WhileExpr:   function (_1, cond, _2, body, _3) { return new MO.Stmt_WhileLoop(cond.toAST(), cond.sourceString, body.toAST(), getLineNo(cond)) },
 
-    DoWhileExpr: (_1, body, _2, cond)     => new MO.Stmt_Do_WhileLoop(cond.toAST(), cond.sourceString, body.toAST(), getLineNo(cond)),
+    DoWhileExpr: function (_1, body, _2, cond)     { return new MO.Stmt_Do_WhileLoop(cond.toAST(), cond.sourceString, body.toAST(), getLineNo(cond)) },
 
-    ForExpr: (_1, variable, _2, initval, _3, finalval, _4, stepval, _5, body, _6) => 
-    new MO.Stmt_ForLoop(variable.toAST(), initval.toAST(), finalval.toAST(), stepval.toAST(), body.toAST(), getLineNo(variable)),
+    ForExpr: function (_1, variable, _2, initval, _3, finalval, _4, stepval, _5, body, _6) {  
+    return new MO.Stmt_ForLoop(variable.toAST(), initval.toAST(), finalval.toAST(), stepval.toAST(), body.toAST(), getLineNo(variable)) },
 
-    FunCall: (a, _1, b, _2) => new MO.CallSubFunction(a.toAST(), b.toAST(), getLineNo(a)),
-    CallSubProcedure: (_1, a, _2, b, _3) => new MO.CallSubProcedure(a.toAST(), b.toAST(), getLineNo(_1)),
+    FunCall: function (a, _1, b, _2) { return new MO.CallSubFunction(a.toAST(), b.toAST(), getLineNo(a)) },
+    CallSubProcedure: function (_1, a, _2, b, _3) { return new MO.CallSubProcedure(a.toAST(), b.toAST(), getLineNo(_1)) },
 
     Arguments:             (a) => a.asIteration().toAST(),
     AtLeastOneArguments:   (a) => a.asIteration().toAST(),
@@ -93,30 +93,30 @@ var operation = {
     
 
     Application: function(keyboardData, mainProg, subPrograms) { 
-        return new MO.Application(keyboardData.toAST(), mainProg.toAST(), subPrograms.toAST()); },
+        return new MO.Application(keyboardData.toAST(), mainProg.toAST(), subPrograms.toAST()) },
 
     Program: function(_1, name, decl, _5, mBlock, _6)  {
-        return new MO.Program(name.toAST(), decl.toAST(), mBlock.toAST()); },
+        return new MO.Program(name.toAST(), decl.toAST(), mBlock.toAST()) },
 
     SubFunction: function(_1, name, _2, params, _3, _4, funType , decl, _7, mBlock, _8) { 
-        return new MO.SubFunction(name.toAST(), params.toAST(), funType.sourceString, decl.toAST(), mBlock.toAST()); },
+        return new MO.SubFunction(name.toAST(), params.toAST(), funType.sourceString, decl.toAST(), mBlock.toAST()) },
 
     SubProcedure: function(_1, name, _2, params, _3, decl, _6, mBlock, _7) {       
-        return new MO.SubProcedure(name.toAST(), params.toAST(), decl.toAST(), mBlock.toAST()); },
+        return new MO.SubProcedure(name.toAST(), params.toAST(), decl.toAST(), mBlock.toAST()) },
  
     DefDeclarations: function(_1, statheres, _2, metavlites) {       
-        return new MO.DefDeclarations(statheres.toAST(), metavlites.toAST()); },
+        return new MO.DefDeclarations(statheres.toAST(), metavlites.toAST()) },
 
-    DefConstant:  function(constid, _, constval) { return new MO.DefConstant(constid.toAST(), constval.toAST()); },
+    DefConstant:  function(constid, _, constval) { return new MO.DefConstant(constid.toAST(), constval.toAST()) },
 
     DefVariables: function(varType, _2, vars)    { return new MO.DefVariables(varType.sourceString , vars.toAST()) },
 
-    Block: function(commands)      { return new MO.Stmt_Block(commands.toAST()); },
-    FuncBlock: function(commands)  { return new MO.Stmt_Block(commands.toAST()); },    
+    Block: function(commands)      { return new MO.Stmt_Block(commands.toAST()) },
+    FuncBlock: function(commands)  { return new MO.Stmt_Block(commands.toAST()) },    
 
-    Stmt_Write: function(_, cmd)   { return new MO.Stmt_Write(cmd.toAST(), getLineNo(cmd)); },
+    Stmt_Write: function(_, cmd)   { return new MO.Stmt_Write(cmd.toAST(), getLineNo(cmd)) },
     
-    Stmt_Read: function(_, cmd)    { return new MO.Stmt_Read(cmd.toAST(), getLineNo(cmd)); }
+    Stmt_Read: function(_, cmd)    { return new MO.Stmt_Read(cmd.toAST(), getLineNo(cmd)) }
 
 };
 

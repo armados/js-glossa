@@ -1,11 +1,11 @@
 "use strict";
 
 class GrammarOhm {
-    getGrammar() {
-        const grammar = `
+  getGrammar() {
+    const grammar = `
         Glwssa {
 
-            Application = KeyboardData* Program (SubFunction | SubProcedure)*
+            Application  = KeyboardData* Program (SubFunction | SubProcedure)*
          
             Program      = "ΠΡΟΓΡΑΜΜΑ" identifier DefDeclarations "ΑΡΧΗ" Block "ΤΕΛΟΣ_ΠΡΟΓΡΑΜΜΑΤΟΣ" 
         
@@ -22,16 +22,16 @@ class GrammarOhm {
         
             Expr =      Exp  
         
-            Exp         =  Exp or Exp1                 -- orop
+            Exp         =  Exp or Exp1               -- orop
                         |  Exp1
-            Exp1        =  Exp1 and Exp2               -- andop
+            Exp1        =  Exp1 and Exp2             -- andop
                         |  Exp2
             Exp2        =  Exp3 "<" Exp3             -- lt
                         |  Exp3 ">" Exp3             -- gt
-                        |  Exp3 "<=" Exp3             -- lte
-                        |  Exp3 ">=" Exp3             -- gte
+                        |  Exp3 "<=" Exp3            -- lte
+                        |  Exp3 ">=" Exp3            -- gte
                         |  Exp3 "=" Exp3             -- eq
-                        |  Exp3 "<>" Exp3             -- neq
+                        |  Exp3 "<>" Exp3            -- neq
                         |  Exp3
             Exp3        =  Exp3 "+" Exp4             -- add
                         |  Exp3 "-" Exp4             -- sub
@@ -41,10 +41,10 @@ class GrammarOhm {
                         |  Exp4 div Exp5             -- intdiv
                         |  Exp4 mod Exp5             -- intmod
                         |  Exp5
-            Exp5        =  Exp5 powop  Exp6            -- powop
+            Exp5        =  Exp5 powop  Exp6          -- powop
                         |  Exp6
-            Exp6        =  not Exp7                    -- not
-                        |  neq Exp7                    -- neq
+            Exp6        =  not Exp7                  -- not
+                        |  neq Exp7                  -- neq
                         |  Exp7
             Exp7        =  boollit
                         |  floatlit
@@ -53,7 +53,7 @@ class GrammarOhm {
                         |  FunCall
                         |  IdentifierTblFetch
                         |  identifier
-                        |  "(" Exp ")"                -- parens
+                        |  "(" Exp ")"               -- parens
         
         
             Block = InnerCommand*
@@ -75,7 +75,7 @@ class GrammarOhm {
             FunCall          = identifier "(" Arguments ")"
             CallSubProcedure = "ΚΑΛΕΣΕ" identifier "(" Arguments ")"
         
-            IdentifierTblAssign       = identifier "[" AtLeastOneArguments "]"
+            IdentifierTblAssign      = identifier "[" AtLeastOneArguments "]"
             IdentifierTblFetch       = identifier "[" AtLeastOneArguments "]"
         
             AtLeastOneArguments = NonemptyListOf<Expr, ",">
@@ -94,8 +94,8 @@ class GrammarOhm {
             grapse       = "ΓΡΑΨΕ" ~idrest
             diavase      = "ΔΙΑΒΑΣΕ" ~idrest
         
-            true        =  ("ΑΛΗΘΗΣ" | "αληθης" | "αληθής") ~idrest
-            false       =  ("ΨΕΥΔΗΣ" | "ψευδης" | "ψευδής") ~idrest
+            true        =  ("ΑΛΗΘΗΣ" | "ΑΛΗΘΉΣ" | "αληθης" | "αληθής") ~idrest
+            false       =  ("ΨΕΥΔΗΣ" | "ΨΕΥΔΉΣ" | "ψευδης" | "ψευδής") ~idrest
             or          =  ("Η" | "Ή" | "ή" | "η") ~idrest
             and         =  ("ΚΑΙ" | "και") ~idrest
             not         =  ("ΟΧΙ" | "ΌΧΙ" | "οχι" | "όχι") ~idrest
@@ -109,50 +109,43 @@ class GrammarOhm {
                 while        = "ΟΣΟ" ~idchar
             */
         
-            //definition of a symbol
             identifier = ~reservedWord  letter (letter|digit|"_")* 
         
             idrest = letter | digit | "_"
         
-            addop       =  "+" | "-"
-            relop       =  "<=" | "<" | "=" | "<>" | ">=" | ">"
-            mulop       =  "*" | "/" | div | mod
             powop       =  "^"
+            mulop       =  "*" | "/" | div | mod
+            addop       =  "+" | "-"
+            relop       =  "<" | "<=" | ">" | ">=" | "=" | "<>"
             prefixop    =  neq | not
             neq         =  "-"
         
             number =   floatlit | intlit
         
-        
-            // literals
             lit         = floatlit | intlit | strlit | boollit
             floatlit    = digit* "." digit+ 
             intlit      = digit+
-            qq          = "'"
+            qq          = "'" | "\\""
             strlit      = qq (~qq any)+ qq
             boollit     = true | false
         
         
-            //space +=  comment
-        
             keyboardinput =  "! KEYBOARD_INPUT:"
         
-            comment = ~keyboardinput "!" (~lineTerminator sourceCharacter)*
+            comment = ~keyboardinput "!" (~lineTerminator any)*
         
             lineTerminator = "\\n" | "\\r"
         
-            sourceCharacter = any
             whitespace = "\t" | " "
             breakLine = "&"
             space := whitespace | lineTerminator | comment | breakLine  
         }
                 
         `;
-        return grammar;
-    }
+    return grammar;
+  }
 }
-
 
 module.exports = {
-    GrammarOhm: GrammarOhm
-}
+  GrammarOhm
+};

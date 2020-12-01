@@ -18,15 +18,6 @@ function isBoolean(val) {
   return typeof val == "boolean";
 }
 
-function valueTypeToString(val) {
-  if (isInt(val)) return "[ " + val + " ] Ακέραια σταθερά";
-  else if (isFloat(val)) return "[ " + val + " ] Πραγματική σταθερά";
-  else if (isString(val)) return "[ '" + val + "' ] Αλφαριθμητική σταθερά";
-  else if (isBoolean(val))
-    return "[ " + (val ? "ΑΛΗΘΗΣ" : "ΨΕΥΔΗΣ") + " ] Λογική σταθερά";
-  else throw new GE.GError("Critical: Unknown value type: " + val);
-}
-
 class Atom {
   constructor(val) {
     this.val = val;
@@ -45,8 +36,20 @@ class MNumber extends Atom {}
 class MBoolean extends Atom {}
 class MString extends Atom {}
 
-class MathOpPow {
+class MathOperation {
+  valueTypeToString(val) {
+    if (isInt(val)) return "[ " + val + " ] Ακέραια σταθερά";
+    else if (isFloat(val)) return "[ " + val + " ] Πραγματική σταθερά";
+    else if (isString(val)) return "[ '" + val + "' ] Αλφαριθμητική σταθερά";
+    else if (isBoolean(val))
+      return "[ " + (val ? "ΑΛΗΘΗΣ" : "ΨΕΥΔΗΣ") + " ] Λογική σταθερά";
+    else throw new GE.GError("Critical: Unknown value type: " + val);
+  }
+}
+
+class MathOpPow extends MathOperation {
   constructor(A, B, line) {
+    super();
     this.A = A;
     this.B = B;
     this.line = line;
@@ -71,9 +74,9 @@ class MathOpPow {
       throw new GE.GError(
         "Δεν είναι δυνατή η πράξη ^ με τα δοθέντα ορίσματα." +
           "\n" +
-          valueTypeToString(a.val) +
+          this.valueTypeToString(a.val) +
           "\n" +
-          valueTypeToString(b.val),
+          this.valueTypeToString(b.val),
         this.line
       );
 
@@ -81,8 +84,9 @@ class MathOpPow {
   }
 }
 
-class MathOpMul {
+class MathOpMul extends MathOperation {
   constructor(A, B, line) {
+    super();
     this.A = A;
     this.B = B;
     this.line = line;
@@ -107,9 +111,9 @@ class MathOpMul {
       throw new GE.GError(
         "Δεν είναι δυνατή η πράξη * με τα δοθέντα ορίσματα." +
           "\n" +
-          valueTypeToString(a.val) +
+          this.valueTypeToString(a.val) +
           "\n" +
-          valueTypeToString(b.val),
+          this.valueTypeToString(b.val),
         this.line
       );
 
@@ -117,8 +121,9 @@ class MathOpMul {
   }
 }
 
-class MathOpDiv {
+class MathOpDiv extends MathOperation {
   constructor(A, B, line) {
+    super();
     this.A = A;
     this.B = B;
     this.line = line;
@@ -143,9 +148,9 @@ class MathOpDiv {
       throw new GE.GError(
         "Δεν είναι δυνατή η πράξη / με τα δοθέντα ορίσματα." +
           "\n" +
-          valueTypeToString(a.val) +
+          this.valueTypeToString(a.val) +
           "\n" +
-          valueTypeToString(b.val),
+          this.valueTypeToString(b.val),
         this.line
       );
 
@@ -156,8 +161,9 @@ class MathOpDiv {
   }
 }
 
-class MathOpDivInt {
+class MathOpDivInt extends MathOperation {
   constructor(A, B, line) {
+    super();
     this.A = A;
     this.B = B;
     this.line = line;
@@ -182,9 +188,9 @@ class MathOpDivInt {
       throw new GE.GError(
         "Δεν είναι δυνατή η πράξη DIV με τα δοθέντα ορίσματα." +
           "\n" +
-          valueTypeToString(a.val) +
+          this.valueTypeToString(a.val) +
           "\n" +
-          valueTypeToString(b.val),
+          this.valueTypeToString(b.val),
         this.line
       );
 
@@ -195,8 +201,9 @@ class MathOpDivInt {
   }
 }
 
-class MathOpModInt {
+class MathOpModInt extends MathOperation {
   constructor(A, B, line) {
+    super();
     this.A = A;
     this.B = B;
     this.line = line;
@@ -221,9 +228,9 @@ class MathOpModInt {
       throw new GE.GError(
         "Δεν είναι δυνατή η πράξη MOD με τα δοθέντα ορίσματα." +
           "\n" +
-          valueTypeToString(a.val) +
+          this.valueTypeToString(a.val) +
           "\n" +
-          valueTypeToString(b.val),
+          this.valueTypeToString(b.val),
         this.line
       );
 
@@ -234,8 +241,9 @@ class MathOpModInt {
   }
 }
 
-class MathOpAdd {
+class MathOpAdd extends MathOperation {
   constructor(A, B, line) {
+    super();
     this.A = A;
     this.B = B;
     this.line = line;
@@ -260,9 +268,9 @@ class MathOpAdd {
       throw new GE.GError(
         "Δεν είναι δυνατή η πράξη + με τα δοθέντα ορίσματα." +
           "\n" +
-          valueTypeToString(a.val) +
+          this.valueTypeToString(a.val) +
           "\n" +
-          valueTypeToString(b.val),
+          this.valueTypeToString(b.val),
         this.line
       );
 
@@ -270,8 +278,9 @@ class MathOpAdd {
   }
 }
 
-class MathOpSub {
+class MathOpSub extends MathOperation {
   constructor(A, B, line) {
+    super();
     this.A = A;
     this.B = B;
     this.line = line;
@@ -296,9 +305,9 @@ class MathOpSub {
       throw new GE.GError(
         "Δεν είναι δυνατή η πράξη - με τα δοθέντα ορίσματα." +
           "\n" +
-          valueTypeToString(a.val) +
+          this.valueTypeToString(a.val) +
           "\n" +
-          valueTypeToString(b.val),
+          this.valueTypeToString(b.val),
         this.line
       );
 
@@ -306,10 +315,9 @@ class MathOpSub {
   }
 }
 
-// ========================================
-
-class MathOpRelLt {
+class MathOpRelLt extends MathOperation {
   constructor(A, B, line) {
+    super();
     this.A = A;
     this.B = B;
     this.line = line;
@@ -339,9 +347,9 @@ class MathOpRelLt {
       throw new GE.GError(
         "Δεν είναι δυνατή η πράξη < με τα δοθέντα ορίσματα." +
           "\n" +
-          valueTypeToString(a.val) +
+          this.valueTypeToString(a.val) +
           "\n" +
-          valueTypeToString(b.val),
+          this.valueTypeToString(b.val),
         this.line
       );
 
@@ -349,8 +357,9 @@ class MathOpRelLt {
   }
 }
 
-class MathOpRelGt {
+class MathOpRelGt extends MathOperation {
   constructor(A, B, line) {
+    super();
     this.A = A;
     this.B = B;
     this.line = line;
@@ -380,9 +389,9 @@ class MathOpRelGt {
       throw new GE.GError(
         "Δεν είναι δυνατή η πράξη > με τα δοθέντα ορίσματα. " +
           "\n" +
-          valueTypeToString(a.val) +
+          this.valueTypeToString(a.val) +
           "\n" +
-          valueTypeToString(b.val),
+          this.valueTypeToString(b.val),
         this.line
       );
 
@@ -390,8 +399,9 @@ class MathOpRelGt {
   }
 }
 
-class MathOpRelLte {
+class MathOpRelLte extends MathOperation {
   constructor(A, B, line) {
+    super();
     this.A = A;
     this.B = B;
     this.line = line;
@@ -421,9 +431,9 @@ class MathOpRelLte {
       throw new GE.GError(
         "Δεν είναι δυνατή η πράξη <= με τα δοθέντα ορίσματα. " +
           "\n" +
-          valueTypeToString(a.val) +
+          this.valueTypeToString(a.val) +
           "\n" +
-          valueTypeToString(b.val),
+          this.valueTypeToString(b.val),
         this.line
       );
 
@@ -431,8 +441,9 @@ class MathOpRelLte {
   }
 }
 
-class MathOpRelGte {
+class MathOpRelGte extends MathOperation {
   constructor(A, B, line) {
+    super();
     this.A = A;
     this.B = B;
     this.line = line;
@@ -462,9 +473,9 @@ class MathOpRelGte {
       throw new GE.GError(
         "Δεν είναι δυνατή η πράξη >= με τα δοθέντα ορίσματα. " +
           "\n" +
-          valueTypeToString(a.val) +
+          this.valueTypeToString(a.val) +
           "\n" +
-          valueTypeToString(b.val),
+          this.valueTypeToString(b.val),
         this.line
       );
 
@@ -472,8 +483,9 @@ class MathOpRelGte {
   }
 }
 
-class MathOpRelEq {
+class MathOpRelEq extends MathOperation {
   constructor(A, B, line) {
+    super();
     this.A = A;
     this.B = B;
     this.line = line;
@@ -502,9 +514,9 @@ class MathOpRelEq {
       throw new GE.GError(
         "Δεν είναι δυνατή η πράξη = με τα δοθέντα ορίσματα." +
           "\n" +
-          valueTypeToString(a.val) +
+          this.valueTypeToString(a.val) +
           "\n" +
-          valueTypeToString(b.val),
+          this.valueTypeToString(b.val),
         this.line
       );
 
@@ -512,8 +524,9 @@ class MathOpRelEq {
   }
 }
 
-class MathOpRelNeq {
+class MathOpRelNeq extends MathOperation {
   constructor(A, B, line) {
+    super();
     this.A = A;
     this.B = B;
     this.line = line;
@@ -542,17 +555,18 @@ class MathOpRelNeq {
       throw new GE.GError(
         "Δεν είναι δυνατή η πράξη <> με τα δοθέντα ορίσματα." +
           "\n" +
-          valueTypeToString(a.val) +
+          this.valueTypeToString(a.val) +
           "\n" +
-          valueTypeToString(b.val),
+          this.valueTypeToString(b.val),
         this.line
       );
     return new MBoolean(a.val != b.val);
   }
 }
 
-class MathOpLogAnd {
+class MathOpLogAnd extends MathOperation {
   constructor(A, B, line) {
+    super();
     this.A = A;
     this.B = B;
     this.line = line;
@@ -577,9 +591,9 @@ class MathOpLogAnd {
       throw new GE.GError(
         "Δεν είναι δυνατή η πράξη ΚΑΙ με τα δοθέντα ορίσματα." +
           "\n" +
-          valueTypeToString(a.val) +
+          this.valueTypeToString(a.val) +
           "\n" +
-          valueTypeToString(b.val),
+          this.valueTypeToString(b.val),
         this.line
       );
 
@@ -587,8 +601,9 @@ class MathOpLogAnd {
   }
 }
 
-class MathOpLogOr {
+class MathOpLogOr extends MathOperation {
   constructor(A, B, line) {
+    super();
     this.A = A;
     this.B = B;
     this.line = line;
@@ -613,9 +628,9 @@ class MathOpLogOr {
       throw new GE.GError(
         "Δεν είναι δυνατή η πράξη Η με τα δοθέντα ορίσματα." +
           "\n" +
-          valueTypeToString(a.val) +
+          this.valueTypeToString(a.val) +
           "\n" +
-          valueTypeToString(b.val),
+          this.valueTypeToString(b.val),
         this.line
       );
 
@@ -623,8 +638,9 @@ class MathOpLogOr {
   }
 }
 
-class MathOpLogNot {
+class MathOpLogNot extends MathOperation {
   constructor(A, line) {
+    super();
     this.A = A;
     this.line = line;
   }
@@ -642,7 +658,7 @@ class MathOpLogNot {
       throw new GE.GError(
         "Δεν είναι δυνατή η πράξη ΟΧΙ με τα δοθέντα ορίσματα." +
           "\n" +
-          valueTypeToString(a.val),
+          this.valueTypeToString(a.val),
         this.line
       );
 
@@ -651,9 +667,10 @@ class MathOpLogNot {
 }
 
 module.exports = {
-  MNumber: MNumber,
-  MBoolean: MBoolean,
-  MString: MString,
+  MNumber,
+  MBoolean,
+  MString,
+
   MathOpPow,
   MathOpMul,
   MathOpDiv,

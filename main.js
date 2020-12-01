@@ -1,15 +1,15 @@
 "use strict";
 
-var ohm = require("ohm-js");
+const ohm = require("ohm-js");
 
-var GOhm = require("./src/grammar.js");
-var Semantics = require("./src/semantics");
+const GOhm = require("./src/grammar.js");
+const Semantics = require("./src/semantics");
 
-var Atom = require("./src/atom");
-var GE = require("./src/gclasses");
-var STR = require("./src/storage");
+const Atom = require("./src/atom");
+const GE = require("./src/gclasses");
+const STR = require("./src/storage");
 
-var IO = require("./src/io");
+const IO = require("./src/io");
 
 class GlossaJS {
   constructor() {

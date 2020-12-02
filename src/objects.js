@@ -280,7 +280,6 @@ class Stmt_Write {
 
     var cmdLineNo = this.cmdLineNo;
     scope.cmdLineNo = this.cmdLineNo; //FIXME:
-  
 
     var output = [];
 

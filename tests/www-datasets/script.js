@@ -354,7 +354,7 @@ $(document).ready(function () {
                 }
             });
 
-            finalOutput = result.join(',\n');
+            finalOutput = result.join('\n');
 
         } catch (e) {
             finalOutput = 'Σφάλμα: ' + e.message;

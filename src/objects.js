@@ -129,9 +129,9 @@ class Stmt_WhileLoop {
       var condResult = this.cond.resolve(scope);
 
       if (!(condResult instanceof Atom.MBoolean))
-        throw new GE.GError('Γραμμή ' + this.cmdLineNo + ': ' + 'Η συνθήκη της ΟΣΟ δεν αποτελεί λογική έκφραση.');
+        throw new GE.GError('Η συνθήκη της ΟΣΟ δεν αποτελεί λογική έκφραση.', this.cmdLineNo);
 
-      scope.io.outputAddDetails('Γραμμή ' + this.cmdLineNo + ': ' + 'Η συνθήκη της ΟΣΟ ' +  this.condstr + ' έχει τιμή ' + (condResult.val ? 'ΑΛΗΘΗΣ':'ΨΕΥΔΗΣ'));
+      scope.io.outputAddDetails('Η συνθήκη της ΟΣΟ ' +  this.condstr + ' έχει τιμή ' + (condResult.val ? 'ΑΛΗΘΗΣ':'ΨΕΥΔΗΣ'), this.cmdLineNo);
 
       if (!condResult.val)
         break;
@@ -159,9 +159,9 @@ class Stmt_Do_WhileLoop {
       var condResult = this.cond.resolve(scope);
 
       if (!(condResult instanceof Atom.MBoolean))
-        throw new GE.GError('Γραμμή ' + this.cmdLineNo + ': ' + 'Η συνθήκη της ΜΕΧΡΙΣ_ΟΤΟΥ δεν αποτελεί λογική έκφραση.');
+        throw new GE.GError('Η συνθήκη της ΜΕΧΡΙΣ_ΟΤΟΥ δεν αποτελεί λογική έκφραση.', this.cmdLineNo);
 
-      scope.io.outputAddDetails('Γραμμή ' + this.cmdLineNo + ': ' + 'Η συνθήκη της ΜΕΧΡΙΣ_ΟΤΟΥ ' +  this.condstr + ' έχει τιμή ' +  (condResult.val ? 'ΑΛΗΘΗΣ':'ΨΕΥΔΗΣ'));
+      scope.io.outputAddDetails('Η συνθήκη της ΜΕΧΡΙΣ_ΟΤΟΥ ' +  this.condstr + ' έχει τιμή ' +  (condResult.val ? 'ΑΛΗΘΗΣ':'ΨΕΥΔΗΣ'), this.cmdLineNo);
 
       scope.incrLogicalCounter();
 
@@ -196,7 +196,7 @@ class Stmt_ForLoop {
     }
 
     if (v_step == 0)
-      throw new GE.GError('Γραμμή ' + this.cmdLineNo + ': ' + 'Μη επιτρεπτή ενέργεια. Το βήμα της εντολή ΓΙΑ δεν μπορεί να λάβει την τιμή μηδέν.');
+      throw new GE.GError('Μη επιτρεπτή ενέργεια. Το βήμα της εντολή ΓΙΑ δεν μπορεί να λάβει την τιμή μηδέν.', this.cmdLineNo);
 
     var tmp = initval.resolve(scope);
     var v_initial = tmp.val;
@@ -209,7 +209,7 @@ class Stmt_ForLoop {
 
     if (v_initial <= v_final && v_step > 0) {
       while (scope.getSymbol(variable.name).val <= v_final) {
-        scope.io.outputAddDetails('Γραμμή ' + this.cmdLineNo + ': ' + 'Η συνθήκη της ΓΙΑ ' + variable.name + '<=' + v_final + ' είναι ΑΛΗΘΗΣ');
+        scope.io.outputAddDetails('Η συνθήκη της ΓΙΑ ' + variable.name + '<=' + v_final + ' είναι ΑΛΗΘΗΣ', this.cmdLineNo);
    
         scope.incrLogicalCounter();
 
@@ -222,11 +222,11 @@ class Stmt_ForLoop {
         );
         scope.addLock(variable.name);
       }
-      scope.io.outputAddDetails('Γραμμή ' + this.cmdLineNo + ': ' + 'Η συνθήκη της ΓΙΑ ' + variable.name + '<=' + v_final + ' είναι ΨΕΥΔΗΣ');
+      scope.io.outputAddDetails('Η συνθήκη της ΓΙΑ ' + variable.name + '<=' + v_final + ' είναι ΨΕΥΔΗΣ', this.cmdLineNo);
 
     } else if (v_initial >= v_final && v_step < 0) {
       while (scope.getSymbol(variable.name).val >= v_final) {
-        scope.io.outputAddDetails('Γραμμή ' + this.cmdLineNo + ': ' + 'Η συνθήκη της ΓΙΑ ' + variable.name + '>=' + v_final + ' είναι ΑΛΗΘΗΣ');
+        scope.io.outputAddDetails('Η συνθήκη της ΓΙΑ ' + variable.name + '>=' + v_final + ' είναι ΑΛΗΘΗΣ', this.cmdLineNo);
         
         scope.incrLogicalCounter();
 
@@ -239,7 +239,7 @@ class Stmt_ForLoop {
         );
         scope.addLock(variable.name);
       }
-      scope.io.outputAddDetails('Γραμμή ' + this.cmdLineNo + ': ' + 'Η συνθήκη της ΓΙΑ ' + variable.name + '>=' + v_final + ' είναι ΨΕΥΔΗΣ');
+      scope.io.outputAddDetails('Η συνθήκη της ΓΙΑ ' + variable.name + '>=' + v_final + ' είναι ΨΕΥΔΗΣ', this.cmdLineNo);
 
     }
 
@@ -263,7 +263,7 @@ class Stmt_Assignment {
 
     var valResolved = this.val.resolve(scope);
     
-    scope.io.outputAddDetails('Γραμμή ' + this.cmdLineNo + ': ' + this.cmdStrA + ' <- ' + this.cmdStrB);
+    scope.io.outputAddDetails(this.cmdStrA + ' <- ' + this.cmdStrB, this.cmdLineNo);
 
     scope.setSymbol(sym.name, valResolved);
 
@@ -278,12 +278,12 @@ class Stmt_Write {
   }
   resolve(scope) {
 
-    var cmdLineNo = this.cmdLineNo;
     scope.cmdLineNo = this.cmdLineNo; //FIXME:
 
     var output = [];
 
-    this.args.forEach(function (argParam) {
+    for (var i = 0, len = this.args.length; i < len; i++) {
+      var argParam = this.args[i];
 
       if (argParam instanceof MSymbolTableFetch)
           argParam = argParam.resolve(scope);
@@ -291,7 +291,7 @@ class Stmt_Write {
       var arg = argParam.resolve(scope);
 
       if (arg == null)
-        throw new GE.GError('Γραμμή ' + cmdLineNo + ': ' + 'Το αναγνωριστικό ' + argParam.name + ' δεν έχει αρχικοποιηθεί.');
+        throw new GE.GError('Το αναγνωριστικό ' + argParam.name + ' δεν έχει αρχικοποιηθεί.', this.cmdLineNo);
   
       var out = arg.getValue();
 
@@ -299,10 +299,10 @@ class Stmt_Write {
         out = arg.getValue() ? "ΑΛΗΘΗΣ" : "ΨΕΥΔΗΣ";
 
       output.push(out);
-    });
+    }
 
     scope.io.outputAdd( output.join(' ') );
-    scope.io.outputAddDetails( 'Γραμμή ' + cmdLineNo + ': ' + 'Εμφάνισε στην οθόνη το μήνυμα: ' + output.join(" ") );
+    scope.io.outputAddDetails('Εμφάνισε στην οθόνη: ' + output.join(" "), this.cmdLineNo);
   }
 }
 
@@ -313,21 +313,25 @@ class Stmt_Read {
   }
   resolve(scope) {
 
-    var cmdLineNo = this.cmdLineNo;
 
-    scope.io.outputAddDetails('Γραμμή ' + cmdLineNo + ': ' + 'Διάβασε από το πληκτρολόγιο');
+    scope.io.outputAddDetails('Διάβασε από το πληκτρολόγιο', this.cmdLineNo);
 
     var output = [];
-    this.args.forEach(function (arg) {
+
+    for (var i = 0, len = this.args.length; i < len; i++) {
+      var arg = this.args[i];
 
       // Check if is a table cell fetch real symbol
       if (arg instanceof MSymbolTableAssign)
         arg = arg.resolve(scope);
 
-      //var data = IOKeyboard.getSingleInputData();
       var data = scope.io.inputFetchValueFromBuffer();
+  
+      if (data == null)
+        throw new GE.GError('Τα δεδομένα εισόδου δεν επαρκούν για την εκτέλεση του προγράμματος.', this.cmdLineNo);
+  
+      scope.io.outputAddDetails('Εισαγωγή από το πληκτρολόγιο της τιμής ' + data + ' στο αναγνωριστικό ' + arg.name, this.cmdLineNo);
 
-      scope.io.outputAddDetails( 'Γραμμή ' + cmdLineNo + ': ' +  'Εισαγωγή τιμής από το πληκτρολόγιο: ' + data + ' στο αναγνωριστικό ' + arg.name);
       output.push(data);
 
       if      (typeof(data) == 'string')  var sym = new Atom.MString(data);
@@ -336,10 +340,10 @@ class Stmt_Read {
         throw new GE.GError('Critical: Unknown input value type: ' + data);
             
       scope.setSymbol(arg.name, sym);
-    });
+    }
 
 
-    //scope.io.outputAddDetails( 'Γραμμή ' + this.cmdLineNo + ': ' + 'Εισαγωγή από το πληκτρολόγιο: ' + output.join(" ") );
+    //scope.io.outputAddDetails('Εισαγωγή από το πληκτρολόγιο: ' + output.join(" "), this.cmdLineNo);
 
   }
 }
@@ -483,10 +487,10 @@ class CallSubFunction {
     this.cmdLineNo = cmdLineNo;
   }
   resolve(scope) {
-    scope.io.outputAddDetails('Γραμμή ' + this.cmdLineNo + ': ' + 'Κλήση της Συνάρτησης ' + this.fun.name);
+    scope.io.outputAddDetails('Κλήση της Συνάρτησης ' + this.fun.name, this.cmdLineNo);
     
     if (!scope.hasSymbol(this.fun.name))
-      throw new GE.GError('Γραμμή ' + this.cmdLineNo + ': ' + 'Η συνάρτηση ' + this.fun.name + ' δεν βρέθηκε.');
+      throw new GE.GError('Η συνάρτηση ' + this.fun.name + ' δεν βρέθηκε.', this.cmdLineNo);
 
     var argsResolved = this.args.map((arg) => arg.resolve(scope));
 
@@ -498,7 +502,7 @@ class CallSubFunction {
 
     var valReturned = fun.apply(this, sendData);
 
-    scope.io.outputAddDetails('Επιστροφή από την συνάρτηση ' + this.fun.name + ' με τιμή επιστροφής ' + valReturned.val);
+    scope.io.outputAddDetails('Επιστροφή από την συνάρτηση ' + this.fun.name + ' με τιμή επιστροφής ' + valReturned.val, this.cmdLineNo);
   
     return valReturned;
   }
@@ -512,10 +516,10 @@ class CallSubProcedure {
     this.cmdLineNo = cmdLineNo;
   }
   resolve(scope) {
-    scope.io.outputAddDetails('Γραμμή ' + this.cmdLineNo + ': ' + 'Κλήση της Διαδικασίας ' + this.fun.name);
+    scope.io.outputAddDetails('Κλήση της Διαδικασίας ' + this.fun.name, this.cmdLineNo);
 
     if (!scope.hasSymbol(this.fun.name))
-      throw new GE.GError('Γραμμή ' + this.cmdLineNo + ': ' + 'Η διαδικασία ' + this.fun.name + 'δεν βρέθηκε.');
+      throw new GE.GError('Η διαδικασία ' + this.fun.name + 'δεν βρέθηκε.', this.cmdLineNo);
 
     var argsResolved = this.args.map((arg) => arg.resolve(scope));
 
@@ -527,7 +531,7 @@ class CallSubProcedure {
  
     var recvData = fun.apply(null, sendData);
 
-    scope.io.outputAddDetails('Επιστροφή από την διαδικασία ' + this.fun.name);
+    scope.io.outputAddDetails('Επιστροφή από την διαδικασία ' + this.fun.name, this.cmdLineNo);
    
     var procScope  = recvData[0];
     var procParams = recvData[1];

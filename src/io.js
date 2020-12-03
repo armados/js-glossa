@@ -2,52 +2,6 @@
 
 const GE = require("./gclasses");
 
-class InputDevice {
-  constructor() {
-    this.data = [];
-  }
-
-  add(val) {
-    this.data.push(val);
-  }
-
-  set(val) {
-    this.data = val;
-  }
-
-  isEmpty() {
-    return this.data.length == 0 ? true : false;
-  }
-
-  getSingleInputData() {
-    if (this.isEmpty()) throw new GE.GError('Τα δεδομένα εισόδου δεν επαρκούν για την εκτέλεση του προγράμματος.');
-
-    var value = this.data.shift();
-
-    if (!isNaN(parseFloat(value)))
-      return Number(value);
-    else
-      return String(value.replace(/['"]+/g, ''));
-
-  }
-}
-
-class OutputDevice {
-    constructor() {
-        this.data = [];
-      }
-    
-      add(val) {
-        this.data.push(val);
-      }
-    
-      get() {
-        return this.data;
-      }
-}
-
-
-
 class IOBuffer {
   constructor() {
       this.inputData  = [];
@@ -59,8 +13,8 @@ class IOBuffer {
       this.outputData.push(val);
     }
 
-    outputAddDetails(val) {
-      this.outputDataDetails.push(val);
+    outputAddDetails(val, line=null) {
+      this.outputDataDetails.push(  (line != null ? 'Γραμμή ' + line + '. ': '') + val);
     }
     
     getOutput() {
@@ -85,7 +39,7 @@ class IOBuffer {
   
     inputFetchValueFromBuffer() {
       if (this.inputIsEmptyBuffer())
-        throw new GE.GError('Τα δεδομένα εισόδου δεν επαρκούν για την εκτέλεση του προγράμματος.');
+        return null;
   
       var value = this.inputData.shift();
   
@@ -101,7 +55,5 @@ class IOBuffer {
 }
 
 module.exports = {
-  IOBuffer: IOBuffer,
-  InputDevice: InputDevice,
-  OutputDevice: OutputDevice,
+  IOBuffer: IOBuffer
 };

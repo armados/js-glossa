@@ -271,6 +271,7 @@ $(document).ready(function () {
                                 case 'custom':
                                     var txtList  = box.find('.dataBoxTextListCustom').val();
                                     var arr= txtList.split(',');
+                                    arr = arr.map(s => s.trim());
                                     console.log(txtList);
                                     break;
                                 default:
@@ -354,6 +355,8 @@ $(document).ready(function () {
                 }
             });
 
+            result = result.map(row => '! KEYBOARD_INPUT: ' + row);
+            
             finalOutput = result.join('\n');
 
         } catch (e) {

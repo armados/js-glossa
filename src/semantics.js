@@ -109,14 +109,14 @@ var operation = {
     FunCall: function (a, _1, b, _2) { return new MO.CallSubFunction(a.toAST(), b.toAST(), getLineNo(a)) },
     CallSubProcedure: function (_1, a, _2, b, _3) { return new MO.CallSubProcedure(a.toAST(), b.toAST(), getLineNo(_1)) },
 
-    Arguments:             (a) => a.asIteration().toAST(),
-    AtLeastOneArguments:   (a) => a.asIteration().toAST(),
+    Arguments:             function(a)  {return  a.asIteration().toAST() },
+    AtLeastOneArguments:   function(a)  {return  a.asIteration().toAST() },
 
-    AtLeastOneParameters:  (a) => a.asIteration().toAST(),
-    Parameters:            (a) => a.asIteration().toAST(),
+    AtLeastOneParameters:  function(a)  {return  a.asIteration().toAST() },
+    Parameters:            function(a)  {return  a.asIteration().toAST() },
     
-    VarParameters:         (a) => a.asIteration().toAST(),
-    VarParametersAssign:   (a) => a.asIteration().toAST(),
+    VarParameters:         function(a)  {return  a.asIteration().toAST() },
+    VarParametersAssign:   function(a)  {return  a.asIteration().toAST() },
     
 
     Application: function(keyboardData, mainProg, subPrograms) { 

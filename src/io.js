@@ -55,5 +55,5 @@ class IOBuffer {
 }
 
 module.exports = {
-  IOBuffer: IOBuffer
+  IOBuffer
 };

@@ -5,7 +5,7 @@ const path = require("path");
 
 const GLO = require("../main.js");
 
-const filename = "../samples-dev/sample19.glo";
+const filename = "../samples-dev/sample18.glo";
 
 
 var sourceCode = null;
@@ -22,6 +22,7 @@ app.setSourceCode(sourceCode);
 app.setInputBuffer(null);
 app.run();
 
+//console.log('=========================');
 console.log(app.getOutput());
 //console.log('=========================');
 //console.log(app.getOutputDetails());

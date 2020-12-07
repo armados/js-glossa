@@ -56,18 +56,31 @@ var operation = {
 
     // Normal block
     IfExpr: function (_1, cond, _2, tb, _AlliosAn, condElseIf, _Tote, blockElseIf, _Allios, eb, _TelosAn) {
+            var arrCond = [];
+            var arrCondStr = [];
+            var arrLineNo =[];
+            var arrBody =[];
+
+            arrCond.push(cond.toAST());
+            arrCondStr.push(cond.sourceString);
+            arrLineNo.push(getLineNo(cond));
+            arrBody.push(tb.toAST());
 
             if (condElseIf.numChildren) {
                 //console.log(blockElseIf.children);
-                condElseIf.children.forEach(function(entry) {
-                    //console.log('LineNo: ', getLineNo(entry)); 
-            });
+                var moreBody = blockElseIf.toAST();
+                for (var i = 0, len = condElseIf.numChildren; i < len; i++) {
+                    var cond2 = condElseIf.children[i];
+
+                    arrCond.push(cond2.toAST());
+                    arrCondStr.push(cond2.sourceString);
+                    arrLineNo.push(getLineNo(cond2));
+                    arrBody.push(moreBody[i]);
+                   };
         }
 
-        var thenBody = tb.toAST();
-        var moreBody = blockElseIf.toAST();
         var elseBody = eb ? eb.toAST()[0] : null;
-        return new MO.Stmt_IfCond(cond.toAST(), cond.sourceString, thenBody, condElseIf.toAST(), moreBody, elseBody, getLineNo(cond));
+        return new MO.Stmt_IfCond(arrCond, arrCondStr, arrLineNo, arrBody, elseBody);
     }, 
 
     
@@ -80,18 +93,31 @@ var operation = {
 
     // Function block
     IfExprFunction: function (_1, cond, _2, tb, _AlliosAn, condElseIf, _Tote, blockElseIf, _Allios, eb, _TelosAn) {
+            var arrCond = [];
+            var arrCondStr = [];
+            var arrLineNo =[];
+            var arrBody =[];
 
-        if (condElseIf.numChildren) {
-            //console.log(blockElseIf.children);
-            condElseIf.children.forEach(function(entry) {
-                //console.log('LineNo: ', getLineNo(entry)); 
-        });
-    }
+            arrCond.push(cond.toAST());
+            arrCondStr.push(cond.sourceString);
+            arrLineNo.push(getLineNo(cond));
+            arrBody.push(tb.toAST());
 
-    var thenBody = tb.toAST();
-    var moreBody = blockElseIf.toAST();
-    var elseBody = eb ? eb.toAST()[0] : null;
-    return new MO.Stmt_IfCond(cond.toAST(), cond.sourceString, thenBody, condElseIf.toAST(), moreBody, elseBody, getLineNo(cond));
+            if (condElseIf.numChildren) {
+                //console.log(blockElseIf.children);
+                var moreBody = blockElseIf.toAST();
+                for (var i = 0, len = condElseIf.numChildren; i < len; i++) {
+                    var cond2 = condElseIf.children[i];
+
+                    arrCond.push(cond2.toAST());
+                    arrCondStr.push(cond2.sourceString);
+                    arrLineNo.push(getLineNo(cond2));
+                    arrBody.push(moreBody[i]);
+                   };
+        }
+
+        var elseBody = eb ? eb.toAST()[0] : null;
+        return new MO.Stmt_IfCond(arrCond, arrCondStr, arrLineNo, arrBody, elseBody);
     }, 
 
 

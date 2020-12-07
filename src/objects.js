@@ -79,55 +79,41 @@ class Stmt_Block {
 }
 
 // ===================================
-
 class Stmt_IfCond {
-  constructor(cond, condstr, thenBody, condElseIf, moreBody, elseBody, cmdLineNo) {
-    this.cond = cond;
-    this.condstr = condstr;
-    this.thenBody = thenBody;
-    this.condElseIf = condElseIf;
-    this.moreBody = moreBody;
+  constructor(arrCond, arrCondStr, arrLineNo, arrBody, elseBody) {
+    this.arrCond = arrCond;
+    this.arrCondStr = arrCondStr;
+    this.arrLineNo = arrLineNo;
+    this.arrBody = arrBody;
     this.elseBody = elseBody;
-    this.cmdLineNo = cmdLineNo;
   }
 
   resolve(scope) {
 
-    scope.cmdLineNo = this.cmdLineNo; //FIXME:
+    scope.cmdLineNo = this.arrLineNo[0]; //FIXME:
 
-    var cond = this.cond;
-    var thenBody = this.thenBody;
-    var condElseIf = this.condElseIf;
-    var moreBody = this.moreBody;
+    var arrCond = this.arrCond;
+    var arrCondStr = this.arrCondStr;
+    var arrLineNo = this.arrLineNo;
+    var arrBody = this.arrBody;
     var elseBody = this.elseBody;
 
-    var condResult = cond.resolve(scope);
+    for (var i = 0; i < arrCond.length; ++i) {
+      var condResult = arrCond[i].resolve(scope);
 
-    if (!(condResult instanceof Atom.MBoolean))
-      throw new GE.GError('Η συνθήκη της ΑΝ δεν αποτελεί λογική έκφραση.');
+      if (!(condResult instanceof Atom.MBoolean))
+        throw new GE.GError('Η συνθήκη της ΑΝ δεν αποτελεί λογική έκφραση.', arrLineNo[i]);
+  
+      scope.io.outputAddDetails('Η συνθήκη της ΑΝ ' +  arrCondStr[i] + ' έχει τιμή ' +  (condResult.val ? 'ΑΛΗΘΗΣ':'ΨΕΥΔΗΣ'), arrLineNo[i]);
+  
+      scope.incrLogicalCounter();
 
-    scope.io.outputAddDetails('Η συνθήκη της ΑΝ ' +  this.condstr + ' έχει τιμή ' +  (condResult.val ? 'ΑΛΗΘΗΣ':'ΨΕΥΔΗΣ'));
-
-    scope.incrLogicalCounter();
+      if (condResult.val == true)
+        return arrBody[i].resolve(scope);
+      
+    }
     
-    if (condResult.val == true)
-      return thenBody.resolve(scope);
-
-    if (condElseIf.length)
-      for (var i = 0; i < condElseIf.length; ++i) {
-        var condResult = condElseIf[i].resolve(scope);
-
-        if (!(condResult instanceof Atom.MBoolean))
-          throw new GE.GError('Η συνθήκη της ΑΛΛΙΩΣ_ΑΝ δεν αποτελεί λογική έκφραση.');
-
-          scope.incrLogicalCounter();
-          
-          if (condResult.val == true) {
-          return moreBody[i].resolve(scope);
-        }
-      }
-    
-    if (elseBody) 
+    if (elseBody != null) 
       return elseBody.resolve(scope);
   }
 }

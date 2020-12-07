@@ -5,7 +5,7 @@ const path = require("path");
 
 const GLO = require("../main.js");
 
-const filename = "../samples-dev/sample18.glo";
+const filename = "../samples-dev/sample10.glo";
 
 
 var sourceCode = null;

@@ -12,7 +12,6 @@ function getLineNo(cmd) {
 }
 
 
-
 var operation = {
     floatlit: function (a, _, b)      { return new Atom.MNumber(parseFloat(this.sourceString, 10))  },
     intlit:   function (a)            { return new Atom.MNumber(parseInt(this.sourceString, 10)) },
@@ -68,7 +67,7 @@ var operation = {
         var thenBody = tb.toAST();
         var moreBody = blockElseIf.toAST();
         var elseBody = eb ? eb.toAST()[0] : null;
-        return new MO.Stmt_IfCond(cond.toAST(), cond.sourceString, thenBody, condElseIf.toAST(), moreBody, elseBody);
+        return new MO.Stmt_IfCond(cond.toAST(), cond.sourceString, thenBody, condElseIf.toAST(), moreBody, elseBody, getLineNo(cond));
     }, 
 
     
@@ -78,7 +77,6 @@ var operation = {
 
     ForExpr: function (_1, variable, _2, initval, _3, finalval, _4, stepval, _5, body, _6) {  
     return new MO.Stmt_ForLoop(variable.toAST(), initval.toAST(), finalval.toAST(), stepval.toAST(), body.toAST(), getLineNo(variable)) },
-
 
     // Function block
     IfExprFunction: function (_1, cond, _2, tb, _AlliosAn, condElseIf, _Tote, blockElseIf, _Allios, eb, _TelosAn) {
@@ -93,7 +91,7 @@ var operation = {
     var thenBody = tb.toAST();
     var moreBody = blockElseIf.toAST();
     var elseBody = eb ? eb.toAST()[0] : null;
-    return new MO.Stmt_IfCond(cond.toAST(), cond.sourceString, thenBody, condElseIf.toAST(), moreBody, elseBody);
+    return new MO.Stmt_IfCond(cond.toAST(), cond.sourceString, thenBody, condElseIf.toAST(), moreBody, elseBody, getLineNo(cond));
     }, 
 
 

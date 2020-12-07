@@ -4,6 +4,13 @@ const Atom = require("./atom");
 const GE   = require("./gclasses");
 const STR  = require("./storage");
 
+function sleepme(time) {
+  var stop = new Date().getTime();
+  while(new Date().getTime() < stop + time) {
+      ;
+  }
+}
+
 // ========================
 
 class MSymbol {
@@ -60,26 +67,34 @@ class Stmt_Block {
   constructor(block) {
     this.statements = block;
   }
+
   resolve(scope) {
     this.statements.forEach(function (statement) {
-      statement.resolve(scope);
-    });
+      //sleepme(300); //FIXME:
+
+           statement.resolve(scope);     
+ 
+        });
   }
 }
 
 // ===================================
 
 class Stmt_IfCond {
-  constructor(cond, condstr, thenBody, condElseIf, moreBody, elseBody) {
+  constructor(cond, condstr, thenBody, condElseIf, moreBody, elseBody, cmdLineNo) {
     this.cond = cond;
     this.condstr = condstr;
     this.thenBody = thenBody;
     this.condElseIf = condElseIf;
     this.moreBody = moreBody;
     this.elseBody = elseBody;
+    this.cmdLineNo = cmdLineNo;
   }
 
   resolve(scope) {
+
+    scope.cmdLineNo = this.cmdLineNo; //FIXME:
+
     var cond = this.cond;
     var thenBody = this.thenBody;
     var condElseIf = this.condElseIf;
@@ -125,6 +140,9 @@ class Stmt_WhileLoop {
     this.cmdLineNo = cmdLineNo;
   }
   resolve(scope) {
+
+    scope.cmdLineNo = this.cmdLineNo; //FIXME:
+
     while (true) {
       var condResult = this.cond.resolve(scope);
 
@@ -152,6 +170,9 @@ class Stmt_Do_WhileLoop {
     this.cmdLineNo = cmdLineNo;
   }
   resolve(scope) {
+
+    scope.cmdLineNo = this.cmdLineNo; //FIXME:
+
     do {
 
       this.body.resolve(scope);
@@ -182,6 +203,9 @@ class Stmt_ForLoop {
     this.cmdLineNo = cmdLineNo;
   }
   resolve(scope) {
+
+    scope.cmdLineNo = this.cmdLineNo; //FIXME:
+
     var variable = this.variable;
     var initval = this.initval;
     var finalval = this.finalval;
@@ -256,6 +280,9 @@ class Stmt_Assignment {
     this.cmdLineNo = cmdLineNo;
   }
   resolve(scope) {
+
+    scope.cmdLineNo = this.cmdLineNo; //FIXME:
+
     var sym = this.symbol;
 
     if (sym instanceof MSymbolTableAssign)
@@ -301,6 +328,8 @@ class Stmt_Write {
       output.push(out);
     }
 
+    console.log ( output.join(' ') );
+
     scope.io.outputAdd( output.join(' ') );
     scope.io.outputAddDetails('Εμφάνισε στην οθόνη: ' + output.join(" "), this.cmdLineNo);
   }
@@ -313,6 +342,7 @@ class Stmt_Read {
   }
   resolve(scope) {
 
+    scope.cmdLineNo = this.cmdLineNo; //FIXME:
 
     scope.io.outputAddDetails('Διάβασε από το πληκτρολόγιο', this.cmdLineNo);
 
@@ -487,6 +517,9 @@ class CallSubFunction {
     this.cmdLineNo = cmdLineNo;
   }
   resolve(scope) {
+
+    scope.cmdLineNo = this.cmdLineNo; //FIXME:
+
     scope.io.outputAddDetails('Κλήση της Συνάρτησης ' + this.fun.name, this.cmdLineNo);
     
     if (!scope.hasSymbol(this.fun.name))
@@ -516,6 +549,9 @@ class CallSubProcedure {
     this.cmdLineNo = cmdLineNo;
   }
   resolve(scope) {
+
+    scope.cmdLineNo = this.cmdLineNo; //FIXME:
+
     scope.io.outputAddDetails('Κλήση της Διαδικασίας ' + this.fun.name, this.cmdLineNo);
 
     if (!scope.hasSymbol(this.fun.name))

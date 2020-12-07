@@ -141,5 +141,5 @@ class GlossaJS {
 }
 
 module.exports = {
-  GlossaJS: GlossaJS
+  GlossaJS
 };

@@ -664,7 +664,62 @@ class MathOpLogNot extends MathOperation {
 
     return new MBoolean(!a);
   }
+
 }
+
+// ========================
+
+
+class MSymbol {
+  constructor(name) {
+    this.name = name;
+  }
+  resolve(scope) {
+    return scope.getSymbol(this.name);
+  }
+}
+
+
+class MSymbolTable {
+  constructor(name, args) {
+    this.name = name;
+    this.args = args;
+    this.cellName = null;
+  }
+
+  fetchCellName(scope) {
+    var argsResolved = this.args.map(function (arg) {
+      return arg.resolve(scope);
+    });
+
+    var tblDimensions = this.args.length;
+
+    if      (tblDimensions == 1)
+      var cellsymbol = this.name + "[" +  argsResolved[0].val + "]";
+    else if (tblDimensions == 2)
+      var cellsymbol = this.name + "[" +  argsResolved[0].val + "][" +  argsResolved[1].val + "]";
+    else
+      throw new GE.GError('Critical: Unknown table dimensions');
+
+      this.cellName = cellsymbol;
+  }
+}
+
+class MSymbolTableAssign extends MSymbolTable {
+  resolve(scope) {
+    this.fetchCellName(scope);
+    return new MSymbol(this.cellName);
+  }
+ }
+
+class MSymbolTableFetch extends MSymbolTable {
+  resolve(scope) {
+    this.fetchCellName(scope);
+    return scope.getSymbol(this.cellName);
+  }
+}
+
+
 
 module.exports = {
   MNumber,
@@ -687,4 +742,9 @@ module.exports = {
   MathOpLogAnd,
   MathOpLogOr,
   MathOpLogNot,
+
+  MSymbol,
+  MSymbolTable,
+  MSymbolTableAssign,
+  MSymbolTableFetch
 };

@@ -67,12 +67,12 @@ class GrammarOhm {
         
             WhileExpr     = "ΟΣΟ" Expr "ΕΠΑΝΑΛΑΒΕ" Block "ΤΕΛΟΣ_ΕΠΑΝΑΛΗΨΗΣ"
             DoWhileExpr   = "ΑΡΧΗ_ΕΠΑΝΑΛΗΨΗΣ" Block "ΜΕΧΡΙΣ_ΟΤΟΥ" Expr
-            ForExpr       = "ΓΙΑ" identifier "ΑΠΟ" Expr "ΜΕΧΡΙ" Expr (("ΜΕ_ΒΗΜΑ" | "ΜΕ ΒΗΜΑ") Expr)? lineTerminator* Block "ΤΕΛΟΣ_ΕΠΑΝΑΛΗΨΗΣ"
+            ForExpr       = "ΓΙΑ" (IdentifierTblAssign | identifier) "ΑΠΟ" Expr "ΜΕΧΡΙ" Expr (("ΜΕ_ΒΗΜΑ" | "ΜΕ ΒΗΜΑ") Expr)? lineTerminator* Block "ΤΕΛΟΣ_ΕΠΑΝΑΛΗΨΗΣ"
             IfExpr        = "ΑΝ" Expr "ΤΟΤΕ" Block ("ΑΛΛΙΩΣ_ΑΝ" Expr "ΤΟΤΕ" Block)* ("ΑΛΛΙΩΣ" Block)? "ΤΕΛΟΣ_ΑΝ"
         
             WhileExprFunction     = "ΟΣΟ" Expr "ΕΠΑΝΑΛΑΒΕ" BlockFunction "ΤΕΛΟΣ_ΕΠΑΝΑΛΗΨΗΣ"
             DoWhileExprFunction   = "ΑΡΧΗ_ΕΠΑΝΑΛΗΨΗΣ" BlockFunction "ΜΕΧΡΙΣ_ΟΤΟΥ" Expr
-            ForExprFunction       = "ΓΙΑ" identifier "ΑΠΟ" Expr "ΜΕΧΡΙ" Expr (("ΜΕ_ΒΗΜΑ" | "ΜΕ ΒΗΜΑ") Expr)? lineTerminator* BlockFunction "ΤΕΛΟΣ_ΕΠΑΝΑΛΗΨΗΣ"
+            ForExprFunction       = "ΓΙΑ" (IdentifierTblAssign | identifier) "ΑΠΟ" Expr "ΜΕΧΡΙ" Expr (("ΜΕ_ΒΗΜΑ" | "ΜΕ ΒΗΜΑ") Expr)? lineTerminator* BlockFunction "ΤΕΛΟΣ_ΕΠΑΝΑΛΗΨΗΣ"
             IfExprFunction        = "ΑΝ" Expr "ΤΟΤΕ" BlockFunction ("ΑΛΛΙΩΣ_ΑΝ" Expr "ΤΟΤΕ" BlockFunction)* ("ΑΛΛΙΩΣ" BlockFunction)? "ΤΕΛΟΣ_ΑΝ"
         
 

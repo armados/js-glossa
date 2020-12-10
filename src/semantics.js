@@ -45,10 +45,10 @@ var operation = {
 
     Exp6_neq:         function (_, a)      { return new Atom.MathOpMul(a.toAST(), new Atom.MNumber(-1), getLineNo(a)) },
 
-    identifier:       function (a, b)         { return new MO.MSymbol(this.sourceString, null) },
+    identifier:       function (a, b)         { return new Atom.MSymbol(this.sourceString, null) },
     
-    IdentifierTblAssign: function (a, _l, b, _r) { return new MO.MSymbolTableAssign(a.sourceString, b.toAST()); },
-    IdentifierTblFetch:  function (a, _l, b, _r) { return new MO.MSymbolTableFetch(a.sourceString, b.toAST()); },
+    IdentifierTblAssign: function (a, _l, b, _r) { return new Atom.MSymbolTableAssign(a.sourceString, b.toAST()); },
+    IdentifierTblFetch:  function (a, _l, b, _r) { return new Atom.MSymbolTableFetch (a.sourceString, b.toAST()); },
 
     AssignExpr: function (a, _, b) { return new MO.Stmt_Assignment(a.toAST(), b.toAST(), a.sourceString, b.sourceString, getLineNo(a)) },
 

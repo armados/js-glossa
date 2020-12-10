@@ -13,55 +13,6 @@ function sleepme(time) {
 
 // ========================
 
-class MSymbol {
-  constructor(name) {
-    this.name = name;
-  }
-  resolve(scope) {
-    return scope.getSymbol(this.name);
-  }
-}
-
-// ========================
-
-class MSymbolTable {
-  constructor(name, args) {
-    this.name = name;
-    this.args = args;
-  }
-  fetchCellName(scope) {
-    var argsResolved = this.args.map(function (arg) {
-      return arg.resolve(scope);
-    });
-
-    var tblDimensions = this.args.length;
-
-    if      (tblDimensions == 1)
-      var cellsymbol = this.name + "[" +  argsResolved[0].val + "]";
-    else if (tblDimensions == 2)
-      var cellsymbol = this.name + "[" +  argsResolved[0].val + "][" +  argsResolved[1].val + "]";
-    else
-      throw new GE.GError('Critical: Unknown table dimensions');
-
-      this.cellName = cellsymbol;
-  }
-}
-
-class MSymbolTableAssign extends MSymbolTable {
-  resolve(scope) {
-    this.fetchCellName(scope);
-    return new MSymbol(this.cellName);
-  }
- }
-
-class MSymbolTableFetch extends MSymbolTable {
-  resolve(scope) {
-    this.fetchCellName(scope);
-    return scope.getSymbol(this.cellName);
-  }
-}
-
-// ============================
 
 class Stmt_Block {
   constructor(block) {
@@ -70,15 +21,121 @@ class Stmt_Block {
 
   resolve(scope) {
     this.statements.forEach(function (statement) {
-      sleepme(90); //FIXME:
-
+           //sleepme(90); //FIXME:
            statement.resolve(scope);     
- 
         });
   }
 }
 
 // ===================================
+
+class Stmt_Assignment {
+  constructor(sym, val, cmdStrA, cmdStrB, cmdLineNo) {
+    this.symbol = sym;
+    this.val = val;
+    this.cmdStrA = cmdStrA;
+    this.cmdStrB = cmdStrB;
+    this.cmdLineNo = cmdLineNo;
+  }
+  resolve(scope) {
+
+    scope.cmdLineNo = this.cmdLineNo; //FIXME:
+
+    var sym = this.symbol;
+
+    if (sym instanceof Atom.MSymbolTableAssign)
+        sym = this.symbol.resolve(scope);
+
+    var valResolved = this.val.resolve(scope);
+    
+    scope.io.outputAddDetails(this.cmdStrA + ' <- ' + this.cmdStrB, this.cmdLineNo);
+
+    scope.setSymbol(sym.name, valResolved);
+
+    scope.incrAssignCounter();
+  }
+}
+
+class Stmt_Write {
+  constructor(args, cmdLineNo) {
+    this.args = args;
+    this.cmdLineNo = cmdLineNo;
+  }
+  resolve(scope) {
+
+    scope.cmdLineNo = this.cmdLineNo; //FIXME:
+
+    var output = [];
+
+    for (var i = 0, len = this.args.length; i < len; i++) {
+      var argParam = this.args[i];
+
+      if (argParam instanceof Atom.MSymbolTableFetch)
+          argParam = argParam.resolve(scope);
+
+      var arg = argParam.resolve(scope);
+
+      if (arg == null)
+        throw new GE.GError('Το αναγνωριστικό ' + argParam.name + ' δεν έχει αρχικοποιηθεί.', this.cmdLineNo);
+  
+      var out = arg.getValue();
+
+      if (arg instanceof Atom.MBoolean)
+        out = arg.getValue() ? "ΑΛΗΘΗΣ" : "ΨΕΥΔΗΣ";
+
+      output.push(out);
+    }
+
+    //console.log ( output.join(' ') );
+
+    scope.io.outputAdd( output.join(' ') );
+    scope.io.outputAddDetails('Εμφάνισε στην οθόνη: ' + output.join(" "), this.cmdLineNo);
+  }
+}
+
+class Stmt_Read {
+  constructor(args, cmdLineNo) {
+    this.args = args;
+    this.cmdLineNo = cmdLineNo;
+  }
+  resolve(scope) {
+
+    scope.cmdLineNo = this.cmdLineNo; //FIXME:
+
+    scope.io.outputAddDetails('Διάβασε από το πληκτρολόγιο', this.cmdLineNo);
+
+    var output = [];
+
+    for (var i = 0, len = this.args.length; i < len; i++) {
+      var arg = this.args[i];
+
+      // Check if is a table cell fetch real symbol
+      if (arg instanceof Atom.MSymbolTableAssign)
+        arg = arg.resolve(scope);
+
+      var data = scope.io.inputFetchValueFromBuffer();
+  
+      if (data == null)
+        throw new GE.GError('Τα δεδομένα εισόδου δεν επαρκούν για την εκτέλεση του προγράμματος.', this.cmdLineNo);
+  
+      scope.io.outputAddDetails('Εισαγωγή από το πληκτρολόγιο της τιμής ' + data + ' στο αναγνωριστικό ' + arg.name, this.cmdLineNo);
+
+      output.push(data);
+
+      if      (typeof(data) == 'string')  var sym = new Atom.MString(data);
+      else if (typeof(data) == 'number')  var sym = new Atom.MNumber(data);
+      else 
+        throw new GE.GError('Critical: Unknown input value type: ' + data);
+            
+      scope.setSymbol(arg.name, sym);
+    }
+
+
+    //scope.io.outputAddDetails('Εισαγωγή από το πληκτρολόγιο: ' + output.join(" "), this.cmdLineNo);
+
+  }
+}
+
 class Stmt_IfCond {
   constructor(arrCond, arrCondStr, arrLineNo, arrBody, elseBody) {
     this.arrCond = arrCond;
@@ -214,6 +271,9 @@ class Stmt_ForLoop {
     var tmp = finalval.resolve(scope);
     var v_final = tmp.val;
 
+    if (variable instanceof Atom.MSymbolTableAssign) //FIXME: 
+      variable = variable.resolve(scope);
+
     scope.setSymbol(variable.name, new Atom.MNumber(v_initial));
     scope.addLock(variable.name);
 
@@ -257,112 +317,6 @@ class Stmt_ForLoop {
   }
 }
 
-class Stmt_Assignment {
-  constructor(sym, val, cmdStrA, cmdStrB, cmdLineNo) {
-    this.symbol = sym;
-    this.val = val;
-    this.cmdStrA = cmdStrA;
-    this.cmdStrB = cmdStrB;
-    this.cmdLineNo = cmdLineNo;
-  }
-  resolve(scope) {
-
-    scope.cmdLineNo = this.cmdLineNo; //FIXME:
-
-    var sym = this.symbol;
-
-    if (sym instanceof MSymbolTableAssign)
-        sym = this.symbol.resolve(scope);
-
-    var valResolved = this.val.resolve(scope);
-    
-    scope.io.outputAddDetails(this.cmdStrA + ' <- ' + this.cmdStrB, this.cmdLineNo);
-
-    scope.setSymbol(sym.name, valResolved);
-
-    scope.incrAssignCounter();
-  }
-}
-
-class Stmt_Write {
-  constructor(args, cmdLineNo) {
-    this.args = args;
-    this.cmdLineNo = cmdLineNo;
-  }
-  resolve(scope) {
-
-    scope.cmdLineNo = this.cmdLineNo; //FIXME:
-
-    var output = [];
-
-    for (var i = 0, len = this.args.length; i < len; i++) {
-      var argParam = this.args[i];
-
-      if (argParam instanceof MSymbolTableFetch)
-          argParam = argParam.resolve(scope);
-
-      var arg = argParam.resolve(scope);
-
-      if (arg == null)
-        throw new GE.GError('Το αναγνωριστικό ' + argParam.name + ' δεν έχει αρχικοποιηθεί.', this.cmdLineNo);
-  
-      var out = arg.getValue();
-
-      if (arg instanceof Atom.MBoolean)
-        out = arg.getValue() ? "ΑΛΗΘΗΣ" : "ΨΕΥΔΗΣ";
-
-      output.push(out);
-    }
-
-    console.log ( output.join(' ') );
-
-    scope.io.outputAdd( output.join(' ') );
-    scope.io.outputAddDetails('Εμφάνισε στην οθόνη: ' + output.join(" "), this.cmdLineNo);
-  }
-}
-
-class Stmt_Read {
-  constructor(args, cmdLineNo) {
-    this.args = args;
-    this.cmdLineNo = cmdLineNo;
-  }
-  resolve(scope) {
-
-    scope.cmdLineNo = this.cmdLineNo; //FIXME:
-
-    scope.io.outputAddDetails('Διάβασε από το πληκτρολόγιο', this.cmdLineNo);
-
-    var output = [];
-
-    for (var i = 0, len = this.args.length; i < len; i++) {
-      var arg = this.args[i];
-
-      // Check if is a table cell fetch real symbol
-      if (arg instanceof MSymbolTableAssign)
-        arg = arg.resolve(scope);
-
-      var data = scope.io.inputFetchValueFromBuffer();
-  
-      if (data == null)
-        throw new GE.GError('Τα δεδομένα εισόδου δεν επαρκούν για την εκτέλεση του προγράμματος.', this.cmdLineNo);
-  
-      scope.io.outputAddDetails('Εισαγωγή από το πληκτρολόγιο της τιμής ' + data + ' στο αναγνωριστικό ' + arg.name, this.cmdLineNo);
-
-      output.push(data);
-
-      if      (typeof(data) == 'string')  var sym = new Atom.MString(data);
-      else if (typeof(data) == 'number')  var sym = new Atom.MNumber(data);
-      else 
-        throw new GE.GError('Critical: Unknown input value type: ' + data);
-            
-      scope.setSymbol(arg.name, sym);
-    }
-
-
-    //scope.io.outputAddDetails('Εισαγωγή από το πληκτρολόγιο: ' + output.join(" "), this.cmdLineNo);
-
-  }
-}
 
 class DefDeclarations {
   constructor(consts, vars) {
@@ -414,7 +368,7 @@ class DefVariables {
 
       //console.log('======> DefVariables: Create variable symbol name: ', e.name, varType, e);
 
-      if (e instanceof MSymbolTable) {
+      if (e instanceof Atom.MSymbolTable) {
 
         //console.log('======> DefVariables: Create variable TABLE symbol name: ', e.name, varType);
 
@@ -582,7 +536,7 @@ class CallSubProcedure {
 
 
       }
-      else if (arg instanceof MSymbolTableFetch ) {
+      else if (arg instanceof Atom.MSymbolTableFetch ) {
         //console.log('detected table CELL arg is : ', arg);
         if (scope.getSymbol(arg.cellName) != procScope.getSymbol(procParams[i].name))
           scope.setSymbol(arg.cellName, procScope.getSymbol(procParams[i].name));
@@ -810,11 +764,6 @@ class Application {
 
 
 module.exports = {
-
-  MSymbol,
-
-  MSymbolTableAssign,
-  MSymbolTableFetch,
 
   Stmt_Block,
   

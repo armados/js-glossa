@@ -5,7 +5,7 @@ const path = require("path");
 
 const GLO = require("../main.js");
 
-const filename = "../samples-dev/sample22.glo";
+const filename = "../samples-dev/sample20.glo";
 
 
 var sourceCode = null;
@@ -17,12 +17,23 @@ try {
 }
 
 
+// =====================================
+function randomArray(length, max) {
+    return Array.apply(null, Array(length)).map(function() {
+        return Math.round(Math.random() * max);
+    });
+}
+
+console.log( randomArray(3,0) );
+// ======================================
+
+
 var app = new GLO.GlossaJS();
 app.setSourceCode(sourceCode);
 app.setInputBuffer(null);
 app.run();
 
-//console.log('=========================');
+console.log('=========================');
 console.log(app.getOutput());
 //console.log('=========================');
 //console.log(app.getOutputDetails());

@@ -6,7 +6,7 @@ const Atom = require("./atom");
 function getLineNo(cmd) {
     var scode = cmd.source.sourceString;
     var endChar = cmd.source.startIdx;
-    var res = scode.substring(0, endChar-1); 
+    var res = scode.substring(0, endChar); 
     var lineNo = res.split(/\r\n|\r|\n/).length;
     return lineNo; 
 }

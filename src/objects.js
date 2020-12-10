@@ -70,7 +70,7 @@ class Stmt_Block {
 
   resolve(scope) {
     this.statements.forEach(function (statement) {
-      //sleepme(120); //FIXME:
+      sleepme(90); //FIXME:
 
            statement.resolve(scope);     
  

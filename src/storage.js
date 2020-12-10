@@ -154,13 +154,13 @@ class SScope {
   setSymbol(name, obj) {
     //console.log("setSymbol(): ", name, " obj: ", obj);
     if (!this.hasSymbol(name))
-        throw new GE.GError('Το αναγνωριστικό ' + name + ' δεν βρέθηκε.');
+        throw new GE.GError('Το αναγνωριστικό ' + name + ' δεν βρέθηκε.', this.cmdLineNo); //FIXME: 
 
     if (!obj)
         return;
 
     if (this.isLocked(name))
-      throw new GE.GError('Το αναγνωριστικό ' + name + ' δεν μπορεί να χρησιμοποιηθεί.');
+      throw new GE.GError('Το αναγνωριστικό ' + name + ' δεν μπορεί να χρησιμοποιηθεί.', this.cmdLineNo); //FIXME: 
 
     var symType = null;
 

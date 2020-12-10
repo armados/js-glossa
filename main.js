@@ -13,6 +13,7 @@ const IO = require("./src/io");
 
 class GlossaJS {
   constructor() {
+    this.running = true;
     this.sourceCode = null;
 
     this.io    = new IO.IOBuffer();
@@ -27,6 +28,8 @@ class GlossaJS {
   }
 
   getStats() { return this.scope.statistics; }
+
+  isrunning() { return this.running; }
 
 
   setSourceCode(data)  { this.sourceCode = data; }
@@ -93,7 +96,9 @@ class GlossaJS {
     delete this.scope.globalStorage[name];
   }
 
-  run() {
+  async run() {
+
+    this.running = true;
 
     var gram = ohm.grammar(new GOhm.GrammarOhm().getGrammar());
     var sem = Semantics.load(gram);
@@ -103,6 +108,7 @@ class GlossaJS {
     if (!match.succeeded()) {
       this.io.outputAdd(match.message);
       this.io.outputAddDetails(match.message);
+      this.running = false;
        return false;
     }
   
@@ -111,7 +117,8 @@ class GlossaJS {
     if (!result) {
       this.io.outputAdd('Error in toAST to give results' + result);
       this.io.outputAddDetails('Error in toAST to give results' + result);
-       return false;
+      this.running = false;
+      return false;
     }
 
     //var AST = require("./src/ast");
@@ -121,13 +128,16 @@ class GlossaJS {
 
 
     try {
-      result.resolve(this.scope)
+      result.resolve(this.scope);
     } catch (e) {
       //console.log('ErrorMsg: ', e.message);
       //console.log(e);
       this.io.outputAdd(e.message);
       this.io.outputAddDetails(e.message);
+    } finally {
+      this.running = false;
     }
+    this.running = false;
 
     //console.log('IO: ', this.io);
 

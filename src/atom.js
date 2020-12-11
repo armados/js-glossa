@@ -674,12 +674,60 @@ class MSymbol {
   constructor(name) {
     this.name = name;
   }
+
   resolve(scope) {
     return scope.getSymbol(this.name);
   }
 }
 
 
+class MSymbolTbl  {
+  constructor(name, args) {
+    this.name = name;
+    this.args = args;
+  }
+  calcName(scope) {
+    
+    var argsResolved = this.args.map(function (arg) {
+      var a = arg.resolve(scope);
+
+      if (a == null)
+      throw new GE.GError(
+        "Το αναγνωριστικό " + arg.name + " δεν έχει αρχικοποιηθεί."
+      );
+
+      if (!isInt(a.val))
+      throw new GE.GError(
+        "Οι δείκτες ενός πίνακα πρέπει να είναι ακέραιος αριθμός.");
+
+      if (a.val <= 0)
+        throw new GE.GError("Οι δείκτες ενός πίνακα είναι θετικός αριθμός. " +
+        a.val);
+
+      return a;
+    });
+
+    var argsResolvedValue = argsResolved.map(function (arg) {
+      return arg.val;
+    });
+
+    var name = this.name + "[" + argsResolvedValue.join(',') + "]";
+
+    return name;
+  }
+
+  eval(scope) {
+    var name = this.calcName(scope);
+    return new MSymbol(name);
+  }
+
+  resolve(scope) {
+    var name = this.calcName(scope);
+    return scope.getSymbol(name);
+  }
+}
+
+/*
 class MSymbolTable {
   constructor(name, args) {
     this.name = name;
@@ -718,7 +766,7 @@ class MSymbolTableFetch extends MSymbolTable {
     return scope.getSymbol(this.cellName);
   }
 }
-
+*/
 
 
 module.exports = {
@@ -744,7 +792,8 @@ module.exports = {
   MathOpLogNot,
 
   MSymbol,
-  MSymbolTable,
-  MSymbolTableAssign,
-  MSymbolTableFetch
+  MSymbolTbl,
+ // MSymbolTable
+ // MSymbolTableAssign,
+//  MSymbolTableFetch
 };

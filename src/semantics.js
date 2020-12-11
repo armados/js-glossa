@@ -45,11 +45,9 @@ var operation = {
 
     Exp6_neq:         function (_, a)      { return new Atom.MathOpMul(a.toAST(), new Atom.MNumber(-1), getLineNo(a)) },
 
-    identifier:       function (a, b)         { return new Atom.MSymbol(this.sourceString, null) },
+    id:       function (a, b)              { return new Atom.MSymbol(this.sourceString, null) },
+    IdTbl:       function (a, _1, b, _2)   { return new Atom.MSymbolTbl(a.sourceString, b.toAST()) },
     
-    IdentifierTblAssign: function (a, _l, b, _r) { return new Atom.MSymbolTableAssign(a.sourceString, b.toAST()); },
-    IdentifierTblFetch:  function (a, _l, b, _r) { return new Atom.MSymbolTableFetch (a.sourceString, b.toAST()); },
-
     AssignExpr: function (a, _, b) { return new MO.Stmt_Assignment(a.toAST(), b.toAST(), a.sourceString, b.sourceString, getLineNo(a)) },
 
     KeyboardData: function (_1, a) { return new MO.KeyboardDataFromSource(a.toAST()) },

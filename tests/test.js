@@ -16,7 +16,7 @@ try {
     return;
 }
 
-
+/*
 // =====================================
 function randomArray(length, max) {
     return Array.apply(null, Array(length)).map(function() {
@@ -26,14 +26,14 @@ function randomArray(length, max) {
 
 console.log( randomArray(3,0) );
 // ======================================
-
+*/
 
 var app = new GLO.GlossaJS();
 app.setSourceCode(sourceCode);
 app.setInputBuffer(null);
 app.run();
 
-console.log('=========================');
+//console.log('=========================');
 console.log(app.getOutput());
 //console.log('=========================');
 //console.log(app.getOutputDetails());

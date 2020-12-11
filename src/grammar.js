@@ -7,18 +7,18 @@ class GrammarOhm {
 
             Application  = KeyboardData* Program (SubFunction | SubProcedure)*
          
-            Program      = "ΠΡΟΓΡΑΜΜΑ" identifier DefDeclarations "ΑΡΧΗ" Block "ΤΕΛΟΣ_ΠΡΟΓΡΑΜΜΑΤΟΣ" 
+            Program      = "ΠΡΟΓΡΑΜΜΑ" id DefDeclarations "ΑΡΧΗ" Block "ΤΕΛΟΣ_ΠΡΟΓΡΑΜΜΑΤΟΣ" 
         
-            SubFunction  = "ΣΥΝΑΡΤΗΣΗ"  identifier "(" AtLeastOneParameters ")" ":" ("ΑΚΕΡΑΙΑ" | "ΠΡΑΓΜΑΤΙΚΗ" | "ΧΑΡΑΚΤΗΡΑΣ" | "ΛΟΓΙΚΗ")  DefDeclarations "ΑΡΧΗ" BlockFunction "ΤΕΛΟΣ_ΣΥΝΑΡΤΗΣΗΣ"
-            SubProcedure = "ΔΙΑΔΙΚΑΣΙΑ" identifier "(" Parameters ")" DefDeclarations "ΑΡΧΗ" Block "ΤΕΛΟΣ_ΔΙΑΔΙΚΑΣΙΑΣ"
+            SubFunction  = "ΣΥΝΑΡΤΗΣΗ"  id "(" AtLeastOneParameters ")" ":" ("ΑΚΕΡΑΙΑ" | "ΠΡΑΓΜΑΤΙΚΗ" | "ΧΑΡΑΚΤΗΡΑΣ" | "ΛΟΓΙΚΗ")  DefDeclarations "ΑΡΧΗ" BlockFunction "ΤΕΛΟΣ_ΣΥΝΑΡΤΗΣΗΣ"
+            SubProcedure = "ΔΙΑΔΙΚΑΣΙΑ" id "(" Parameters ")" DefDeclarations "ΑΡΧΗ" Block "ΤΕΛΟΣ_ΔΙΑΔΙΚΑΣΙΑΣ"
         
             DefDeclarations = ("ΣΤΑΘΕΡΕΣ" DefConstant+)?
                               ("ΜΕΤΑΒΛΗΤΕΣ" DefVariables*)?
         
-            DefConstant  = identifier "=" Expr
+            DefConstant  = id "=" Expr
             DefVariables = ("ΑΚΕΡΑΙΕΣ" | "ΠΡΑΓΜΑΤΙΚΕΣ" | "ΧΑΡΑΚΤΗΡΕΣ" | "ΛΟΓΙΚΕΣ") ":" VarParametersAssign
            
-            AssignExpr   = (IdentifierTblAssign | identifier) "<-" Expr
+            AssignExpr   = (IdTbl | id) "<-" Expr
         
             Expr =      Exp  
         
@@ -51,8 +51,8 @@ class GrammarOhm {
                         |  intlit
                         |  strlit
                         |  FunCall
-                        |  IdentifierTblFetch
-                        |  identifier
+                        |  IdTbl
+                        |  id
                         |  "(" Exp ")"               -- parens
         
         
@@ -67,12 +67,12 @@ class GrammarOhm {
         
             WhileExpr     = "ΟΣΟ" Expr "ΕΠΑΝΑΛΑΒΕ" Block "ΤΕΛΟΣ_ΕΠΑΝΑΛΗΨΗΣ"
             DoWhileExpr   = "ΑΡΧΗ_ΕΠΑΝΑΛΗΨΗΣ" Block "ΜΕΧΡΙΣ_ΟΤΟΥ" Expr
-            ForExpr       = "ΓΙΑ" (IdentifierTblAssign | identifier) "ΑΠΟ" Expr "ΜΕΧΡΙ" Expr (("ΜΕ_ΒΗΜΑ" | "ΜΕ ΒΗΜΑ") Expr)? lineTerminator* Block "ΤΕΛΟΣ_ΕΠΑΝΑΛΗΨΗΣ"
+            ForExpr       = "ΓΙΑ" (IdTbl | id) "ΑΠΟ" Expr "ΜΕΧΡΙ" Expr (("ΜΕ_ΒΗΜΑ" | "ΜΕ ΒΗΜΑ") Expr)? lineTerminator* Block "ΤΕΛΟΣ_ΕΠΑΝΑΛΗΨΗΣ"
             IfExpr        = "ΑΝ" Expr "ΤΟΤΕ" Block ("ΑΛΛΙΩΣ_ΑΝ" Expr "ΤΟΤΕ" Block)* ("ΑΛΛΙΩΣ" Block)? "ΤΕΛΟΣ_ΑΝ"
         
             WhileExprFunction     = "ΟΣΟ" Expr "ΕΠΑΝΑΛΑΒΕ" BlockFunction "ΤΕΛΟΣ_ΕΠΑΝΑΛΗΨΗΣ"
             DoWhileExprFunction   = "ΑΡΧΗ_ΕΠΑΝΑΛΗΨΗΣ" BlockFunction "ΜΕΧΡΙΣ_ΟΤΟΥ" Expr
-            ForExprFunction       = "ΓΙΑ" (IdentifierTblAssign | identifier) "ΑΠΟ" Expr "ΜΕΧΡΙ" Expr (("ΜΕ_ΒΗΜΑ" | "ΜΕ ΒΗΜΑ") Expr)? lineTerminator* BlockFunction "ΤΕΛΟΣ_ΕΠΑΝΑΛΗΨΗΣ"
+            ForExprFunction       = "ΓΙΑ" (IdTbl | id) "ΑΠΟ" Expr "ΜΕΧΡΙ" Expr (("ΜΕ_ΒΗΜΑ" | "ΜΕ ΒΗΜΑ") Expr)? lineTerminator* BlockFunction "ΤΕΛΟΣ_ΕΠΑΝΑΛΗΨΗΣ"
             IfExprFunction        = "ΑΝ" Expr "ΤΟΤΕ" BlockFunction ("ΑΛΛΙΩΣ_ΑΝ" Expr "ΤΟΤΕ" BlockFunction)* ("ΑΛΛΙΩΣ" BlockFunction)? "ΤΕΛΟΣ_ΑΝ"
         
 
@@ -81,20 +81,17 @@ class GrammarOhm {
 
 
             //function calls and variables
-            FunCall          = identifier "(" Arguments ")"
-            CallSubProcedure = "ΚΑΛΕΣΕ" identifier "(" Arguments ")" 
-        
-            IdentifierTblAssign      = identifier "[" AtLeastOneArguments "]"
-            IdentifierTblFetch       = identifier "[" AtLeastOneArguments "]"
+            FunCall          = id "(" Arguments ")"
+            CallSubProcedure = "ΚΑΛΕΣΕ" id "(" Arguments ")" 
         
             AtLeastOneArguments = NonemptyListOf<Expr, ",">
             Arguments           = ListOf<Expr, ",">
         
-            AtLeastOneParameters = NonemptyListOf<identifier, ",">
-            Parameters           = ListOf<identifier, ",">
+            AtLeastOneParameters = NonemptyListOf<id, ",">
+            Parameters           = ListOf<id, ",">
         
-            VarParameters = NonemptyListOf<(IdentifierTblFetch | identifier), ",">   // parameters when define variables
-            VarParametersAssign = NonemptyListOf<(IdentifierTblAssign | identifier), ",">   // parameters when define variables
+            VarParameters = NonemptyListOf<(IdTbl | id), ",">   // parameters when define variables
+            VarParametersAssign = NonemptyListOf<(IdTbl | id), ",">   // parameters when define variables
          
             KeyboardData = keyboardinput AtLeastOneArguments
         
@@ -118,8 +115,11 @@ class GrammarOhm {
                 while        = "ΟΣΟ" ~idchar
             */
         
-            identifier = ~reservedWord  letter (letter|digit|"_")* 
-        
+            IdTbl = id "[" AtLeastOneArguments "]"
+
+            id = ~reservedWord  letter (letter|digit|"_")* 
+
+
             idrest = letter | digit | "_"
         
             powop       =  "^"

@@ -43,8 +43,8 @@ class Stmt_Assignment {
 
     var sym = this.symbol;
 
-    if (sym instanceof Atom.MSymbolTableAssign)
-        sym = this.symbol.resolve(scope);
+    if (sym instanceof Atom.MSymbolTbl)
+        sym = sym.eval(scope);
 
     var valResolved = this.val.resolve(scope);
     
@@ -70,8 +70,8 @@ class Stmt_Write {
     for (var i = 0, len = this.args.length; i < len; i++) {
       var argParam = this.args[i];
 
-      if (argParam instanceof Atom.MSymbolTableFetch)
-          argParam = argParam.resolve(scope);
+      if (argParam instanceof Atom.MSymbolTbl)
+        argParam = argParam.eval(scope);
 
       var arg = argParam.resolve(scope);
 
@@ -109,9 +109,8 @@ class Stmt_Read {
     for (var i = 0, len = this.args.length; i < len; i++) {
       var arg = this.args[i];
 
-      // Check if is a table cell fetch real symbol
-      if (arg instanceof Atom.MSymbolTableAssign)
-        arg = arg.resolve(scope);
+      if (arg instanceof Atom.MSymbolTbl)
+        arg = arg.eval(scope);
 
       var data = scope.io.inputFetchValueFromBuffer();
   
@@ -271,26 +270,29 @@ class Stmt_ForLoop {
     var tmp = finalval.resolve(scope);
     var v_final = tmp.val;
 
-    if (variable instanceof Atom.MSymbolTableAssign) //FIXME: 
-      variable = variable.resolve(scope);
+    if (variable instanceof Atom.MSymbolTbl) //FIXME: 
+    variable = variable.eval(scope);
 
     scope.setSymbol(variable.name, new Atom.MNumber(v_initial));
     scope.addLock(variable.name);
 
     if (v_initial <= v_final && v_step > 0) {
       while (scope.getSymbol(variable.name).val <= v_final) {
-        scope.io.outputAddDetails('Η συνθήκη της ΓΙΑ ' + variable.name + '<=' + v_final + ' είναι ΑΛΗΘΗΣ', this.cmdLineNo);
+
+                scope.io.outputAddDetails('Η συνθήκη της ΓΙΑ ' + variable.name + '<=' + v_final + ' είναι ΑΛΗΘΗΣ', this.cmdLineNo);
    
         scope.incrLogicalCounter();
 
         body.resolve(scope);
 
         scope.removeLock(variable.name);
+
         scope.setSymbol(
-          this.variable.name,
+          variable.name,
           new Atom.MNumber(scope.getSymbol(variable.name).val + v_step)
         );
         scope.addLock(variable.name);
+
       }
       scope.io.outputAddDetails('Η συνθήκη της ΓΙΑ ' + variable.name + '<=' + v_final + ' είναι ΨΕΥΔΗΣ', this.cmdLineNo);
 
@@ -304,7 +306,7 @@ class Stmt_ForLoop {
 
         scope.removeLock(variable.name);
         scope.setSymbol(
-          this.variable.name,
+          variable.name,
           new Atom.MNumber(scope.getSymbol(variable.name).val + v_step)
         );
         scope.addLock(variable.name);
@@ -368,7 +370,7 @@ class DefVariables {
 
       //console.log('======> DefVariables: Create variable symbol name: ', e.name, varType, e);
 
-      if (e instanceof Atom.MSymbolTable) {
+      if (e instanceof Atom.MSymbolTbl) {
 
         //console.log('======> DefVariables: Create variable TABLE symbol name: ', e.name, varType);
 
@@ -424,7 +426,7 @@ class DefVariables {
             for (var i = 1; i <= tblsize1; ++i) {
               for (var j = 1; j <= tblsize2; ++j) {
                 //console.log('   Create table element : ', i, ' ', j);
-              scope.addSymbol(e.name + "[" + i + "][" + j + "]", helperCreateCellFromType(varType));
+              scope.addSymbol(e.name + "[" + i + "," + j + "]", helperCreateCellFromType(varType));
             }
           }
     } else
@@ -529,20 +531,20 @@ class CallSubProcedure {
             var tblsize2 = scope.getSymbol(arg.name).getSize()[1];
             for (var j = 1; j <= tblsize1; ++j) {
               for (var l = 1; l <= tblsize2; ++l) {
-              scope.setSymbol(arg.name + "[" + j + "][" + l + "]", procScope.getSymbol(procParams[i].name + "[" + j + "][" + l + "]"));
+              scope.setSymbol(arg.name + "[" + j + "," + l + "]", procScope.getSymbol(procParams[i].name + "[" + j + "," + l + "]"));
             }
           }
         }
 
 
       }
-      else if (arg instanceof Atom.MSymbolTableFetch ) {
-        //console.log('detected table CELL arg is : ', arg);
-        if (scope.getSymbol(arg.cellName) != procScope.getSymbol(procParams[i].name))
-          scope.setSymbol(arg.cellName, procScope.getSymbol(procParams[i].name));
+      else if (arg instanceof Atom.MSymbolTbl ) {
+        arg = arg.eval(scope);
+        if (scope.getSymbol(arg.name) != procScope.getSymbol(procParams[i].name))
+          scope.setSymbol(arg.name, procScope.getSymbol(procParams[i].name));
 
       }
-      else if  (arg instanceof MSymbol) {
+      else if  (arg instanceof Atom.MSymbol) {
         if (scope.getSymbol(arg.name) != procScope.getSymbol(procParams[i].name))
           scope.setSymbol(arg.name, procScope.getSymbol(procParams[i].name));
       }
@@ -624,7 +626,7 @@ class SubFunction {
               var tblsize2 = argsResolved[1];
               for (var k = 1; k <= tblsize1; ++k) {
                 for (var l = 1; l <= tblsize2; ++l) {
-                  scope2.setSymbol(param.name + "[" + k + "][" + l + "]", parentScope.getSymbol(args[i].tblname + "[" + k + "][" + l + "]"));
+                  scope2.setSymbol(param.name + "[" + k + "," + l + "]", parentScope.getSymbol(args[i].tblname + "[" + k + "," + l + "]"));
                 }
             }
           }
@@ -730,6 +732,8 @@ class Program {
     this.declarations.resolve(scope);
 
     this.body.resolve(scope);
+
+    //scope.printMemory();
   }
 }
 

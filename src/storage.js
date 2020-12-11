@@ -157,7 +157,7 @@ class SScope {
   }
 
   setSymbol(name, obj) {
-
+    
     if (!this.hasSymbol(name))
         throw new GE.GError('Το αναγνωριστικό ' + name + ' δεν βρέθηκε στο τμήμα δηλώσεων.', this.cmdLineNo); //FIXME: 
 

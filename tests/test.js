@@ -16,17 +16,6 @@ try {
     return;
 }
 
-/*
-// =====================================
-function randomArray(length, max) {
-    return Array.apply(null, Array(length)).map(function() {
-        return Math.round(Math.random() * max);
-    });
-}
-
-console.log( randomArray(3,0) );
-// ======================================
-*/
 
 var app = new GLO.GlossaJS();
 app.setSourceCode(sourceCode);

@@ -18,6 +18,15 @@ function isBoolean(val) {
   return typeof val == "boolean";
 }
 
+function valueTypeToString(val) {
+  if (isInt(val)) return "[ " + val + " ] Ακέραια σταθερά";
+  else if (isFloat(val)) return "[ " + val + " ] Πραγματική σταθερά";
+  else if (isString(val)) return "[ '" + val + "' ] Αλφαριθμητική σταθερά";
+  else if (isBoolean(val))
+    return "[ " + (val ? "ΑΛΗΘΗΣ" : "ΨΕΥΔΗΣ") + " ] Λογική σταθερά";
+  else throw new GE.GError("Critical: Unknown value type: " + val);
+}
+
 class Atom {
   constructor(val) {
     this.val = val;
@@ -33,19 +42,10 @@ class Atom {
 }
 
 class MNumber extends Atom {}
-class MBoolean extends Atom {}
 class MString extends Atom {}
+class MBoolean extends Atom {}
 
-class MathOperation {
-  valueTypeToString(val) {
-    if (isInt(val)) return "[ " + val + " ] Ακέραια σταθερά";
-    else if (isFloat(val)) return "[ " + val + " ] Πραγματική σταθερά";
-    else if (isString(val)) return "[ '" + val + "' ] Αλφαριθμητική σταθερά";
-    else if (isBoolean(val))
-      return "[ " + (val ? "ΑΛΗΘΗΣ" : "ΨΕΥΔΗΣ") + " ] Λογική σταθερά";
-    else throw new GE.GError("Critical: Unknown value type: " + val);
-  }
-}
+class MathOperation {}
 
 class MathOpPow extends MathOperation {
   constructor(A, B, line) {
@@ -72,11 +72,11 @@ class MathOpPow extends MathOperation {
 
     if (!isNumber(a.val) || !isNumber(b.val))
       throw new GE.GError(
-        "Δεν είναι δυνατή η πράξη ^ με τα δοθέντα ορίσματα." +
+        "Δεν είναι δυνατή η πράξη της ύψωσης σε δύναμη (^) με τα δοθέντα ορίσματα." +
           "\n" +
-          this.valueTypeToString(a.val) +
+          valueTypeToString(a.val) +
           "\n" +
-          this.valueTypeToString(b.val),
+          valueTypeToString(b.val),
         this.line
       );
 
@@ -109,11 +109,11 @@ class MathOpMul extends MathOperation {
 
     if (!isNumber(a.val) || !isNumber(b.val))
       throw new GE.GError(
-        "Δεν είναι δυνατή η πράξη * με τα δοθέντα ορίσματα." +
+        "Δεν είναι δυνατή η πράξη του πολλαπλασιασμού (*) με τα δοθέντα ορίσματα." +
           "\n" +
-          this.valueTypeToString(a.val) +
+          valueTypeToString(a.val) +
           "\n" +
-          this.valueTypeToString(b.val),
+          valueTypeToString(b.val),
         this.line
       );
 
@@ -146,11 +146,11 @@ class MathOpDiv extends MathOperation {
 
     if (!isNumber(a.val) || !isNumber(b.val))
       throw new GE.GError(
-        "Δεν είναι δυνατή η πράξη / με τα δοθέντα ορίσματα." +
+        "Δεν είναι δυνατή η πράξη της διαίρεσης (/) με τα δοθέντα ορίσματα." +
           "\n" +
-          this.valueTypeToString(a.val) +
+          valueTypeToString(a.val) +
           "\n" +
-          this.valueTypeToString(b.val),
+          valueTypeToString(b.val),
         this.line
       );
 
@@ -186,11 +186,11 @@ class MathOpDivInt extends MathOperation {
 
     if (!isInt(a.val) || !isInt(b.val))
       throw new GE.GError(
-        "Δεν είναι δυνατή η πράξη DIV με τα δοθέντα ορίσματα." +
+        "Δεν είναι δυνατή η πράξη της ακέραιας διαίρεσης (DIV) με τα δοθέντα ορίσματα." +
           "\n" +
-          this.valueTypeToString(a.val) +
+          valueTypeToString(a.val) +
           "\n" +
-          this.valueTypeToString(b.val),
+          valueTypeToString(b.val),
         this.line
       );
 
@@ -226,11 +226,11 @@ class MathOpModInt extends MathOperation {
 
     if (!isInt(a.val) || !isInt(b.val))
       throw new GE.GError(
-        "Δεν είναι δυνατή η πράξη MOD με τα δοθέντα ορίσματα." +
+        "Δεν είναι δυνατή η πράξη της ακέραιας διαίρεσης (MOD) με τα δοθέντα ορίσματα." +
           "\n" +
-          this.valueTypeToString(a.val) +
+          valueTypeToString(a.val) +
           "\n" +
-          this.valueTypeToString(b.val),
+          valueTypeToString(b.val),
         this.line
       );
 
@@ -266,11 +266,11 @@ class MathOpAdd extends MathOperation {
 
     if (!isNumber(a.val) || !isNumber(b.val))
       throw new GE.GError(
-        "Δεν είναι δυνατή η πράξη + με τα δοθέντα ορίσματα." +
+        "Δεν είναι δυνατή η πράξη της πρόσθεσης (+) με τα δοθέντα ορίσματα." +
           "\n" +
-          this.valueTypeToString(a.val) +
+          valueTypeToString(a.val) +
           "\n" +
-          this.valueTypeToString(b.val),
+          valueTypeToString(b.val),
         this.line
       );
 
@@ -303,11 +303,11 @@ class MathOpSub extends MathOperation {
 
     if (!isNumber(a.val) || !isNumber(b.val))
       throw new GE.GError(
-        "Δεν είναι δυνατή η πράξη - με τα δοθέντα ορίσματα." +
+        "Δεν είναι δυνατή η πράξη της αφαίρεσης (-) με τα δοθέντα ορίσματα." +
           "\n" +
-          this.valueTypeToString(a.val) +
+          valueTypeToString(a.val) +
           "\n" +
-          this.valueTypeToString(b.val),
+          valueTypeToString(b.val),
         this.line
       );
 
@@ -345,11 +345,11 @@ class MathOpRelLt extends MathOperation {
       isBoolean(b.val)
     )
       throw new GE.GError(
-        "Δεν είναι δυνατή η πράξη < με τα δοθέντα ορίσματα." +
+        "Δεν είναι δυνατή η σύγκριση (<) με τα δοθέντα ορίσματα." +
           "\n" +
-          this.valueTypeToString(a.val) +
+          valueTypeToString(a.val) +
           "\n" +
-          this.valueTypeToString(b.val),
+          valueTypeToString(b.val),
         this.line
       );
 
@@ -387,11 +387,11 @@ class MathOpRelGt extends MathOperation {
       isBoolean(b.val)
     )
       throw new GE.GError(
-        "Δεν είναι δυνατή η πράξη > με τα δοθέντα ορίσματα. " +
+        "Δεν είναι δυνατή η σύγκριση (>) με τα δοθέντα ορίσματα. " +
           "\n" +
-          this.valueTypeToString(a.val) +
+          valueTypeToString(a.val) +
           "\n" +
-          this.valueTypeToString(b.val),
+          valueTypeToString(b.val),
         this.line
       );
 
@@ -429,11 +429,11 @@ class MathOpRelLte extends MathOperation {
       isBoolean(b.val)
     )
       throw new GE.GError(
-        "Δεν είναι δυνατή η πράξη <= με τα δοθέντα ορίσματα. " +
+        "Δεν είναι δυνατή η σύγκριση (<=) με τα δοθέντα ορίσματα. " +
           "\n" +
-          this.valueTypeToString(a.val) +
+          valueTypeToString(a.val) +
           "\n" +
-          this.valueTypeToString(b.val),
+          valueTypeToString(b.val),
         this.line
       );
 
@@ -471,11 +471,11 @@ class MathOpRelGte extends MathOperation {
       isBoolean(b.val)
     )
       throw new GE.GError(
-        "Δεν είναι δυνατή η πράξη >= με τα δοθέντα ορίσματα. " +
+        "Δεν είναι δυνατή η σύγκριση (>=) με τα δοθέντα ορίσματα. " +
           "\n" +
-          this.valueTypeToString(a.val) +
+          valueTypeToString(a.val) +
           "\n" +
-          this.valueTypeToString(b.val),
+          valueTypeToString(b.val),
         this.line
       );
 
@@ -512,11 +512,11 @@ class MathOpRelEq extends MathOperation {
       (isBoolean(a.val) && !isBoolean(b.val))
     )
       throw new GE.GError(
-        "Δεν είναι δυνατή η πράξη = με τα δοθέντα ορίσματα." +
+        "Δεν είναι δυνατή η σύγκριση (=) με τα δοθέντα ορίσματα." +
           "\n" +
-          this.valueTypeToString(a.val) +
+          valueTypeToString(a.val) +
           "\n" +
-          this.valueTypeToString(b.val),
+          valueTypeToString(b.val),
         this.line
       );
 
@@ -553,11 +553,11 @@ class MathOpRelNeq extends MathOperation {
       (isBoolean(a.val) && !isBoolean(b.val))
     )
       throw new GE.GError(
-        "Δεν είναι δυνατή η πράξη <> με τα δοθέντα ορίσματα." +
+        "Δεν είναι δυνατή η σύγκριση (<>) με τα δοθέντα ορίσματα." +
           "\n" +
-          this.valueTypeToString(a.val) +
+          valueTypeToString(a.val) +
           "\n" +
-          this.valueTypeToString(b.val),
+          valueTypeToString(b.val),
         this.line
       );
     return new MBoolean(a.val != b.val);
@@ -589,11 +589,11 @@ class MathOpLogAnd extends MathOperation {
 
     if (!isBoolean(a.val) || !isBoolean(b.val))
       throw new GE.GError(
-        "Δεν είναι δυνατή η πράξη ΚΑΙ με τα δοθέντα ορίσματα." +
+        "Δεν είναι δυνατή η πράξη της σύζευξης (ΚΑΙ) με τα δοθέντα ορίσματα." +
           "\n" +
-          this.valueTypeToString(a.val) +
+          valueTypeToString(a.val) +
           "\n" +
-          this.valueTypeToString(b.val),
+          valueTypeToString(b.val),
         this.line
       );
 
@@ -626,11 +626,11 @@ class MathOpLogOr extends MathOperation {
 
     if (!isBoolean(a.val) || !isBoolean(b.val))
       throw new GE.GError(
-        "Δεν είναι δυνατή η πράξη Η με τα δοθέντα ορίσματα." +
+        "Δεν είναι δυνατή η πράξη της διάζευξης (Η) με τα δοθέντα ορίσματα." +
           "\n" +
-          this.valueTypeToString(a.val) +
+          valueTypeToString(a.val) +
           "\n" +
-          this.valueTypeToString(b.val),
+          valueTypeToString(b.val),
         this.line
       );
 
@@ -655,9 +655,9 @@ class MathOpLogNot extends MathOperation {
 
     if (!isBoolean(a.val))
       throw new GE.GError(
-        "Δεν είναι δυνατή η πράξη ΟΧΙ με τα δοθέντα ορίσματα." +
+        "Δεν είναι δυνατή η πράξη της άρνησης (ΟΧΙ) με τα δοθέντα ορίσματα." +
           "\n" +
-          this.valueTypeToString(a.val),
+          valueTypeToString(a.val),
         this.line
       );
 
@@ -690,12 +690,16 @@ class MSymbolTableCell {
 
       if (!isInt(a.val))
         throw new GE.GError(
-          "Οι δείκτες ενός πίνακα πρέπει να είναι ακέραιος αριθμός."
+          "Ο δείκτης του πίνακα δεν είναι ακέραιος αριθμός." +
+            "\n" +
+            valueTypeToString(a.val)
         );
 
       if (a.val <= 0)
         throw new GE.GError(
-          "Οι δείκτες ενός πίνακα είναι θετικός αριθμός. " + a.val
+          "Ο δείκτης του πίνακα δεν είναι θετικός αριθμός. " +
+            "\n" +
+            valueTypeToString(a.val)
         );
 
       return a;

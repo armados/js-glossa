@@ -133,7 +133,7 @@
                 <div class="tabHeader inputHeader">Είσοδος</div>
                 <textarea
                   id="codekeyboardinput"
-                  placeholder="Οι τιμές που θα εισαχθούν εδώ θα δωθούν ως είσοδος στο πρόγραμμα. Αν έχουν δηλωθεί τιμές εισόδου εντός του πηγαίου προγράμματος αυτές δεν θα ληφθούν υπόψη."
+                  placeholder="Οι τιμές που θα εισαχθούν εδώ θα δoθούν ως είσοδος στο πρόγραμμα. Αν έχουν δηλωθεί τιμές εισόδου εντός του πηγαίου προγράμματος αυτές δεν θα ληφθούν υπόψη."
                 ></textarea>
               </div>
 
@@ -179,13 +179,13 @@
 
       var editor = ace.edit("aceeditor");
       require("ace/config").setModuleUrl("ace/theme/gruvbox", "https://ajaxorg.github.io/ace-builds/src/theme-gruvbox.js")
-      //editor.setTheme("ace/theme/gruvbox");
+      editor.setTheme("ace/theme/gruvbox");
       require("ace/config").setModuleUrl("ace/mode/glossa", "acemodeglo.js");
       editor.session.setMode("ace/mode/glossa");
       editor.setDisplayIndentGuides(false);
       editor.setShowPrintMargin(false);
-      editor.setHighlightActiveLine(true);
-      //editor.renderer.setShowGutter(false);
+      editor.setHighlightActiveLine(false);
+      editor.renderer.setShowGutter(true);
       editor.clearSelection();
 
     </script>

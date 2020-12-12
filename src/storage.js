@@ -60,8 +60,6 @@ class STRTableNameInt     extends STRTableName {}
 class STRTableNameString  extends STRTableName {}
 class STRTableNameBoolean extends STRTableName {}
 
-// ============
-
 class SScope {
   constructor(parent) {
     this.globalStorage = {};

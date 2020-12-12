@@ -684,6 +684,7 @@ class DefVariables {
         // Initialize table cells
         var tblDimensions = argsResolved.length;
 
+        /*
         var rrr1 = new Array(tblDimensions).fill(30);
         console.log (rrr1);
 
@@ -693,7 +694,7 @@ class DefVariables {
           return pl;//helperCreateCellFromType(varType);
         });
         console.log (rrr2);
-
+*/
         if (tblDimensions == 1) {
           var tblsize1 = argsResolved[0];
           for (var i = 1; i <= tblsize1; ++i) {

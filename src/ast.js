@@ -71,5 +71,5 @@ class ASTree {
 
 
 module.exports = {
-  ASTree: ASTree
+  ASTree
 }

@@ -43,7 +43,7 @@ class Stmt_Assignment {
 
     var sym = this.symbol;
 
-    if (sym instanceof Atom.MSymbolTbl)
+    if (sym instanceof Atom.MSymbolTableCell)
         sym = sym.eval(scope);
 
     var valResolved = this.val.resolve(scope);
@@ -70,7 +70,7 @@ class Stmt_Write {
     for (var i = 0, len = this.args.length; i < len; i++) {
       var argParam = this.args[i];
 
-      if (argParam instanceof Atom.MSymbolTbl)
+      if (argParam instanceof Atom.MSymbolTableCell)
         argParam = argParam.eval(scope);
 
       var arg = argParam.resolve(scope);
@@ -109,7 +109,7 @@ class Stmt_Read {
     for (var i = 0, len = this.args.length; i < len; i++) {
       var arg = this.args[i];
 
-      if (arg instanceof Atom.MSymbolTbl)
+      if (arg instanceof Atom.MSymbolTableCell)
         arg = arg.eval(scope);
 
       var data = scope.io.inputFetchValueFromBuffer();
@@ -270,7 +270,7 @@ class Stmt_ForLoop {
     var tmp = finalval.resolve(scope);
     var v_final = tmp.val;
 
-    if (variable instanceof Atom.MSymbolTbl) //FIXME: 
+    if (variable instanceof Atom.MSymbolTableCell) //FIXME: 
     variable = variable.eval(scope);
 
     scope.setSymbol(variable.name, new Atom.MNumber(v_initial));
@@ -316,138 +316,6 @@ class Stmt_ForLoop {
     }
 
     scope.removeLock(variable.name);
-  }
-}
-
-
-class DefDeclarations {
-  constructor(consts, vars) {
-    this.consts = consts;
-    this.vars = vars;
-  }
-  resolve(scope) {
-    if (this.consts[0]) this.consts[0].forEach( (e) => e.resolve(scope));
-    if (this.vars[0])   this.vars[0].forEach(   (e) => e.resolve(scope));
-  }
-}
-
-class DefConstant {
-  constructor(sym, val) {
-    this.sym = sym;
-    this.val = val;
-  }
-  resolve(scope) {
-
-    var obj = this.val.resolve(scope);
-  
-    if      (Number(obj.val) === obj.val && obj.val % 1 === 0)
-      var newObj = new STR.STRInt( obj );
-    else if (Number(obj.val) === obj.val && obj.val % 1 !== 0)
-      var newObj = new STR.STRFloat( obj );
-    else if (typeof(obj.val) == 'string')
-      var newObj = new STR.STRString( obj );
-    else if (typeof(obj.val) == 'boolean')
-      var newObj = new STR.STRBoolean( obj );
-    else
-      throw new GE.GError('Critical: Unknown constant type');
-
-    scope.addSymbol(this.sym.name, newObj )
-    scope.addLock(this.sym.name);
-  }
-}
-
-class DefVariables {
-  constructor(varType, sym) {
-    this.varType = varType;
-    this.sym = sym;
-  }
-  resolve(scope) {
-
-    var varType = this.varType;
-    //console.log('======> DefVariables: : ', varType);
-
-    this.sym.forEach(function (e) {
-
-      //console.log('======> DefVariables: Create variable symbol name: ', e.name, varType, e);
-
-      if (e instanceof Atom.MSymbolTbl) {
-
-        //console.log('======> DefVariables: Create variable TABLE symbol name: ', e.name, varType);
-
-        var argsResolved = e.args.map(function (arg) {
-          return arg.resolve(scope).val;
-        });
- 
-        if      (varType == 'ΑΚΕΡΑΙΕΣ')
-          var ctype = new STR.STRTableNameInt( e.name, argsResolved );
-        else if (varType == 'ΠΡΑΓΜΑΤΙΚΕΣ')
-          var ctype = new STR.STRTableNameFloat( e.name, argsResolved );
-        else if (varType == 'ΧΑΡΑΚΤΗΡΕΣ')
-          var ctype = new STR.STRTableNameString( e.name, argsResolved );
-        else if (varType == 'ΛΟΓΙΚΕΣ')
-          var ctype = new STR.STRTableNameBoolean( e.name, argsResolved );
-        else
-          throw new GE.GError('Critical: Unknown variable type');
-    
-        // Add to local STR symbol for table name
-        scope.addSymbol(e.name, ctype );
-
-
-
-
-        function helperCreateCellFromType(varType) {
-          if      (varType == 'ΑΚΕΡΑΙΕΣ')
-            return new STR.STRInt( null );
-          else if (varType == 'ΠΡΑΓΜΑΤΙΚΕΣ')
-            return new STR.STRFloat( null );
-          else if (varType == 'ΧΑΡΑΚΤΗΡΕΣ')
-            return new STR.STRString( null );
-          else if (varType == 'ΛΟΓΙΚΕΣ')
-            return new STR.STRBoolean( null );
-          else
-            throw new GE.GError('Critical: Unknown variable type');
-        }
-      
-
-
-
-        // Initialize table cells
-        var tblDimensions = argsResolved.length;
-
-        if (tblDimensions == 1) {
-          var tblsize1 = argsResolved[0];
-          for (var i = 1; i <= tblsize1; ++i) {
-            //console.log('   Create table element : ', i);
-            scope.addSymbol(e.name + "[" + i + "]", helperCreateCellFromType(varType));
-          }
-        } else if (tblDimensions == 2) {
-            var tblsize1 = argsResolved[0];
-            var tblsize2 = argsResolved[1];
-            for (var i = 1; i <= tblsize1; ++i) {
-              for (var j = 1; j <= tblsize2; ++j) {
-                //console.log('   Create table element : ', i, ' ', j);
-              scope.addSymbol(e.name + "[" + i + "," + j + "]", helperCreateCellFromType(varType));
-            }
-          }
-    } else
-        throw new GE.GError('Critical: Unsupported table dimensions');
-
-        return true;
-      }
-
-    if      (varType == 'ΑΚΕΡΑΙΕΣ')
-      var ctype = new STR.STRInt( null );
-    else if (varType == 'ΠΡΑΓΜΑΤΙΚΕΣ')
-      var ctype = new STR.STRFloat( null );
-    else if (varType == 'ΧΑΡΑΚΤΗΡΕΣ')
-      var ctype = new STR.STRString( null );
-    else if (varType == 'ΛΟΓΙΚΕΣ')
-      var ctype = new STR.STRBoolean( null );
-    else
-      throw new GE.GError('Critical: Cannot detect variable type');
-  
-      return scope.addSymbol(e.name, ctype);
-    }); 
   }
 }
 
@@ -538,7 +406,7 @@ class CallSubProcedure {
 
 
       }
-      else if (arg instanceof Atom.MSymbolTbl ) {
+      else if (arg instanceof Atom.MSymbolTableCell ) {
         arg = arg.eval(scope);
         if (scope.getSymbol(arg.name) != procScope.getSymbol(procParams[i].name))
           scope.setSymbol(arg.name, procScope.getSymbol(procParams[i].name));
@@ -716,6 +584,150 @@ class SubProcedure {
 
       return procExecArr;
     }));
+  }
+}
+
+
+
+
+class DefDeclarations {
+  constructor(consts, vars) {
+    this.consts = consts;
+    this.vars = vars;
+  }
+  resolve(scope) {
+    if (this.consts[0]) this.consts[0].forEach( (e) => e.resolve(scope));
+    if (this.vars[0])   this.vars[0].forEach(   (e) => e.resolve(scope));
+  }
+}
+
+class DefConstant {
+  constructor(sym, val) {
+    this.sym = sym;
+    this.val = val;
+  }
+  resolve(scope) {
+
+    var obj = this.val.resolve(scope);
+  
+    if      (Number(obj.val) === obj.val && obj.val % 1 === 0)
+      var newObj = new STR.STRInt( obj );
+    else if (Number(obj.val) === obj.val && obj.val % 1 !== 0)
+      var newObj = new STR.STRFloat( obj );
+    else if (typeof(obj.val) == 'string')
+      var newObj = new STR.STRString( obj );
+    else if (typeof(obj.val) == 'boolean')
+      var newObj = new STR.STRBoolean( obj );
+    else
+      throw new GE.GError('Critical: Unknown constant type');
+
+    scope.addSymbol(this.sym.name, newObj )
+    scope.addLock(this.sym.name);
+  }
+}
+
+class DefVariables {
+  constructor(varType, sym) {
+    this.varType = varType;
+    this.sym = sym;
+  }
+  resolve(scope) {
+
+    var varType = this.varType;
+    //console.log('======> DefVariables: : ', varType);
+
+    this.sym.forEach(function (e) {
+
+      //console.log('======> DefVariables: Create variable symbol name: ', e.name, varType, e);
+
+      if (e instanceof Atom.MSymbolTableCell) {
+
+        //console.log('======> DefVariables: Create variable TABLE symbol name: ', e.name, varType);
+
+        var argsResolved = e.args.map(function (arg) {
+          return arg.resolve(scope).val;
+        });
+ 
+        if      (varType == 'ΑΚΕΡΑΙΕΣ')
+          var ctype = new STR.STRTableNameInt( e.name, argsResolved );
+        else if (varType == 'ΠΡΑΓΜΑΤΙΚΕΣ')
+          var ctype = new STR.STRTableNameFloat( e.name, argsResolved );
+        else if (varType == 'ΧΑΡΑΚΤΗΡΕΣ')
+          var ctype = new STR.STRTableNameString( e.name, argsResolved );
+        else if (varType == 'ΛΟΓΙΚΕΣ')
+          var ctype = new STR.STRTableNameBoolean( e.name, argsResolved );
+        else
+          throw new GE.GError('Critical: Unknown variable type');
+    
+        // Add to local STR symbol for table name
+        scope.addSymbol(e.name, ctype );
+
+
+
+
+        function helperCreateCellFromType(varType) {
+          if      (varType == 'ΑΚΕΡΑΙΕΣ')
+            return new STR.STRInt( null );
+          else if (varType == 'ΠΡΑΓΜΑΤΙΚΕΣ')
+            return new STR.STRFloat( null );
+          else if (varType == 'ΧΑΡΑΚΤΗΡΕΣ')
+            return new STR.STRString( null );
+          else if (varType == 'ΛΟΓΙΚΕΣ')
+            return new STR.STRBoolean( null );
+          else
+            throw new GE.GError('Critical: Unknown variable type');
+        }
+      
+
+
+
+        // Initialize table cells
+        var tblDimensions = argsResolved.length;
+
+        var rrr1 = new Array(tblDimensions).fill(30);
+        console.log (rrr1);
+
+        var pl =0;
+        var rrr2 = Array.apply(null, Array(tblDimensions)).map(function() {
+          pl=pl+1;
+          return pl;//helperCreateCellFromType(varType);
+        });
+        console.log (rrr2);
+
+        if (tblDimensions == 1) {
+          var tblsize1 = argsResolved[0];
+          for (var i = 1; i <= tblsize1; ++i) {
+            //console.log('   Create table element : ', i);
+            scope.addSymbol(e.name + "[" + i + "]", helperCreateCellFromType(varType));
+          }
+        } else if (tblDimensions == 2) {
+            var tblsize1 = argsResolved[0];
+            var tblsize2 = argsResolved[1];
+            for (var i = 1; i <= tblsize1; ++i) {
+              for (var j = 1; j <= tblsize2; ++j) {
+                //console.log('   Create table element : ', i, ' ', j);
+              scope.addSymbol(e.name + "[" + i + "," + j + "]", helperCreateCellFromType(varType));
+            }
+          }
+    } else
+        throw new GE.GError('Critical: Unsupported table dimensions');
+
+        return true;
+      }
+
+    if      (varType == 'ΑΚΕΡΑΙΕΣ')
+      var ctype = new STR.STRInt( null );
+    else if (varType == 'ΠΡΑΓΜΑΤΙΚΕΣ')
+      var ctype = new STR.STRFloat( null );
+    else if (varType == 'ΧΑΡΑΚΤΗΡΕΣ')
+      var ctype = new STR.STRString( null );
+    else if (varType == 'ΛΟΓΙΚΕΣ')
+      var ctype = new STR.STRBoolean( null );
+    else
+      throw new GE.GError('Critical: Cannot detect variable type');
+  
+      return scope.addSymbol(e.name, ctype);
+    }); 
   }
 }
 

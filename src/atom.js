@@ -644,7 +644,6 @@ class MathOpLogNot extends MathOperation {
     this.A = A;
     this.line = line;
   }
-
   resolve(scope) {
     var a = this.A.resolve(scope);
 
@@ -664,45 +663,40 @@ class MathOpLogNot extends MathOperation {
 
     return new MBoolean(!a);
   }
-
 }
-
-// ========================
-
 
 class MSymbol {
   constructor(name) {
     this.name = name;
   }
-
   resolve(scope) {
     return scope.getSymbol(this.name);
   }
 }
 
-
-class MSymbolTbl  {
+class MSymbolTableCell {
   constructor(name, args) {
     this.name = name;
     this.args = args;
   }
   calcName(scope) {
-    
     var argsResolved = this.args.map(function (arg) {
       var a = arg.resolve(scope);
 
       if (a == null)
-      throw new GE.GError(
-        "Το αναγνωριστικό " + arg.name + " δεν έχει αρχικοποιηθεί."
-      );
+        throw new GE.GError(
+          "Το αναγνωριστικό " + arg.name + " δεν έχει αρχικοποιηθεί."
+        );
 
       if (!isInt(a.val))
-      throw new GE.GError(
-        "Οι δείκτες ενός πίνακα πρέπει να είναι ακέραιος αριθμός.");
+        throw new GE.GError(
+          "Οι δείκτες ενός πίνακα πρέπει να είναι ακέραιος αριθμός."
+        );
 
       if (a.val <= 0)
-        throw new GE.GError("Οι δείκτες ενός πίνακα είναι θετικός αριθμός. " +
-        a.val);
+        throw new GE.GError(
+          "Οι δείκτες ενός πίνακα είναι θετικός αριθμός. " + a.val
+        );
 
       return a;
     });
@@ -711,7 +705,7 @@ class MSymbolTbl  {
       return arg.val;
     });
 
-    var name = this.name + "[" + argsResolvedValue.join(',') + "]";
+    var name = this.name + "[" + argsResolvedValue.join(",") + "]";
 
     return name;
   }
@@ -726,48 +720,6 @@ class MSymbolTbl  {
     return scope.getSymbol(name);
   }
 }
-
-/*
-class MSymbolTable {
-  constructor(name, args) {
-    this.name = name;
-    this.args = args;
-    this.cellName = null;
-  }
-
-  fetchCellName(scope) {
-    var argsResolved = this.args.map(function (arg) {
-      return arg.resolve(scope);
-    });
-
-    var tblDimensions = this.args.length;
-
-    if      (tblDimensions == 1)
-      var cellsymbol = this.name + "[" +  argsResolved[0].val + "]";
-    else if (tblDimensions == 2)
-      var cellsymbol = this.name + "[" +  argsResolved[0].val + "][" +  argsResolved[1].val + "]";
-    else
-      throw new GE.GError('Critical: Unknown table dimensions');
-
-      this.cellName = cellsymbol;
-  }
-}
-
-class MSymbolTableAssign extends MSymbolTable {
-  resolve(scope) {
-    this.fetchCellName(scope);
-    return new MSymbol(this.cellName);
-  }
- }
-
-class MSymbolTableFetch extends MSymbolTable {
-  resolve(scope) {
-    this.fetchCellName(scope);
-    return scope.getSymbol(this.cellName);
-  }
-}
-*/
-
 
 module.exports = {
   MNumber,
@@ -792,8 +744,5 @@ module.exports = {
   MathOpLogNot,
 
   MSymbol,
-  MSymbolTbl,
- // MSymbolTable
- // MSymbolTableAssign,
-//  MSymbolTableFetch
+  MSymbolTableCell,
 };

@@ -14,5 +14,5 @@ class GError extends Error {
   }
   
   module.exports = { 
-    GError: GError
+    GError
   };

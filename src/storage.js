@@ -196,11 +196,9 @@ class SScope {
     else
       throw new GE.GError('Critical: 01 Unknown symbol type' + this.getSymbol(name));
     
-
-     //console.log('setSymbol: ', name, symType, ' <--  ',  obj, obj.constructor.name);
+      //console.log('setSymbol: ', name, symType, ' <--  ',  obj, obj.constructor.name);
 
      if      (this.getSymbolObject(name) instanceof STRInt ||
-              this.getSymbolObject(name) instanceof STRTableNameInt ||
               this.getSymbolObject(name) instanceof STRFuncNameInt) {
       if (!(obj instanceof STRInt || obj instanceof Atom.MNumber))
         throw new GE.GError('Το αναγνωριστικό ' + name + ' λαμβάνει μόνο ΑΚΕΡΑΙΕΣ τιμές.', this.cmdLineNo); //FIXME: 
@@ -269,36 +267,33 @@ class SScope {
 
 module.exports = {
 
-    STRGlobalScope: STRGlobalScope,
-    STRLocalScope: STRLocalScope,
+    STRReservedName,
     
-    STRReservedName: STRReservedName,
+    STRFunctionMethod,
+    STRProcedureMethod,
     
-    STRFunctionMethod: STRFunctionMethod,
-    STRProcedureMethod: STRProcedureMethod,
+    STRBuiltinFunction,
     
-    STRBuiltinFunction: STRBuiltinFunction,
+    STRUserFunction, 
+    STRUserProcedure,
     
-    STRUserFunction: STRUserFunction, 
-    STRUserProcedure: STRUserProcedure,
-    
-    STRNumber: STRNumber,  
-    STRFloat: STRFloat,
-    STRInt: STRInt, 
-    STRString: STRString,   
-    STRBoolean: STRBoolean, 
+    STRNumber,  
+    STRFloat,
+    STRInt, 
+    STRString,   
+    STRBoolean, 
         
-    STRFuncNameFloat: STRFuncNameFloat, 
-    STRFuncNameInt: STRFuncNameInt, 
-    STRFuncNameString: STRFuncNameString, 
-    STRFuncNameBoolean: STRFuncNameBoolean,
+    STRFuncNameFloat, 
+    STRFuncNameInt, 
+    STRFuncNameString, 
+    STRFuncNameBoolean,
     
-    STRTableName: STRTableName,
+    STRTableName,
 
-    STRTableNameFloat: STRTableNameFloat, 
-    STRTableNameInt: STRTableNameInt, 
-    STRTableNameString: STRTableNameString, 
-    STRTableNameBoolean: STRTableNameBoolean,
+    STRTableNameFloat, 
+    STRTableNameInt, 
+    STRTableNameString, 
+    STRTableNameBoolean,
     
     SScope: SScope,
 }

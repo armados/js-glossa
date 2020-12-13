@@ -669,17 +669,20 @@ class MathOpLogNot extends MathOperation {
 }
 
 class MSymbol {
-  constructor(name) {
+  constructor(name, cmdLineNo) {
     this.name = name;
+    this.cmdLineNo = cmdLineNo;
   }
   resolve(scope) {
+    scope.cmdLineNo = this.cmdLineNo; //FIXME:
+
     return scope.getSymbol(this.name);
   }
 }
 
 class MSymbolTableCell extends MSymbol {
-  constructor(name, args) {
-    super(name);
+  constructor(name, args, cmdLineNo) {
+    super(name, cmdLineNo);
     this.args = args;
   }
   calcTableIndex(scope) {
@@ -718,11 +721,15 @@ class MSymbolTableCell extends MSymbol {
   }
 
   eval(scope) {
+    scope.cmdLineNo = this.cmdLineNo; //FIXME:
+
     var name = this.calcTableIndex(scope);
     return new MSymbol(name);
   }
 
   resolve(scope) {
+    scope.cmdLineNo = this.cmdLineNo; //FIXME:
+
     var name = this.calcTableIndex(scope);
     return scope.getSymbol(name);
   }

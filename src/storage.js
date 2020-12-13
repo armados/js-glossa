@@ -3,9 +3,6 @@
 const Atom = require("./atom");
 const GE = require("./gclasses");
 
-
-
-
 class STRScope {
    constructor(obj) { this.obj = obj; }
    get()    { return this.obj; }
@@ -136,7 +133,7 @@ class SScope {
 
   addSymbol(name, obj) {
     if (this.hasSymbol(name))
-      throw new GE.GError('Critical: addSymbol(): Symbol already used ' + name);
+      throw new GE.GError('Το αναγνωριστικό ' + name + ' έχει ξαναδηλωθεί.', this.cmdLineNo); //FIXME: 
       
     if (obj instanceof STRGlobalScope)
       return this.globalStorage[name] = obj;
@@ -229,8 +226,7 @@ class SScope {
 
     //console.log("Θέσε στο " +  name + " την τιμή " + obj.val);
     //this.io.outputAddDetails('[#] Θέσε στο ' +  name + ' την τιμή ' + obj.val);
-    //console.log('FF NAME: ' + name);
-    //console.log(this.localStorage[name]);
+
     this.localStorage[name].set(obj);
 
     //FIXME: oxi edw mono tis entoles this.incrAssignCounter();
@@ -240,7 +236,7 @@ class SScope {
     if (name in this.localStorage) 
       return this.localStorage[name].get();
     
-    throw new GE.GError('Critical:: 01 Internal??? Το αναγνωριστικό ' + name + ' δεν έχει δηλωθεί στο τμήμα δηλώσεων.', this.cmdLineNo); //FIXME: 
+    throw new GE.GError('Το αναγνωριστικό ' + name + ' δεν βρέθηκε στο τμήμα δηλώσεων.', this.cmdLineNo); //FIXME: 
   }
 
   getGlobalSymbol(name) {

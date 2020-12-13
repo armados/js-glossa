@@ -13,11 +13,11 @@ function getLineNo(cmd) {
 
 
 var operation = {
-    floatlit: function (a, _, b)      { return new Atom.MNumber(parseFloat(this.sourceString, 10))  },
-    intlit:   function (a)            { return new Atom.MNumber(parseInt(this.sourceString, 10)) },
-    strlit:   function (_l, a, _r)    { return new Atom.MString(a.sourceString) },
-    true:     function (a)            { return new Atom.MBoolean( true )  },
-    false:    function (a)            { return new Atom.MBoolean( false ) },
+    floatlit:         function (a, _, b)   { return new Atom.MNumber(parseFloat(this.sourceString, 10))  },
+    intlit:           function (a)         { return new Atom.MNumber(parseInt(this.sourceString, 10)) },
+    strlit:           function (_l, a, _r) { return new Atom.MString(a.sourceString) },
+    true:             function (a)         { return new Atom.MBoolean( true )  },
+    false:            function (a)         { return new Atom.MBoolean( false ) },
 
     Exp7_parens:      function (_l, a, _r) { return a.toAST() },
 
@@ -44,14 +44,14 @@ var operation = {
     Exp_orop:         function (a, _, b)   { return new Atom.MathOpLogOr(a.toAST(), b.toAST(), getLineNo(a)) },
 
     Exp6_neq:         function (_, a)      { return new Atom.MathOpMul(a.toAST(), new Atom.MNumber(-1), getLineNo(a)) },
+  
+    AssignExpr:       function (a, _, b)   { return new MO.Stmt_Assignment(a.toAST(), b.toAST(), a.sourceString, b.sourceString, getLineNo(a)) },
 
-    id:       function (a, b)              { return new Atom.MSymbol(this.sourceString, null) },
-    IdTbl:       function (a, _1, b, _2)   { return new Atom.MSymbolTableCell(a.sourceString, b.toAST()) },
-    
-    AssignExpr: function (a, _, b) { return new MO.Stmt_Assignment(a.toAST(), b.toAST(), a.sourceString, b.sourceString, getLineNo(a)) },
+    KeyboardData:     function (_1, a)     { return new MO.KeyboardDataFromSource(a.toAST()) },
 
-    KeyboardData: function (_1, a) { return new MO.KeyboardDataFromSource(a.toAST()) },
-
+    id:               function (a, b)           { return new Atom.MSymbol(this.sourceString, getLineNo(a)) },
+    IdTbl:            function (a, _1, b, _2)   { return new Atom.MSymbolTableCell(a.sourceString, b.toAST(), getLineNo(a)) },
+  
     // Normal block
     IfExpr: function (_1, cond, _2, tb, _AlliosAn, condElseIf, _Tote, blockElseIf, _Allios, eb, _TelosAn) {
             var arrCond = [];
@@ -129,7 +129,7 @@ var operation = {
 
 
     FunCall: function (a, _1, b, _2) { return new MO.CallSubFunction(a.toAST(), b.toAST(), getLineNo(a)) },
-    CallSubProcedure: function (_1, a, _2, b, _3) { return new MO.CallSubProcedure(a.toAST(), b.toAST(), getLineNo(_1)) },
+    CallSubProcedure: function (_1, a, _2, b, _3) { return new MO.CallSubProcedure(a.toAST(), b.toAST(), getLineNo(a)) },
 
     Arguments:             function(a)  {return  a.asIteration().toAST() },
     AtLeastOneArguments:   function(a)  {return  a.asIteration().toAST() },
@@ -145,20 +145,20 @@ var operation = {
         return new MO.Application(keyboardData.toAST(), mainProg.toAST(), subPrograms.toAST()) },
 
     Program: function(_1, name, decl, _5, mBlock, _6)  {
-        return new MO.Program(name.toAST(), decl.toAST(), mBlock.toAST()) },
+        return new MO.Program(name.toAST(), decl.toAST(), mBlock.toAST(), getLineNo(name)) },
 
     SubFunction: function(_1, name, _2, params, _3, _4, funType , decl, _7, mBlock, _8) { 
-        return new MO.SubFunction(name.toAST(), params.toAST(), funType.sourceString, decl.toAST(), mBlock.toAST()) },
+        return new MO.SubFunction(name.toAST(), params.toAST(), funType.sourceString, decl.toAST(), mBlock.toAST(), getLineNo(name)) },
 
     SubProcedure: function(_1, name, _2, params, _3, decl, _6, mBlock, _7) {       
-        return new MO.SubProcedure(name.toAST(), params.toAST(), decl.toAST(), mBlock.toAST()) },
+        return new MO.SubProcedure(name.toAST(), params.toAST(), decl.toAST(), mBlock.toAST(), getLineNo(name)) },
  
     DefDeclarations: function(_1, statheres, _2, metavlites) {       
         return new MO.DefDeclarations(statheres.toAST(), metavlites.toAST()) },
 
-    DefConstant:  function(constid, _, constval) { return new MO.DefConstant(constid.toAST(), constval.toAST()) },
+    DefConstant:  function(a, _, b) { return new MO.DefConstant(a.toAST(), b.toAST(), getLineNo(a)) },
 
-    DefVariables: function(varType, _2, vars)    { return new MO.DefVariables(varType.sourceString , vars.toAST()) },
+    DefVariables: function(a, _, b)    { return new MO.DefVariables(a.sourceString , b.toAST(), getLineNo(a)) },
 
     Block:         function(commands)  { return new MO.Stmt_Block(commands.toAST()) },
     BlockFunction: function(commands)  { return new MO.Stmt_Block(commands.toAST()) },    

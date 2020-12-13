@@ -186,44 +186,53 @@ class Stmt_IfCond {
   }
 }
 
-
-
-
-
-
-
 class Stmt_Select {
-  constructor(expr, arrCond, arrCondStr, arrLineNo, arrBody, elseBody) {
+  constructor(expr, arrCond, arrCondStr, arrLineNo, arrBody, elseBody, cmdLineNo) {
     this.expr = expr;
     this.arrCond = arrCond;
     this.arrCondStr = arrCondStr;
     this.arrLineNo = arrLineNo;
     this.arrBody = arrBody;
     this.elseBody = elseBody;
+    this.cmdLineNo = cmdLineNo;
   }
 
   resolve(scope) {
-    scope.cmdLineNo = this.arrLineNo[0]; //FIXME:
+    scope.cmdLineNo = this.cmdLineNo; 
 
+    var expr = this.expr;
     var arrCond = this.arrCond;
     var arrCondStr = this.arrCondStr;
     var arrLineNo = this.arrLineNo;
     var arrBody = this.arrBody;
     var elseBody = this.elseBody;
 
-//console.log('select expression: ', this.expr);
-console.log('select expression value: ', this.expr.resolve(scope));
+    //console.log('select expression: ', this.expr);
+    //console.log('select expression value: ', this.expr.resolve(scope));
 
-//console.log(arrCond);
+    //console.log(arrCond);
+    var exprResult = expr.resolve(scope);
+
+    if (exprResult instanceof STR.STRTableName)
+    throw new GE.GError(
+      "Στην εντολή ΕΠΙΛΕΞΕ επιτρέπονται εκφράσεις όλων των τύπων δεδομένων αλλά όχι πίνακες.",
+        this.cmdLineNo
+    );
 
 
     for (var i = 0; i < arrCond.length; ++i) {
       var condResult = arrCond[i].resolve(scope);
-console.log('select PERIPTOSI resolved value: ' + condResult);
-console.log(condResult);
+      //console.log("select PERIPTOSI resolved value: " + condResult);
+      //console.log(condResult);
+
+      if (!(condResult instanceof Atom.MBoolean))
+        throw new GE.GError(
+          "Η συνθήκη της ΕΠΙΛΕΞΕ δεν αποτελεί λογική έκφραση.",
+          arrLineNo[i]
+        );
 
       scope.io.outputAddDetails(
-        "Η συνθήκη της ΑΝ " +
+        "Η συνθήκη της ΕΠΙΛΕΞΕ " +
           arrCondStr[i] +
           " έχει τιμή " +
           (condResult.val ? "ΑΛΗΘΗΣ" : "ΨΕΥΔΗΣ"),
@@ -238,16 +247,6 @@ console.log(condResult);
     if (elseBody != null) return elseBody.resolve(scope);
   }
 }
-
-
-
-
-
-
-
-
-
-
 
 class Stmt_WhileLoop {
   constructor(cond, condstr, body, cmdLineNo) {
@@ -926,7 +925,6 @@ class Application {
     this.keyboardData = keyboardData;
   }
   resolve(scope) {
-
     if (scope.io.inputIsEmptyBuffer() && this.keyboardData.length)
       this.keyboardData.forEach((e) => e.addKeyboardInputData(scope));
 

@@ -118,7 +118,7 @@ var operation = {
         return new MO.Stmt_IfCond(arrCond, arrCondStr, arrLineNo, arrBody, elseBody);
     }, 
 
-    subrange:     function (a, _1, b)   { return new Atom.MSelectSubrange(a.toAST(), b.toAST(), getLineNo(a)) },
+    Subrange:     function (a, _1, b)   { return new Atom.MSelectSubrange(a.toAST(), b.toAST(), getLineNo(a)) },
     SelectExpr:   function (a, b)       { return new Atom.MSelectExpr(a.sourceString, b.toAST(), getLineNo(a)) },
 
     Stmt_Select: function (_1, a, _2, exprcase, exprbody, _3, _4, eb, _6) {  
@@ -127,21 +127,59 @@ var operation = {
         var arrLineNo =[];
         var arrBody =[];
 
+        var aAst = a.toAST();
+
         if (exprcase.numChildren) {
             //console.log(blockElseIf.children);
             var moreBody = exprbody.toAST();
             for (var i = 0, len = exprcase.numChildren; i < len; i++) {
                 var cond2 = exprcase.children[i];
 
-                arrCond.push(cond2.toAST());
-                arrCondStr.push(cond2.sourceString);
+                var cond2ast = cond2.toAST();
+                var line = getLineNo(cond2);
+
+                if (cond2ast instanceof Atom.MSelectSubrange) {
+                    //console.log('is MSelectSubrange');
+                    var newcondL = new Atom.MathOpRelGte(aAst, cond2ast.A, line);
+                    var newcondR = new Atom.MathOpRelLte(aAst, cond2ast.B, line);
+                    var newcond = new Atom.MathOpLogAnd(newcondL, newcondR, line);
+                   // console.log(newcond);                 
+                
+                }
+                else if (cond2ast instanceof Atom.MSelectExpr) {
+                    //console.log('is MSelectExpr');
+                    
+                    switch (cond2ast.oper) {
+                        case '<':  var newcond = new Atom.MathOpRelLt(aAst, cond2ast.A, line); break;
+                        case '<=': var newcond = new Atom.MathOpRelLte(aAst, cond2ast.A, line); break;
+                        case '>':  var newcond = new Atom.MathOpRelGt(aAst, cond2ast.A, line); break;
+                        case '>=': var newcond = new Atom.MathOpRelGte(aAst, cond2ast.A, line); break;
+                        case '=':  var newcond = new Atom.MathOpRelEq(aAst, cond2ast.A, line); break;
+                        case '<>': var newcond = new Atom.MathOpRelNeq(aAst, cond2ast.A, line); break;
+                        default: 
+                          throw new Error('Missing Rel Operation??');
+                    }
+
+                    //console.log(newcond)    
+                
+                }
+                    else {
+                       
+                        var newcond = new Atom.MathOpRelEq(aAst, cond2ast, line);
+                    }
+
+                //console.log('====================================');
+                //console.log(cond2ast);
+
+                arrCond.push(newcond);
+                arrCondStr.push(line);
                 arrLineNo.push(getLineNo(cond2));
                 arrBody.push(moreBody[i]);
                };
     }
-
+    
         var elseBody = eb ? eb.toAST()[0] : null;
-        return new MO.Stmt_Select(a.toAST(), arrCond, arrCondStr, arrLineNo, arrBody, elseBody);
+        return new MO.Stmt_Select(aAst, arrCond, arrCondStr, arrLineNo, arrBody, elseBody, getLineNo(a));
         },
 
         

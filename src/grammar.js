@@ -75,9 +75,9 @@ class GrammarOhm {
             | expression
             ;
           */
-            subrange      = intlit ".." intlit
+            Subrange      = Expr ".." Expr
             SelectExpr    = "<" Expr | "<=" Expr | ">" Expr | ">=" Expr | "=" Expr | "<>" Expr
-            SelectCase    = subrange | SelectExpr | Expr 
+            SelectCase    = Subrange | SelectExpr | Expr 
             Stmt_Select   = "ΕΠΙΛΕΞΕ" Expr ("ΠΕΡΙΠΤΩΣΗ" ~"ΑΛΛΙΩΣ" SelectCase Block)* ("ΠΕΡΙΠΤΩΣΗ" "ΑΛΛΙΩΣ" Block)? "ΤΕΛΟΣ_ΕΠΙΛΟΓΩΝ"
 
 

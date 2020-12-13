@@ -130,7 +130,7 @@ class GlossaJS {
     try {
       result.resolve(this.scope);
     } catch (e) {
-      console.log('Console ErrorMsg: ', e.message);
+      //console.log('Console ErrorMsg: ', e.message);
       //console.log(e);
       this.io.outputAdd(e.message);
       this.io.outputAddDetails(e.message);

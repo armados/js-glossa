@@ -24,7 +24,7 @@ function valueTypeToString(val) {
   else if (isString(val)) return "[ '" + val + "' ] Αλφαριθμητική σταθερά";
   else if (isBoolean(val))
     return "[ " + (val ? "ΑΛΗΘΗΣ" : "ΨΕΥΔΗΣ") + " ] Λογική σταθερά";
-  else throw new GE.GError("Critical: Unknown value type: " + val);
+  //else throw new GE.GError("Critical: Unknown value type: " + val);
 }
 
 class Atom {
@@ -51,7 +51,7 @@ class MBoolean extends Atom {}
 class MathOperation {}
 
 class MathOpPow extends MathOperation {
-  constructor(A, B, line) {
+  constructor(A, B, line = null) {
     super();
     this.A = A;
     this.B = B;
@@ -88,7 +88,7 @@ class MathOpPow extends MathOperation {
 }
 
 class MathOpMul extends MathOperation {
-  constructor(A, B, line) {
+  constructor(A, B, line = null) {
     super();
     this.A = A;
     this.B = B;
@@ -125,7 +125,7 @@ class MathOpMul extends MathOperation {
 }
 
 class MathOpDiv extends MathOperation {
-  constructor(A, B, line) {
+  constructor(A, B, line = null) {
     super();
     this.A = A;
     this.B = B;
@@ -165,7 +165,7 @@ class MathOpDiv extends MathOperation {
 }
 
 class MathOpDivInt extends MathOperation {
-  constructor(A, B, line) {
+  constructor(A, B, line = null) {
     super();
     this.A = A;
     this.B = B;
@@ -205,7 +205,7 @@ class MathOpDivInt extends MathOperation {
 }
 
 class MathOpModInt extends MathOperation {
-  constructor(A, B, line) {
+  constructor(A, B, line = null) {
     super();
     this.A = A;
     this.B = B;
@@ -245,7 +245,7 @@ class MathOpModInt extends MathOperation {
 }
 
 class MathOpAdd extends MathOperation {
-  constructor(A, B, line) {
+  constructor(A, B, line = null) {
     super();
     this.A = A;
     this.B = B;
@@ -282,7 +282,7 @@ class MathOpAdd extends MathOperation {
 }
 
 class MathOpSub extends MathOperation {
-  constructor(A, B, line) {
+  constructor(A, B, line = null) {
     super();
     this.A = A;
     this.B = B;
@@ -319,7 +319,7 @@ class MathOpSub extends MathOperation {
 }
 
 class MathOpRelLt extends MathOperation {
-  constructor(A, B, line) {
+  constructor(A, B, line = null) {
     super();
     this.A = A;
     this.B = B;
@@ -361,7 +361,7 @@ class MathOpRelLt extends MathOperation {
 }
 
 class MathOpRelGt extends MathOperation {
-  constructor(A, B, line) {
+  constructor(A, B, line = null) {
     super();
     this.A = A;
     this.B = B;
@@ -373,13 +373,13 @@ class MathOpRelGt extends MathOperation {
 
     if (a == null)
       throw new GE.GError(
-        "Το αναγνωριστικό " + this.A.name + "δεν έχει αρχικοποιηθεί.",
+        "Το αναγνωριστικό " + this.A.name + " δεν έχει αρχικοποιηθεί.",
         this.line
       );
 
     if (a == null)
       throw new GE.GError(
-        "Το αναγνωριστικό " + this.B.name + "δεν έχει αρχικοποιηθεί.",
+        "Το αναγνωριστικό " + this.B.name + " δεν έχει αρχικοποιηθεί.",
         this.line
       );
 
@@ -403,7 +403,7 @@ class MathOpRelGt extends MathOperation {
 }
 
 class MathOpRelLte extends MathOperation {
-  constructor(A, B, line) {
+  constructor(A, B, line = null) {
     super();
     this.A = A;
     this.B = B;
@@ -415,13 +415,13 @@ class MathOpRelLte extends MathOperation {
 
     if (a == null)
       throw new GE.GError(
-        "Το αναγνωριστικό " + this.A.name + "δεν έχει αρχικοποιηθεί.",
+        "Το αναγνωριστικό " + this.A.name + " δεν έχει αρχικοποιηθεί.",
         this.line
       );
 
     if (b == null)
       throw new GE.GError(
-        "Το αναγνωριστικό " + this.B.name + "δεν έχει αρχικοποιηθεί.",
+        "Το αναγνωριστικό " + this.B.name + " δεν έχει αρχικοποιηθεί.",
         this.line
       );
 
@@ -445,7 +445,7 @@ class MathOpRelLte extends MathOperation {
 }
 
 class MathOpRelGte extends MathOperation {
-  constructor(A, B, line) {
+  constructor(A, B, line = null) {
     super();
     this.A = A;
     this.B = B;
@@ -457,13 +457,13 @@ class MathOpRelGte extends MathOperation {
 
     if (a == null)
       throw new GE.GError(
-        "Το αναγνωριστικό " + this.A.name + "δεν έχει αρχικοποιηθεί.",
+        "Το αναγνωριστικό " + this.A.name + " δεν έχει αρχικοποιηθεί.",
         this.line
       );
 
     if (b == null)
       throw new GE.GError(
-        "Το αναγνωριστικό " + this.B.name + "δεν έχει αρχικοποιηθεί.",
+        "Το αναγνωριστικό " + this.B.name + " δεν έχει αρχικοποιηθεί.",
         this.line
       );
 
@@ -487,7 +487,7 @@ class MathOpRelGte extends MathOperation {
 }
 
 class MathOpRelEq extends MathOperation {
-  constructor(A, B, line) {
+  constructor(A, B, line = null) {
     super();
     this.A = A;
     this.B = B;
@@ -499,13 +499,13 @@ class MathOpRelEq extends MathOperation {
 
     if (a == null)
       throw new GE.GError(
-        "Το αναγνωριστικό " + this.A.name + "δεν έχει αρχικοποιηθεί.",
+        "Το αναγνωριστικό " + this.A.name + " δεν έχει αρχικοποιηθεί.",
         this.line
       );
 
     if (b == null)
       throw new GE.GError(
-        "Το αναγνωριστικό " + this.B.name + "δεν έχει αρχικοποιηθεί.",
+        "Το αναγνωριστικό " + this.B.name + " δεν έχει αρχικοποιηθεί.",
         this.line
       );
 
@@ -528,7 +528,7 @@ class MathOpRelEq extends MathOperation {
 }
 
 class MathOpRelNeq extends MathOperation {
-  constructor(A, B, line) {
+  constructor(A, B, line = null) {
     super();
     this.A = A;
     this.B = B;
@@ -540,13 +540,13 @@ class MathOpRelNeq extends MathOperation {
 
     if (a == null)
       throw new GE.GError(
-        "Το αναγνωριστικό " + this.A.name + "δεν έχει αρχικοποιηθεί.",
+        "Το αναγνωριστικό " + this.A.name + " δεν έχει αρχικοποιηθεί.",
         this.line
       );
 
     if (b == null)
       throw new GE.GError(
-        "Το αναγνωριστικό " + this.B.name + "δεν έχει αρχικοποιηθεί.",
+        "Το αναγνωριστικό " + this.B.name + " δεν έχει αρχικοποιηθεί.",
         this.line
       );
 
@@ -568,7 +568,7 @@ class MathOpRelNeq extends MathOperation {
 }
 
 class MathOpLogAnd extends MathOperation {
-  constructor(A, B, line) {
+  constructor(A, B, line = null) {
     super();
     this.A = A;
     this.B = B;
@@ -580,13 +580,13 @@ class MathOpLogAnd extends MathOperation {
 
     if (a == null)
       throw new GE.GError(
-        "Το αναγνωριστικό " + this.A.name + "δεν έχει αρχικοποιηθεί.",
+        "Το αναγνωριστικό " + this.A.name + " δεν έχει αρχικοποιηθεί.",
         this.line
       );
 
     if (b == null)
       throw new GE.GError(
-        "Το αναγνωριστικό " + this.B.name + "δεν έχει αρχικοποιηθεί.",
+        "Το αναγνωριστικό " + this.B.name + " δεν έχει αρχικοποιηθεί.",
         this.line
       );
 
@@ -605,7 +605,7 @@ class MathOpLogAnd extends MathOperation {
 }
 
 class MathOpLogOr extends MathOperation {
-  constructor(A, B, line) {
+  constructor(A, B, line = null) {
     super();
     this.A = A;
     this.B = B;
@@ -617,13 +617,13 @@ class MathOpLogOr extends MathOperation {
 
     if (a == null)
       throw new GE.GError(
-        "Το αναγνωριστικό " + this.A.name + "δεν έχει αρχικοποιηθεί.",
+        "Το αναγνωριστικό " + this.A.name + " δεν έχει αρχικοποιηθεί.",
         this.line
       );
 
     if (b == null)
       throw new GE.GError(
-        "Το αναγνωριστικό " + this.B.name + "δεν έχει αρχικοποιηθεί.",
+        "Το αναγνωριστικό " + this.B.name + " δεν έχει αρχικοποιηθεί.",
         this.line
       );
 
@@ -642,7 +642,7 @@ class MathOpLogOr extends MathOperation {
 }
 
 class MathOpLogNot extends MathOperation {
-  constructor(A, line) {
+  constructor(A, line = null) {
     super();
     this.A = A;
     this.line = line;
@@ -652,7 +652,7 @@ class MathOpLogNot extends MathOperation {
 
     if (a.val == null)
       throw new GE.GError(
-        "Το αναγνωριστικό " + this.A.name + "δεν έχει αρχικοποιηθεί.",
+        "Το αναγνωριστικό " + this.A.name + " δεν έχει αρχικοποιηθεί.",
         this.line
       );
 
@@ -673,7 +673,7 @@ class MathOpLogNot extends MathOperation {
 
 
 class MSelectSubrange {
-  constructor(A, B, line) {
+  constructor(A, B, line = null) {
     this.A = A;
     this.B = B;
     this.line = line;
@@ -710,7 +710,7 @@ class MSelectSubrange {
 
 
 class MSelectExpr {
-constructor(oper, A, cmdLineNo) {
+constructor(oper, A, cmdLineNo = null) {
   this.oper = oper;
   this.A = A;
   this.cmdLineNo = cmdLineNo;
@@ -722,11 +722,11 @@ resolve(scope) {
 
   if (a.val == null)
     throw new GE.GError(
-      "Το αναγνωριστικό " + this.A.name + "δεν έχει αρχικοποιηθεί.",
+      "Το αναγνωριστικό " + this.A.name + " δεν έχει αρχικοποιηθεί.",
       this.line
     );
 
-  console.log('####' + this.oper + ' ' + a.val);
+  //console.log('####' + this.oper + ' ' + a.val);
 
   return a.val;
 }
@@ -734,7 +734,7 @@ resolve(scope) {
 
 
 class MSymbol {
-  constructor(name, cmdLineNo) {
+  constructor(name, cmdLineNo = null) {
     this.name = name;
     this.cmdLineNo = cmdLineNo;
   }
@@ -746,7 +746,7 @@ class MSymbol {
 }
 
 class MSymbolTableCell extends MSymbol {
-  constructor(name, args, cmdLineNo) {
+  constructor(name, args, cmdLineNo = null) {
     super(name, cmdLineNo);
     this.args = args;
   }

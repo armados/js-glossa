@@ -171,26 +171,26 @@ class SScope {
       symType = "ΑΚΕΡΑΙΑ";
     else if (this.getSymbolObject(name) instanceof STRFuncNameInt)
       symType = "ΑΚΕΡΑΙΑ (ονομα συνάρτησης)";
-    else if (this.getSymbolObject(name) instanceof STRTableNameInt)
-      symType = "ΑΚΕΡΑΙΑ (στοιχείο σε πίνακα)";
+    //else if (this.getSymbolObject(name) instanceof STRTableNameInt)
+    //  symType = "ΑΚΕΡΑΙΑ (στοιχείο σε πίνακα)";
     else if (this.getSymbolObject(name) instanceof STRFloat) 
       symType = "ΠΡΑΓΜΑΤΙΚΗ";
     else if (this.getSymbolObject(name) instanceof STRFuncNameFloat)
       symType = "ΠΡΑΓΜΑΤΙΚΗ (ονομα συνάρτησης)";
-    else if (this.getSymbolObject(name) instanceof STRTableNameFloat)
-      symType = "ΠΡΑΓΜΑΤΙΚΗ (στοιχείο σε πίνακα)";
+    //else if (this.getSymbolObject(name) instanceof STRTableNameFloat)
+    //  symType = "ΠΡΑΓΜΑΤΙΚΗ (στοιχείο σε πίνακα)";
     else if (this.getSymbolObject(name) instanceof STRString)
       symType = "ΧΑΡΑΚΤΗΡΑΣ";
     else if (this.getSymbolObject(name) instanceof STRFuncNameString)
       symType = "ΧΑΡΑΚΤΗΡΑΣ (ονομα συνάρτησης)";
-    else if (this.getSymbolObject(name) instanceof STRTableNameString)
-      symType = "ΧΑΡΑΚΤΗΡΑΣ (στοιχείο σε πίνακα)";
+    //else if (this.getSymbolObject(name) instanceof STRTableNameString)
+    //  symType = "ΧΑΡΑΚΤΗΡΑΣ (στοιχείο σε πίνακα)";
     else if (this.getSymbolObject(name) instanceof STRBoolean)
       symType = "ΛΟΓΙΚΗ";
     else if (this.getSymbolObject(name) instanceof STRFuncNameBoolean)
       symType = "ΛΟΓΙΚΗ (όνομα συνάρτησης)";
-    else if (this.getSymbolObject(name) instanceof STRTableNameBoolean)
-      symType = "ΛΟΓΙΚΗ (στοιχείο σε πίνακα)";
+    //else if (this.getSymbolObject(name) instanceof STRTableNameBoolean)
+    //  symType = "ΛΟΓΙΚΗ (στοιχείο σε πίνακα)";
     else
       throw new GE.GError('Critical: 01 Unknown symbol type' + this.getSymbol(name));
     

@@ -30,8 +30,6 @@ function valueTypeToString(val) {
 class Atom {
   constructor(val) {
     this.val = val;
-
-    if (isFloat(val)) this.val = +parseFloat(val).toFixed(2);
   }
   resolve(scope) {
     return this;
@@ -41,7 +39,12 @@ class Atom {
   }
 }
 
-class MNumber extends Atom {}
+class MNumber extends Atom {
+  constructor(val) {
+    super(val);
+    if (isFloat(val)) this.val = +parseFloat(val).toFixed(2);
+  }
+}
 class MString extends Atom {}
 class MBoolean extends Atom {}
 
@@ -674,12 +677,12 @@ class MSymbol {
   }
 }
 
-class MSymbolTableCell {
+class MSymbolTableCell extends MSymbol {
   constructor(name, args) {
-    this.name = name;
+    super(name);
     this.args = args;
   }
-  calcName(scope) {
+  calcTableIndex(scope) {
     var argsResolved = this.args.map(function (arg) {
       var a = arg.resolve(scope);
 
@@ -715,12 +718,12 @@ class MSymbolTableCell {
   }
 
   eval(scope) {
-    var name = this.calcName(scope);
+    var name = this.calcTableIndex(scope);
     return new MSymbol(name);
   }
 
   resolve(scope) {
-    var name = this.calcName(scope);
+    var name = this.calcTableIndex(scope);
     return scope.getSymbol(name);
   }
 }

@@ -668,6 +668,71 @@ class MathOpLogNot extends MathOperation {
   }
 }
 
+
+
+
+
+class MSelectSubrange {
+  constructor(A, B, line) {
+    this.A = A;
+    this.B = B;
+    this.line = line;
+  }
+  resolve(scope) {
+    var a = this.A.resolve(scope);
+    var b = this.B.resolve(scope);
+
+    if (a == null)
+      throw new GE.GError(
+        "Το αναγνωριστικό " + this.A.name + " δεν έχει αρχικοποιηθεί.",
+        this.line
+      );
+
+    if (b == null)
+      throw new GE.GError(
+        "Το αναγνωριστικό " + this.B.name + " δεν έχει αρχικοποιηθεί.",
+        this.line
+      );
+
+    if (!isInt(a.val) || !isInt(b.val))
+      throw new GE.GError(
+        "Δεν είναι δυνατή η πράξη της ακέραιας διαίρεσης (MOD) με τα δοθέντα ορίσματα." +
+          "\n" +
+          valueTypeToString(a.val) +
+          "\n" +
+          valueTypeToString(b.val),
+        this.line
+      );
+
+    return this;
+  }
+}
+
+
+class MSelectExpr {
+constructor(oper, A, cmdLineNo) {
+  this.oper = oper;
+  this.A = A;
+  this.cmdLineNo = cmdLineNo;
+}
+resolve(scope) {
+  scope.cmdLineNo = this.cmdLineNo; //FIXME:
+
+  var a = this.A.resolve(scope);
+
+  if (a.val == null)
+    throw new GE.GError(
+      "Το αναγνωριστικό " + this.A.name + "δεν έχει αρχικοποιηθεί.",
+      this.line
+    );
+
+  console.log('####' + this.oper + ' ' + a.val);
+
+  return a.val;
+}
+}
+
+
 class MSymbol {
   constructor(name, cmdLineNo) {
     this.name = name;
@@ -739,6 +804,9 @@ module.exports = {
   MNumber,
   MBoolean,
   MString,
+
+  MSelectExpr,
+  MSelectSubrange,
 
   MathOpPow,
   MathOpMul,

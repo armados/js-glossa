@@ -16,7 +16,7 @@ class GrammarOhm {
                               ("ΜΕΤΑΒΛΗΤΕΣ" DefVariables*)?
         
             DefConstant  = id "=" Expr
-            DefVariables = ("ΑΚΕΡΑΙΕΣ" | "ΠΡΑΓΜΑΤΙΚΕΣ" | "ΧΑΡΑΚΤΗΡΕΣ" | "ΛΟΓΙΚΕΣ") ":" VarParametersAssign
+            DefVariables = ("ΑΚΕΡΑΙΕΣ" | "ΠΡΑΓΜΑΤΙΚΕΣ" | "ΧΑΡΑΚΤΗΡΕΣ" | "ΛΟΓΙΚΕΣ") ":" VarParameters
            
             AssignExpr   = (IdTbl | id) "<-" Expr
         
@@ -59,20 +59,31 @@ class GrammarOhm {
             Block = InnerCommand*
             BlockFunction = InnerCommandFunction*
         
-            InnerCommand         = AssignExpr | WhileExpr | DoWhileExpr | ForExpr | IfExpr | comment | CallSubProcedure | Stmt_Write | Stmt_Read
-            InnerCommandFunction = AssignExpr | WhileExprFunction | DoWhileExprFunction | ForExprFunction | IfExprFunction | comment 
+            InnerCommand         = AssignExpr | WhileExpr | DoWhileExpr | ForExpr | IfExpr | Stmt_Select | comment | CallSubProcedure | Stmt_Write | Stmt_Read
+            InnerCommandFunction = AssignExpr | WhileExprFunction | DoWhileExprFunction | ForExprFunction | IfExprFunction | Stmt_Select | comment //FIXME:
         
             Stmt_Write = grapse Arguments
-            Stmt_Read  = diavase VarParametersAssign
+            Stmt_Read  = diavase VarParameters
         
             WhileExpr     = "ΟΣΟ" Expr "ΕΠΑΝΑΛΑΒΕ" Block "ΤΕΛΟΣ_ΕΠΑΝΑΛΗΨΗΣ"
             DoWhileExpr   = "ΑΡΧΗ_ΕΠΑΝΑΛΗΨΗΣ" Block "ΜΕΧΡΙΣ_ΟΤΟΥ" Expr
-            ForExpr       = "ΓΙΑ" (IdTbl | id) "ΑΠΟ" Expr "ΜΕΧΡΙ" Expr (("ΜΕ_ΒΗΜΑ" | "ΜΕ ΒΗΜΑ") Expr)? lineTerminator* Block "ΤΕΛΟΣ_ΕΠΑΝΑΛΗΨΗΣ"
+            ForExpr       = "ΓΙΑ" (IdTbl | id) "ΑΠΟ" Expr "ΜΕΧΡΙ" Expr (("ΜΕ_ΒΗΜΑ" | "ΜΕ ΒΗΜΑ") Expr)? nl* Block "ΤΕΛΟΣ_ΕΠΑΝΑΛΗΨΗΣ"
             IfExpr        = "ΑΝ" Expr "ΤΟΤΕ" Block ("ΑΛΛΙΩΣ_ΑΝ" Expr "ΤΟΤΕ" Block)* ("ΑΛΛΙΩΣ" Block)? "ΤΕΛΟΣ_ΑΝ"
         
+           /* select_case
+            : ("=" | "<>" | "<" | ">" | "<=" | ">=") expression
+            | expression
+            ;
+          */
+            subrange      = intlit ".." intlit
+            SelectExpr    = "<" Expr | "<=" Expr | ">" Expr | ">=" Expr | "=" Expr | "<>" Expr
+            SelectCase    = subrange | SelectExpr | Expr 
+            Stmt_Select   = "ΕΠΙΛΕΞΕ" Expr ("ΠΕΡΙΠΤΩΣΗ" ~"ΑΛΛΙΩΣ" SelectCase Block)* ("ΠΕΡΙΠΤΩΣΗ" "ΑΛΛΙΩΣ" Block)? "ΤΕΛΟΣ_ΕΠΙΛΟΓΩΝ"
+
+
             WhileExprFunction     = "ΟΣΟ" Expr "ΕΠΑΝΑΛΑΒΕ" BlockFunction "ΤΕΛΟΣ_ΕΠΑΝΑΛΗΨΗΣ"
             DoWhileExprFunction   = "ΑΡΧΗ_ΕΠΑΝΑΛΗΨΗΣ" BlockFunction "ΜΕΧΡΙΣ_ΟΤΟΥ" Expr
-            ForExprFunction       = "ΓΙΑ" (IdTbl | id) "ΑΠΟ" Expr "ΜΕΧΡΙ" Expr (("ΜΕ_ΒΗΜΑ" | "ΜΕ ΒΗΜΑ") Expr)? lineTerminator* BlockFunction "ΤΕΛΟΣ_ΕΠΑΝΑΛΗΨΗΣ"
+            ForExprFunction       = "ΓΙΑ" (IdTbl | id) "ΑΠΟ" Expr "ΜΕΧΡΙ" Expr (("ΜΕ_ΒΗΜΑ" | "ΜΕ ΒΗΜΑ") Expr)? nl* BlockFunction "ΤΕΛΟΣ_ΕΠΑΝΑΛΗΨΗΣ"
             IfExprFunction        = "ΑΝ" Expr "ΤΟΤΕ" BlockFunction ("ΑΛΛΙΩΣ_ΑΝ" Expr "ΤΟΤΕ" BlockFunction)* ("ΑΛΛΙΩΣ" BlockFunction)? "ΤΕΛΟΣ_ΑΝ"
         
 
@@ -80,9 +91,8 @@ class GrammarOhm {
 
 
 
-            //function calls and variables
-            FunCall          = id "(" Arguments ")"
-            CallSubProcedure = "ΚΑΛΕΣΕ" id "(" Arguments ")" 
+            FunCall             = id "(" Arguments ")"
+            CallSubProcedure    = "ΚΑΛΕΣΕ" id "(" Arguments ")" 
         
             AtLeastOneArguments = NonemptyListOf<Expr, ",">
             Arguments           = ListOf<Expr, ",">
@@ -90,9 +100,8 @@ class GrammarOhm {
             AtLeastOneParameters = NonemptyListOf<id, ",">
             Parameters           = ListOf<id, ",">
         
-            VarParameters = NonemptyListOf<(IdTbl | id), ",">   // parameters when define variables
-            VarParametersAssign = NonemptyListOf<(IdTbl | id), ",">   // parameters when define variables
-         
+            VarParameters       = NonemptyListOf<(IdTbl | id), ",">   // parameters when define variables
+  
             KeyboardData = keyboardinput AtLeastOneArguments
         
             reservedWord = grapse | diavase | and | or | not | div | mod | boollit
@@ -141,13 +150,13 @@ class GrammarOhm {
         
             keyboardinput =  "! KEYBOARD_INPUT:"
         
-            comment = ~keyboardinput "!" (~lineTerminator any)*
+            comment = ~keyboardinput "!" (~nl any)*
         
-            lineTerminator = "\\n" | "\\r"
-        
+            nl = "\\n" | "\\r"
+
             whitespace = "\t" | " "
             breakLine = "&"
-            space := whitespace | lineTerminator | comment | breakLine  
+            space := whitespace | nl | comment | breakLine  
         }
                 
         `;

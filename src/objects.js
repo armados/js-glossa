@@ -186,6 +186,69 @@ class Stmt_IfCond {
   }
 }
 
+
+
+
+
+
+
+class Stmt_Select {
+  constructor(expr, arrCond, arrCondStr, arrLineNo, arrBody, elseBody) {
+    this.expr = expr;
+    this.arrCond = arrCond;
+    this.arrCondStr = arrCondStr;
+    this.arrLineNo = arrLineNo;
+    this.arrBody = arrBody;
+    this.elseBody = elseBody;
+  }
+
+  resolve(scope) {
+    scope.cmdLineNo = this.arrLineNo[0]; //FIXME:
+
+    var arrCond = this.arrCond;
+    var arrCondStr = this.arrCondStr;
+    var arrLineNo = this.arrLineNo;
+    var arrBody = this.arrBody;
+    var elseBody = this.elseBody;
+
+//console.log('select expression: ', this.expr);
+console.log('select expression value: ', this.expr.resolve(scope));
+
+//console.log(arrCond);
+
+
+    for (var i = 0; i < arrCond.length; ++i) {
+      var condResult = arrCond[i].resolve(scope);
+console.log('select PERIPTOSI resolved value: ' + condResult);
+console.log(condResult);
+
+      scope.io.outputAddDetails(
+        "Η συνθήκη της ΑΝ " +
+          arrCondStr[i] +
+          " έχει τιμή " +
+          (condResult.val ? "ΑΛΗΘΗΣ" : "ΨΕΥΔΗΣ"),
+        arrLineNo[i]
+      );
+
+      scope.incrLogicalCounter();
+
+      if (condResult.val == true) return arrBody[i].resolve(scope);
+    }
+
+    if (elseBody != null) return elseBody.resolve(scope);
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
 class Stmt_WhileLoop {
   constructor(cond, condstr, body, cmdLineNo) {
     this.cond = cond;
@@ -883,6 +946,7 @@ module.exports = {
   Stmt_Read,
 
   Stmt_IfCond,
+  Stmt_Select,
 
   Stmt_WhileLoop,
   Stmt_Do_WhileLoop,

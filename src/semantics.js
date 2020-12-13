@@ -118,7 +118,33 @@ var operation = {
         return new MO.Stmt_IfCond(arrCond, arrCondStr, arrLineNo, arrBody, elseBody);
     }, 
 
+    subrange:     function (a, _1, b)   { return new Atom.MSelectSubrange(a.toAST(), b.toAST(), getLineNo(a)) },
+    SelectExpr:   function (a, b)       { return new Atom.MSelectExpr(a.sourceString, b.toAST(), getLineNo(a)) },
 
+    Stmt_Select: function (_1, a, _2, exprcase, exprbody, _3, _4, eb, _6) {  
+        var arrCond = [];
+        var arrCondStr = [];
+        var arrLineNo =[];
+        var arrBody =[];
+
+        if (exprcase.numChildren) {
+            //console.log(blockElseIf.children);
+            var moreBody = exprbody.toAST();
+            for (var i = 0, len = exprcase.numChildren; i < len; i++) {
+                var cond2 = exprcase.children[i];
+
+                arrCond.push(cond2.toAST());
+                arrCondStr.push(cond2.sourceString);
+                arrLineNo.push(getLineNo(cond2));
+                arrBody.push(moreBody[i]);
+               };
+    }
+
+        var elseBody = eb ? eb.toAST()[0] : null;
+        return new MO.Stmt_Select(a.toAST(), arrCond, arrCondStr, arrLineNo, arrBody, elseBody);
+        },
+
+        
     WhileExprFunction:   function (_1, cond, _2, body, _3) { return new MO.Stmt_WhileLoop(cond.toAST(), cond.sourceString, body.toAST(), getLineNo(cond)) },
 
     DoWhileExprFunction: function (_1, body, _2, cond)     { return new MO.Stmt_Do_WhileLoop(cond.toAST(), cond.sourceString, body.toAST(), getLineNo(cond)) },
@@ -138,8 +164,7 @@ var operation = {
     Parameters:            function(a)  {return  a.asIteration().toAST() },
     
     VarParameters:         function(a)  {return  a.asIteration().toAST() },
-    VarParametersAssign:   function(a)  {return  a.asIteration().toAST() },
-    
+
 
     Application: function(keyboardData, mainProg, subPrograms) { 
         return new MO.Application(keyboardData.toAST(), mainProg.toAST(), subPrograms.toAST()) },

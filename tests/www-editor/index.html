@@ -12,10 +12,7 @@
     <link
       rel="stylesheet"
       href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
-      integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh"
-      crossorigin="anonymous"
     />
-
 
     <!-- Add icon library -->
     <link
@@ -23,8 +20,11 @@
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
     />
 
-    <link rel="preconnect" href="https://fonts.gstatic.com">
-    <link href="https://fonts.googleapis.com/css2?family=Fira+Mono&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.gstatic.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fira+Mono&display=swap"
+      rel="stylesheet"
+    />
 
     <link rel="stylesheet" type="text/css" href="style.css" />
   </head>
@@ -36,37 +36,28 @@
           <h4>GlossaJS</h4>
         </div>
 
-        <div class="col"><p>
-          <a href="https://github.com/armados/js-glossa/"
-            >https://github.com/armados/js-glossa/</a
-          >
-        </p>
+        <div class="col">
+          <p>
+            <a href="https://github.com/armados/js-glossa/"
+              >https://github.com/armados/js-glossa/</a
+            >
+          </p>
+        </div>
       </div>
 
-      </div>
+      <div class="row">
+        <div class="col">
+          <div class="gloBox">
+            <div class="gloAceEditor"></div>
 
-        <div class="row">
-          <div class="col">
-
-
-
-          <div class="glossaBox">
-            <!-- <div class="tabHeader editorHeader">Πρόγραμμα σε ΓΛΩΣΣΑ</div> -->
-            <div id="aceeditor"></div>
-
-            <div class="controls">
-
-             <div
+            <div class="gloControls">
+              <div
                 class="btn-toolbar"
                 role="toolbar"
                 aria-label="Toolbar with button groups"
               >
-                <div
-                  class="btn-group mr-2"
-                  role="group"
-                  aria-label="First group"
-                >
-                  <button class="btn btn-success btn-sm" id="run">
+                <div class="btn-group mr-2" role="group">
+                  <button class="btn btn-success btn-sm gloRun">
                     <i class="fa fa-play"></i> Εκτέλεση
                   </button>
                 </div>
@@ -75,14 +66,12 @@
                   class="btn-group btn-group-toggle mr-2"
                   role="group"
                   data-toggle="buttons"
-                  aria-label="Second group"
                 >
                   <label class="btn btn-info btn-sm">
                     <input
                       type="radio"
                       name="options"
-                      id="option1"
-                      class="btnShowInput"
+                      class="gloBtnShowInput"
                     />
                     Είσοδος
                   </label>
@@ -90,8 +79,7 @@
                     <input
                       type="radio"
                       name="options"
-                      id="option2"
-                      class="btnShowOutput"
+                      class="gloBtnShowOutput"
                       checked
                     />
                     Έξοδος
@@ -100,67 +88,48 @@
                     <input
                       type="radio"
                       name="options"
-                      id="option2"
-                      class="btnShowOutputDetails"
+                      class="gloBtnShowOutputDetails"
                     />
                     Αναλυτική Έξοδος
                   </label>
                 </div>
 
                 <div
-                  id="spinner"
-                  class="spinner-border spinner-border-sm"
+                  class="spinner-border spinner-border-sm gloSpinner"
                   role="status"
                   aria-hidden="true"
                 >
                   <span class="sr-only">Loading...</span>
                 </div>
-
-
-
-
-
               </div>
             </div>
 
-            <div class="tab-content" id="nav-tabContent">
-              <div
-                class="tab-pane"
-                id="inputTab"
-                role="tabpanel"
-                aria-labelledby="inputTab"
-              >
-                <div class="tabHeader inputHeader">Είσοδος</div>
+            <div class="tab-content">
+              <div class="tab-pane gloInputTab" role="tabpanel">
+                <div class="gloTabHeader gloInputHeader">Είσοδος</div>
                 <textarea
-                  id="codekeyboardinput"
+                  class="gloCodeKeyboardInput"
                   placeholder="Οι τιμές που θα εισαχθούν εδώ θα δoθούν ως είσοδος στο πρόγραμμα. Αν έχουν δηλωθεί τιμές εισόδου εντός του πηγαίου προγράμματος αυτές δεν θα ληφθούν υπόψη."
                 ></textarea>
               </div>
 
-              <div
-                class="tab-pane show active"
-                id="outputTab"
-                role="tabpanel"
-                aria-labelledby="outputTab"
-              >
-                <div class="tabHeader outputHeader">Έξοδος</div>
-                <pre id="resultpre"><div id="result"></div></pre>
-              </div>
-                            
-              <div
-                class="tab-pane"
-                id="outputTabDetails"
-                role="tabpanel"
-                aria-labelledby="outputTabDetails"
-              >
-                <div class="tabHeader outputHeaderDetails">Έξοδος με αναλυτική περιγραφή των βημάτων εκτέλεσης του προγράμματος</div>
-                <pre id="resultpre"><div id="resultDetails"></div></pre>
+              <div class="tab-pane show active gloOutputTab" role="tabpanel">
+                <div class="gloTabHeader gloOutputHeader">Έξοδος</div>
+                <pre class="gloResultPre"><div class="gloResult"></div></pre>
               </div>
 
+              <div class="tab-pane gloOutputTabDetails" role="tabpanel">
+                <div class="gloTabHeader gloOutputHeaderDetails">
+                  Έξοδος με αναλυτική περιγραφή των βημάτων εκτέλεσης του
+                  προγράμματος
+                </div>
+                <pre
+                  class="gloResultDetailsPre"
+                ><div class="gloResultDetails"></div></pre>
+              </div>
             </div>
           </div>
         </div>
-
       </div>
     </div>
 
@@ -176,18 +145,23 @@
     <script src="script.js"></script>
 
     <script type="text/javascript">
-
-      var editor = ace.edit("aceeditor");
-      require("ace/config").setModuleUrl("ace/theme/gruvbox", "https://ajaxorg.github.io/ace-builds/src/theme-gruvbox.js")
-      editor.setTheme("ace/theme/gruvbox");
-      require("ace/config").setModuleUrl("ace/mode/glossa", "acemodeglo.js");
-      editor.session.setMode("ace/mode/glossa");
-      editor.setDisplayIndentGuides(false);
-      editor.setShowPrintMargin(false);
-      editor.setHighlightActiveLine(false);
-      editor.renderer.setShowGutter(true);
-      editor.clearSelection();
-
+      var editor;
+      $(".gloAceEditor").each(function (index) {
+        editor = ace.edit(this);
+        //var editor = ace.edit(".gloAceEditor");
+        require("ace/config").setModuleUrl(
+          "ace/theme/gruvbox",
+          "https://ajaxorg.github.io/ace-builds/src/theme-gruvbox.js"
+        );
+        editor.setTheme("ace/theme/gruvbox");
+        require("ace/config").setModuleUrl("ace/mode/glossa", "acemodeglo.js");
+        editor.session.setMode("ace/mode/glossa");
+        editor.setDisplayIndentGuides(false);
+        editor.setShowPrintMargin(false);
+        editor.setHighlightActiveLine(false);
+        editor.renderer.setShowGutter(true);
+        editor.clearSelection();
+      });
     </script>
   </body>
 </html>

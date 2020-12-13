@@ -1,58 +1,55 @@
 $(document).ready(function () {
-
   $("h4").click(function (e) {
     e.preventDefault();
     editor.setTheme("ace/theme/gruvbox");
   });
 
-  $(".btnShowInput").click(function (e) {
+  $(".gloBtnShowInput").click(function (e) {
     e.preventDefault();
-    $("#outputTab").hide();
-    $("#outputTabDetails").hide();
-    $("#inputTab").show();
+    $(".gloOutputTab").hide();
+    $(".gloOutputTabDetails").hide();
+    $(".gloInputTab").show();
   });
 
-  $(".btnShowOutput").click(function (e) {
+  $(".gloBtnShowOutput").click(function (e) {
     e.preventDefault();
-    $("#inputTab").hide();
-    $("#outputTab").show();
-    $("#outputTabDetails").hide();
+    $(".gloInputTab").hide();
+    $(".gloOutputTab").show();
+    $(".gloOutputTabDetails").hide();
   });
 
-  $(".btnShowOutputDetails").click(function (e) {
+  $(".gloBtnShowOutputDetails").click(function (e) {
     e.preventDefault();
-    $("#inputTab").hide();
-    $("#outputTab").hide();
-    $("#outputTabDetails").show();
+    $(".gloInputTab").hide();
+    $(".gloOutputTab").hide();
+    $(".gloOutputTabDetails").show();
   });
 
-  $("#spinner").hide();
+  $(".gloSpinner").hide();
 
- 
   editor.setValue(
     "ΠΡΟΓΡΑΜΜΑ Άσκηση\n\nΜΕΤΑΒΛΗΤΕΣ\nΑΚΕΡΑΙΕΣ: α\n\nΑΡΧΗ\n\nΓΙΑ α ΑΠΟ 1 ΜΕΧΡΙ 10\n  ΓΡΑΨΕ 'Καλημέρα κόσμε', α\nΤΕΛΟΣ_ΕΠΑΝΑΛΗΨΗΣ\n\nΤΕΛΟΣ_ΠΡΟΓΡΑΜΜΑΤΟΣ\n"
   );
   editor.clearSelection();
-//  editor.gotoLine(3);
-//  editor.setReadOnly(true);
+  //  editor.gotoLine(3);
+  //  editor.setReadOnly(true);
 
-
-  $("#run").click(function (e) {
+  $(".gloRun").click(function (e) {
     e.preventDefault();
+
+    $(".gloSpinner").show();
 
     editor.setReadOnly(true);
 
-    $("#spinner").show();
+    $(".gloRun").addClass("disabled");
+    $(".gloRun").prop("disabled", true);
 
-    $("#run").addClass("disabled");
-    $("#run").prop("disabled", true);
+    $(".gloBtnShowOutput").click();
 
-    $(".btnShowOutput").click();
+    $(".gloResult").html("Περιμένετε....");
+    $(".gloResultDetails").html("Περιμένετε....");
 
-    $("#result").html("Περιμένετε....");
-    $("#resultDetails").html("Περιμένετε....");
-
-    $("#error").html("").hide();
+    $(".gloError").html("").hide();
 
     var editorCode = editor.getValue();
 
@@ -61,30 +58,30 @@ $(document).ready(function () {
     try {
       var app = new GLO.GlossaJS();
       app.setSourceCode(editorCode);
-      
-      if ($("#codekeyboardinput").val() != "")
-        app.setInputBuffer($("#codekeyboardinput").val());
-        app.run();
-        output1 = app.getOutput();
-        output2 = app.getOutputDetails();
-      } catch (e) {
+
+      if ($(".gloCodeKeyboardInput").val() != "")
+        app.setInputBuffer($(".gloCodeKeyboardInput").val());
+      app.run();
+      output1 = app.getOutput();
+      output2 = app.getOutputDetails();
+    } catch (e) {
       output1 = e.message;
       output2 = e.message;
     }
 
-    $("#spinner").hide();
+    $(".gloSpinner").hide();
 
-    $("#result").html(output1);
-    $("#resultDetails").html(output2);
+    $(".gloResult").html(output1);
+    $(".gloResultDetails").html(output2);
 
-    $("#run").removeClass("disabled");
-    $("#run").prop("disabled", false);
+    $(".gloRun").removeClass("disabled");
+    $(".gloRun").prop("disabled", false);
 
     editor.setReadOnly(false);
 
-    $("#resultpre").animate(
+    $(".gloResultPre").animate(
       {
-        scrollTop: $("#resultpre").get(0).scrollHeight,
+        scrollTop: $(".gloResultPre").get(0).scrollHeight,
       },
       400
     );

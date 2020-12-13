@@ -1,56 +1,56 @@
-.glossaBox {
+.gloBox {
   border: 1px solid #ddd;
   margin-top: 10px;
   margin-bottom: 20px;
 }
 
-#aceeditor {
+.gloAceEditor {
   min-height: 260px;
   font-family: "Fira Mono", monospace;
   font-size: 85%;
 }
 
-.controls {
+.gloControls {
   padding: 12px 15px;
   background-color: #f5f5f5;
 }
 
-.tabHeader {
+.gloTabHeader {
   padding: 3px 7px;
   font-family: "Fira Mono", monospace;
   font-size: 80%;
   color: #fff;
 }
 
-.inputHeader {
+.gloInputHeader {
   background-color: rgba(91, 192, 222, 0.7);
 }
 
-.outputHeader {
+.gloOutputHeader {
   background-color: rgba(92, 184, 92, 0.7);
 }
 
-.outputHeaderDetails {
+.gloOutputHeaderDetails {
   background-color: rgb(236, 154, 30);
 }
 
-.editorHeader {
+.gloEditorHeader {
   background-color: rgb(69, 140, 161);
   text-align: center;
 }
 
-#error {
+.gloEerror {
   display: none;
   color: #d63f3f;
 }
 
 pre,
-#codeeditor,
-#codekeyboardinput {
+.gloCodeKeyboardInput {
   font-family: "Fira Mono", monospace;
 }
 
-#resultpre {
+.gloResultPre,
+.gloResultDetailsPre {
   overflow: auto;
   word-wrap: break-word !important;
   white-space: pre-wrap;
@@ -64,7 +64,7 @@ pre,
   font-size: 80%;
 }
 
-textarea#codekeyboardinput {
+textarea.gloCodeKeyboardInput {
   outline: none;
   resize: none;
   width: 100%;
@@ -74,8 +74,8 @@ textarea#codekeyboardinput {
   white-space: pre-wrap;
   margin: 0px;
   padding: 15px;
-  background-color: #fff;
+  background-color: #efefef;
   border: 0px solid #ddd;
-  color: #111;
+  color: #222;
   font-size: 80%;
 }

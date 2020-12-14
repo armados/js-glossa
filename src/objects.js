@@ -143,12 +143,13 @@ class Stmt_Read {
 }
 
 class Stmt_IfCond {
-  constructor(arrCond, arrCondStr, arrLineNo, arrBody, elseBody) {
+  constructor(arrCond, arrCondStr, arrLineNo, arrBody, elseBody, elseBodyLine) {
     this.arrCond = arrCond;
     this.arrCondStr = arrCondStr;
     this.arrLineNo = arrLineNo;
     this.arrBody = arrBody;
     this.elseBody = elseBody;
+    this.elseBodyLine = elseBodyLine;
   }
 
   resolve(scope) {
@@ -159,6 +160,7 @@ class Stmt_IfCond {
     var arrLineNo = this.arrLineNo;
     var arrBody = this.arrBody;
     var elseBody = this.elseBody;
+    var elseBodyLine = this.elseBodyLine;
 
     for (var i = 0; i < arrCond.length; ++i) {
       var condResult = arrCond[i].resolve(scope);
@@ -182,23 +184,36 @@ class Stmt_IfCond {
       if (condResult.val == true) return arrBody[i].resolve(scope);
     }
 
-    if (elseBody != null) return elseBody.resolve(scope);
+    if (elseBody != null) {
+      scope.io.outputAddDetails("Εκτέλεση του τμήματος εντολών της ΑΛΛΙΩΣ", elseBodyLine);
+      return elseBody.resolve(scope);
+    }
   }
 }
 
 class Stmt_Select {
-  constructor(expr, arrCond, arrCondStr, arrLineNo, arrBody, elseBody, cmdLineNo) {
+  constructor(
+    expr,
+    arrCond,
+    arrCondStr,
+    arrLineNo,
+    arrBody,
+    elseBody,
+    elseBodyLine,
+    cmdLineNo
+  ) {
     this.expr = expr;
     this.arrCond = arrCond;
     this.arrCondStr = arrCondStr;
     this.arrLineNo = arrLineNo;
     this.arrBody = arrBody;
     this.elseBody = elseBody;
+    this.elseBodyLine = elseBodyLine;
     this.cmdLineNo = cmdLineNo;
   }
 
   resolve(scope) {
-    scope.cmdLineNo = this.cmdLineNo; 
+    scope.cmdLineNo = this.cmdLineNo;
 
     var expr = this.expr;
     var arrCond = this.arrCond;
@@ -206,6 +221,8 @@ class Stmt_Select {
     var arrLineNo = this.arrLineNo;
     var arrBody = this.arrBody;
     var elseBody = this.elseBody;
+    var elseBodyLine = this.elseBodyLine;
+
 
     //console.log('select expression: ', this.expr);
     //console.log('select expression value: ', this.expr.resolve(scope));
@@ -214,11 +231,10 @@ class Stmt_Select {
     var exprResult = expr.resolve(scope);
 
     if (exprResult instanceof STR.STRTableName)
-    throw new GE.GError(
-      "Στην εντολή ΕΠΙΛΕΞΕ επιτρέπονται εκφράσεις όλων των τύπων δεδομένων αλλά όχι πίνακες.",
+      throw new GE.GError(
+        "Στην εντολή ΕΠΙΛΕΞΕ επιτρέπονται εκφράσεις όλων των τύπων δεδομένων αλλά όχι πίνακες.",
         this.cmdLineNo
-    );
-
+      );
 
     for (var i = 0; i < arrCond.length; ++i) {
       var condResult = arrCond[i].resolve(scope);
@@ -244,7 +260,11 @@ class Stmt_Select {
       if (condResult.val == true) return arrBody[i].resolve(scope);
     }
 
-    if (elseBody != null) return elseBody.resolve(scope);
+    if (elseBody != null) {
+      scope.io.outputAddDetails("Εκτέλεση του τμήματος εντολών της ΑΛΛΙΩΣ", elseBodyLine);
+      return elseBody.resolve(scope);
+    }
+
   }
 }
 

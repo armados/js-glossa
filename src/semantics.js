@@ -78,7 +78,7 @@ var operation = {
         }
 
         var elseBody = eb ? eb.toAST()[0] : null;
-        return new MO.Stmt_IfCond(arrCond, arrCondStr, arrLineNo, arrBody, elseBody);
+        return new MO.Stmt_IfCond(arrCond, arrCondStr, arrLineNo, arrBody, elseBody, getLineNo(_Allios));
     }, 
 
     
@@ -115,13 +115,13 @@ var operation = {
         }
 
         var elseBody = eb ? eb.toAST()[0] : null;
-        return new MO.Stmt_IfCond(arrCond, arrCondStr, arrLineNo, arrBody, elseBody);
+        return new MO.Stmt_IfCond(arrCond, arrCondStr, arrLineNo, arrBody, elseBody, getLineNo(_Allios));
     }, 
 
     Subrange:     function (a, _1, b)   { return new Atom.MSelectSubrange(a.toAST(), b.toAST(), getLineNo(a)) },
     SelectExpr:   function (a, b)       { return new Atom.MSelectExpr(a.sourceString, b.toAST(), getLineNo(a)) },
 
-    Stmt_Select: function (_1, a, _2, exprcase, exprbody, _3, _4, eb, _6) {  
+    Stmt_Select: function (_1, a, _2, exprcase, exprbody, _3, _4ALLIOS, eb, _6) {  
         var arrCond = [];
         var arrCondStr = [];
         var arrLineNo =[];
@@ -179,7 +179,7 @@ var operation = {
     }
     
         var elseBody = eb ? eb.toAST()[0] : null;
-        return new MO.Stmt_Select(aAst, arrCond, arrCondStr, arrLineNo, arrBody, elseBody, getLineNo(a));
+        return new MO.Stmt_Select(aAst, arrCond, arrCondStr, arrLineNo, arrBody, elseBody, getLineNo(_4ALLIOS), getLineNo(a));
         },
 
         

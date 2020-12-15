@@ -668,10 +668,6 @@ class MathOpLogNot extends MathOperation {
   }
 }
 
-
-
-
-
 class MSelectSubrange {
   constructor(A, B, line = null) {
     this.A = A;
@@ -708,30 +704,28 @@ class MSelectSubrange {
   }
 }
 
-
 class MSelectExpr {
-constructor(oper, A, cmdLineNo = null) {
-  this.oper = oper;
-  this.A = A;
-  this.cmdLineNo = cmdLineNo;
+  constructor(oper, A, cmdLineNo = null) {
+    this.oper = oper;
+    this.A = A;
+    this.cmdLineNo = cmdLineNo;
+  }
+  resolve(scope) {
+    scope.cmdLineNo = this.cmdLineNo; //FIXME:
+
+    var a = this.A.resolve(scope);
+
+    if (a.val == null)
+      throw new GE.GError(
+        "Το αναγνωριστικό " + this.A.name + " δεν έχει αρχικοποιηθεί.",
+        this.line
+      );
+
+    //console.log('####' + this.oper + ' ' + a.val);
+
+    return a.val;
+  }
 }
-resolve(scope) {
-  scope.cmdLineNo = this.cmdLineNo; //FIXME:
-
-  var a = this.A.resolve(scope);
-
-  if (a.val == null)
-    throw new GE.GError(
-      "Το αναγνωριστικό " + this.A.name + " δεν έχει αρχικοποιηθεί.",
-      this.line
-    );
-
-  //console.log('####' + this.oper + ' ' + a.val);
-
-  return a.val;
-}
-}
-
 
 class MSymbol {
   constructor(name, cmdLineNo = null) {

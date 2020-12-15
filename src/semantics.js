@@ -15,11 +15,11 @@ function getLineNo(cmd) {
 var operation = {
     floatlit:         function (a, _, b)   { return new Atom.MNumber(parseFloat(this.sourceString, 10))  },
     intlit:           function (a)         { return new Atom.MNumber(parseInt(this.sourceString, 10)) },
-    strlit:           function (_l, a, _r) { return new Atom.MString(a.sourceString) },
+    strlit:           function (_1, a, _2) { return new Atom.MString(a.sourceString) },
     true:             function (a)         { return new Atom.MBoolean( true )  },
     false:            function (a)         { return new Atom.MBoolean( false ) },
 
-    Exp7_parens:      function (_l, a, _r) { return a.toAST() },
+    Exp7_parens:      function (_1, a, _2) { return a.toAST() },
 
     Exp5_powop:       function (a, _, b)   { return new Atom.MathOpPow(a.toAST(), b.toAST(), getLineNo(a)) },
 
@@ -191,7 +191,6 @@ var operation = {
     return new MO.Stmt_ForLoop(variable.toAST(), initval.toAST(), finalval.toAST(), stepval.toAST(), body.toAST(), getLineNo(variable)) },
 
 
-
     FunCall: function (a, _1, b, _2) { return new MO.CallSubFunction(a.toAST(), b.toAST(), getLineNo(a)) },
     CallSubProcedure: function (_1, a, _2, b, _3) { return new MO.CallSubProcedure(a.toAST(), b.toAST(), getLineNo(a)) },
 
@@ -223,11 +222,11 @@ var operation = {
 
     DefVariables: function(a, _, b)    { return new MO.DefVariables(a.sourceString , b.toAST(), getLineNo(a)) },
 
-    Block:         function(commands)  { return new MO.Stmt_Block(commands.toAST()) },
-    BlockFunction: function(commands)  { return new MO.Stmt_Block(commands.toAST()) },    
+    Block:         function(a)  { return new MO.Stmt_Block(a.toAST()) },
+    BlockFunction: function(a)  { return new MO.Stmt_Block(a.toAST()) },    
 
-    Stmt_Write: function(_, cmd)   { return new MO.Stmt_Write(cmd.toAST(), getLineNo(cmd)) },
-    Stmt_Read:  function(_, cmd)   { return new MO.Stmt_Read (cmd.toAST(), getLineNo(cmd)) }
+    Stmt_Write: function(_, a)   { return new MO.Stmt_Write(a.toAST(), getLineNo(a)) },
+    Stmt_Read:  function(_, a)   { return new MO.Stmt_Read (a.toAST(), getLineNo(a)) }
 
 };
 

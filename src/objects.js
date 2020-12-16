@@ -185,7 +185,10 @@ class Stmt_IfCond {
     }
 
     if (elseBody != null) {
-      scope.io.outputAddDetails("Εκτέλεση του τμήματος εντολών της ΑΛΛΙΩΣ", elseBodyLine);
+      scope.io.outputAddDetails(
+        "Εκτέλεση του τμήματος εντολών της ΑΛΛΙΩΣ",
+        elseBodyLine
+      );
       return elseBody.resolve(scope);
     }
   }
@@ -223,7 +226,6 @@ class Stmt_Select {
     var elseBody = this.elseBody;
     var elseBodyLine = this.elseBodyLine;
 
-
     //console.log('select expression: ', this.expr);
     //console.log('select expression value: ', this.expr.resolve(scope));
 
@@ -237,34 +239,38 @@ class Stmt_Select {
       );
 
     for (var i = 0; i < arrCond.length; ++i) {
-      var condResult = arrCond[i].resolve(scope);
-      //console.log("select PERIPTOSI resolved value: " + condResult);
-      //console.log(condResult);
+      for (var j = 0; j < arrCond[i].length; ++j) {
+        var condResult = arrCond[i][j].resolve(scope);
+        //console.log("select PERIPTOSI resolved value: " + condResult);
+        //console.log(condResult);
 
-      if (!(condResult instanceof Atom.MBoolean))
-        throw new GE.GError(
-          "Η συνθήκη της ΕΠΙΛΕΞΕ δεν αποτελεί λογική έκφραση.",
+        if (!(condResult instanceof Atom.MBoolean))
+          throw new GE.GError(
+            "Η συνθήκη της ΕΠΙΛΕΞΕ δεν αποτελεί λογική έκφραση.",
+            arrLineNo[i]
+          );
+
+        scope.io.outputAddDetails(
+          "Η συνθήκη της ΕΠΙΛΕΞΕ " +
+            arrCondStr[i] +
+            " έχει τιμή " +
+            (condResult.val ? "ΑΛΗΘΗΣ" : "ΨΕΥΔΗΣ"),
           arrLineNo[i]
         );
 
-      scope.io.outputAddDetails(
-        "Η συνθήκη της ΕΠΙΛΕΞΕ " +
-          arrCondStr[i] +
-          " έχει τιμή " +
-          (condResult.val ? "ΑΛΗΘΗΣ" : "ΨΕΥΔΗΣ"),
-        arrLineNo[i]
-      );
+        scope.incrLogicalCounter();
 
-      scope.incrLogicalCounter();
-
-      if (condResult.val == true) return arrBody[i].resolve(scope);
+        if (condResult.val == true) return arrBody[i].resolve(scope);
+      }
     }
 
     if (elseBody != null) {
-      scope.io.outputAddDetails("Εκτέλεση του τμήματος εντολών της ΑΛΛΙΩΣ", elseBodyLine);
+      scope.io.outputAddDetails(
+        "Εκτέλεση του τμήματος εντολών της ΑΛΛΙΩΣ",
+        elseBodyLine
+      );
       return elseBody.resolve(scope);
     }
-
   }
 }
 

@@ -70,15 +70,11 @@ class GrammarOhm {
             ForExpr       = "ΓΙΑ" (IdTbl | id) "ΑΠΟ" Expr "ΜΕΧΡΙ" Expr (("ΜΕ_ΒΗΜΑ" | "ΜΕ ΒΗΜΑ") Expr)? nl* Block "ΤΕΛΟΣ_ΕΠΑΝΑΛΗΨΗΣ"
             IfExpr        = "ΑΝ" Expr "ΤΟΤΕ" Block ("ΑΛΛΙΩΣ_ΑΝ" Expr "ΤΟΤΕ" Block)* ("ΑΛΛΙΩΣ" Block)? "ΤΕΛΟΣ_ΑΝ"
         
-           /* select_case
-            : ("=" | "<>" | "<" | ">" | "<=" | ">=") expression
-            | expression
-            ;
-          */
             Subrange      = Expr ".." Expr
             SelectExpr    = "<" Expr | "<=" Expr | ">" Expr | ">=" Expr | "=" Expr | "<>" Expr
             SelectCase    = Subrange | SelectExpr | Expr 
-            Stmt_Select   = "ΕΠΙΛΕΞΕ" Expr ("ΠΕΡΙΠΤΩΣΗ" ~"ΑΛΛΙΩΣ" SelectCase Block)* ("ΠΕΡΙΠΤΩΣΗ" "ΑΛΛΙΩΣ" Block)? "ΤΕΛΟΣ_ΕΠΙΛΟΓΩΝ"
+            AtLeastOneSelectCase = NonemptyListOf<SelectCase, ",">
+            Stmt_Select   = "ΕΠΙΛΕΞΕ" Expr ("ΠΕΡΙΠΤΩΣΗ" ~"ΑΛΛΙΩΣ" AtLeastOneSelectCase Block)* ("ΠΕΡΙΠΤΩΣΗ" "ΑΛΛΙΩΣ" Block)? "ΤΕΛΟΣ_ΕΠΙΛΟΓΩΝ"
 
 
             WhileExprFunction     = "ΟΣΟ" Expr "ΕΠΑΝΑΛΑΒΕ" BlockFunction "ΤΕΛΟΣ_ΕΠΑΝΑΛΗΨΗΣ"

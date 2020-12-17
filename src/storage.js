@@ -16,7 +16,6 @@ class STRScope {
 }
 
 class STRGlobalScope extends STRScope {}
-
 class STRLocalScope extends STRScope {}
 
 class STRReservedName extends STRGlobalScope {}
@@ -333,6 +332,8 @@ module.exports = {
   STRString,
   STRBoolean,
 
+  SScope,
+
   STRFuncNameFloat,
   STRFuncNameInt,
   STRFuncNameString,
@@ -343,7 +344,5 @@ module.exports = {
   STRTableNameFloat,
   STRTableNameInt,
   STRTableNameString,
-  STRTableNameBoolean,
-
-  SScope: SScope,
+  STRTableNameBoolean
 };

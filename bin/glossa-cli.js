@@ -1,4 +1,4 @@
-#!/usr/bin/env node
+//dd !/usr/bin/env node
 
 "use strict";
 
@@ -33,7 +33,7 @@ var args = minimist(process.argv.slice(2), {
 });
 
 if (args["version"]) {
-  console.log('0.0.1');
+  console.log('v0.1');
   return;
 }
 

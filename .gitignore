@@ -1,10 +1,14 @@
 .vscode/
 samples-private/
 
+
+dist/binary/
+
+
+
 cache/
 
 debug.log
-
 npm-debug.log
 
 # Dependency directory

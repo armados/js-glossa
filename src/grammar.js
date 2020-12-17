@@ -144,7 +144,7 @@ class GrammarOhm {
             boollit     = true | false
         
         
-            keyboardinput =  "! KEYBOARD_INPUT:"
+            keyboardinput =  "!" whitespace* "KEYBOARD_INPUT:"
         
             comment = ~keyboardinput "!" (~nl any)*
         

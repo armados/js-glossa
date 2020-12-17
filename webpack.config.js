@@ -3,11 +3,11 @@ const path = require("path");
 module.exports = {
 
     entry: {
-        glossajs: './main.js',
+        glossajs: './main.js'
     },
     output: {
         path: path.join(__dirname, 'dist'),
-        filename: 'glossajs.js',
+        filename: '[name].js',
         library: 'GLO',
     },
 

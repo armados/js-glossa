@@ -2,7 +2,7 @@
 
 "use strict";
 
-var GLO = require("../main");
+var GLO = require("../src/main");
 var GE = require("../src/gclasses");
 
 var fs = require("fs");

@@ -3,15 +3,14 @@
 const fs = require("fs");
 const path = require("path");
 
-const GLO = require("../main.js");
+const GLO = require("../src/main.js");
 
-const filename = "../samples-dev/sample23.glo";
+const filename = "../samples-dev/sample26.glo";
 
-var sourceCode = null;
 try {
-    sourceCode = fs.readFileSync(path.join(__dirname, filename)).toString();
+    var sourceCode = fs.readFileSync(path.join(__dirname, filename)).toString();
 } catch (e) {
-    console.log('Το αρχείο δεν βρέθηκε');
+    console.log('Σφάλμα. Το αρχείο δεν βρέθηκε.');
     return;
 }
 

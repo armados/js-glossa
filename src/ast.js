@@ -1,5 +1,5 @@
 "use strict";
-const util = require('util');
+const util = require("util");
 
 class ASTree {
   constructor(result) {
@@ -7,14 +7,13 @@ class ASTree {
   }
 
   generate() {
-
     const entities = new Map();
 
     this.addReachableEntities(this.result, entities);
 
     var myTree = [...entities]
-      .map( ([node, index]) => this.detailLine(node, index, entities) )
-      .join('\n');
+      .map(([node, index]) => this.detailLine(node, index, entities))
+      .join("\n");
 
     return myTree;
   }
@@ -52,24 +51,14 @@ class ASTree {
     Object.keys(node).forEach((key) => {
       const val = this.ref(node[key], entities);
 
-      //if (node instanceof MObjects.Stmt_WhileLoop) line += `Line Loop ${key}=${val}`;
-        line += node.constructor.name;
-        line += val === undefined ? '' : `  ${key}=${val} `;
-/*  
-      if (node instanceof MObjects.BinaryOp) 
-        line += val === undefined ? '' : `BinaryOp ${key}=${val}`;
-      else if (node instanceof MObjects.MBoolean) 
-        line += val === undefined ? '' : `Boolean  ${key}=${val}`;
-        else if (node instanceof MObjects.MSymbol) 
-        line += val === undefined ? '' : `MSymbol  ${key}=${val}`;
-    */
-       });
+      line += node.constructor.name;
+      line += val === undefined ? "" : `  ${key}=${val} `;
+    });
 
     return line;
   }
 }
 
-
 module.exports = {
-  ASTree
-}
+  ASTree,
+};

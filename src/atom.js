@@ -745,26 +745,31 @@ class MSymbolTableCell extends MSymbol {
     this.args = args;
   }
   calcTableIndex(scope) {
+    var cmdLineNo = this.cmdLineNo;
+
     var argsResolved = this.args.map(function (arg) {
       var a = arg.resolve(scope);
 
       if (a == null)
         throw new GE.GError(
-          "Το αναγνωριστικό " + arg.name + " δεν έχει αρχικοποιηθεί."
+          "Το αναγνωριστικό " + arg.name + " δεν έχει αρχικοποιηθεί.",
+          cmdLineNo
         );
 
       if (!isInt(a.val))
         throw new GE.GError(
           "Ο δείκτης του πίνακα δεν είναι ακέραιος αριθμός." +
             "\n" +
-            valueTypeToString(a.val)
+            valueTypeToString(a.val),
+          cmdLineNo
         );
 
       if (a.val <= 0)
         throw new GE.GError(
           "Ο δείκτης του πίνακα δεν είναι θετικός αριθμός. " +
             "\n" +
-            valueTypeToString(a.val)
+            valueTypeToString(a.val),
+          cmdLineNo
         );
 
       return a;

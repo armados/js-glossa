@@ -1,6 +1,8 @@
 .vscode/
 samples-private/
 
+cache/
+
 debug.log
 
 npm-debug.log

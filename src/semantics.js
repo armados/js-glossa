@@ -99,7 +99,7 @@ var operation = {
   },
 
   KeyboardData: function (_1, a) {
-    return new MO.KeyboardDataFromSource(a.toAST());
+    return new MO.InlineKeyboardInput(a.toAST());
   },
 
   id: function (a, b) {
@@ -395,7 +395,9 @@ var operation = {
   AtLeastOneArguments: function (a) {
     return a.asIteration().toAST();
   },
-
+  AtLeastOneLit: function (a) {
+    return a.asIteration().toAST();
+  },
   AtLeastOneParameters: function (a) {
     return a.asIteration().toAST();
   },

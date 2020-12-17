@@ -19,6 +19,8 @@ class Stmt_Block {
   resolve(scope) {
     this.statements.forEach(function (statement) {
       //sleepme(90); //FIXME:
+      //console.log(scope.io.outputData[scope.io.outputData.length -1 ]);
+      //console.log('=================================');
       statement.resolve(scope);
     });
   }
@@ -933,13 +935,14 @@ class Program {
   }
 }
 
-class KeyboardDataFromSource {
+class InlineKeyboardInput {
   constructor(args) {
     this.args = args;
   }
 
   addKeyboardInputData(scope) {
-    var argsResolved = this.args.map((arg) => arg.resolve(scope));
+    var argsResolved = this.args.map((arg) => arg.resolve(null));
+
     argsResolved.forEach((e) => scope.io.inputAddToBuffer(e.val));
   }
 }
@@ -951,7 +954,7 @@ class Application {
     this.keyboardData = keyboardData;
   }
   resolve(scope) {
-    if (scope.io.inputIsEmptyBuffer() && this.keyboardData.length)
+    if (scope.io.inputIsEmptyBuffer())
       this.keyboardData.forEach((e) => e.addKeyboardInputData(scope));
 
     if (this.subPrograms.length)
@@ -990,5 +993,5 @@ module.exports = {
   SubFunction,
   SubProcedure,
 
-  KeyboardDataFromSource,
+  InlineKeyboardInput,
 };

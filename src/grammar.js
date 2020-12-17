@@ -98,7 +98,8 @@ class GrammarOhm {
         
             VarParameters       = NonemptyListOf<(IdTbl | id), ",">   // parameters when define variables
   
-            KeyboardData = keyboardinput AtLeastOneArguments
+            AtLeastOneLit       = NonemptyListOf<(floatlit | intlit | strlit), ",">
+            KeyboardData = keyboardinput AtLeastOneLit
         
             reservedWord = grapse | diavase | and | or | not | div | mod | boollit
         
@@ -134,7 +135,6 @@ class GrammarOhm {
             prefixop    =  neq | not
             neq         =  "-"
         
-            number =   floatlit | intlit
         
             lit         = floatlit | intlit | strlit | boollit
             floatlit    = digit* "." digit+ 

@@ -785,14 +785,14 @@ class MSymbolTableCell extends MSymbol {
   }
 
   eval(scope) {
-    scope.cmdLineNo = this.cmdLineNo; //FIXME:
+    //scope.cmdLineNo = this.cmdLineNo; //FIXME:
 
     var name = this.calcTableIndex(scope);
     return new MSymbol(name);
   }
 
   resolve(scope) {
-    scope.cmdLineNo = this.cmdLineNo; //FIXME:
+    //scope.cmdLineNo = this.cmdLineNo; //FIXME:
 
     var name = this.calcTableIndex(scope);
     return scope.getSymbol(name);

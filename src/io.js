@@ -10,6 +10,7 @@ class IOBuffer {
   }
 
   outputAdd(val) {
+    console.log(val);
     this.outputData.push(val);
   }
 

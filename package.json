@@ -1,5 +1,5 @@
 {
-  "name": "GlossaJS",
+  "name": "glossajs",
   "version": "1.0.0",
   "description": "GlossaJS is an interpreter for programming language Glossa",
   "main": "./src/main.js",

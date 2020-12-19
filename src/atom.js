@@ -18,12 +18,14 @@ function isBoolean(val) {
   return typeof val == "boolean";
 }
 
-function valueTypeToString(val) {
+function valueTypeToString(obj) {
+  var val = obj.val;
   if (isInt(val)) return "[ " + val + " ] Ακέραια σταθερά";
   else if (isFloat(val)) return "[ " + val + " ] Πραγματική σταθερά";
   else if (isString(val)) return "[ '" + val + "' ] Αλφαριθμητική σταθερά";
   else if (isBoolean(val))
     return "[ " + (val ? "ΑΛΗΘΗΣ" : "ΨΕΥΔΗΣ") + " ] Λογική σταθερά";
+    else console.log(obj);
   //else throw new GE.GError("Critical: Unknown value type: " + val);
 }
 
@@ -77,9 +79,9 @@ class MathOpPow extends MathOperation {
       throw new GE.GError(
         "Δεν είναι δυνατή η πράξη της ύψωσης σε δύναμη (^) με τα δοθέντα ορίσματα." +
           "\n" +
-          valueTypeToString(a.val) +
+          valueTypeToString(a) +
           "\n" +
-          valueTypeToString(b.val),
+          valueTypeToString(b),
         this.line
       );
 
@@ -114,9 +116,9 @@ class MathOpMul extends MathOperation {
       throw new GE.GError(
         "Δεν είναι δυνατή η πράξη του πολλαπλασιασμού (*) με τα δοθέντα ορίσματα." +
           "\n" +
-          valueTypeToString(a.val) +
+          valueTypeToString(a) +
           "\n" +
-          valueTypeToString(b.val),
+          valueTypeToString(b),
         this.line
       );
 
@@ -151,9 +153,9 @@ class MathOpDiv extends MathOperation {
       throw new GE.GError(
         "Δεν είναι δυνατή η πράξη της διαίρεσης (/) με τα δοθέντα ορίσματα." +
           "\n" +
-          valueTypeToString(a.val) +
+          valueTypeToString(a) +
           "\n" +
-          valueTypeToString(b.val),
+          valueTypeToString(b),
         this.line
       );
 
@@ -191,9 +193,9 @@ class MathOpDivInt extends MathOperation {
       throw new GE.GError(
         "Δεν είναι δυνατή η πράξη της ακέραιας διαίρεσης (DIV) με τα δοθέντα ορίσματα." +
           "\n" +
-          valueTypeToString(a.val) +
+          valueTypeToString(a) +
           "\n" +
-          valueTypeToString(b.val),
+          valueTypeToString(b),
         this.line
       );
 
@@ -231,9 +233,9 @@ class MathOpModInt extends MathOperation {
       throw new GE.GError(
         "Δεν είναι δυνατή η πράξη της ακέραιας διαίρεσης (MOD) με τα δοθέντα ορίσματα." +
           "\n" +
-          valueTypeToString(a.val) +
+          valueTypeToString(a) +
           "\n" +
-          valueTypeToString(b.val),
+          valueTypeToString(b),
         this.line
       );
 
@@ -271,9 +273,9 @@ class MathOpAdd extends MathOperation {
       throw new GE.GError(
         "Δεν είναι δυνατή η πράξη της πρόσθεσης (+) με τα δοθέντα ορίσματα." +
           "\n" +
-          valueTypeToString(a.val) +
+          valueTypeToString(a) +
           "\n" +
-          valueTypeToString(b.val),
+          valueTypeToString(b),
         this.line
       );
 
@@ -308,9 +310,9 @@ class MathOpSub extends MathOperation {
       throw new GE.GError(
         "Δεν είναι δυνατή η πράξη της αφαίρεσης (-) με τα δοθέντα ορίσματα." +
           "\n" +
-          valueTypeToString(a.val) +
+          valueTypeToString(a) +
           "\n" +
-          valueTypeToString(b.val),
+          valueTypeToString(b),
         this.line
       );
 
@@ -350,9 +352,9 @@ class MathOpRelLt extends MathOperation {
       throw new GE.GError(
         "Δεν είναι δυνατή η σύγκριση (<) με τα δοθέντα ορίσματα." +
           "\n" +
-          valueTypeToString(a.val) +
+          valueTypeToString(a) +
           "\n" +
-          valueTypeToString(b.val),
+          valueTypeToString(b),
         this.line
       );
 
@@ -392,9 +394,9 @@ class MathOpRelGt extends MathOperation {
       throw new GE.GError(
         "Δεν είναι δυνατή η σύγκριση (>) με τα δοθέντα ορίσματα. " +
           "\n" +
-          valueTypeToString(a.val) +
+          valueTypeToString(a) +
           "\n" +
-          valueTypeToString(b.val),
+          valueTypeToString(b),
         this.line
       );
 
@@ -434,9 +436,9 @@ class MathOpRelLte extends MathOperation {
       throw new GE.GError(
         "Δεν είναι δυνατή η σύγκριση (<=) με τα δοθέντα ορίσματα. " +
           "\n" +
-          valueTypeToString(a.val) +
+          valueTypeToString(a) +
           "\n" +
-          valueTypeToString(b.val),
+          valueTypeToString(b),
         this.line
       );
 
@@ -476,9 +478,9 @@ class MathOpRelGte extends MathOperation {
       throw new GE.GError(
         "Δεν είναι δυνατή η σύγκριση (>=) με τα δοθέντα ορίσματα. " +
           "\n" +
-          valueTypeToString(a.val) +
+          valueTypeToString(a) +
           "\n" +
-          valueTypeToString(b.val),
+          valueTypeToString(b),
         this.line
       );
 
@@ -517,9 +519,9 @@ class MathOpRelEq extends MathOperation {
       throw new GE.GError(
         "Δεν είναι δυνατή η σύγκριση (=) με τα δοθέντα ορίσματα." +
           "\n" +
-          valueTypeToString(a.val) +
+          valueTypeToString(a) +
           "\n" +
-          valueTypeToString(b.val),
+          valueTypeToString(b),
         this.line
       );
 
@@ -558,9 +560,9 @@ class MathOpRelNeq extends MathOperation {
       throw new GE.GError(
         "Δεν είναι δυνατή η σύγκριση (<>) με τα δοθέντα ορίσματα." +
           "\n" +
-          valueTypeToString(a.val) +
+          valueTypeToString(a) +
           "\n" +
-          valueTypeToString(b.val),
+          valueTypeToString(b),
         this.line
       );
     return new MBoolean(a.val != b.val);
@@ -594,9 +596,9 @@ class MathOpLogAnd extends MathOperation {
       throw new GE.GError(
         "Δεν είναι δυνατή η πράξη της σύζευξης (ΚΑΙ) με τα δοθέντα ορίσματα." +
           "\n" +
-          valueTypeToString(a.val) +
+          valueTypeToString(a) +
           "\n" +
-          valueTypeToString(b.val),
+          valueTypeToString(b),
         this.line
       );
 
@@ -631,9 +633,9 @@ class MathOpLogOr extends MathOperation {
       throw new GE.GError(
         "Δεν είναι δυνατή η πράξη της διάζευξης (Η) με τα δοθέντα ορίσματα." +
           "\n" +
-          valueTypeToString(a.val) +
+          valueTypeToString(a) +
           "\n" +
-          valueTypeToString(b.val),
+          valueTypeToString(b),
         this.line
       );
 
@@ -660,7 +662,7 @@ class MathOpLogNot extends MathOperation {
       throw new GE.GError(
         "Δεν είναι δυνατή η πράξη της άρνησης (ΟΧΙ) με τα δοθέντα ορίσματα." +
           "\n" +
-          valueTypeToString(a.val),
+          valueTypeToString(a),
         this.line
       );
 
@@ -694,9 +696,9 @@ class MSelectSubrange {
       throw new GE.GError(
         "Δεν είναι δυνατή η πράξη της ακέραιας διαίρεσης (MOD) με τα δοθέντα ορίσματα." +
           "\n" +
-          valueTypeToString(a.val) +
+          valueTypeToString(a) +
           "\n" +
-          valueTypeToString(b.val),
+          valueTypeToString(b),
         this.line
       );
 
@@ -745,6 +747,7 @@ class MSymbolTableCell extends MSymbol {
     this.args = args;
   }
   calcTableIndex(scope) {
+    var name = this.name;
     var cmdLineNo = this.cmdLineNo;
 
     var argsResolved = this.args.map(function (arg) {
@@ -756,19 +759,11 @@ class MSymbolTableCell extends MSymbol {
           cmdLineNo
         );
 
-      if (!isInt(a.val))
+      if (!isInt(a.val) || a.val <= 0)
         throw new GE.GError(
-          "Ο δείκτης του πίνακα δεν είναι ακέραιος αριθμός." +
+          "Ο δείκτης του πίνακα " + name + " δεν είναι θετικός ακέραιος αριθμός." +
             "\n" +
-            valueTypeToString(a.val),
-          cmdLineNo
-        );
-
-      if (a.val <= 0)
-        throw new GE.GError(
-          "Ο δείκτης του πίνακα δεν είναι θετικός αριθμός. " +
-            "\n" +
-            valueTypeToString(a.val),
+            valueTypeToString(a),
           cmdLineNo
         );
 
@@ -783,7 +778,7 @@ class MSymbolTableCell extends MSymbol {
 
     return name;
   }
-
+ 
   eval(scope) {
     //scope.cmdLineNo = this.cmdLineNo; //FIXME:
 

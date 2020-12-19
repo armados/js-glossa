@@ -4,8 +4,6 @@ const Atom = require("./atom");
 const GE = require("./gclasses");
 const STR = require("./storage");
 
-const prompt = require('prompt-sync')();
-
 
 function sleepme(time) {
   var stop = new Date().getTime();
@@ -120,14 +118,21 @@ class Stmt_Read {
 
       var data = scope.io.inputFetchValueFromBuffer();
 
+/*
       if (data == null) {
+
+        if (typeof prompt === 'function') {
+          const prompt = require('prompt-sync')();
+
         data = prompt();
         if  (!isNaN(parseFloat(data))) 
          data= Number(data);
          if (scope.getSymbolObject(arg.name) instanceof STR.STRString) { data= String(data);}
+        }
+
 
       }
-      
+*/      
       if (data == null)
         throw new GE.GError(
           "Τα δεδομένα εισόδου δεν επαρκούν για την εκτέλεση του προγράμματος.",

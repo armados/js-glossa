@@ -4,7 +4,6 @@ const Atom = require("./atom");
 const GE = require("./gclasses");
 const STR = require("./storage");
 
-
 function sleepme(time) {
   var stop = new Date().getTime();
   while (new Date().getTime() < stop + time) {}
@@ -91,9 +90,9 @@ class Stmt_Write {
 
     //console.log ( output.join(' ') );
 
-    scope.io.outputAdd(output.join(' '));
+    scope.io.outputAdd(output.join(" "));
     scope.io.outputAddDetails(
-      "Εμφάνισε στην οθόνη: " + output.join(' '),
+      "Εμφάνισε στην οθόνη: " + output.join(" "),
       this.cmdLineNo
     );
   }
@@ -118,7 +117,7 @@ class Stmt_Read {
 
       var data = scope.io.inputFetchValueFromBuffer();
 
-/*
+      /*
       if (data == null) {
 
         if (typeof prompt === 'function') {
@@ -132,7 +131,7 @@ class Stmt_Read {
 
 
       }
-*/      
+*/
       if (data == null)
         throw new GE.GError(
           "Τα δεδομένα εισόδου δεν επαρκούν για την εκτέλεση του προγράμματος.",
@@ -492,6 +491,7 @@ class CallSubFunction {
     var sendData = [];
     sendData[0] = argsResolved;
     sendData[1] = scope;
+    sendData[2] = this.cmdLineNo;
 
     var fun = scope.getGlobalSymbol(this.fun.name);
 
@@ -681,8 +681,8 @@ class SubFunction {
                 );
               }
             } else if (tblDimensions == 2) {
-              var tblsize1 = argsResolved[0];
-              var tblsize2 = argsResolved[1];
+              var tblsize1 = args[i].getSize()[0];
+              var tblsize2 = args[i].getSize()[1];
               for (var k = 1; k <= tblsize1; ++k) {
                 for (var l = 1; l <= tblsize2; ++l) {
                   scope2.setSymbol(
@@ -775,8 +775,8 @@ class SubProcedure {
                 );
               }
             } else if (tblDimensions == 2) {
-              var tblsize1 = argsResolved[0];
-              var tblsize2 = argsResolved[1];
+              var tblsize1 = args[i].getSize()[0];
+              var tblsize2 = args[i].getSize()[1];
               for (var k = 1; k <= tblsize1; ++k) {
                 for (var l = 1; l <= tblsize2; ++l) {
                   scope2.setSymbol(

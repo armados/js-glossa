@@ -1,33 +1,8 @@
 "use strict";
 
 const GE = require("./gclasses");
+const HP = require("./helper");
 
-function isFloat(val) {
-  return typeof val == "number" && Number(val) === val && val % 1 !== 0;
-}
-function isInt(val) {
-  return typeof val == "number" && Number(val) === val && val % 1 === 0;
-}
-function isNumber(val) {
-  return typeof val == "number" && Number(val) === val;
-}
-function isString(val) {
-  return typeof val == "string";
-}
-function isBoolean(val) {
-  return typeof val == "boolean";
-}
-
-function valueTypeToString(obj) {
-  var val = obj.val;
-  if (isInt(val)) return "[ " + val + " ] Ακέραια σταθερά";
-  else if (isFloat(val)) return "[ " + val + " ] Πραγματική σταθερά";
-  else if (isString(val)) return "[ '" + val + "' ] Αλφαριθμητική σταθερά";
-  else if (isBoolean(val))
-    return "[ " + (val ? "ΑΛΗΘΗΣ" : "ΨΕΥΔΗΣ") + " ] Λογική σταθερά";
-    else console.log(obj);
-  //else throw new GE.GError("Critical: Unknown value type: " + val);
-}
 
 class Atom {
   constructor(val) {
@@ -44,7 +19,7 @@ class Atom {
 class MNumber extends Atom {
   constructor(val) {
     super(val);
-    if (isFloat(val)) this.val = +parseFloat(val).toFixed(2);
+    if (HP.isFloat(val)) this.val = +parseFloat(val).toFixed(2);
   }
 }
 class MString extends Atom {}
@@ -75,13 +50,13 @@ class MathOpPow extends MathOperation {
         this.line
       );
 
-    if (!isNumber(a.val) || !isNumber(b.val))
+    if (!HP.isNumber(a.val) || !HP.isNumber(b.val))
       throw new GE.GError(
         "Δεν είναι δυνατή η πράξη της ύψωσης σε δύναμη (^) με τα δοθέντα ορίσματα." +
           "\n" +
-          valueTypeToString(a) +
+          HP.valueTypeToString(a) +
           "\n" +
-          valueTypeToString(b),
+          HP.valueTypeToString(b),
         this.line
       );
 
@@ -112,13 +87,13 @@ class MathOpMul extends MathOperation {
         this.line
       );
 
-    if (!isNumber(a.val) || !isNumber(b.val))
+    if (!HP.isNumber(a.val) || !HP.isNumber(b.val))
       throw new GE.GError(
         "Δεν είναι δυνατή η πράξη του πολλαπλασιασμού (*) με τα δοθέντα ορίσματα." +
           "\n" +
-          valueTypeToString(a) +
+          HP.valueTypeToString(a) +
           "\n" +
-          valueTypeToString(b),
+          HP.valueTypeToString(b),
         this.line
       );
 
@@ -149,13 +124,13 @@ class MathOpDiv extends MathOperation {
         this.line
       );
 
-    if (!isNumber(a.val) || !isNumber(b.val))
+    if (!HP.isNumber(a.val) || !HP.isNumber(b.val))
       throw new GE.GError(
         "Δεν είναι δυνατή η πράξη της διαίρεσης (/) με τα δοθέντα ορίσματα." +
           "\n" +
-          valueTypeToString(a) +
+          HP.valueTypeToString(a) +
           "\n" +
-          valueTypeToString(b),
+          HP.valueTypeToString(b),
         this.line
       );
 
@@ -189,13 +164,13 @@ class MathOpDivInt extends MathOperation {
         this.line
       );
 
-    if (!isInt(a.val) || !isInt(b.val))
+    if (!HP.isInt(a.val) || !HP.isInt(b.val))
       throw new GE.GError(
         "Δεν είναι δυνατή η πράξη της ακέραιας διαίρεσης (DIV) με τα δοθέντα ορίσματα." +
           "\n" +
-          valueTypeToString(a) +
+          HP.valueTypeToString(a) +
           "\n" +
-          valueTypeToString(b),
+          HP.valueTypeToString(b),
         this.line
       );
 
@@ -229,13 +204,13 @@ class MathOpModInt extends MathOperation {
         this.line
       );
 
-    if (!isInt(a.val) || !isInt(b.val))
+    if (!HP.isInt(a.val) || !HP.isInt(b.val))
       throw new GE.GError(
         "Δεν είναι δυνατή η πράξη της ακέραιας διαίρεσης (MOD) με τα δοθέντα ορίσματα." +
           "\n" +
-          valueTypeToString(a) +
+          HP.valueTypeToString(a) +
           "\n" +
-          valueTypeToString(b),
+          HP.valueTypeToString(b),
         this.line
       );
 
@@ -269,13 +244,13 @@ class MathOpAdd extends MathOperation {
         this.line
       );
 
-    if (!isNumber(a.val) || !isNumber(b.val))
+    if (!HP.isNumber(a.val) || !HP.isNumber(b.val))
       throw new GE.GError(
         "Δεν είναι δυνατή η πράξη της πρόσθεσης (+) με τα δοθέντα ορίσματα." +
           "\n" +
-          valueTypeToString(a) +
+          HP.valueTypeToString(a) +
           "\n" +
-          valueTypeToString(b),
+          HP.valueTypeToString(b),
         this.line
       );
 
@@ -306,13 +281,13 @@ class MathOpSub extends MathOperation {
         this.line
       );
 
-    if (!isNumber(a.val) || !isNumber(b.val))
+    if (!HP.isNumber(a.val) || !HP.isNumber(b.val))
       throw new GE.GError(
         "Δεν είναι δυνατή η πράξη της αφαίρεσης (-) με τα δοθέντα ορίσματα." +
           "\n" +
-          valueTypeToString(a) +
+          HP.valueTypeToString(a) +
           "\n" +
-          valueTypeToString(b),
+          HP.valueTypeToString(b),
         this.line
       );
 
@@ -344,17 +319,17 @@ class MathOpRelLt extends MathOperation {
       );
 
     if (
-      (isNumber(a.val) && !isNumber(b.val)) ||
-      (isString(a.val) && !isString(b.val)) ||
-      isBoolean(a.val) ||
-      isBoolean(b.val)
+      (HP.isNumber(a.val) && !HP.isNumber(b.val)) ||
+      (HP.isString(a.val) && !HP.isString(b.val)) ||
+      HP.isBoolean(a.val) ||
+      HP.isBoolean(b.val)
     )
       throw new GE.GError(
         "Δεν είναι δυνατή η σύγκριση (<) με τα δοθέντα ορίσματα." +
           "\n" +
-          valueTypeToString(a) +
+          HP.valueTypeToString(a) +
           "\n" +
-          valueTypeToString(b),
+          HP.valueTypeToString(b),
         this.line
       );
 
@@ -386,17 +361,17 @@ class MathOpRelGt extends MathOperation {
       );
 
     if (
-      (isNumber(a.val) && !isNumber(b.val)) ||
-      (isString(a.val) && !isString(b.val)) ||
-      isBoolean(a.val) ||
-      isBoolean(b.val)
+      (HP.isNumber(a.val) && !HP.isNumber(b.val)) ||
+      (HP.isString(a.val) && !HP.isString(b.val)) ||
+      HP.isBoolean(a.val) ||
+      HP.isBoolean(b.val)
     )
       throw new GE.GError(
         "Δεν είναι δυνατή η σύγκριση (>) με τα δοθέντα ορίσματα. " +
           "\n" +
-          valueTypeToString(a) +
+          HP.valueTypeToString(a) +
           "\n" +
-          valueTypeToString(b),
+          HP.valueTypeToString(b),
         this.line
       );
 
@@ -428,17 +403,17 @@ class MathOpRelLte extends MathOperation {
       );
 
     if (
-      (isNumber(a.val) && !isNumber(b.val)) ||
-      (isString(a.val) && !isString(b.val)) ||
-      isBoolean(a.val) ||
-      isBoolean(b.val)
+      (HP.isNumber(a.val) && !HP.isNumber(b.val)) ||
+      (HP.isString(a.val) && !HP.isString(b.val)) ||
+      HP.isBoolean(a.val) ||
+      HP.isBoolean(b.val)
     )
       throw new GE.GError(
         "Δεν είναι δυνατή η σύγκριση (<=) με τα δοθέντα ορίσματα. " +
           "\n" +
-          valueTypeToString(a) +
+          HP.valueTypeToString(a) +
           "\n" +
-          valueTypeToString(b),
+          HP.valueTypeToString(b),
         this.line
       );
 
@@ -470,17 +445,17 @@ class MathOpRelGte extends MathOperation {
       );
 
     if (
-      (isNumber(a.val) && !isNumber(b.val)) ||
-      (isString(a.val) && !isString(b.val)) ||
-      isBoolean(a.val) ||
-      isBoolean(b.val)
+      (HP.isNumber(a.val) && !HP.isNumber(b.val)) ||
+      (HP.isString(a.val) && !HP.isString(b.val)) ||
+      HP.isBoolean(a.val) ||
+      HP.isBoolean(b.val)
     )
       throw new GE.GError(
         "Δεν είναι δυνατή η σύγκριση (>=) με τα δοθέντα ορίσματα. " +
           "\n" +
-          valueTypeToString(a) +
+          HP.valueTypeToString(a) +
           "\n" +
-          valueTypeToString(b),
+          HP.valueTypeToString(b),
         this.line
       );
 
@@ -512,16 +487,16 @@ class MathOpRelEq extends MathOperation {
       );
 
     if (
-      (isNumber(a.val) && !isNumber(b.val)) ||
-      (isString(a.val) && !isString(b.val)) ||
-      (isBoolean(a.val) && !isBoolean(b.val))
+      (HP.isNumber(a.val) && !HP.isNumber(b.val)) ||
+      (HP.isString(a.val) && !HP.isString(b.val)) ||
+      (HP.isBoolean(a.val) && !HP.isBoolean(b.val))
     )
       throw new GE.GError(
         "Δεν είναι δυνατή η σύγκριση (=) με τα δοθέντα ορίσματα." +
           "\n" +
-          valueTypeToString(a) +
+          HP.valueTypeToString(a) +
           "\n" +
-          valueTypeToString(b),
+          HP.valueTypeToString(b),
         this.line
       );
 
@@ -553,16 +528,16 @@ class MathOpRelNeq extends MathOperation {
       );
 
     if (
-      (isNumber(a.val) && !isNumber(b.val)) ||
-      (isString(a.val) && !isString(b.val)) ||
-      (isBoolean(a.val) && !isBoolean(b.val))
+      (HP.isNumber(a.val) && !HP.isNumber(b.val)) ||
+      (HP.isString(a.val) && !HP.isString(b.val)) ||
+      (HP.isBoolean(a.val) && !HP.isBoolean(b.val))
     )
       throw new GE.GError(
         "Δεν είναι δυνατή η σύγκριση (<>) με τα δοθέντα ορίσματα." +
           "\n" +
-          valueTypeToString(a) +
+          HP.valueTypeToString(a) +
           "\n" +
-          valueTypeToString(b),
+          HP.valueTypeToString(b),
         this.line
       );
     return new MBoolean(a.val != b.val);
@@ -592,13 +567,13 @@ class MathOpLogAnd extends MathOperation {
         this.line
       );
 
-    if (!isBoolean(a.val) || !isBoolean(b.val))
+    if (!HP.isBoolean(a.val) || !HP.isBoolean(b.val))
       throw new GE.GError(
         "Δεν είναι δυνατή η πράξη της σύζευξης (ΚΑΙ) με τα δοθέντα ορίσματα." +
           "\n" +
-          valueTypeToString(a) +
+          HP.valueTypeToString(a) +
           "\n" +
-          valueTypeToString(b),
+          HP.valueTypeToString(b),
         this.line
       );
 
@@ -629,13 +604,13 @@ class MathOpLogOr extends MathOperation {
         this.line
       );
 
-    if (!isBoolean(a.val) || !isBoolean(b.val))
+    if (!HP.isBoolean(a.val) || !HP.isBoolean(b.val))
       throw new GE.GError(
         "Δεν είναι δυνατή η πράξη της διάζευξης (Η) με τα δοθέντα ορίσματα." +
           "\n" +
-          valueTypeToString(a) +
+          HP.valueTypeToString(a) +
           "\n" +
-          valueTypeToString(b),
+          HP.valueTypeToString(b),
         this.line
       );
 
@@ -658,11 +633,11 @@ class MathOpLogNot extends MathOperation {
         this.line
       );
 
-    if (!isBoolean(a.val))
+    if (!HP.isBoolean(a.val))
       throw new GE.GError(
         "Δεν είναι δυνατή η πράξη της άρνησης (ΟΧΙ) με τα δοθέντα ορίσματα." +
           "\n" +
-          valueTypeToString(a),
+          HP.valueTypeToString(a),
         this.line
       );
 
@@ -692,13 +667,13 @@ class MSelectSubrange {
         this.line
       );
 
-    if (!isInt(a.val) || !isInt(b.val))
+    if (!HP.isInt(a.val) || !HP.isInt(b.val))
       throw new GE.GError(
         "Δεν είναι δυνατή η πράξη της ακέραιας διαίρεσης (MOD) με τα δοθέντα ορίσματα." +
           "\n" +
-          valueTypeToString(a) +
+          HP.valueTypeToString(a) +
           "\n" +
-          valueTypeToString(b),
+          HP.valueTypeToString(b),
         this.line
       );
 
@@ -722,8 +697,6 @@ class MSelectExpr {
         "Το αναγνωριστικό " + this.A.name + " δεν έχει αρχικοποιηθεί.",
         this.line
       );
-
-    //console.log('####' + this.oper + ' ' + a.val);
 
     return a.val;
   }
@@ -759,11 +732,11 @@ class MSymbolTableCell extends MSymbol {
           cmdLineNo
         );
 
-      if (!isInt(a.val) || a.val <= 0)
+      if (!HP.isInt(a.val) || a.val <= 0)
         throw new GE.GError(
           "Ο δείκτης του πίνακα " + name + " δεν είναι θετικός ακέραιος αριθμός." +
             "\n" +
-            valueTypeToString(a),
+            HP.valueTypeToString(a),
           cmdLineNo
         );
 

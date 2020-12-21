@@ -6,52 +6,49 @@ $(document).ready(function () {
 
   $(".gloBtnShowInput").click(function (e) {
     e.preventDefault();
-    $(".gloOutputTab").hide();
-    $(".gloOutputTabDetails").hide();
-    $(".gloInputTab").show();
+    $(this).closest(".gloBox").find(".gloOutputTab").hide();
+    $(this).closest(".gloBox").find(".gloOutputTabDetails").hide();
+    $(this).closest(".gloBox").find(".gloInputTab").show();
   });
 
   $(".gloBtnShowOutput").click(function (e) {
     e.preventDefault();
-    $(".gloInputTab").hide();
-    $(".gloOutputTab").show();
-    $(".gloOutputTabDetails").hide();
+    $(this).closest(".gloBox").find(".gloInputTab").hide();
+    $(this).closest(".gloBox").find(".gloOutputTab").show();
+    $(this).closest(".gloBox").find(".gloOutputTabDetails").hide();
   });
 
   $(".gloBtnShowOutputDetails").click(function (e) {
     e.preventDefault();
-    $(".gloInputTab").hide();
-    $(".gloOutputTab").hide();
-    $(".gloOutputTabDetails").show();
+    $(this).closest(".gloBox").find(".gloInputTab").hide();
+    $(this).closest(".gloBox").find(".gloOutputTab").hide();
+    $(this).closest(".gloBox").find(".gloOutputTabDetails").show();
   });
 
   $(".gloSpinner").hide();
 
-  editor.setValue(
-    "ΠΡΟΓΡΑΜΜΑ Άσκηση\n\nΜΕΤΑΒΛΗΤΕΣ\nΑΚΕΡΑΙΕΣ: α\n\nΑΡΧΗ\n\nΓΙΑ α ΑΠΟ 1 ΜΕΧΡΙ 10\n  ΓΡΑΨΕ 'Καλημέρα κόσμε', α\nΤΕΛΟΣ_ΕΠΑΝΑΛΗΨΗΣ\n\nΤΕΛΟΣ_ΠΡΟΓΡΑΜΜΑΤΟΣ\n"
-  );
-  editor.clearSelection();
-  //  editor.gotoLine(3);
-  //  editor.setReadOnly(true);
-
   $(".gloRun").click(function (e) {
     e.preventDefault();
 
-    $(".gloSpinner").show();
+    $(this).closest(".gloBox").find(".gloSpinner").show();
 
-    editor.setReadOnly(true);
+    //editor.setReadOnly(true);
 
-    $(".gloRun").addClass("disabled");
-    $(".gloRun").prop("disabled", true);
+    $(this).closest(".gloBox").find(".gloRun").addClass("disabled");
+    $(this).closest(".gloBox").find(".gloRun").prop("disabled", true);
 
-    $(".gloBtnShowOutput").click();
+    $(this).closest(".gloBox").find(".gloBtnShowOutput").click();
 
-    $(".gloResult").html("Περιμένετε....");
-    $(".gloResultDetails").html("Περιμένετε....");
+    $(this).closest(".gloBox").find(".gloResult").html("Περιμένετε....");
+    $(this).closest(".gloBox").find(".gloResultDetails").html("Περιμένετε....");
 
-    $(".gloError").html("").hide();
+    $(this).closest(".gloBox").find(".gloError").html("").hide();
 
-    var editorCode = editor.getValue();
+    var AceEditorID = $(this).closest(".gloBox").find(".gloAceEditor").get(0).id;
+
+    var aceeditor = ace.edit(AceEditorID);
+    
+    var editorCode = aceeditor.getValue();
 
     var output1 = null;
     var output2 = null;
@@ -59,8 +56,8 @@ $(document).ready(function () {
       var app = new GLO.GlossaJS();
       app.setSourceCode(editorCode);
 
-      if ($(".gloCodeKeyboardInput").val() != "")
-        app.setInputBuffer($(".gloCodeKeyboardInput").val());
+      if ($(this).closest(".gloBox").find(".gloCodeKeyboardInput").val() != "")
+        app.setInputBuffer($(this).closest(".gloBox").find(".gloCodeKeyboardInput").val());
       app.run();
       output1 = app.getOutput();
       output2 = app.getOutputDetails();
@@ -69,19 +66,19 @@ $(document).ready(function () {
       output2 = e.message;
     }
 
-    $(".gloSpinner").hide();
+    $(this).closest(".gloBox").find(".gloSpinner").hide();
 
-    $(".gloResult").html(output1);
-    $(".gloResultDetails").html(output2);
+    $(this).closest(".gloBox").find(".gloResult").html(output1);
+    $(this).closest(".gloBox").find(".gloResultDetails").html(output2);
 
-    $(".gloRun").removeClass("disabled");
-    $(".gloRun").prop("disabled", false);
+    $(this).closest(".gloBox").find(".gloRun").removeClass("disabled");
+    $(this).closest(".gloBox").find(".gloRun").prop("disabled", false);
 
-    editor.setReadOnly(false);
+    //editor.setReadOnly(false);
 
-    $(".gloResultPre").animate(
+    $(this).closest(".gloBox").find(".gloResultPre").animate(
       {
-        scrollTop: $(".gloResultPre").get(0).scrollHeight,
+        scrollTop: $(this).closest(".gloBox").find(".gloResultPre").get(0).scrollHeight,
       },
       400
     );

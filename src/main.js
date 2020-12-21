@@ -10,6 +10,9 @@ const GE = require("./gclasses");
 const STR = require("./storage");
 
 const IO = require("./io");
+const HP = require("./helper");
+
+
 
 class GlossaJS {
   constructor() {
@@ -52,67 +55,206 @@ class GlossaJS {
   initGlobalFunction() {
     this.scope.addSymbol(
       "Α_Μ",
-      new STR.STRBuiltinFunction(function (arrArgs) {
-        var A = arrArgs[0];
+      new STR.STRBuiltinFunction(function (...arrArgs) {
+        var args = arrArgs[0];
+        var cmdLineNo = arrArgs[2];
+        var A = args[0];
+
+        if (args.length != 1)
+          throw new GE.GError(
+            "Λάθος αριθμός παραμέτρων κατά την κλήση της συνάρτησης.",
+            cmdLineNo
+          );
+
+        if (A == null)
+          throw new GE.GError(
+            "Το αναγνωριστικό " + A + " δεν έχει αρχικοποιηθεί.",
+            cmdLineNo
+          );
+
+          if (!HP.isNumber(A.val))
+          throw new GE.GError(
+            "Η ενσωματωμένη συνάρτηση Α_Μ δεν μπορεί να δεχτεί αυτό το όρισμα." +
+              "\n" +
+              HP.valueTypeToString(A),
+            cmdLineNo
+          );
+          
         return new Atom.MNumber(Math.trunc(A.val / 1));
       })
     );
 
     this.scope.addSymbol(
       "Α_Τ",
-      new STR.STRBuiltinFunction(function (arrArgs) {
-        var A = arrArgs[0];
+      new STR.STRBuiltinFunction(function (...arrArgs) {
+        var args = arrArgs[0];
+        var cmdLineNo = arrArgs[2];
+
+        if (args.length != 1)
+          throw new GE.GError(
+            "Λάθος αριθμός παραμέτρων κατά την κλήση της συνάρτησης.",
+            cmdLineNo
+          );
+
+        var A = args[0];
+
+        if (A == null)
+          throw new GE.GError(
+            "Το αναγνωριστικό " + A + " δεν έχει αρχικοποιηθεί.",
+            cmdLineNo
+          );
+
         if (A.val < 0) return new Atom.MNumber(-A.val);
-        return A;
+        return new Atom.MNumber(A.val);;
       })
     );
 
     this.scope.addSymbol(
       "Τ_Ρ",
-      new STR.STRBuiltinFunction(function (arrArgs) {
-        var A = arrArgs[0];
+      new STR.STRBuiltinFunction(function (...arrArgs) {
+        var args = arrArgs[0];
+        var cmdLineNo = arrArgs[2];
+
+        if (args.length != 1)
+          throw new GE.GError(
+            "Λάθος αριθμός παραμέτρων κατά την κλήση της συνάρτησης.",
+            cmdLineNo
+          );
+
+        var A = args[0];
+
+        if (A == null)
+          throw new GE.GError(
+            "Το αναγνωριστικό " + A + " δεν έχει αρχικοποιηθεί.",
+            cmdLineNo
+          );
+
         if (A.val < 0)
-          throw new GE.GError("Δεν ορίζεται ρίζα αρνητικού αριθμού.");
+          throw new GE.GError(
+            "Δεν ορίζεται ρίζα αρνητικού αριθμού.",
+            cmdLineNo
+          );
         return new Atom.MNumber(Math.sqrt(A.val));
       })
     );
 
     this.scope.addSymbol(
       "ΗΜ",
-      new STR.STRBuiltinFunction(function (arrArgs) {
-        var A = arrArgs[0];
+      new STR.STRBuiltinFunction(function (...arrArgs) {
+        var args = arrArgs[0];
+        var cmdLineNo = arrArgs[2];
+
+        if (args.length != 1)
+          throw new GE.GError(
+            "Λάθος αριθμός παραμέτρων κατά την κλήση της συνάρτησης.",
+            cmdLineNo
+          );
+
+        var A = args[0];
+
+        if (A == null)
+          throw new GE.GError(
+            "Το αναγνωριστικό " + A + " δεν έχει αρχικοποιηθεί.",
+            cmdLineNo
+          );
+
         return new Atom.MNumber(Math.sin(A.val));
       })
     );
 
     this.scope.addSymbol(
       "ΣΥΝ",
-      new STR.STRBuiltinFunction(function (arrArgs) {
-        var A = arrArgs[0];
+      new STR.STRBuiltinFunction(function (...arrArgs) {
+        var args = arrArgs[0];
+        var cmdLineNo = arrArgs[2];
+
+        if (args.length != 1)
+          throw new GE.GError(
+            "Λάθος αριθμός παραμέτρων κατά την κλήση της συνάρτησης.",
+            cmdLineNo
+          );
+
+        var A = args[0];
+
+        if (A == null)
+          throw new GE.GError(
+            "Το αναγνωριστικό " + A + " δεν έχει αρχικοποιηθεί.",
+            cmdLineNo
+          );
+
         return new Atom.MNumber(Math.cos(A.val));
       })
     );
 
     this.scope.addSymbol(
       "Ε",
-      new STR.STRBuiltinFunction(function (arrArgs) {
-        var A = arrArgs[0];
+      new STR.STRBuiltinFunction(function (...arrArgs) {
+        var args = arrArgs[0];
+        var cmdLineNo = arrArgs[2];
+
+        if (args.length != 1)
+          throw new GE.GError(
+            "Λάθος αριθμός παραμέτρων κατά την κλήση της συνάρτησης.",
+            cmdLineNo
+          );
+
+        var A = args[0];
+
+        if (A == null)
+          throw new GE.GError(
+            "Το αναγνωριστικό " + A + " δεν έχει αρχικοποιηθεί.",
+            cmdLineNo
+          );
+
         return new Atom.MNumber(Math.exp(A.val));
       })
     );
 
     this.scope.addSymbol(
       "ΕΦ",
-      new STR.STRBuiltinFunction(function (arrArgs) {
-        var A = arrArgs[0];
+      new STR.STRBuiltinFunction(function (...arrArgs) {
+        var args = arrArgs[0];
+        var cmdLineNo = arrArgs[2];
+
+        if (args.length != 1)
+          throw new GE.GError(
+            "Λάθος αριθμός παραμέτρων κατά την κλήση της συνάρτησης.",
+            cmdLineNo
+          );
+
+        var A = args[0];
+
+        if (A == null)
+          throw new GE.GError(
+            "Το αναγνωριστικό " + A + " δεν έχει αρχικοποιηθεί.",
+            cmdLineNo
+          );
+
+  
         return new Atom.MNumber(Math.tan(A.val));
       })
     );
 
     this.scope.addSymbol(
       "ΛΟΓ",
-      new STR.STRBuiltinFunction(function (arrArgs) {
-        var A = arrArgs[0];
+      new STR.STRBuiltinFunction(function (...arrArgs) {
+        var args = arrArgs[0];
+        var cmdLineNo = arrArgs[2];
+
+        if (args.length != 1)
+          throw new GE.GError(
+            "Λάθος αριθμός παραμέτρων κατά την κλήση της συνάρτησης.",
+            cmdLineNo
+          );
+
+        var A = args[0];
+
+        if (A == null)
+          throw new GE.GError(
+            "Το αναγνωριστικό " + A + " δεν έχει αρχικοποιηθεί.",
+            cmdLineNo
+          );
+
         return new Atom.MNumber(Math.log(A.val));
       })
     );

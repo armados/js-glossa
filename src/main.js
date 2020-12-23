@@ -12,8 +12,6 @@ const STR = require("./storage");
 const IO = require("./io");
 const HP = require("./helper");
 
-
-
 class GlossaJS {
   constructor() {
     this.running = false;
@@ -72,14 +70,14 @@ class GlossaJS {
             cmdLineNo
           );
 
-          if (!HP.isNumber(A.val))
+        if (!HP.isNumber(A.val))
           throw new GE.GError(
-            "Η ενσωματωμένη συνάρτηση Α_Μ δεν μπορεί να δεχτεί αυτό το όρισμα." +
+            "Η συνάρτηση Α_Μ δεν μπορεί να δεχτεί αυτό το όρισμα." +
               "\n" +
               HP.valueTypeToString(A),
             cmdLineNo
           );
-          
+
         return new Atom.MNumber(Math.trunc(A.val / 1));
       })
     );
@@ -89,6 +87,7 @@ class GlossaJS {
       new STR.STRBuiltinFunction(function (...arrArgs) {
         var args = arrArgs[0];
         var cmdLineNo = arrArgs[2];
+        var A = args[0];
 
         if (args.length != 1)
           throw new GE.GError(
@@ -96,16 +95,22 @@ class GlossaJS {
             cmdLineNo
           );
 
-        var A = args[0];
-
         if (A == null)
           throw new GE.GError(
             "Το αναγνωριστικό " + A + " δεν έχει αρχικοποιηθεί.",
             cmdLineNo
           );
 
+        if (!HP.isNumber(A.val))
+          throw new GE.GError(
+            "Η συνάρτηση Α_Τ δεν μπορεί να δεχτεί αυτό το όρισμα." +
+              "\n" +
+              HP.valueTypeToString(A),
+            cmdLineNo
+          );
+
         if (A.val < 0) return new Atom.MNumber(-A.val);
-        return new Atom.MNumber(A.val);;
+        return new Atom.MNumber(A.val);
       })
     );
 
@@ -114,6 +119,7 @@ class GlossaJS {
       new STR.STRBuiltinFunction(function (...arrArgs) {
         var args = arrArgs[0];
         var cmdLineNo = arrArgs[2];
+        var A = args[0];
 
         if (args.length != 1)
           throw new GE.GError(
@@ -121,11 +127,17 @@ class GlossaJS {
             cmdLineNo
           );
 
-        var A = args[0];
-
         if (A == null)
           throw new GE.GError(
             "Το αναγνωριστικό " + A + " δεν έχει αρχικοποιηθεί.",
+            cmdLineNo
+          );
+
+        if (!HP.isNumber(A.val))
+          throw new GE.GError(
+            "Η συνάρτηση Τ_Ρ δεν μπορεί να δεχτεί αυτό το όρισμα." +
+              "\n" +
+              HP.valueTypeToString(A),
             cmdLineNo
           );
 
@@ -143,6 +155,7 @@ class GlossaJS {
       new STR.STRBuiltinFunction(function (...arrArgs) {
         var args = arrArgs[0];
         var cmdLineNo = arrArgs[2];
+        var A = args[0];
 
         if (args.length != 1)
           throw new GE.GError(
@@ -150,11 +163,17 @@ class GlossaJS {
             cmdLineNo
           );
 
-        var A = args[0];
-
         if (A == null)
           throw new GE.GError(
             "Το αναγνωριστικό " + A + " δεν έχει αρχικοποιηθεί.",
+            cmdLineNo
+          );
+
+        if (!HP.isNumber(A.val))
+          throw new GE.GError(
+            "Η συνάρτηση ΗΜ δεν μπορεί να δεχτεί αυτό το όρισμα." +
+              "\n" +
+              HP.valueTypeToString(A),
             cmdLineNo
           );
 
@@ -167,6 +186,7 @@ class GlossaJS {
       new STR.STRBuiltinFunction(function (...arrArgs) {
         var args = arrArgs[0];
         var cmdLineNo = arrArgs[2];
+        var A = args[0];
 
         if (args.length != 1)
           throw new GE.GError(
@@ -174,11 +194,17 @@ class GlossaJS {
             cmdLineNo
           );
 
-        var A = args[0];
-
         if (A == null)
           throw new GE.GError(
             "Το αναγνωριστικό " + A + " δεν έχει αρχικοποιηθεί.",
+            cmdLineNo
+          );
+
+        if (!HP.isNumber(A.val))
+          throw new GE.GError(
+            "Η συνάρτηση ΣΥΝ δεν μπορεί να δεχτεί αυτό το όρισμα." +
+              "\n" +
+              HP.valueTypeToString(A),
             cmdLineNo
           );
 
@@ -191,6 +217,7 @@ class GlossaJS {
       new STR.STRBuiltinFunction(function (...arrArgs) {
         var args = arrArgs[0];
         var cmdLineNo = arrArgs[2];
+        var A = args[0];
 
         if (args.length != 1)
           throw new GE.GError(
@@ -198,11 +225,17 @@ class GlossaJS {
             cmdLineNo
           );
 
-        var A = args[0];
-
         if (A == null)
           throw new GE.GError(
             "Το αναγνωριστικό " + A + " δεν έχει αρχικοποιηθεί.",
+            cmdLineNo
+          );
+
+        if (!HP.isNumber(A.val))
+          throw new GE.GError(
+            "Η συνάρτηση Ε δεν μπορεί να δεχτεί αυτό το όρισμα." +
+              "\n" +
+              HP.valueTypeToString(A),
             cmdLineNo
           );
 
@@ -215,6 +248,7 @@ class GlossaJS {
       new STR.STRBuiltinFunction(function (...arrArgs) {
         var args = arrArgs[0];
         var cmdLineNo = arrArgs[2];
+        var A = args[0];
 
         if (args.length != 1)
           throw new GE.GError(
@@ -222,15 +256,20 @@ class GlossaJS {
             cmdLineNo
           );
 
-        var A = args[0];
-
         if (A == null)
           throw new GE.GError(
             "Το αναγνωριστικό " + A + " δεν έχει αρχικοποιηθεί.",
             cmdLineNo
           );
 
-  
+        if (!HP.isNumber(A.val))
+          throw new GE.GError(
+            "Η συνάρτηση ΕΦ δεν μπορεί να δεχτεί αυτό το όρισμα." +
+              "\n" +
+              HP.valueTypeToString(A),
+            cmdLineNo
+          );
+
         return new Atom.MNumber(Math.tan(A.val));
       })
     );
@@ -240,6 +279,7 @@ class GlossaJS {
       new STR.STRBuiltinFunction(function (...arrArgs) {
         var args = arrArgs[0];
         var cmdLineNo = arrArgs[2];
+        var A = args[0];
 
         if (args.length != 1)
           throw new GE.GError(
@@ -247,11 +287,17 @@ class GlossaJS {
             cmdLineNo
           );
 
-        var A = args[0];
-
         if (A == null)
           throw new GE.GError(
             "Το αναγνωριστικό " + A + " δεν έχει αρχικοποιηθεί.",
+            cmdLineNo
+          );
+
+        if (!HP.isNumber(A.val))
+          throw new GE.GError(
+            "Η συνάρτηση ΛΟΓ δεν μπορεί να δεχτεί αυτό το όρισμα." +
+              "\n" +
+              HP.valueTypeToString(A),
             cmdLineNo
           );
 

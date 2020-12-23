@@ -1,8 +1,11 @@
+function GLOonChange(line) {
+  console.log('###GLOonChange ' + line);
+  editor.setHighlightActiveLine(true);
+  editor.gotoLine(line);
+  editor.resize();
+}
+
 $(document).ready(function () {
-  $("h4").click(function (e) {
-    e.preventDefault();
-    editor.setTheme("ace/theme/gruvbox");
-  });
 
   $(".gloBtnShowInput").click(function (e) {
     e.preventDefault();
@@ -58,7 +61,9 @@ $(document).ready(function () {
 
       if ($(this).closest(".gloBox").find(".gloCodeKeyboardInput").val() != "")
         app.setInputBuffer($(this).closest(".gloBox").find(".gloCodeKeyboardInput").val());
+
       app.run();
+
       output1 = app.getOutput();
       output2 = app.getOutputDetails();
     } catch (e) {

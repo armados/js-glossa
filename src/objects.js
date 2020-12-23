@@ -18,10 +18,16 @@ class Stmt_Block {
 
   resolve(scope) {
     this.statements.forEach(function (statement) {
-      //sleepme(90); //FIXME:
+
       //console.log(scope.io.outputData[scope.io.outputData.length -1 ]);
       //console.log('=================================');
       statement.resolve(scope);
+
+      if (typeof GLOonChange === "function") {
+        // safe to use the function
+        //sleepme(290); //FIXME:
+        GLOonChange(scope.cmdLineNo);
+      }
     });
   }
 }

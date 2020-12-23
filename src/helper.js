@@ -1,5 +1,6 @@
 "use strict";
 
+
 //class Helper {
    function isFloat(val) {
     return typeof val == "number" && Number(val) === val && val % 1 !== 0;
@@ -19,13 +20,19 @@
 
   function  valueTypeToString(obj) {
     var val = obj.val;
-    if (isInt(val)) return "[ " + val + " ] Ακέραια σταθερά";
+
+var  STR = require("./storage");
+    if      ( obj instanceof STR.STRTableNameInt) return "[ " + obj.tblname +  " ] Πίνακας Ακεραίων";
+    else if ( obj instanceof STR.STRTableNameFloat) return "[ " + obj.tblname +  " ] Πίνακας Πραγματικών";
+    else if ( obj instanceof STR.STRTableNameString) return "[ " + obj.tblname +  " ] Πίνακας Χαρακτήρων";
+    else if ( obj instanceof STR.STRTableNameBoolean) return "[ " + obj.tblname +  " ] Πίνακας Λογικών";
+    else if (isInt(val)) return "[ " + val + " ] Ακέραια σταθερά";
     else if (isFloat(val)) return "[ " + val + " ] Πραγματική σταθερά";
     else if (isString(val)) return "[ '" + val + "' ] Αλφαριθμητική σταθερά";
     else if (isBoolean(val))
       return "[ " + (val ? "ΑΛΗΘΗΣ" : "ΨΕΥΔΗΣ") + " ] Λογική σταθερά";
-    else console.log(obj);
-    //else throw new GE.GError("Critical: Unknown value type: " + val);
+    else //console.log(obj);
+     throw new GE.GError("Critical: Unknown value type: " + val);
   }
 //}
 

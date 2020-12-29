@@ -1,8 +1,8 @@
 function GLOonChange(line) {
   console.log('###GLOonChange ' + line);
-  editor.setHighlightActiveLine(true);
-  editor.gotoLine(line);
-  editor.resize();
+  //editor.setHighlightActiveLine(true);
+  //editor.gotoLine(line);
+  //editor.resize();
 }
 
 $(document).ready(function () {

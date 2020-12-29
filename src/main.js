@@ -15,6 +15,7 @@ const HP = require("./helper");
 class GlossaJS {
   constructor() {
     this.running = false;
+
     this.sourceCode = null;
 
     this.io = new IO.IOBuffer();

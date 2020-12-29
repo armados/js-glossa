@@ -1,7 +1,6 @@
 "use strict";
 
 
-//class Helper {
    function isFloat(val) {
     return typeof val == "number" && Number(val) === val && val % 1 !== 0;
   }
@@ -34,7 +33,7 @@ var  STR = require("./storage");
     else //console.log(obj);
      throw new GE.GError("Critical: Unknown value type: " + val);
   }
-//}
+
 
 module.exports = {
     isFloat,

@@ -3,7 +3,6 @@
 const GE = require("./gclasses");
 const HP = require("./helper");
 
-
 class Atom {
   constructor(val) {
     this.val = val;
@@ -174,6 +173,16 @@ class MathOpDivInt extends MathOperation {
         this.line
       );
 
+    if (a.val < 0 || b.val < 0)
+      throw new GE.GError(
+        "Δεν είναι δυνατή η πράξη της ακέραιας διαίρεσης (DIV) με αρνητικές τιμές." +
+          "\n" +
+          HP.valueTypeToString(a) +
+          "\n" +
+          HP.valueTypeToString(b),
+        this.line
+      );
+
     if (b.val == 0)
       throw new GE.GError("Η διαίρεση με το μηδέν δεν ορίζεται.", this.line);
 
@@ -207,6 +216,16 @@ class MathOpModInt extends MathOperation {
     if (!HP.isInt(a.val) || !HP.isInt(b.val))
       throw new GE.GError(
         "Δεν είναι δυνατή η πράξη της ακέραιας διαίρεσης (MOD) με τα δοθέντα ορίσματα." +
+          "\n" +
+          HP.valueTypeToString(a) +
+          "\n" +
+          HP.valueTypeToString(b),
+        this.line
+      );
+
+    if (a.val < 0 || b.val < 0)
+      throw new GE.GError(
+        "Δεν είναι δυνατή η πράξη της ακέραιας διαίρεσης (MOD) με αρνητικές τιμές." +
           "\n" +
           HP.valueTypeToString(a) +
           "\n" +
@@ -734,7 +753,9 @@ class MSymbolTableCell extends MSymbol {
 
       if (!HP.isInt(a.val) || a.val <= 0)
         throw new GE.GError(
-          "Ο δείκτης του πίνακα " + name + " δεν είναι θετικός ακέραιος αριθμός." +
+          "Ο δείκτης του πίνακα " +
+            name +
+            " δεν είναι θετικός ακέραιος αριθμός." +
             "\n" +
             HP.valueTypeToString(a),
           cmdLineNo
@@ -751,7 +772,7 @@ class MSymbolTableCell extends MSymbol {
 
     return name;
   }
- 
+
   eval(scope) {
     //scope.cmdLineNo = this.cmdLineNo; //FIXME:
 

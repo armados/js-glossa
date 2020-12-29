@@ -7,7 +7,7 @@ class GrammarOhm {
 
             Application  = KeyboardData* Program (SubFunction | SubProcedure)*
          
-            Program      = "ΠΡΟΓΡΑΜΜΑ" id DefDeclarations "ΑΡΧΗ" Block "ΤΕΛΟΣ_ΠΡΟΓΡΑΜΜΑΤΟΣ" 
+            Program      = "ΠΡΟΓΡΑΜΜΑ" id DefDeclarations "ΑΡΧΗ" Block "ΤΕΛΟΣ_ΠΡΟΓΡΑΜΜΑΤΟΣ"
         
             SubFunction  = "ΣΥΝΑΡΤΗΣΗ"  id "(" AtLeastOneParameters ")" ":" ("ΑΚΕΡΑΙΑ" | "ΠΡΑΓΜΑΤΙΚΗ" | "ΧΑΡΑΚΤΗΡΑΣ" | "ΛΟΓΙΚΗ")  DefDeclarations "ΑΡΧΗ" BlockFunction "ΤΕΛΟΣ_ΣΥΝΑΡΤΗΣΗΣ"
             SubProcedure = "ΔΙΑΔΙΚΑΣΙΑ" id "(" Parameters ")" DefDeclarations "ΑΡΧΗ" Block "ΤΕΛΟΣ_ΔΙΑΔΙΚΑΣΙΑΣ"
@@ -151,7 +151,7 @@ class GrammarOhm {
             nl = "\\n" | "\\r"
 
             whitespace = "\t" | " "
-            breakLine = "&"
+            breakLine  = "&"
             space := whitespace | nl | comment | breakLine  
         }
                 

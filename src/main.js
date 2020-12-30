@@ -316,7 +316,7 @@ class GlossaJS {
     delete this.scope.globalStorage[name];
   }
 
-  async run() {
+  run() {
     this.running = true;
 
     var gram = ohm.grammar(new GOhm.GrammarOhm().getGrammar());

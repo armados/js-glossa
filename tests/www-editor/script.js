@@ -1,9 +1,19 @@
-function GLOonChange(line) {
+function sleepme(time) {
+  var stop = new Date().getTime();
+  while (new Date().getTime() < stop + time) {}
+}
+
+
+function GLOonChange(line = null) {
   console.log('###GLOonChange ' + line);
+  $( "h4" ).append( "<p>Test</p>" );
+  //sleepme(400);
   //editor.setHighlightActiveLine(true);
   //editor.gotoLine(line);
   //editor.resize();
 }
+
+
 
 $(document).ready(function () {
 
@@ -63,7 +73,7 @@ $(document).ready(function () {
         app.setInputBuffer($(this).closest(".gloBox").find(".gloCodeKeyboardInput").val());
 
       app.run();
-
+     
       output1 = app.getOutput();
       output2 = app.getOutputDetails();
     } catch (e) {

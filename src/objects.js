@@ -4,11 +4,6 @@ const Atom = require("./atom");
 const GE = require("./gclasses");
 const STR = require("./storage");
 
-function sleepme(time) {
-  var stop = new Date().getTime();
-  while (new Date().getTime() < stop + time) {}
-}
-
 // ========================
 
 class Stmt_Block {

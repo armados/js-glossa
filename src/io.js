@@ -12,12 +12,19 @@ class IOBuffer {
   outputAdd(val) {
     console.log(val);
     this.outputData.push(val);
+
+    if (typeof updateUI === "function") {
+      updateUI("outputappend", val);
+    }
   }
 
   outputAddDetails(val, line = null) {
-    this.outputDataDetails.push(
-      (line != null ? "Γραμμή " + line + ". " : "") + val
-    );
+    var str = (line != null ? "Γραμμή " + line + ". " : "") + val;
+    this.outputDataDetails.push(str);
+
+    if (typeof updateUI === "function") {
+      updateUI("outputdetailtsappend", str);
+    }
   }
 
   getOutput() {
@@ -51,5 +58,5 @@ class IOBuffer {
 }
 
 module.exports = {
-  IOBuffer
+  IOBuffer,
 };

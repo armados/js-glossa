@@ -140,14 +140,14 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.12/ace.min.js"></script>
 
-    <script src="../../dist/glossajs.min.js"></script>
+
 
     <script src="script.js"></script>
 
     <script type="text/javascript">
-      var editor;
+      
       $(".gloAceEditor").each(function (index) {
-       editor = ace.edit(this);
+        var editor = ace.edit(this);
         //var editor = ace.edit(".gloAceEditor");
         require("ace/config").setModuleUrl(
           "ace/theme/gruvbox",

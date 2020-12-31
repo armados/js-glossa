@@ -1,22 +1,93 @@
-function sleepme(time) {
-  var stop = new Date().getTime();
-  while (new Date().getTime() < stop + time) {}
-}
+var worker = new Worker("worker.js");
 
+worker.addEventListener(
+  "message",
+  function (e) {
+    var editorid = e.data["editorid"];
 
-function GLOonChange(line = null) {
-  console.log('###GLOonChange ' + line);
-  $( "h4" ).append( "<p>Test</p>" );
-  //sleepme(400);
-  //editor.setHighlightActiveLine(true);
-  //editor.gotoLine(line);
-  //editor.resize();
-}
+    var aceeditor = ace.edit(editorid);
 
+    //console.log("UI: Rec msg");
 
+    switch (e.data["cmd"]) {
+      case "line":
+        console.log("Update line " + e.data["data"]);
+        aceeditor.setHighlightActiveLine(true);
+        aceeditor.gotoLine(e.data["data"]);
+        break;
+      case "outputappend":
+        //console.log("Update outputappend");
+        var output = e.data["data"];
+        $("#" + editorid)
+          .closest(".gloBox")
+          .find(".gloResult")
+          .html(function (index, value) {
+            return value + output + "\n";
+          });
+
+        break;
+      case "outputdetailtsappend":
+        //console.log("Update outputdetailtsappend");
+        var output = e.data["data"];
+        $("#" + editorid)
+          .closest(".gloBox")
+          .find(".gloResultDetails")
+          .html(function (index, value) {
+            return value + output + "\n";
+          });
+
+        break;
+      case "error":
+        //console.log("Update error");
+        var output = e.data["data"];
+        $("#" + editorid)
+          .closest(".gloBox")
+          .find(".gloResult")
+          .html(function (index, value) {
+            return value + "ERROR!!" + output + "\n";
+          });
+
+        break;
+
+      case "finished":
+        //console.log("Update finished");
+
+        $("#" + editorid)
+          .closest(".gloBox")
+          .find(".gloSpinner")
+          .hide();
+
+        $("#" + editorid)
+          .closest(".gloBox")
+          .find(".gloRun")
+          .removeClass("disabled");
+        $("#" + editorid)
+          .closest(".gloBox")
+          .find(".gloRun")
+          .prop("disabled", false);
+
+        aceeditor.setReadOnly(false);
+
+        break;
+    }
+
+    /*
+    $("#"+editorid)
+      .closest(".gloBox")
+      .find(".gloResultPre")
+      .animate(
+        {
+          scrollTop: $("#"+editorid).closest(".gloBox").find(".gloResultPre").get(0)
+            .scrollHeight,
+        },
+        400
+      );
+      */
+  },
+  false
+);
 
 $(document).ready(function () {
-
   $(".gloBtnShowInput").click(function (e) {
     e.preventDefault();
     $(this).closest(".gloBox").find(".gloOutputTab").hide();
@@ -45,57 +116,40 @@ $(document).ready(function () {
 
     $(this).closest(".gloBox").find(".gloSpinner").show();
 
-    //editor.setReadOnly(true);
-
     $(this).closest(".gloBox").find(".gloRun").addClass("disabled");
     $(this).closest(".gloBox").find(".gloRun").prop("disabled", true);
 
     $(this).closest(".gloBox").find(".gloBtnShowOutput").click();
 
-    $(this).closest(".gloBox").find(".gloResult").html("Περιμένετε....");
-    $(this).closest(".gloBox").find(".gloResultDetails").html("Περιμένετε....");
+    $(this).closest(".gloBox").find(".gloResult").html("");
+    $(this).closest(".gloBox").find(".gloResultDetails").html("");
 
     $(this).closest(".gloBox").find(".gloError").html("").hide();
 
-    var AceEditorID = $(this).closest(".gloBox").find(".gloAceEditor").get(0).id;
+    var AceEditorID = $(this).closest(".gloBox").find(".gloAceEditor").get(0)
+      .id;
 
     var aceeditor = ace.edit(AceEditorID);
-    
-    var editorCode = aceeditor.getValue();
 
-    var output1 = null;
-    var output2 = null;
-    try {
-      var app = new GLO.GlossaJS();
-      app.setSourceCode(editorCode);
+    aceeditor.setReadOnly(true);
 
-      if ($(this).closest(".gloBox").find(".gloCodeKeyboardInput").val() != "")
-        app.setInputBuffer($(this).closest(".gloBox").find(".gloCodeKeyboardInput").val());
+    var sourcecode = aceeditor.getValue();
 
-      app.run();
-     
-      output1 = app.getOutput();
-      output2 = app.getOutputDetails();
-    } catch (e) {
-      output1 = e.message;
-      output2 = e.message;
-    }
+    var inputbox = $(this)
+      .closest(".gloBox")
+      .find(".gloCodeKeyboardInput")
+      .val();
 
-    $(this).closest(".gloBox").find(".gloSpinner").hide();
+    //if ($(this).closest(".gloBox").find(".gloCodeKeyboardInput").val() != "")
+    //  app.setInputBuffer($(this).closest(".gloBox").find(".gloCodeKeyboardInput").val());
 
-    $(this).closest(".gloBox").find(".gloResult").html(output1);
-    $(this).closest(".gloBox").find(".gloResultDetails").html(output2);
+    var arr = {
+      editorid: AceEditorID,
+      sourcecode: sourcecode,
+      keyboardbuffer: inputbox,
+      runspeed: "FIXME",
+    };
 
-    $(this).closest(".gloBox").find(".gloRun").removeClass("disabled");
-    $(this).closest(".gloBox").find(".gloRun").prop("disabled", false);
-
-    //editor.setReadOnly(false);
-
-    $(this).closest(".gloBox").find(".gloResultPre").animate(
-      {
-        scrollTop: $(this).closest(".gloBox").find(".gloResultPre").get(0).scrollHeight,
-      },
-      400
-    );
+    worker.postMessage(arr);
   });
 });

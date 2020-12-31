@@ -4,6 +4,12 @@ const Atom = require("./atom");
 const GE = require("./gclasses");
 const STR = require("./storage");
 
+
+function sleepme(time) {
+  var stop = new Date().getTime();
+  while (new Date().getTime() < stop + time) {}
+}
+
 // ========================
 
 class Stmt_Block {
@@ -16,11 +22,7 @@ class Stmt_Block {
 
       //console.log(scope.io.outputData[scope.io.outputData.length -1 ]);
       //console.log('=================================');
-      if (typeof GLOonChange === "function") {
-        // safe to use the function
-        //sleepme(290); //FIXME:
-        GLOonChange(scope.cmdLineNo);
-      }
+      sleepme(100); 
 
       statement.resolve(scope);
 
@@ -40,6 +42,11 @@ class Stmt_Assignment {
   }
   resolve(scope) {
     scope.cmdLineNo = this.cmdLineNo; //FIXME:
+
+    if (typeof updateUI === "function") {
+      updateUI('line', scope.cmdLineNo);
+
+    }
 
     var sym = this.symbol;
 
@@ -65,6 +72,11 @@ class Stmt_Write {
   }
   resolve(scope) {
     scope.cmdLineNo = this.cmdLineNo; //FIXME:
+    
+    if (typeof updateUI === "function") {
+      updateUI('line', scope.cmdLineNo);
+
+    }
 
     var output = [];
 
@@ -107,6 +119,11 @@ class Stmt_Read {
   }
   resolve(scope) {
     scope.cmdLineNo = this.cmdLineNo; //FIXME:
+
+    if (typeof updateUI === "function") {
+      updateUI('line', scope.cmdLineNo);
+
+    }
 
     scope.io.outputAddDetails("Διάβασε από το πληκτρολόγιο", this.cmdLineNo);
 
@@ -173,6 +190,11 @@ class Stmt_IfCond {
 
   resolve(scope) {
     scope.cmdLineNo = this.arrLineNo[0]; //FIXME:
+    
+    if (typeof updateUI === "function") {
+      updateUI('line', scope.cmdLineNo);
+
+    }
 
     var arrCond = this.arrCond;
     var arrCondStr = this.arrCondStr;
@@ -236,6 +258,11 @@ class Stmt_Select {
 
   resolve(scope) {
     scope.cmdLineNo = this.cmdLineNo;
+    
+    if (typeof updateUI === "function") {
+      updateUI('line', scope.cmdLineNo);
+
+    }
 
     var expr = this.expr;
     var arrCond = this.arrCond;
@@ -302,6 +329,11 @@ class Stmt_WhileLoop {
   }
   resolve(scope) {
     scope.cmdLineNo = this.cmdLineNo; //FIXME:
+    
+    if (typeof updateUI === "function") {
+      updateUI('line', scope.cmdLineNo);
+
+    }
 
     while (true) {
       var condResult = this.cond.resolve(scope);
@@ -338,6 +370,11 @@ class Stmt_Do_WhileLoop {
   }
   resolve(scope) {
     scope.cmdLineNo = this.cmdLineNo; //FIXME:
+    
+    if (typeof updateUI === "function") {
+      updateUI('line', scope.cmdLineNo);
+
+    }
 
     do {
       this.body.resolve(scope);
@@ -376,6 +413,11 @@ class Stmt_ForLoop {
   }
   resolve(scope) {
     scope.cmdLineNo = this.cmdLineNo; //FIXME:
+    
+    if (typeof updateUI === "function") {
+      updateUI('line', scope.cmdLineNo);
+
+    }
 
     var variable = this.variable;
     var initval = this.initval;
@@ -606,6 +648,11 @@ class SubFunction {
 
   resolve(scope) {
     scope.cmdLineNo = this.cmdLineNo; //FIXME:
+    
+    if (typeof updateUI === "function") {
+      updateUI('line', scope.cmdLineNo);
+
+    }
 
     var name = this.name.name;
     var params = this.params;
@@ -723,6 +770,11 @@ class SubProcedure {
 
   resolve(scope) {
     scope.cmdLineNo = this.cmdLineNo; //FIXME:
+    
+    if (typeof updateUI === "function") {
+      updateUI('line', scope.cmdLineNo);
+
+    }
 
     var name = this.name.name;
     var params = this.params;
@@ -822,6 +874,11 @@ class DefConstant {
   }
   resolve(scope) {
     scope.cmdLineNo = this.cmdLineNo; //FIXME:
+    
+    if (typeof updateUI === "function") {
+      updateUI('line', scope.cmdLineNo);
+
+    }
 
     var obj = this.val.resolve(scope);
 
@@ -846,6 +903,11 @@ class DefVariables {
   }
   resolve(scope) {
     scope.cmdLineNo = this.cmdLineNo; //FIXME:
+    
+    if (typeof updateUI === "function") {
+      updateUI('line', scope.cmdLineNo);
+
+    }
 
     var varType = this.varType;
     //console.log('======> DefVariables: : ', varType);
@@ -942,6 +1004,11 @@ class Program {
 
   resolve(scope) {
     scope.cmdLineNo = this.cmdLineNo; //FIXME:
+    
+    if (typeof updateUI === "function") {
+      updateUI('line', scope.cmdLineNo);
+
+    }
 
     scope.addSymbol(this.progname.name, new STR.STRReservedName(null));
 
@@ -949,7 +1016,6 @@ class Program {
 
     this.body.resolve(scope);
 
-    //scope.printMemory();
   }
 }
 

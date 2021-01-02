@@ -28,15 +28,13 @@ function updateUI(cmd, data = null) {
   }
 }
 
-function runWorker(sourcecode, keyboardbuffer, runspeed) {
+function runWorker(sourcecode, keyboardbuffer, slowrun) {
   var app = new GLO.GlossaJS();
 
   app.setSourceCode(sourcecode);
+  app.setInputBuffer(keyboardbuffer);
+  app.setSlowRun(slowrun);
 
-  if (keyboardbuffer != "") app.setInputBuffer(keyboardbuffer);
-
-  app.setRunSpeed(runspeed);
-  
   var errorMsg = null;
 
   try {
@@ -55,9 +53,9 @@ self.addEventListener(
     editorid = e.data["editorid"];
     var sourcecode = e.data["sourcecode"];
     var keyboardbuffer = e.data["keyboardbuffer"];
-    var runspeed = e.data["runspeed"];
+    var slowrun = e.data["slowrun"];
 
-    runWorker(sourcecode, keyboardbuffer, runspeed);
+    runWorker(sourcecode, keyboardbuffer, slowrun);
   },
   false
 );

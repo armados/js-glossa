@@ -24,6 +24,7 @@ class GlossaJS {
     this.scope.io = this.io;
     this.scope.config["maxExecutionCmd"] = 100000;
     this.scope.config["maxLogicalComp"] = 100000;
+    this.scope.config["runspeed"] = 0;
 
     this.initGlobalFunction();
   }
@@ -51,8 +52,8 @@ class GlossaJS {
     }
   }
 
-  setRunSpeed(value) {
-    this.scope.config["runspeed"] = value;
+  setSlowRun(flag) {
+    this.scope.config["runspeed"] = (flag) ? 400 : 0;
   }
 
   initGlobalFunction() {

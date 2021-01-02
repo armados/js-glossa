@@ -5,23 +5,7 @@ const GE = require("./gclasses");
 const STR = require("./storage");
 
 class Stmt {
-  setActiveLine(line) {
-    if (typeof updateUI === "function") {
-      var tt = new STR.SScope();
 
-      var runspeed = tt.config["runspeed"]; //FIXME:
-
-      if (runspeed != 0) {
-        updateUI("line", line);
-        this.sleepme(runspeed);
-      }
-    }
-  }
-
-  sleepme(time) {
-    var stop = new Date().getTime();
-    while (new Date().getTime() < stop + time) {}
-  }
 }
 
 // ========================
@@ -51,7 +35,7 @@ class Stmt_Assignment extends Stmt {
     this.cmdLineNo = cmdLineNo;
   }
   resolve(scope) {
-    this.setActiveLine(this.cmdLineNo);
+    scope.setActiveLine(this.cmdLineNo);
 
     var sym = this.symbol;
 
@@ -77,7 +61,7 @@ class Stmt_Write extends Stmt {
     this.cmdLineNo = cmdLineNo;
   }
   resolve(scope) {
-    this.setActiveLine(this.cmdLineNo);
+    scope.setActiveLine(this.cmdLineNo);
 
     var output = [];
 
@@ -120,7 +104,7 @@ class Stmt_Read extends Stmt {
     this.cmdLineNo = cmdLineNo;
   }
   resolve(scope) {
-    this.setActiveLine(this.cmdLineNo);
+    scope.setActiveLine(this.cmdLineNo);
 
     scope.io.outputAddDetails("Διάβασε από το πληκτρολόγιο", this.cmdLineNo);
 
@@ -195,7 +179,7 @@ class Stmt_IfCond extends Stmt {
     var elseBodyLine = this.elseBodyLine;
 
     for (var i = 0; i < arrCond.length; ++i) {
-      this.setActiveLine(this.arrLineNo[i]);
+      scope.setActiveLine(this.arrLineNo[i]);
 
       var condResult = arrCond[i].resolve(scope);
 
@@ -219,7 +203,7 @@ class Stmt_IfCond extends Stmt {
     }
 
     if (elseBody != null) {
-      this.setActiveLine(this.elseBodyLine);
+      scope.setActiveLine(this.elseBodyLine);
 
       scope.io.outputAddDetails(
         "Εκτέλεση του τμήματος εντολών της ΑΛΛΙΩΣ",
@@ -253,7 +237,7 @@ class Stmt_Select extends Stmt {
   }
 
   resolve(scope) {
-    this.setActiveLine(this.cmdLineNo);
+    scope.setActiveLine(this.cmdLineNo);
 
     var expr = this.expr;
     var arrCond = this.arrCond;
@@ -322,7 +306,7 @@ class Stmt_WhileLoop extends Stmt {
   }
   resolve(scope) {
     while (true) {
-      this.setActiveLine(this.cmdLineNoOso);
+      scope.setActiveLine(this.cmdLineNoOso);
 
       var condResult = this.cond.resolve(scope);
 
@@ -346,7 +330,7 @@ class Stmt_WhileLoop extends Stmt {
 
       this.body.resolve(scope);
 
-      this.setActiveLine(this.cmdLineNoTelosEpanalhpshs);
+      scope.setActiveLine(this.cmdLineNoTelosEpanalhpshs);
     }
   }
 }
@@ -362,11 +346,11 @@ class Stmt_Do_WhileLoop extends Stmt {
   }
   resolve(scope) {
     do {
-      this.setActiveLine(this.cmdLineNoArxh);
+      scope.setActiveLine(this.cmdLineNoArxh);
 
       this.body.resolve(scope);
 
-      this.setActiveLine(this.cmdLineNoMexrisOtou);
+      scope.setActiveLine(this.cmdLineNoMexrisOtou);
 
       var condResult = this.cond.resolve(scope);
 
@@ -411,7 +395,7 @@ class Stmt_ForLoop extends Stmt {
     this.cmdLineNoTelosEpanalhpshs = cmdLineNoTelosEpanalhpshs;
   }
   resolve(scope) {
-    this.setActiveLine(this.cmdLineNoGia);
+    scope.setActiveLine(this.cmdLineNoGia);
 
     var variable = this.variable;
     var initval = this.initval;
@@ -460,9 +444,9 @@ class Stmt_ForLoop extends Stmt {
 
         body.resolve(scope);
 
-        this.setActiveLine(this.cmdLineNoTelosEpanalhpshs);
+        scope.setActiveLine(this.cmdLineNoTelosEpanalhpshs);
 
-        this.setActiveLine(this.cmdLineNoGia);
+        scope.setActiveLine(this.cmdLineNoGia);
 
         scope.removeLock(variable.name);
 
@@ -492,9 +476,9 @@ class Stmt_ForLoop extends Stmt {
 
         body.resolve(scope);
 
-        this.setActiveLine(this.cmdLineNoTelosEpanalhpshs);
+        scope.setActiveLine(this.cmdLineNoTelosEpanalhpshs);
 
-        this.setActiveLine(this.cmdLineNoGia);
+        scope.setActiveLine(this.cmdLineNoGia);
 
         scope.removeLock(variable.name);
         scope.setSymbol(
@@ -566,7 +550,7 @@ class CallSubProcedure extends Stmt {
     this.cmdLineNo = cmdLineNo;
   }
   resolve(scope) {
-    this.setActiveLine(this.cmdLineNo);
+    scope.setActiveLine(this.cmdLineNo);
 
     scope.io.outputAddDetails(
       "Κλήση της Διαδικασίας " + this.fun.name,
@@ -665,7 +649,7 @@ class SubFunction extends Stmt {
       name,
       new STR.STRUserFunction(
         function (...arrargs) {
-          this.setActiveLine(cmdLineNo);
+          scope.setActiveLine(cmdLineNo);
 
           var args = arrargs[0];
           var parentScope = arrargs[1];
@@ -784,7 +768,7 @@ class SubProcedure extends Stmt {
       name,
       new STR.STRUserProcedure(
         function (...arrargs) {
-          this.setActiveLine(this.cmdLineNo);
+          scope.setActiveLine(this.cmdLineNo);
 
           var args = arrargs[0];
           var parentScope = arrargs[1];
@@ -878,7 +862,7 @@ class DefConstant extends Stmt {
     this.cmdLineNo = cmdLineNo;
   }
   resolve(scope) {
-    this.setActiveLine(this.cmdLineNo);
+    scope.setActiveLine(this.cmdLineNo);
 
     var obj = this.val.resolve(scope);
 
@@ -903,7 +887,7 @@ class DefVariables extends Stmt {
     this.cmdLineNo = cmdLineNo;
   }
   resolve(scope) {
-    this.setActiveLine(this.cmdLineNo);
+    scope.setActiveLine(this.cmdLineNo);
 
     var varType = this.varType;
     //console.log('======> DefVariables: : ', varType);
@@ -1011,15 +995,15 @@ class Program extends Stmt {
   resolve(scope) {
     scope.addSymbol(this.progname.name, new STR.STRReservedName(null));
 
-    this.setActiveLine(this.cmdLineNoProgramma);
+    scope.setActiveLine(this.cmdLineNoProgramma);
 
     this.declarations.resolve(scope);
 
-    this.setActiveLine(this.cmdLineNoArxh);
+    scope.setActiveLine(this.cmdLineNoArxh);
 
     this.body.resolve(scope);
 
-    this.setActiveLine(this.cmdLineNoTelosProgrammatos);
+    scope.setActiveLine(this.cmdLineNoTelosProgrammatos);
   }
 }
 

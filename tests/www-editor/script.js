@@ -96,7 +96,6 @@ worker.addEventListener(
   false
 );
 
-
 $(document).ready(function () {
   $(".gloBtnShowInput").click(function (e) {
     e.preventDefault();
@@ -154,24 +153,22 @@ $(document).ready(function () {
       .find(".gloCodeKeyboardInput")
       .val();
 
-    //if ($(this).closest(".gloBox").find(".gloCodeKeyboardInput").val() != "") FIXME:
-    //  app.setInputBuffer($(this).closest(".gloBox").find(".gloCodeKeyboardInput").val());
-
+    var slowrun = $(this).closest(".gloBox").find(".gloSlowRun").is(":checked");
+    
     var arr = {
       editorid: AceEditorID,
       sourcecode: sourcecode,
       keyboardbuffer: inputbox,
-      runspeed: 0,
+      slowrun: slowrun,
     };
 
     worker.postMessage(arr);
   });
 
-
   $(".gloStop").click(function (e) {
     e.preventDefault();
 
-    worker.postMessage('abort'); // FIXME:
+    worker.postMessage("abort"); // FIXME:
 
     $(this).closest(".gloBox").find(".gloSpinner").hide();
 
@@ -181,7 +178,4 @@ $(document).ready(function () {
     $(this).closest(".gloBox").find(".gloRun").removeClass("disabled");
     $(this).closest(".gloBox").find(".gloRun").prop("disabled", false);
   });
-
-
-
 });

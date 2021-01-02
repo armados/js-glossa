@@ -80,9 +80,9 @@ class SScope {
     this.statistics["totalLogicalComp"] = 0;
 
     this.config = {};
-    this.config["maxExecutionCmd"] = 10000;
-    this.config["maxLogicalComp"] = 5000;
-    this.config["runspeed"] = 0;
+    this.config["maxExecutionCmd"] = null;
+    this.config["maxLogicalComp"] = null;
+    this.config["runspeed"] = null;
 
     if (parent) {
       this.globalStorage = parent.globalStorage;
@@ -96,6 +96,26 @@ class SScope {
   makeSubScope() {
     return new SScope(this);
   }
+
+  setActiveLine(line) {
+    this.cmdLineNo = line;
+
+    if (typeof updateUI === "function") {
+
+      var runspeed = this.config["runspeed"];
+
+      if (runspeed != 0) {
+        updateUI("line", line);
+        this.sleepme(runspeed);
+      }
+    }
+  }
+
+  sleepme(time) {
+    var stop = new Date().getTime();
+    while (new Date().getTime() < stop + time) {}
+  }
+
 
 
   isLocked(name) {

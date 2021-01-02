@@ -28,20 +28,25 @@ function updateUI(cmd, data = null) {
   }
 }
 
-function runWorker(sourcecode) {
+function runWorker(sourcecode, keyboardbuffer, runspeed) {
   var app = new GLO.GlossaJS();
 
   app.setSourceCode(sourcecode);
 
+  if (keyboardbuffer != "") app.setInputBuffer(keyboardbuffer);
+
+  app.setRunSpeed(runspeed);
+  
   var errorMsg = null;
+
   try {
     app.run();
   } catch (e) {
     errorMsg = e.message;
-    updateUI("error");
   }
 
-  updateUI("finished");
+  if (errorMsg == null) updateUI("finished");
+  else updateUI("finishedwitherror");
 }
 
 self.addEventListener(
@@ -49,10 +54,10 @@ self.addEventListener(
   function (e) {
     editorid = e.data["editorid"];
     var sourcecode = e.data["sourcecode"];
-    //    e.data['keyboardbuffer'];
-    //    e.data['runspeed'];
+    var keyboardbuffer = e.data["keyboardbuffer"];
+    var runspeed = e.data["runspeed"];
 
-    runWorker(sourcecode);
+    runWorker(sourcecode, keyboardbuffer, runspeed);
   },
   false
 );

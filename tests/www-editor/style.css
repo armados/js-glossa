@@ -5,7 +5,7 @@
 }
 
 .gloAceEditor {
-  min-height: 260px;
+  min-height: 320px;
   font-family: "Fira Mono", monospace;
   font-size: 85%;
 }
@@ -57,7 +57,7 @@ pre,
   margin: 0px;
   padding: 15px;
   width: 100%;
-  height: 200px;
+  height: 150px;
   background-color: #222;
   border: 0px solid #ddd;
   color: #efefef;
@@ -68,7 +68,7 @@ textarea.gloCodeKeyboardInput {
   outline: none;
   resize: none;
   width: 100%;
-  height: 200px;
+  height: 150px;
   overflow: auto;
   word-wrap: break-word !important;
   white-space: pre-wrap;

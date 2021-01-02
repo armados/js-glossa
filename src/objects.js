@@ -4,36 +4,46 @@ const Atom = require("./atom");
 const GE = require("./gclasses");
 const STR = require("./storage");
 
+class Stmt {
+  setActiveLine(line) {
+    if (typeof updateUI === "function") {
+      var tt = new STR.SScope();
 
-function sleepme(time) {
-  var stop = new Date().getTime();
-  while (new Date().getTime() < stop + time) {}
+      var runspeed = tt.config["runspeed"]; //FIXME:
+
+      if (runspeed != 0) {
+        updateUI("line", line);
+        this.sleepme(runspeed);
+      }
+    }
+  }
+
+  sleepme(time) {
+    var stop = new Date().getTime();
+    while (new Date().getTime() < stop + time) {}
+  }
 }
 
 // ========================
 
-class Stmt_Block {
+class Stmt_Block extends Stmt {
   constructor(block) {
+    super();
     this.statements = block;
   }
 
   resolve(scope) {
     this.statements.forEach(function (statement) {
-
-      //console.log(scope.io.outputData[scope.io.outputData.length -1 ]);
-      //console.log('=================================');
-      sleepme(100); 
-
       statement.resolve(scope);
-
     });
   }
 }
 
 // ===================================
 
-class Stmt_Assignment {
+class Stmt_Assignment extends Stmt {
   constructor(sym, val, cmdStrA, cmdStrB, cmdLineNo) {
+    super();
     this.symbol = sym;
     this.val = val;
     this.cmdStrA = cmdStrA;
@@ -41,12 +51,7 @@ class Stmt_Assignment {
     this.cmdLineNo = cmdLineNo;
   }
   resolve(scope) {
-    scope.cmdLineNo = this.cmdLineNo; //FIXME:
-
-    if (typeof updateUI === "function") {
-      updateUI('line', scope.cmdLineNo);
-
-    }
+    this.setActiveLine(this.cmdLineNo);
 
     var sym = this.symbol;
 
@@ -65,18 +70,14 @@ class Stmt_Assignment {
   }
 }
 
-class Stmt_Write {
+class Stmt_Write extends Stmt {
   constructor(args, cmdLineNo) {
+    super();
     this.args = args;
     this.cmdLineNo = cmdLineNo;
   }
   resolve(scope) {
-    scope.cmdLineNo = this.cmdLineNo; //FIXME:
-    
-    if (typeof updateUI === "function") {
-      updateUI('line', scope.cmdLineNo);
-
-    }
+    this.setActiveLine(this.cmdLineNo);
 
     var output = [];
 
@@ -112,18 +113,14 @@ class Stmt_Write {
   }
 }
 
-class Stmt_Read {
+class Stmt_Read extends Stmt {
   constructor(args, cmdLineNo) {
+    super();
     this.args = args;
     this.cmdLineNo = cmdLineNo;
   }
   resolve(scope) {
-    scope.cmdLineNo = this.cmdLineNo; //FIXME:
-
-    if (typeof updateUI === "function") {
-      updateUI('line', scope.cmdLineNo);
-
-    }
+    this.setActiveLine(this.cmdLineNo);
 
     scope.io.outputAddDetails("Διάβασε από το πληκτρολόγιο", this.cmdLineNo);
 
@@ -178,8 +175,9 @@ class Stmt_Read {
   }
 }
 
-class Stmt_IfCond {
+class Stmt_IfCond extends Stmt {
   constructor(arrCond, arrCondStr, arrLineNo, arrBody, elseBody, elseBodyLine) {
+    super();
     this.arrCond = arrCond;
     this.arrCondStr = arrCondStr;
     this.arrLineNo = arrLineNo;
@@ -189,13 +187,6 @@ class Stmt_IfCond {
   }
 
   resolve(scope) {
-    scope.cmdLineNo = this.arrLineNo[0]; //FIXME:
-    
-    if (typeof updateUI === "function") {
-      updateUI('line', scope.cmdLineNo);
-
-    }
-
     var arrCond = this.arrCond;
     var arrCondStr = this.arrCondStr;
     var arrLineNo = this.arrLineNo;
@@ -204,6 +195,8 @@ class Stmt_IfCond {
     var elseBodyLine = this.elseBodyLine;
 
     for (var i = 0; i < arrCond.length; ++i) {
+      this.setActiveLine(this.arrLineNo[i]);
+
       var condResult = arrCond[i].resolve(scope);
 
       if (!(condResult instanceof Atom.MBoolean))
@@ -226,6 +219,8 @@ class Stmt_IfCond {
     }
 
     if (elseBody != null) {
+      this.setActiveLine(this.elseBodyLine);
+
       scope.io.outputAddDetails(
         "Εκτέλεση του τμήματος εντολών της ΑΛΛΙΩΣ",
         elseBodyLine
@@ -235,7 +230,7 @@ class Stmt_IfCond {
   }
 }
 
-class Stmt_Select {
+class Stmt_Select extends Stmt {
   constructor(
     expr,
     arrCond,
@@ -246,6 +241,7 @@ class Stmt_Select {
     elseBodyLine,
     cmdLineNo
   ) {
+    super();
     this.expr = expr;
     this.arrCond = arrCond;
     this.arrCondStr = arrCondStr;
@@ -257,12 +253,7 @@ class Stmt_Select {
   }
 
   resolve(scope) {
-    scope.cmdLineNo = this.cmdLineNo;
-    
-    if (typeof updateUI === "function") {
-      updateUI('line', scope.cmdLineNo);
-
-    }
+    this.setActiveLine(this.cmdLineNo);
 
     var expr = this.expr;
     var arrCond = this.arrCond;
@@ -320,22 +311,19 @@ class Stmt_Select {
   }
 }
 
-class Stmt_WhileLoop {
-  constructor(cond, condstr, body, cmdLineNo) {
+class Stmt_WhileLoop extends Stmt {
+  constructor(cond, condstr, body, cmdLineNoOso, cmdLineNoTelosEpanalhpshs) {
+    super();
     this.cond = cond;
     this.condstr = condstr;
     this.body = body;
-    this.cmdLineNo = cmdLineNo;
+    this.cmdLineNoOso = cmdLineNoOso;
+    this.cmdLineNoTelosEpanalhpshs = cmdLineNoTelosEpanalhpshs;
   }
   resolve(scope) {
-    scope.cmdLineNo = this.cmdLineNo; //FIXME:
-    
-    if (typeof updateUI === "function") {
-      updateUI('line', scope.cmdLineNo);
-
-    }
-
     while (true) {
+      this.setActiveLine(this.cmdLineNoOso);
+
       var condResult = this.cond.resolve(scope);
 
       if (!(condResult instanceof Atom.MBoolean))
@@ -357,27 +345,28 @@ class Stmt_WhileLoop {
       scope.incrLogicalCounter();
 
       this.body.resolve(scope);
+
+      this.setActiveLine(this.cmdLineNoTelosEpanalhpshs);
     }
   }
 }
 
-class Stmt_Do_WhileLoop {
-  constructor(cond, condstr, body, cmdLineNo) {
+class Stmt_Do_WhileLoop extends Stmt {
+  constructor(cond, condstr, body, cmdLineNoArxh, cmdLineNoMexrisOtou) {
+    super();
     this.cond = cond;
     this.condstr = condstr;
     this.body = body;
-    this.cmdLineNo = cmdLineNo;
+    this.cmdLineNoArxh = cmdLineNoArxh;
+    this.cmdLineNoMexrisOtou = cmdLineNoMexrisOtou;
   }
   resolve(scope) {
-    scope.cmdLineNo = this.cmdLineNo; //FIXME:
-    
-    if (typeof updateUI === "function") {
-      updateUI('line', scope.cmdLineNo);
-
-    }
-
     do {
+      this.setActiveLine(this.cmdLineNoArxh);
+
       this.body.resolve(scope);
+
+      this.setActiveLine(this.cmdLineNoMexrisOtou);
 
       var condResult = this.cond.resolve(scope);
 
@@ -402,22 +391,27 @@ class Stmt_Do_WhileLoop {
   }
 }
 
-class Stmt_ForLoop {
-  constructor(variable, initval, finalval, stepval, body, cmdLineNo) {
+class Stmt_ForLoop extends Stmt {
+  constructor(
+    variable,
+    initval,
+    finalval,
+    stepval,
+    body,
+    cmdLineNoGia,
+    cmdLineNoTelosEpanalhpshs
+  ) {
+    super();
     this.variable = variable;
     this.initval = initval;
     this.finalval = finalval;
     this.stepval = stepval;
     this.body = body;
-    this.cmdLineNo = cmdLineNo;
+    this.cmdLineNoGia = cmdLineNoGia;
+    this.cmdLineNoTelosEpanalhpshs = cmdLineNoTelosEpanalhpshs;
   }
   resolve(scope) {
-    scope.cmdLineNo = this.cmdLineNo; //FIXME:
-    
-    if (typeof updateUI === "function") {
-      updateUI('line', scope.cmdLineNo);
-
-    }
+    this.setActiveLine(this.cmdLineNoGia);
 
     var variable = this.variable;
     var initval = this.initval;
@@ -466,6 +460,10 @@ class Stmt_ForLoop {
 
         body.resolve(scope);
 
+        this.setActiveLine(this.cmdLineNoTelosEpanalhpshs);
+
+        this.setActiveLine(this.cmdLineNoGia);
+
         scope.removeLock(variable.name);
 
         scope.setSymbol(
@@ -474,6 +472,7 @@ class Stmt_ForLoop {
         );
         scope.addLock(variable.name);
       }
+
       scope.io.outputAddDetails(
         "Η συνθήκη της ΓΙΑ " + variable.name + "<=" + v_final + " είναι ΨΕΥΔΗΣ",
         this.cmdLineNo
@@ -493,6 +492,10 @@ class Stmt_ForLoop {
 
         body.resolve(scope);
 
+        this.setActiveLine(this.cmdLineNoTelosEpanalhpshs);
+
+        this.setActiveLine(this.cmdLineNoGia);
+
         scope.removeLock(variable.name);
         scope.setSymbol(
           variable.name,
@@ -500,6 +503,7 @@ class Stmt_ForLoop {
         );
         scope.addLock(variable.name);
       }
+
       scope.io.outputAddDetails(
         "Η συνθήκη της ΓΙΑ " + variable.name + ">=" + v_final + " είναι ΨΕΥΔΗΣ",
         this.cmdLineNo
@@ -510,8 +514,9 @@ class Stmt_ForLoop {
   }
 }
 
-class CallSubFunction {
+class CallSubFunction extends Stmt {
   constructor(fun, args, cmdLineNo) {
+    super();
     this.fun = fun;
     this.args = args;
     this.cmdLineNo = cmdLineNo;
@@ -553,14 +558,15 @@ class CallSubFunction {
   }
 }
 
-class CallSubProcedure {
+class CallSubProcedure extends Stmt {
   constructor(fun, args, cmdLineNo) {
+    super();
     this.fun = fun;
     this.args = args;
     this.cmdLineNo = cmdLineNo;
   }
   resolve(scope) {
-    scope.cmdLineNo = this.cmdLineNo; //FIXME:
+    this.setActiveLine(this.cmdLineNo);
 
     scope.io.outputAddDetails(
       "Κλήση της Διαδικασίας " + this.fun.name,
@@ -636,8 +642,9 @@ class CallSubProcedure {
   }
 }
 
-class SubFunction {
+class SubFunction extends Stmt {
   constructor(name, params, funType, declarations, body, cmdLineNo) {
+    super();
     this.name = name;
     this.params = params;
     this.funType = funType;
@@ -647,120 +654,119 @@ class SubFunction {
   }
 
   resolve(scope) {
-    scope.cmdLineNo = this.cmdLineNo; //FIXME:
-    
-    if (typeof updateUI === "function") {
-      updateUI('line', scope.cmdLineNo);
-
-    }
-
     var name = this.name.name;
     var params = this.params;
     var funType = this.funType;
     var declarations = this.declarations;
     var body = this.body;
+    var cmdLineNo = this.cmdLineNo;
 
     scope.addSymbol(
       name,
-      new STR.STRUserFunction(function (...arrargs) {
-        var args = arrargs[0];
-        var parentScope = arrargs[1];
+      new STR.STRUserFunction(
+        function (...arrargs) {
+          this.setActiveLine(cmdLineNo);
 
-        if (args.length != params.length)
-          throw new GE.GError(
-            "Λάθος αριθμός παραμέτρων κατά την κλήση της συνάρτησης."
-          );
+          var args = arrargs[0];
+          var parentScope = arrargs[1];
 
-        var scope2 = scope.makeSubScope();
-
-        var ftype = null;
-
-        switch (funType) {
-          case "ΑΚΕΡΑΙΑ":
-            ftype = new STR.STRFuncNameInt(null);
-            break;
-          case "ΠΡΑΓΜΑΤΙΚΗ":
-            ftype = new STR.STRFuncNameFloat(null);
-            break;
-          case "ΧΑΡΑΚΤΗΡΑΣ":
-            ftype = new STR.STRFuncNameString(null);
-            break;
-          case "ΛΟΓΙΚΗ":
-            ftype = new STR.STRFuncNameBoolean(null);
-            break;
-          default:
+          if (args.length != params.length)
             throw new GE.GError(
-              "Critical: Cannot detect function return value type"
-            );
-        }
-
-        // Add function name as variable
-        scope2.addSymbolFuncName(name, ftype);
-
-        declarations.resolve(scope2);
-
-        params.forEach(function (param, i) {
-          if (!scope2.hasSymbol(param.name))
-            throw new GE.GError(
-              "Η παράμετρος " +
-                param.name +
-                "δεν έχει δηλωθεί στο τμήμα δηλώσεων."
+              "Λάθος αριθμός παραμέτρων κατά την κλήση της συνάρτησης."
             );
 
-          if (!(args[i] instanceof STR.STRTableName))
-            scope2.setSymbol(param.name, args[i]);
-          else {
-            if (
-              scope2.getSymbol(param.name).constructor.name !=
-              args[i].constructor.name
-            )
-              throw new GE.GError("Οι πίνακες έχουν διαφορετικό τύπο.");
+          var scope2 = scope.makeSubScope();
 
-            if (!scope2.getSymbol(param.name).arraySizeEquals(args[i]))
-              throw new GE.GError("Οι πίνακες έχουν διαφορετικό μέγεθος.");
+          var ftype = null;
 
-            var tblDimensions = scope2.getSymbol(param.name).getSize().length;
+          switch (funType) {
+            case "ΑΚΕΡΑΙΑ":
+              ftype = new STR.STRFuncNameInt(null);
+              break;
+            case "ΠΡΑΓΜΑΤΙΚΗ":
+              ftype = new STR.STRFuncNameFloat(null);
+              break;
+            case "ΧΑΡΑΚΤΗΡΑΣ":
+              ftype = new STR.STRFuncNameString(null);
+              break;
+            case "ΛΟΓΙΚΗ":
+              ftype = new STR.STRFuncNameBoolean(null);
+              break;
+            default:
+              throw new GE.GError(
+                "Critical: Cannot detect function return value type"
+              );
+          }
 
-            if (tblDimensions == 1) {
-              var tblsize1 = args[i].getSize()[0];
-              for (var k = 1; k <= tblsize1; ++k) {
-                scope2.setSymbol(
-                  param.name + "[" + k + "]",
-                  parentScope.getSymbol(args[i].tblname + "[" + k + "]")
-                );
-              }
-            } else if (tblDimensions == 2) {
-              var tblsize1 = args[i].getSize()[0];
-              var tblsize2 = args[i].getSize()[1];
-              for (var k = 1; k <= tblsize1; ++k) {
-                for (var l = 1; l <= tblsize2; ++l) {
+          // Add function name as variable
+          scope2.addSymbolFuncName(name, ftype);
+
+          declarations.resolve(scope2);
+
+          params.forEach(function (param, i) {
+            if (!scope2.hasSymbol(param.name))
+              throw new GE.GError(
+                "Η παράμετρος " +
+                  param.name +
+                  "δεν έχει δηλωθεί στο τμήμα δηλώσεων."
+              );
+
+            if (!(args[i] instanceof STR.STRTableName))
+              scope2.setSymbol(param.name, args[i]);
+            else {
+              if (
+                scope2.getSymbol(param.name).constructor.name !=
+                args[i].constructor.name
+              )
+                throw new GE.GError("Οι πίνακες έχουν διαφορετικό τύπο.");
+
+              if (!scope2.getSymbol(param.name).arraySizeEquals(args[i]))
+                throw new GE.GError("Οι πίνακες έχουν διαφορετικό μέγεθος.");
+
+              var tblDimensions = scope2.getSymbol(param.name).getSize().length;
+
+              if (tblDimensions == 1) {
+                var tblsize1 = args[i].getSize()[0];
+                for (var k = 1; k <= tblsize1; ++k) {
                   scope2.setSymbol(
-                    param.name + "[" + k + "," + l + "]",
-                    parentScope.getSymbol(
-                      args[i].tblname + "[" + k + "," + l + "]"
-                    )
+                    param.name + "[" + k + "]",
+                    parentScope.getSymbol(args[i].tblname + "[" + k + "]")
                   );
+                }
+              } else if (tblDimensions == 2) {
+                var tblsize1 = args[i].getSize()[0];
+                var tblsize2 = args[i].getSize()[1];
+                for (var k = 1; k <= tblsize1; ++k) {
+                  for (var l = 1; l <= tblsize2; ++l) {
+                    scope2.setSymbol(
+                      param.name + "[" + k + "," + l + "]",
+                      parentScope.getSymbol(
+                        args[i].tblname + "[" + k + "," + l + "]"
+                      )
+                    );
+                  }
                 }
               }
             }
-          }
-        });
+          });
 
-        body.resolve(scope2);
+          body.resolve(scope2);
 
-        if (!scope2.getSymbol(name))
-          throw new GE.GError(
-            "Η συνάρτηση δεν επέστρεψε τιμή με το όνομά της."
-          );
+          if (!scope2.getSymbol(name))
+            throw new GE.GError(
+              "Η συνάρτηση δεν επέστρεψε τιμή με το όνομά της."
+            );
 
-        return scope2.getSymbol(name);
-      })
+          return scope2.getSymbol(name);
+        }.bind(this)
+      )
     );
   }
 }
 
-class SubProcedure {
+class SubProcedure extends Stmt {
   constructor(name, params, declarations, body, cmdLineNo) {
+    super();
     this.name = name;
     this.params = params;
     this.declarations = declarations;
@@ -769,13 +775,6 @@ class SubProcedure {
   }
 
   resolve(scope) {
-    scope.cmdLineNo = this.cmdLineNo; //FIXME:
-    
-    if (typeof updateUI === "function") {
-      updateUI('line', scope.cmdLineNo);
-
-    }
-
     var name = this.name.name;
     var params = this.params;
     var declarations = this.declarations;
@@ -783,80 +782,85 @@ class SubProcedure {
 
     scope.addSymbol(
       name,
-      new STR.STRUserProcedure(function (...arrargs) {
-        var args = arrargs[0];
-        var parentScope = arrargs[1];
+      new STR.STRUserProcedure(
+        function (...arrargs) {
+          this.setActiveLine(this.cmdLineNo);
 
-        if (args.length != params.length)
-          throw new GE.GError(
-            "Λάθος αριθμός παραμέτρων κατά την κλήση της διαδικασίας."
-          );
+          var args = arrargs[0];
+          var parentScope = arrargs[1];
 
-        var scope2 = scope.makeSubScope();
-
-        // Declare constants and variables
-        declarations.resolve(scope2);
-
-        // Sent values to procedure
-        params.forEach(function (param, i) {
-          if (!scope2.hasSymbol(param.name))
+          if (args.length != params.length)
             throw new GE.GError(
-              "Η παράμετρος " +
-                param.name +
-                " δεν έχει δηλωθεί στο τμήμα δηλώσεων."
+              "Λάθος αριθμός παραμέτρων κατά την κλήση της διαδικασίας."
             );
 
-          if (!(args[i] instanceof STR.STRTableName))
-            scope2.setSymbol(param.name, args[i]);
-          else {
-            if (
-              scope2.getSymbol(param.name).constructor.name !=
-              args[i].constructor.name
-            )
-              throw new GE.GError("Οι πίνακες έχουν διαφορετικό τύπο.");
+          var scope2 = scope.makeSubScope();
 
-            if (!scope2.getSymbol(param.name).arraySizeEquals(args[i]))
-              throw new GE.GError("Οι πίνακες έχουν διαφορετικό μέγεθος.");
+          // Declare constants and variables
+          declarations.resolve(scope2);
 
-            var tblDimensions = scope2.getSymbol(param.name).getSize().length;
+          // Sent values to procedure
+          params.forEach(function (param, i) {
+            if (!scope2.hasSymbol(param.name))
+              throw new GE.GError(
+                "Η παράμετρος " +
+                  param.name +
+                  " δεν έχει δηλωθεί στο τμήμα δηλώσεων."
+              );
 
-            if (tblDimensions == 1) {
-              var tblsize1 = args[i].getSize()[0];
-              for (var k = 1; k <= tblsize1; ++k) {
-                scope2.setSymbol(
-                  param.name + "[" + k + "]",
-                  parentScope.getSymbol(args[i].tblname + "[" + k + "]")
-                );
-              }
-            } else if (tblDimensions == 2) {
-              var tblsize1 = args[i].getSize()[0];
-              var tblsize2 = args[i].getSize()[1];
-              for (var k = 1; k <= tblsize1; ++k) {
-                for (var l = 1; l <= tblsize2; ++l) {
+            if (!(args[i] instanceof STR.STRTableName))
+              scope2.setSymbol(param.name, args[i]);
+            else {
+              if (
+                scope2.getSymbol(param.name).constructor.name !=
+                args[i].constructor.name
+              )
+                throw new GE.GError("Οι πίνακες έχουν διαφορετικό τύπο.");
+
+              if (!scope2.getSymbol(param.name).arraySizeEquals(args[i]))
+                throw new GE.GError("Οι πίνακες έχουν διαφορετικό μέγεθος.");
+
+              var tblDimensions = scope2.getSymbol(param.name).getSize().length;
+
+              if (tblDimensions == 1) {
+                var tblsize1 = args[i].getSize()[0];
+                for (var k = 1; k <= tblsize1; ++k) {
                   scope2.setSymbol(
-                    param.name + "[" + k + "][" + l + "]",
-                    parentScope.getSymbol(
-                      args[i].tblname + "[" + k + "][" + l + "]"
-                    )
+                    param.name + "[" + k + "]",
+                    parentScope.getSymbol(args[i].tblname + "[" + k + "]")
                   );
+                }
+              } else if (tblDimensions == 2) {
+                var tblsize1 = args[i].getSize()[0];
+                var tblsize2 = args[i].getSize()[1];
+                for (var k = 1; k <= tblsize1; ++k) {
+                  for (var l = 1; l <= tblsize2; ++l) {
+                    scope2.setSymbol(
+                      param.name + "[" + k + "][" + l + "]",
+                      parentScope.getSymbol(
+                        args[i].tblname + "[" + k + "][" + l + "]"
+                      )
+                    );
+                  }
                 }
               }
             }
-          }
-        });
+          });
 
-        body.resolve(scope2);
+          body.resolve(scope2);
 
-        var procExecArr = [scope2, params];
+          var procExecArr = [scope2, params];
 
-        return procExecArr;
-      })
+          return procExecArr;
+        }.bind(this)
+      )
     );
   }
 }
 
-class DefDeclarations {
+class DefDeclarations extends Stmt {
   constructor(consts, vars) {
+    super();
     this.consts = consts;
     this.vars = vars;
   }
@@ -866,19 +870,15 @@ class DefDeclarations {
   }
 }
 
-class DefConstant {
+class DefConstant extends Stmt {
   constructor(sym, val, cmdLineNo) {
+    super();
     this.sym = sym;
     this.val = val;
     this.cmdLineNo = cmdLineNo;
   }
   resolve(scope) {
-    scope.cmdLineNo = this.cmdLineNo; //FIXME:
-    
-    if (typeof updateUI === "function") {
-      updateUI('line', scope.cmdLineNo);
-
-    }
+    this.setActiveLine(this.cmdLineNo);
 
     var obj = this.val.resolve(scope);
 
@@ -895,19 +895,15 @@ class DefConstant {
   }
 }
 
-class DefVariables {
+class DefVariables extends Stmt {
   constructor(varType, sym, cmdLineNo) {
+    super();
     this.varType = varType;
     this.sym = sym;
     this.cmdLineNo = cmdLineNo;
   }
   resolve(scope) {
-    scope.cmdLineNo = this.cmdLineNo; //FIXME:
-    
-    if (typeof updateUI === "function") {
-      updateUI('line', scope.cmdLineNo);
-
-    }
+    this.setActiveLine(this.cmdLineNo);
 
     var varType = this.varType;
     //console.log('======> DefVariables: : ', varType);
@@ -994,28 +990,36 @@ class DefVariables {
   }
 }
 
-class Program {
-  constructor(progname, declarations, body, cmdLineNo) {
+class Program extends Stmt {
+  constructor(
+    progname,
+    declarations,
+    body,
+    cmdLineNoProgramma,
+    cmdLineNoArxh,
+    cmdLineNoTelosProgrammatos
+  ) {
+    super();
     this.progname = progname;
     this.declarations = declarations;
     this.body = body;
-    this.cmdLineNo = cmdLineNo;
+    this.cmdLineNoProgramma = cmdLineNoProgramma;
+    this.cmdLineNoArxh = cmdLineNoArxh;
+    this.cmdLineNoTelosProgrammatos = cmdLineNoTelosProgrammatos;
   }
 
   resolve(scope) {
-    scope.cmdLineNo = this.cmdLineNo; //FIXME:
-    
-    if (typeof updateUI === "function") {
-      updateUI('line', scope.cmdLineNo);
-
-    }
-
     scope.addSymbol(this.progname.name, new STR.STRReservedName(null));
+
+    this.setActiveLine(this.cmdLineNoProgramma);
 
     this.declarations.resolve(scope);
 
+    this.setActiveLine(this.cmdLineNoArxh);
+
     this.body.resolve(scope);
 
+    this.setActiveLine(this.cmdLineNoTelosProgrammatos);
   }
 }
 

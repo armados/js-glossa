@@ -12,7 +12,6 @@ worker.addEventListener(
     switch (e.data["cmd"]) {
       case "line":
         console.log("Update line " + e.data["data"]);
-        aceeditor.setHighlightActiveLine(true);
         aceeditor.gotoLine(e.data["data"]);
         break;
       case "outputappend":
@@ -37,7 +36,7 @@ worker.addEventListener(
           });
 
         break;
-      case "error":
+      case "finishedwitherror":
         //console.log("Update error");
         var output = e.data["data"];
         $("#" + editorid)
@@ -59,6 +58,15 @@ worker.addEventListener(
 
         $("#" + editorid)
           .closest(".gloBox")
+          .find(".gloStop")
+          .addClass("disabled");
+        $("#" + editorid)
+          .closest(".gloBox")
+          .find(".gloStop")
+          .prop("disabled", true);
+
+        $("#" + editorid)
+          .closest(".gloBox")
           .find(".gloRun")
           .removeClass("disabled");
         $("#" + editorid)
@@ -66,6 +74,7 @@ worker.addEventListener(
           .find(".gloRun")
           .prop("disabled", false);
 
+        aceeditor.setHighlightActiveLine(false);
         aceeditor.setReadOnly(false);
 
         break;
@@ -86,6 +95,7 @@ worker.addEventListener(
   },
   false
 );
+
 
 $(document).ready(function () {
   $(".gloBtnShowInput").click(function (e) {
@@ -119,6 +129,9 @@ $(document).ready(function () {
     $(this).closest(".gloBox").find(".gloRun").addClass("disabled");
     $(this).closest(".gloBox").find(".gloRun").prop("disabled", true);
 
+    $(this).closest(".gloBox").find(".gloStop").removeClass("disabled");
+    $(this).closest(".gloBox").find(".gloStop").prop("disabled", false);
+
     $(this).closest(".gloBox").find(".gloBtnShowOutput").click();
 
     $(this).closest(".gloBox").find(".gloResult").html("");
@@ -132,6 +145,7 @@ $(document).ready(function () {
     var aceeditor = ace.edit(AceEditorID);
 
     aceeditor.setReadOnly(true);
+    aceeditor.setHighlightActiveLine(true);
 
     var sourcecode = aceeditor.getValue();
 
@@ -140,16 +154,34 @@ $(document).ready(function () {
       .find(".gloCodeKeyboardInput")
       .val();
 
-    //if ($(this).closest(".gloBox").find(".gloCodeKeyboardInput").val() != "")
+    //if ($(this).closest(".gloBox").find(".gloCodeKeyboardInput").val() != "") FIXME:
     //  app.setInputBuffer($(this).closest(".gloBox").find(".gloCodeKeyboardInput").val());
 
     var arr = {
       editorid: AceEditorID,
       sourcecode: sourcecode,
       keyboardbuffer: inputbox,
-      runspeed: "FIXME",
+      runspeed: 0,
     };
 
     worker.postMessage(arr);
   });
+
+
+  $(".gloStop").click(function (e) {
+    e.preventDefault();
+
+    worker.postMessage('abort'); // FIXME:
+
+    $(this).closest(".gloBox").find(".gloSpinner").hide();
+
+    $(this).closest(".gloBox").find(".gloStop").addClass("disabled");
+    $(this).closest(".gloBox").find(".gloStop").prop("disabled", true);
+
+    $(this).closest(".gloBox").find(".gloRun").removeClass("disabled");
+    $(this).closest(".gloBox").find(".gloRun").prop("disabled", false);
+  });
+
+
+
 });

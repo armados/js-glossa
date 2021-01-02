@@ -157,36 +157,38 @@ var operation = {
     );
   },
 
-  WhileExpr: function (_1, cond, _2, body, _3) {
+  WhileExpr: function (_OSO, cond, _EPANALAVE, body, _TELOS_EPANALHPSHS) {
     return new MO.Stmt_WhileLoop(
       cond.toAST(),
       cond.sourceString,
       body.toAST(),
-      getLineNo(cond)
+      getLineNo(_OSO),
+      getLineNo(_TELOS_EPANALHPSHS)
     );
   },
 
-  DoWhileExpr: function (_1, body, _2, cond) {
+  DoWhileExpr: function (_ARXH_EPANALHPSHS, body, _MEXRIS_OTOU, cond) {
     return new MO.Stmt_Do_WhileLoop(
       cond.toAST(),
       cond.sourceString,
       body.toAST(),
-      getLineNo(cond)
+      getLineNo(_ARXH_EPANALHPSHS),
+      getLineNo(_MEXRIS_OTOU)
     );
   },
 
   ForExpr: function (
-    _1,
+    _GIA,
     variable,
-    _2,
+    _APO,
     initval,
-    _3,
+    _MEXRI,
     finalval,
-    _4,
+    _ME_BHMA,
     stepval,
-    _5,
+    _nl,
     body,
-    _6
+    _TELOS_EPANALHPSHS
   ) {
     return new MO.Stmt_ForLoop(
       variable.toAST(),
@@ -194,7 +196,8 @@ var operation = {
       finalval.toAST(),
       stepval.toAST(),
       body.toAST(),
-      getLineNo(variable)
+      getLineNo(_GIA),
+      getLineNo(_TELOS_EPANALHPSHS)
     );
   },
 
@@ -322,11 +325,8 @@ var operation = {
         arrBody.push(moreBody[i]);
       }
     }
-    
 
     //console.log(arrCond);
-
-
 
     var elseBody = eb ? eb.toAST()[0] : null;
     return new MO.Stmt_Select(
@@ -341,36 +341,38 @@ var operation = {
     );
   },
 
-  WhileExprFunction: function (_1, cond, _2, body, _3) {
+  WhileExprFunction: function (_OSO, cond, _EPANALAVE, body, _TELOS_EPANALHPSHS) {
     return new MO.Stmt_WhileLoop(
       cond.toAST(),
       cond.sourceString,
       body.toAST(),
-      getLineNo(cond)
+      getLineNo(_OSO),
+      getLineNo(_TELOS_EPANALHPSHS)
     );
   },
 
-  DoWhileExprFunction: function (_1, body, _2, cond) {
+  DoWhileExprFunction: function (_ARXH_EPANALHPSHS, body, _MEXRIS_OTOU, cond) {
     return new MO.Stmt_Do_WhileLoop(
       cond.toAST(),
       cond.sourceString,
       body.toAST(),
-      getLineNo(cond)
+      getLineNo(_ARXH_EPANALHPSHS),
+      getLineNo(_MEXRIS_OTOU)
     );
   },
 
   ForExprFunction: function (
-    _1,
+    _GIA,
     variable,
-    _2,
+    _APO,
     initval,
-    _3,
+    _MEXRI,
     finalval,
-    _4,
+    _ME_BHMA,
     stepval,
-    _5,
+    _nl,
     body,
-    _6
+    _TELOS_EPANALHPSHS
   ) {
     return new MO.Stmt_ForLoop(
       variable.toAST(),
@@ -378,9 +380,11 @@ var operation = {
       finalval.toAST(),
       stepval.toAST(),
       body.toAST(),
-      getLineNo(variable)
+      getLineNo(_GIA),
+      getLineNo(_TELOS_EPANALHPSHS)
     );
   },
+
 
   FunCall: function (a, _1, b, _2) {
     return new MO.CallSubFunction(a.toAST(), b.toAST(), getLineNo(a));
@@ -421,12 +425,21 @@ var operation = {
     );
   },
 
-  Program: function (_1, name, decl, _5, mBlock, _6) {
+  Program: function (
+    _PROGRAMMA,
+    name,
+    decl,
+    _ARXH,
+    mBlock,
+    _TELOS_PROGRAMMATOS
+  ) {
     return new MO.Program(
       name.toAST(),
       decl.toAST(),
       mBlock.toAST(),
-      getLineNo(name)
+      getLineNo(_PROGRAMMA),
+      getLineNo(_ARXH),
+      getLineNo(_TELOS_PROGRAMMATOS)
     );
   },
 

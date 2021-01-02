@@ -44,11 +44,15 @@ class GlossaJS {
   }
 
   setInputBuffer(data) {
-    if (data != null && data != "") {
+    if (data != null && data.trim() != "") {
       //console.log('Keyboard buffer argIOKeyboard: ', argIOKeyboard);
       var arrKeyboard = data.split(",").map((item) => item.trim());
       arrKeyboard.forEach((e) => this.scope.io.inputAddToBuffer(e));
     }
+  }
+
+  setRunSpeed(value) {
+    this.scope.config["runspeed"] = value;
   }
 
   initGlobalFunction() {
@@ -348,10 +352,12 @@ class GlossaJS {
     }
 
     try {
+
       result.resolve(this.scope);
+
     } catch (e) {
-      //console.log('Console ErrorMsg: ', e.message);
-      //console.log(e);
+      console.log("Console ErrorMsg: ", e.message);
+      console.log(e);
       this.io.outputAdd(e.message);
       this.io.outputAddDetails(e.message);
     } finally {

@@ -82,6 +82,7 @@ class SScope {
     this.config = {};
     this.config["maxExecutionCmd"] = 10000;
     this.config["maxLogicalComp"] = 5000;
+    this.config["runspeed"] = 0;
 
     if (parent) {
       this.globalStorage = parent.globalStorage;
@@ -95,6 +96,7 @@ class SScope {
   makeSubScope() {
     return new SScope(this);
   }
+
 
   isLocked(name) {
     return this.lockedVariables.includes(name);

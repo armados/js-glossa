@@ -52,6 +52,8 @@ class IOBuffer {
 
     var value = this.inputData.shift();
 
+    if (typeof value == "boolean") return value;
+
     if (!isNaN(parseFloat(value))) return Number(value);
     else return String(value.replace(/['"]+/g, ""));
   }

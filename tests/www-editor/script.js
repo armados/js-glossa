@@ -7,9 +7,34 @@ worker.addEventListener(
 
     var aceeditor = ace.edit(editorid);
 
-    //console.log("UI: Rec msg");
+    function objectToString(obj) {
+      var variables = [];
+
+      for (var key in obj) {
+
+        if (obj[key]["obj"] != null)
+          variables.push(key + " = " + obj[key]["obj"]["val"]);
+        else variables.push((key + " = <i>null</i>"));
+      }
+
+      var html =
+        "<ul>" +
+        variables
+          .map(function (variable) {
+            return "<li>" + variable + "</li>";
+          })
+          .join("") +
+        "</ul>";
+
+      return html;
+    }
 
     switch (e.data["cmd"]) {
+      case "memory":
+        //console.log("Got Memory data");
+        //console.log(objectToString(e.data["data"]));
+        $("#memory").html(objectToString(e.data["data"]));
+        break;
       case "line":
         console.log("Update line " + e.data["data"]);
         aceeditor.gotoLine(e.data["data"]);
@@ -154,7 +179,7 @@ $(document).ready(function () {
       .val();
 
     var slowrun = $(this).closest(".gloBox").find(".gloSlowRun").is(":checked");
-    
+
     var arr = {
       editorid: AceEditorID,
       sourcecode: sourcecode,

@@ -4,9 +4,7 @@ const Atom = require("./atom");
 const GE = require("./gclasses");
 const STR = require("./storage");
 
-class Stmt {
-
-}
+class Stmt {}
 
 // ========================
 
@@ -150,6 +148,7 @@ class Stmt_Read extends Stmt {
 
       if (typeof data == "string") var sym = new Atom.MString(data);
       else if (typeof data == "number") var sym = new Atom.MNumber(data);
+      else if (typeof data == "boolean") var sym = new Atom.MBoolean(data);
       else throw new GE.GError("Critical: Unknown input value type: " + data);
 
       scope.setSymbol(arg.name, sym);
@@ -160,7 +159,15 @@ class Stmt_Read extends Stmt {
 }
 
 class Stmt_IfCond extends Stmt {
-  constructor(arrCond, arrCondStr, arrLineNo, arrBody, elseBody, elseBodyLine) {
+  constructor(
+    arrCond,
+    arrCondStr,
+    arrLineNo,
+    arrBody,
+    elseBody,
+    elseBodyLine,
+    telosAnLine
+  ) {
     super();
     this.arrCond = arrCond;
     this.arrCondStr = arrCondStr;
@@ -168,6 +175,7 @@ class Stmt_IfCond extends Stmt {
     this.arrBody = arrBody;
     this.elseBody = elseBody;
     this.elseBodyLine = elseBodyLine;
+    this.telosAnLine = telosAnLine;
   }
 
   resolve(scope) {
@@ -199,7 +207,11 @@ class Stmt_IfCond extends Stmt {
 
       scope.incrLogicalCounter();
 
-      if (condResult.val == true) return arrBody[i].resolve(scope);
+      if (condResult.val == true) {
+        arrBody[i].resolve(scope);
+        scope.setActiveLine(this.telosAnLine);
+        return;
+      }
     }
 
     if (elseBody != null) {
@@ -209,8 +221,13 @@ class Stmt_IfCond extends Stmt {
         "Εκτέλεση του τμήματος εντολών της ΑΛΛΙΩΣ",
         elseBodyLine
       );
-      return elseBody.resolve(scope);
+
+      elseBody.resolve(scope);
+      scope.setActiveLine(this.telosAnLine);
+      return;
     }
+
+    scope.setActiveLine(this.telosAnLine);
   }
 }
 
@@ -413,7 +430,7 @@ class Stmt_ForLoop extends Stmt {
     if (v_step == 0)
       throw new GE.GError(
         "Μη επιτρεπτή ενέργεια. Το βήμα της εντολή ΓΙΑ δεν μπορεί να λάβει την τιμή μηδέν.",
-        this.cmdLineNo
+        this.cmdLineNoGia
       );
 
     var tmp = initval.resolve(scope);
@@ -437,7 +454,7 @@ class Stmt_ForLoop extends Stmt {
             "<=" +
             v_final +
             " είναι ΑΛΗΘΗΣ",
-          this.cmdLineNo
+          this.cmdLineNoGia
         );
 
         scope.incrLogicalCounter();
@@ -459,7 +476,7 @@ class Stmt_ForLoop extends Stmt {
 
       scope.io.outputAddDetails(
         "Η συνθήκη της ΓΙΑ " + variable.name + "<=" + v_final + " είναι ΨΕΥΔΗΣ",
-        this.cmdLineNo
+        this.cmdLineNoGia
       );
     } else if (v_initial >= v_final && v_step < 0) {
       while (scope.getSymbol(variable.name).val >= v_final) {
@@ -469,7 +486,7 @@ class Stmt_ForLoop extends Stmt {
             ">=" +
             v_final +
             " είναι ΑΛΗΘΗΣ",
-          this.cmdLineNo
+          this.cmdLineNoGia
         );
 
         scope.incrLogicalCounter();
@@ -490,7 +507,7 @@ class Stmt_ForLoop extends Stmt {
 
       scope.io.outputAddDetails(
         "Η συνθήκη της ΓΙΑ " + variable.name + ">=" + v_final + " είναι ΨΕΥΔΗΣ",
-        this.cmdLineNo
+        this.cmdLineNoGia
       );
     }
 

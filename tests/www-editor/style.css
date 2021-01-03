@@ -49,6 +49,23 @@ pre,
   font-family: "Fira Mono", monospace;
 }
 
+#memory {
+  overflow: auto;
+  word-wrap: break-word !important;
+  white-space: pre-wrap;
+  margin: 0px;
+  margin-top: 10px;
+  padding: 15px;
+  width: 100%;
+  height: 300px;
+  background-color: rgb(119, 50, 50);
+  border: 0px solid #ddd;
+  color: #efefef;
+  font-size: 80%;
+}
+#memory ul { list-style: none; margin: 0; padding: 0; }
+#memody ul li { padding: 5px 0; }
+
 .gloResultPre,
 .gloResultDetailsPre {
   overflow: auto;

@@ -4,6 +4,10 @@ var editorid = null;
 
 function updateUI(cmd, data = null) {
   switch (cmd) {
+    case "memory":
+      //console.log(data);
+      self.postMessage({ cmd: "memory", editorid: editorid, data: data });
+      break;
     case "line":
       self.postMessage({ cmd: "line", editorid: editorid, data: data });
       break;

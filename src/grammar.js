@@ -98,7 +98,7 @@ class GrammarOhm {
         
             VarParameters       = NonemptyListOf<(IdTbl | id), ",">   // parameters when define variables
   
-            AtLeastOneLit       = NonemptyListOf<(floatlit | intlit | strlit), ",">
+            AtLeastOneLit       = NonemptyListOf<Expr, ",">
             KeyboardData = keyboardinput AtLeastOneLit
         
             reservedWord = grapse | diavase | and | or | not | div | mod | boollit

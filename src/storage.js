@@ -100,14 +100,12 @@ class SScope {
   setActiveLine(line) {
     this.cmdLineNo = line;
 
-    if (typeof updateUI === "function") {
-
-      var runspeed = this.config["runspeed"];
-
-      if (runspeed != 0) {
+    if (this.config["runspeed"] != 0) {
+      if (typeof updateUI === "function") {
         updateUI("line", line);
-        this.sleepme(runspeed);
+        updateUI("memory", this.localStorage);
       }
+      this.sleepme(this.config["runspeed"]);
     }
   }
 
@@ -115,8 +113,6 @@ class SScope {
     var stop = new Date().getTime();
     while (new Date().getTime() < stop + time) {}
   }
-
-
 
   isLocked(name) {
     return this.lockedVariables.includes(name);
@@ -366,5 +362,5 @@ module.exports = {
   STRTableNameFloat,
   STRTableNameInt,
   STRTableNameString,
-  STRTableNameBoolean
+  STRTableNameBoolean,
 };

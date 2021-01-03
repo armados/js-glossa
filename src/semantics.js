@@ -153,7 +153,8 @@ var operation = {
       arrLineNo,
       arrBody,
       elseBody,
-      getLineNo(_Allios)
+      getLineNo(_Allios),
+      getLineNo(_TelosAn)
     );
   },
 
@@ -245,7 +246,8 @@ var operation = {
       arrLineNo,
       arrBody,
       elseBody,
-      getLineNo(_Allios)
+      getLineNo(_Allios),
+      getLineNo(_TelosAn)
     );
   },
 
@@ -341,7 +343,13 @@ var operation = {
     );
   },
 
-  WhileExprFunction: function (_OSO, cond, _EPANALAVE, body, _TELOS_EPANALHPSHS) {
+  WhileExprFunction: function (
+    _OSO,
+    cond,
+    _EPANALAVE,
+    body,
+    _TELOS_EPANALHPSHS
+  ) {
     return new MO.Stmt_WhileLoop(
       cond.toAST(),
       cond.sourceString,
@@ -384,7 +392,6 @@ var operation = {
       getLineNo(_TELOS_EPANALHPSHS)
     );
   },
-
 
   FunCall: function (a, _1, b, _2) {
     return new MO.CallSubFunction(a.toAST(), b.toAST(), getLineNo(a));

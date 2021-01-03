@@ -1,11 +1,10 @@
 .gloBox {
-  border: 1px solid #ddd;
-  margin-top: 10px;
-  margin-bottom: 20px;
+  border: 0px solid #ddd;
 }
 
 .gloAceEditor {
-  min-height: 320px;
+  min-height: 350px;
+  height: 100%;
   font-family: "Fira Mono", monospace;
   font-size: 85%;
 }
@@ -39,7 +38,7 @@
   text-align: center;
 }
 
-.gloEerror {
+.gloError {
   display: none;
   color: #d63f3f;
 }
@@ -55,12 +54,11 @@ pre,
   word-wrap: break-word !important;
   white-space: pre-wrap;
   margin: 0px;
-  margin-top: 10px;
   padding: 15px;
   width: 100%;
-  min-height: 320px;
-  background-color: #222;
-  border: 0px solid #ddd;
+  height: 100%;
+  background-color: #252526;
+  border-left: 1px solid #333;
   color: #efefef;
   font-size: 80%;
 }

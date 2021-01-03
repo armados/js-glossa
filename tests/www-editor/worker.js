@@ -28,7 +28,7 @@ function updateUI(cmd, data = null) {
       self.postMessage({ cmd: "finished", editorid: editorid, data: null });
       break;
     default:
-      throw new Error("Invalid command");
+      throw new Error("Worker: Invalid command");
   }
 }
 

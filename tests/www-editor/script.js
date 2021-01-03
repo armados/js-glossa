@@ -1,111 +1,116 @@
-var worker = new Worker("worker.js");
+var gloWorker = null;
 
-worker.addEventListener(
-  "message",
-  function (e) {
-    var editorid = e.data["editorid"];
 
-    var aceeditor = ace.edit(editorid);
 
-    function objectToString(obj) {
-      var variables = [];
 
-      for (var key in obj) {
+function initGloWorker() {
+  var worker = new Worker("worker.js");
 
-        if (obj[key]["obj"] != null)
-          variables.push(key + " = " + obj[key]["obj"]["val"]);
-        else variables.push((key + " = <i>null</i>"));
+  worker.addEventListener(
+    "message",
+    function (e) {
+      var editorid = e.data["editorid"];
+
+      var aceeditor = ace.edit(editorid);
+
+      function objectToString(obj) {
+        var variables = [];
+
+        for (var key in obj) {
+          if (obj[key]["obj"] != null)
+            variables.push(key + " = " + obj[key]["obj"]["val"]);
+          else variables.push(key + " = <i>null</i>");
+        }
+
+        var html =
+          "<ul>" +
+          variables
+            .map(function (variable) {
+              return "<li>" + variable + "</li>";
+            })
+            .join("") +
+          "</ul>";
+
+        return html;
       }
 
-      var html =
-        "<ul>" +
-        variables
-          .map(function (variable) {
-            return "<li>" + variable + "</li>";
-          })
-          .join("") +
-        "</ul>";
+      switch (e.data["cmd"]) {
+        case "memory":
+          //console.log("Got Memory data");
+          //console.log(objectToString(e.data["data"]));
+          $("#memory").html(objectToString(e.data["data"]));
+          break;
+        case "line":
+          console.log("Update line " + e.data["data"]);
+          aceeditor.gotoLine(e.data["data"]);
+          break;
+        case "outputappend":
+          //console.log("Update outputappend");
+          var output = e.data["data"];
+          $("#" + editorid)
+            .closest(".gloBox")
+            .find(".gloResult")
+            .html(function (index, value) {
+              return value + output + "\n";
+            });
 
-      return html;
-    }
+          break;
+        case "outputdetailtsappend":
+          //console.log("Update outputdetailtsappend");
+          var output = e.data["data"];
+          $("#" + editorid)
+            .closest(".gloBox")
+            .find(".gloResultDetails")
+            .html(function (index, value) {
+              return value + output + "\n";
+            });
 
-    switch (e.data["cmd"]) {
-      case "memory":
-        //console.log("Got Memory data");
-        //console.log(objectToString(e.data["data"]));
-        $("#memory").html(objectToString(e.data["data"]));
-        break;
-      case "line":
-        console.log("Update line " + e.data["data"]);
-        aceeditor.gotoLine(e.data["data"]);
-        break;
-      case "outputappend":
-        //console.log("Update outputappend");
-        var output = e.data["data"];
-        $("#" + editorid)
-          .closest(".gloBox")
-          .find(".gloResult")
-          .html(function (index, value) {
-            return value + output + "\n";
-          });
+          break;
+        case "finishedwitherror":
+          //console.log("Update error");
+          var output = e.data["data"];
+          $("#" + editorid)
+            .closest(".gloBox")
+            .find(".gloResult")
+            .html(function (index, value) {
+              return value + "ERROR!!" + output + "\n";
+            });
 
-        break;
-      case "outputdetailtsappend":
-        //console.log("Update outputdetailtsappend");
-        var output = e.data["data"];
-        $("#" + editorid)
-          .closest(".gloBox")
-          .find(".gloResultDetails")
-          .html(function (index, value) {
-            return value + output + "\n";
-          });
+          break;
 
-        break;
-      case "finishedwitherror":
-        //console.log("Update error");
-        var output = e.data["data"];
-        $("#" + editorid)
-          .closest(".gloBox")
-          .find(".gloResult")
-          .html(function (index, value) {
-            return value + "ERROR!!" + output + "\n";
-          });
+        case "finished":
+          //console.log("Update finished");
 
-        break;
+          $("#" + editorid)
+            .closest(".gloBox")
+            .find(".gloSpinner")
+            .hide();
 
-      case "finished":
-        //console.log("Update finished");
+          $("#" + editorid)
+            .closest(".gloBox")
+            .find(".gloStop")
+            .addClass("disabled");
+          $("#" + editorid)
+            .closest(".gloBox")
+            .find(".gloStop")
+            .prop("disabled", true);
 
-        $("#" + editorid)
-          .closest(".gloBox")
-          .find(".gloSpinner")
-          .hide();
+          $("#" + editorid)
+            .closest(".gloBox")
+            .find(".gloRun")
+            .removeClass("disabled");
+          $("#" + editorid)
+            .closest(".gloBox")
+            .find(".gloRun")
+            .prop("disabled", false);
 
-        $("#" + editorid)
-          .closest(".gloBox")
-          .find(".gloStop")
-          .addClass("disabled");
-        $("#" + editorid)
-          .closest(".gloBox")
-          .find(".gloStop")
-          .prop("disabled", true);
+          aceeditor.setHighlightActiveLine(false);
+          aceeditor.setReadOnly(false);
 
-        $("#" + editorid)
-          .closest(".gloBox")
-          .find(".gloRun")
-          .removeClass("disabled");
-        $("#" + editorid)
-          .closest(".gloBox")
-          .find(".gloRun")
-          .prop("disabled", false);
+          break;
+      }
 
-        aceeditor.setHighlightActiveLine(false);
-        aceeditor.setReadOnly(false);
-
-        break;
-    }
-
-    /*
+      /*
     $("#"+editorid)
       .closest(".gloBox")
       .find(".gloResultPre")
@@ -117,9 +122,12 @@ worker.addEventListener(
         400
       );
       */
-  },
-  false
-);
+    },
+    false
+  );
+
+  return worker;
+}
 
 $(document).ready(function () {
   $(".gloBtnShowInput").click(function (e) {
@@ -160,6 +168,7 @@ $(document).ready(function () {
 
     $(this).closest(".gloBox").find(".gloResult").html("");
     $(this).closest(".gloBox").find(".gloResultDetails").html("");
+    $("#memory").html("");
 
     $(this).closest(".gloBox").find(".gloError").html("").hide();
 
@@ -187,13 +196,14 @@ $(document).ready(function () {
       slowrun: slowrun,
     };
 
-    worker.postMessage(arr);
+    gloWorker = initGloWorker();
+    gloWorker.postMessage(arr);
   });
 
   $(".gloStop").click(function (e) {
     e.preventDefault();
 
-    worker.postMessage("abort"); // FIXME:
+    gloWorker.terminate(); // FIXME:
 
     $(this).closest(".gloBox").find(".gloSpinner").hide();
 
@@ -202,5 +212,7 @@ $(document).ready(function () {
 
     $(this).closest(".gloBox").find(".gloRun").removeClass("disabled");
     $(this).closest(".gloBox").find(".gloRun").prop("disabled", false);
+
+    $("#memory").html("");
   });
 });

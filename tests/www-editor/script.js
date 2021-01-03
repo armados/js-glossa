@@ -19,7 +19,7 @@ function initGloWorker() {
         for (var key in obj) {
           if (obj[key]["obj"] != null)
             variables.push(key + " = " + obj[key]["obj"]["val"]);
-          else variables.push(key + " = <i>null</i>");
+          else variables.push(key + " =");
         }
 
         var html =
@@ -42,6 +42,7 @@ function initGloWorker() {
           break;
         case "line":
           console.log("Update line " + e.data["data"]);
+          aceeditor.setHighlightActiveLine(true);
           aceeditor.gotoLine(e.data["data"]);
           break;
         case "outputappend":
@@ -130,6 +131,7 @@ function initGloWorker() {
 }
 
 $(document).ready(function () {
+
   $(".gloBtnShowInput").click(function (e) {
     e.preventDefault();
     $(this).closest(".gloBox").find(".gloOutputTab").hide();
@@ -178,7 +180,6 @@ $(document).ready(function () {
     var aceeditor = ace.edit(AceEditorID);
 
     aceeditor.setReadOnly(true);
-    aceeditor.setHighlightActiveLine(true);
 
     var sourcecode = aceeditor.getValue();
 
@@ -214,5 +215,15 @@ $(document).ready(function () {
     $(this).closest(".gloBox").find(".gloRun").prop("disabled", false);
 
     $("#memory").html("");
+
+    
+    var AceEditorID = $(this).closest(".gloBox").find(".gloAceEditor").get(0)
+      .id;
+
+    var aceeditor = ace.edit(AceEditorID);
+
+    aceeditor.setHighlightActiveLine(false);
+    aceeditor.setReadOnly(false);
+
   });
 });

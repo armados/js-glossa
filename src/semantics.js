@@ -258,13 +258,13 @@ var operation = {
     return new Atom.MSelectExpr(a.sourceString, b.toAST(), getLineNo(a));
   },
 
-  Stmt_Select: function (_1, a, _2, exprcase, exprbody, _3, _4ALLIOS, eb, _6) {
+  Stmt_Select: function (_EPILEXE, expr, _PERIPTOSH, exprcase, exprbody, _PERIPTOSH2, _ALLIOS, eb, _TELOS_EPILOGON) {
     var arrCond = [];
     var arrCondStr = [];
     var arrLineNo = [];
     var arrBody = [];
 
-    var aAst = a.toAST();
+    var aAst = expr.toAST();
 
     if (exprcase.numChildren) {
       //console.log(blockElseIf.children);
@@ -338,8 +338,9 @@ var operation = {
       arrLineNo,
       arrBody,
       elseBody,
-      getLineNo(_4ALLIOS),
-      getLineNo(a)
+      getLineNo(expr),
+      getLineNo(_ALLIOS),
+      getLineNo(_TELOS_EPILOGON)
     );
   },
 

@@ -239,8 +239,9 @@ class Stmt_Select extends Stmt {
     arrLineNo,
     arrBody,
     elseBody,
+    cmdLineNo,
     elseBodyLine,
-    cmdLineNo
+    cmdLineNoTelosEpilogwn
   ) {
     super();
     this.expr = expr;
@@ -249,8 +250,9 @@ class Stmt_Select extends Stmt {
     this.arrLineNo = arrLineNo;
     this.arrBody = arrBody;
     this.elseBody = elseBody;
-    this.elseBodyLine = elseBodyLine;
     this.cmdLineNo = cmdLineNo;
+    this.elseBodyLine = elseBodyLine;
+    this.cmdLineNoTelosEpilogwn = cmdLineNoTelosEpilogwn;
   }
 
   resolve(scope) {
@@ -263,6 +265,7 @@ class Stmt_Select extends Stmt {
     var arrBody = this.arrBody;
     var elseBody = this.elseBody;
     var elseBodyLine = this.elseBodyLine;
+    var cmdLineNoTelosEpilogwn = this.cmdLineNoTelosEpilogwn;
 
     //console.log('select expression: ', this.expr);
     //console.log('select expression value: ', this.expr.resolve(scope));
@@ -278,6 +281,9 @@ class Stmt_Select extends Stmt {
 
     for (var i = 0; i < arrCond.length; ++i) {
       for (var j = 0; j < arrCond[i].length; ++j) {
+
+        scope.setActiveLine(arrLineNo[i]);
+
         var condResult = arrCond[i][j].resolve(scope);
         //console.log("select PERIPTOSI resolved value: " + condResult);
         //console.log(condResult);
@@ -298,16 +304,27 @@ class Stmt_Select extends Stmt {
 
         scope.incrLogicalCounter();
 
-        if (condResult.val == true) return arrBody[i].resolve(scope);
+        if (condResult.val == true) {
+          arrBody[i].resolve(scope);
+          scope.setActiveLine(cmdLineNoTelosEpilogwn);
+          return;
+        }
+
       }
     }
 
     if (elseBody != null) {
+      scope.setActiveLine(elseBodyLine);
+
       scope.io.outputAddDetails(
         "Εκτέλεση του τμήματος εντολών της ΑΛΛΙΩΣ",
         elseBodyLine
       );
-      return elseBody.resolve(scope);
+
+      elseBody.resolve(scope);
+      scope.setActiveLine(cmdLineNoTelosEpilogwn);
+      return;
+
     }
   }
 }

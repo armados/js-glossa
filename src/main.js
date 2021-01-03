@@ -53,7 +53,7 @@ class GlossaJS {
   }
 
   setSlowRun(flag) {
-    this.scope.config["runspeed"] = (flag) ? 250 : 0;
+    this.scope.config["runspeed"] = (flag) ? 330 : 0;
   }
 
   initGlobalFunction() {

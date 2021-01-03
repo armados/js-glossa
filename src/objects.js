@@ -330,7 +330,7 @@ class Stmt_WhileLoop extends Stmt {
       if (!(condResult instanceof Atom.MBoolean))
         throw new GE.GError(
           "Η συνθήκη της ΟΣΟ δεν αποτελεί λογική έκφραση.",
-          this.cmdLineNo
+          this.cmdLineNoOso
         );
 
       scope.io.outputAddDetails(
@@ -338,7 +338,7 @@ class Stmt_WhileLoop extends Stmt {
           this.condstr +
           " έχει τιμή " +
           (condResult.val ? "ΑΛΗΘΗΣ" : "ΨΕΥΔΗΣ"),
-        this.cmdLineNo
+        this.cmdLineNoOso
       );
 
       if (!condResult.val) break;
@@ -374,7 +374,7 @@ class Stmt_Do_WhileLoop extends Stmt {
       if (!(condResult instanceof Atom.MBoolean))
         throw new GE.GError(
           "Η συνθήκη της ΜΕΧΡΙΣ_ΟΤΟΥ δεν αποτελεί λογική έκφραση.",
-          this.cmdLineNo
+          this.cmdLineNoMexrisOtou
         );
 
       scope.io.outputAddDetails(
@@ -382,7 +382,7 @@ class Stmt_Do_WhileLoop extends Stmt {
           this.condstr +
           " έχει τιμή " +
           (condResult.val ? "ΑΛΗΘΗΣ" : "ΨΕΥΔΗΣ"),
-        this.cmdLineNo
+        this.cmdLineNoMexrisOtou
       );
 
       scope.incrLogicalCounter();

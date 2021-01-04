@@ -2,7 +2,9 @@ var gloWorker = null;
 
 if (!window.Worker) alert("Web Worker not supported by this browser");
 
+
 // ==============================
+
 
 function initGloWorker() {
   var worker = new Worker("worker.js");

@@ -2,35 +2,6 @@ importScripts("../../dist/glossajs.min.js");
 
 var editorid = null;
 
-function updateUI(cmd, data = null) {
-  switch (cmd) {
-    case "memory":
-      //console.log(data);
-      self.postMessage({ cmd: "memory", editorid: editorid, data: data });
-      break;
-    case "line":
-      self.postMessage({ cmd: "line", editorid: editorid, data: data });
-      break;
-    case "outputappend":
-      self.postMessage({ cmd: "outputappend", editorid: editorid, data: data });
-      break;
-    case "outputdetailtsappend":
-      self.postMessage({
-        cmd: "outputdetailtsappend",
-        editorid: editorid,
-        data: data,
-      });
-      break;
-    case "error":
-      self.postMessage({ cmd: "error", editorid: editorid, data: data });
-      break;
-    case "finished":
-      self.postMessage({ cmd: "finished", editorid: editorid, data: null });
-      break;
-    default:
-      throw new Error("Worker: Invalid command");
-  }
-}
 
 function runWorker(sourcecode, keyboardbuffer, slowrun) {
   var app = new GLO.GlossaJS();
@@ -51,13 +22,50 @@ function runWorker(sourcecode, keyboardbuffer, slowrun) {
   else updateUI("finishedwitherror");
 }
 
+
+function updateUI(method, data = null) {
+  switch (method) {
+    case "prompt":
+      //console.log(data);
+      self.postMessage(["prompt"]);
+      break;
+
+    case "memory":
+      //console.log(data);
+      self.postMessage(["memory", editorid, data]);
+      break;
+    case "line":
+      self.postMessage(["line", editorid, data]);
+      break;
+    case "outputappend":
+      self.postMessage(["outputappend", editorid, data]);
+      break;
+    case "outputdetailtsappend":
+      self.postMessage(["outputdetailtsappend", editorid, data]);
+      break;
+    case "error":
+      self.postMessage(["error", editorid, data]);
+      break;
+    case "finished":
+      self.postMessage(["finished", editorid, null]);
+      break;
+    default:
+      throw new Error("Worker: Invalid command");
+  }
+}
+
+
+
+
+
+
 self.addEventListener(
   "message",
-  function (e) {
-    editorid = e.data["editorid"];
-    var sourcecode = e.data["sourcecode"];
-    var keyboardbuffer = e.data["keyboardbuffer"];
-    var slowrun = e.data["slowrun"];
+  function (event) {
+    editorid = event.data["editorid"];
+    var sourcecode = event.data["sourcecode"];
+    var keyboardbuffer = event.data["keyboardbuffer"];
+    var slowrun = event.data["slowrun"];
 
     runWorker(sourcecode, keyboardbuffer, slowrun);
   },

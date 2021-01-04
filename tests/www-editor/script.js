@@ -8,10 +8,7 @@ function initGloWorker() {
 
   worker.addEventListener(
     "message",
-    function (e) {
-      var editorid = e.data["editorid"];
-
-      var aceeditor = ace.edit(editorid);
+    function (event) {
 
       function objectToString(obj) {
         var variables = [];
@@ -34,20 +31,34 @@ function initGloWorker() {
         return html;
       }
 
-      switch (e.data["cmd"]) {
+
+      var method = event.data[0] || null;
+      var editorid = event.data[1] || null;
+      var data   = event.data[2] || null;
+
+      var aceeditor = ace.edit(editorid);
+
+      switch (method) {
+
+        case "prompt":
+          //console.log("Got Memory data");
+          //console.log(objectToString(e.data["data"]));
+          var data = prompt('Εισαγωγή από το πληκτρολόγιο:');
+          break;
+        
         case "memory":
           //console.log("Got Memory data");
           //console.log(objectToString(e.data["data"]));
-          $("#memory").html(objectToString(e.data["data"]));
+          $("#memory").html(objectToString(data));
           break;
         case "line":
-          console.log("Update line " + e.data["data"]);
+          console.log("Update line " + data);
           aceeditor.setHighlightActiveLine(true);
-          aceeditor.gotoLine(e.data["data"]);
+          aceeditor.gotoLine(data);
           break;
         case "outputappend":
           //console.log("Update outputappend");
-          var output = e.data["data"];
+          var output = data;
           $("#" + editorid)
             .closest(".gloBox")
             .find(".gloResult")
@@ -58,7 +69,7 @@ function initGloWorker() {
           break;
         case "outputdetailtsappend":
           //console.log("Update outputdetailtsappend");
-          var output = e.data["data"];
+          var output = data;
           $("#" + editorid)
             .closest(".gloBox")
             .find(".gloResultDetails")
@@ -69,7 +80,7 @@ function initGloWorker() {
           break;
         case "finishedwitherror":
           //console.log("Update error");
-          var output = e.data["data"];
+          var output = data;
           $("#" + editorid)
             .closest(".gloBox")
             .find(".gloResult")

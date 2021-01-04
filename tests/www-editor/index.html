@@ -178,19 +178,22 @@
 
         var cookieData = Cookies.get("editorSourceCode");
 
-        if (typeof cookieData !== "undefined") editor.setValue(cookieData);
+        //console.log('#'+cookieData+'#');
+
+        if (typeof cookieData !== "undefined" && cookieData != "")
+          editor.setValue(cookieData);
         else
           editor.setValue(
             "ΠΡΟΓΡΑΜΜΑ Άσκηση\n\nΜΕΤΑΒΛΗΤΕΣ\nΑΚΕΡΑΙΕΣ: α\n\nΑΡΧΗ\n\nΓΙΑ α ΑΠΟ 1 ΜΕΧΡΙ 10\n  ΓΡΑΨΕ 'Καλημέρα κόσμε', α\nΤΕΛΟΣ_ΕΠΑΝΑΛΗΨΗΣ\n\nΤΕΛΟΣ_ΠΡΟΓΡΑΜΜΑΤΟΣ\n"
           );
 
+        //Cookies.set("editorSourceCode", editor.getValue(), { expires: 7 });
+
         editor.clearSelection();
 
         editor.getSession().on("change", function () {
-
-            //console.log("editor was changed by user typing or copy paste");
-            Cookies.set("editorSourceCode", editor.getValue(), { expires: 7 });
-          
+          //console.log("editor was changed by user typing or copy paste");
+          Cookies.set("editorSourceCode", editor.getValue());
         });
         //  editor.gotoLine(3);
         //  editor.setReadOnly(true);

@@ -3,25 +3,22 @@
 const Atom = require("./atom");
 const GE = require("./gclasses");
 const STR = require("./storage");
+const HP = require("./helper");
 
 class Stmt {}
 
 // ========================
 
-class Stmt_Block extends Stmt {
+class Stmt_Block {
   constructor(block) {
-    super();
-    this.statements = block;
+    this.block = block;
   }
-
   resolve(scope) {
-    this.statements.forEach(function (statement) {
-      statement.resolve(scope);
+    this.block.forEach(function (stmt) {
+      stmt.resolve(scope);
     });
   }
 }
-
-// ===================================
 
 class Stmt_Assignment extends Stmt {
   constructor(sym, val, cmdStrA, cmdStrB, cmdLineNo) {
@@ -114,6 +111,14 @@ class Stmt_Read extends Stmt {
       if (arg instanceof Atom.MSymbolTableCell) arg = arg.eval(scope);
 
       var data = scope.io.inputFetchValueFromBuffer();
+
+
+      if (data == null) {
+        if (typeof updateUI === 'function') {
+          updateUI("prompt");
+          console.log('Got input dialog box!');
+        }
+      }
 
       /*
       if (data == null) {
@@ -281,7 +286,6 @@ class Stmt_Select extends Stmt {
 
     for (var i = 0; i < arrCond.length; ++i) {
       for (var j = 0; j < arrCond[i].length; ++j) {
-
         scope.setActiveLine(arrLineNo[i]);
 
         var condResult = arrCond[i][j].resolve(scope);
@@ -309,7 +313,6 @@ class Stmt_Select extends Stmt {
           scope.setActiveLine(cmdLineNoTelosEpilogwn);
           return;
         }
-
       }
     }
 
@@ -324,7 +327,6 @@ class Stmt_Select extends Stmt {
       elseBody.resolve(scope);
       scope.setActiveLine(cmdLineNoTelosEpilogwn);
       return;
-
     }
   }
 }
@@ -877,14 +879,14 @@ class SubProcedure extends Stmt {
 }
 
 class DefDeclarations extends Stmt {
-  constructor(consts, vars) {
+  constructor(constants, variables) {
     super();
-    this.consts = consts;
-    this.vars = vars;
+    this.constants = constants;
+    this.variables = variables;
   }
   resolve(scope) {
-    if (this.consts[0]) this.consts[0].forEach((e) => e.resolve(scope));
-    if (this.vars[0]) this.vars[0].forEach((e) => e.resolve(scope));
+    if (this.constants[0]) this.constants[0].forEach((e) => e.resolve(scope));
+    if (this.variables[0]) this.variables[0].forEach((e) => e.resolve(scope));
   }
 }
 
@@ -900,15 +902,14 @@ class DefConstant extends Stmt {
 
     var obj = this.val.resolve(scope);
 
-    if (Number(obj.val) === obj.val && obj.val % 1 === 0)
-      var newObj = new STR.STRInt(obj);
-    else if (Number(obj.val) === obj.val && obj.val % 1 !== 0)
-      var newObj = new STR.STRFloat(obj);
-    else if (typeof obj.val == "string") var newObj = new STR.STRString(obj);
-    else if (typeof obj.val == "boolean") var newObj = new STR.STRBoolean(obj);
+    if (HP.isInt(obj.val)) var newObj = new STR.STRInt(obj);
+    else if (HP.isFloat(obj.val)) var newObj = new STR.STRFloat(obj);
+    else if (HP.isString(obj.val)) var newObj = new STR.STRString(obj);
+    else if (HP.isBoolean(obj.val)) var newObj = new STR.STRBoolean(obj);
     else throw new GE.GError("Critical: Unknown constant type");
 
     scope.addSymbol(this.sym.name, newObj);
+
     scope.addLock(this.sym.name);
   }
 }
@@ -1045,28 +1046,27 @@ class InlineKeyboardInput {
   constructor(args) {
     this.args = args;
   }
+  resolve(scope) {
+    var argsResolved = this.args.map((arg) => arg.resolve(scope));
 
-  addKeyboardInputData(scope) {
-    var argsResolved = this.args.map((arg) => arg.resolve(null));
-
-    argsResolved.forEach((e) => scope.io.inputAddToBuffer(e.val));
+    argsResolved.forEach((arg) => scope.io.inputAddToBuffer(arg.val));
   }
 }
 
 class Application {
-  constructor(keyboardData, mainProg, subPrograms) {
-    this.mainProg = mainProg;
-    this.subPrograms = subPrograms;
-    this.keyboardData = keyboardData;
+  constructor(inputdata, program, subprograms) {
+    this.inputdata = inputdata;
+    this.program = program;
+    this.subprograms = subprograms;
   }
   resolve(scope) {
     if (scope.io.inputIsEmptyBuffer())
-      this.keyboardData.forEach((e) => e.addKeyboardInputData(scope));
+      this.inputdata.forEach((e) => e.resolve(scope));
 
-    if (this.subPrograms.length)
-      this.subPrograms.forEach((e) => e.resolve(scope));
+    if (this.subprograms.length)
+      this.subprograms.forEach((e) => e.resolve(scope));
 
-    this.mainProg.resolve(scope);
+    this.program.resolve(scope);
   }
 }
 

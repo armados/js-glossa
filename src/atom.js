@@ -777,6 +777,10 @@ class MSymbolTableCell extends MSymbol {
     //scope.cmdLineNo = this.cmdLineNo; //FIXME:
 
     var name = this.calcTableIndex(scope);
+
+    // Check if symbol exist in scope
+    scope.getSymbol(name);
+
     return new MSymbol(name);
   }
 

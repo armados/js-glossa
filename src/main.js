@@ -321,7 +321,7 @@ class GlossaJS {
     delete this.scope.globalStorage[name];
   }
 
-  run() {
+  async run() {
     this.running = true;
 
     var gram = ohm.grammar(new GOhm.GrammarOhm().getGrammar());
@@ -354,7 +354,7 @@ class GlossaJS {
 
     try {
 
-      result.resolve(this.scope);
+      await result.resolve(this.scope);
 
     } catch (e) {
       console.log("Console ErrorMsg: ", e.message);

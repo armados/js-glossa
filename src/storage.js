@@ -97,16 +97,23 @@ class SScope {
     return new SScope(this);
   }
 
-  setActiveLine(line) {
+  async setActiveLine(line) {
     this.cmdLineNo = line;
 
-    if (this.config["runspeed"] != 0) {
-      if (typeof updateUI === "function") {
-        updateUI("line", line);
-        updateUI("memory", this.localStorage);
-      }
-      this.sleepme(this.config["runspeed"]);
+    async function sleepFunc(ms) {
+      let promise = new Promise((resolve, reject) => {
+        setTimeout(() => resolve("done!"), ms);
+      });
+
+      let result = await promise;
     }
+
+    if (typeof updateUI === "function") {
+      updateUI("line", line);
+      updateUI("memory", this.localStorage);
+    }
+
+    await sleepFunc(this.config["runspeed"]);
   }
 
   sleepme(time) {
@@ -296,6 +303,9 @@ class SScope {
 
     this.localStorage[name].set(obj);
 
+    if (typeof updateUI === "function") {
+      updateUI("memory", this.localStorage);
+    }
     //FIXME: oxi edw mono tis entoles this.incrAssignCounter();
   }
 

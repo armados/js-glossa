@@ -18,8 +18,12 @@ function runWorker(sourcecode, keyboardbuffer, slowrun) {
     errorMsg = e.message;
   }
 
-  if (errorMsg == null) updateUI("finished");
-  else updateUI("finishedwitherror");
+  if (errorMsg != null)  {
+    console.log('ERROR IN WORKER: ' + errorMsg);
+    updateUI("error");
+  }
+
+  updateUI("finished");
 }
 
 
@@ -50,7 +54,7 @@ function updateUI(method, data = null) {
       self.postMessage(["finished", editorid, null]);
       break;
     default:
-      throw new Error("Worker: Invalid command");
+      throw new Error("Worker: Invalid command: "+method);
   }
 }
 
@@ -62,12 +66,25 @@ function updateUI(method, data = null) {
 self.addEventListener(
   "message",
   function (event) {
-    editorid = event.data["editorid"];
-    var sourcecode = event.data["sourcecode"];
-    var keyboardbuffer = event.data["keyboardbuffer"];
-    var slowrun = event.data["slowrun"];
+    var method = event.data[0] || null;
+    editorid = event.data[1] || null;
+    var data = event.data[2] || null;
 
-    runWorker(sourcecode, keyboardbuffer, slowrun);
+    switch (method) {
+      case "run":
+        var sourcecode = data[0];
+        var keyboardbuffer = data[1];
+        var slowrun = data[2];
+        runWorker(sourcecode, keyboardbuffer, slowrun);
+        console.log('running worker started');
+        break;
+  
+      case "ping":
+        console.log('Worker ping: ' + data);
+        break;
+    }
+  
+
   },
   false
 );

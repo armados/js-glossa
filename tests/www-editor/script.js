@@ -1,7 +1,8 @@
 var gloWorker = null;
 
+if (!window.Worker) alert("Web Worker not supported by this browser");
 
-
+// ==============================
 
 function initGloWorker() {
   var worker = new Worker("worker.js");
@@ -9,7 +10,6 @@ function initGloWorker() {
   worker.addEventListener(
     "message",
     function (event) {
-
       function objectToString(obj) {
         var variables = [];
 
@@ -31,28 +31,26 @@ function initGloWorker() {
         return html;
       }
 
-
       var method = event.data[0] || null;
       var editorid = event.data[1] || null;
-      var data   = event.data[2] || null;
+      var data = event.data[2] || null;
 
       var aceeditor = ace.edit(editorid);
 
       switch (method) {
-
         case "prompt":
           //console.log("Got Memory data");
           //console.log(objectToString(e.data["data"]));
-          var data = prompt('Εισαγωγή από το πληκτρολόγιο:');
+          var data = prompt("Εισαγωγή από το πληκτρολόγιο:");
           break;
-        
+
         case "memory":
           //console.log("Got Memory data");
           //console.log(objectToString(e.data["data"]));
           $("#memory").html(objectToString(data));
           break;
         case "line":
-          console.log("Update line " + data);
+          //console.log("Update line " + data);
           aceeditor.setHighlightActiveLine(true);
           aceeditor.gotoLine(data);
           break;
@@ -142,7 +140,6 @@ function initGloWorker() {
 }
 
 $(document).ready(function () {
-
   $(".gloBtnShowInput").click(function (e) {
     e.preventDefault();
     $(this).closest(".gloBox").find(".gloOutputTab").hide();
@@ -162,6 +159,7 @@ $(document).ready(function () {
     $(this).closest(".gloBox").find(".gloInputTab").hide();
     $(this).closest(".gloBox").find(".gloOutputTab").hide();
     $(this).closest(".gloBox").find(".gloOutputTabDetails").show();
+    gloWorker.postMessage(['ping', null, 'Hey!!!! i am here!!']);
   });
 
   $(".gloSpinner").hide();
@@ -201,15 +199,21 @@ $(document).ready(function () {
 
     var slowrun = $(this).closest(".gloBox").find(".gloSlowRun").is(":checked");
 
-    var arr = {
-      editorid: AceEditorID,
-      sourcecode: sourcecode,
-      keyboardbuffer: inputbox,
-      slowrun: slowrun,
-    };
+    var arrData = [
+      sourcecode,
+      inputbox,
+      slowrun,
+    ];
+
+    var arrCall = [
+      'run',
+      AceEditorID,
+      arrData
+    ];
+
 
     gloWorker = initGloWorker();
-    gloWorker.postMessage(arr);
+    gloWorker.postMessage(arrCall);
   });
 
   $(".gloStop").click(function (e) {
@@ -227,7 +231,6 @@ $(document).ready(function () {
 
     $("#memory").html("");
 
-    
     var AceEditorID = $(this).closest(".gloBox").find(".gloAceEditor").get(0)
       .id;
 
@@ -235,6 +238,5 @@ $(document).ready(function () {
 
     aceeditor.setHighlightActiveLine(false);
     aceeditor.setReadOnly(false);
-
   });
 });

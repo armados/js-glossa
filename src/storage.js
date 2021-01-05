@@ -2,6 +2,7 @@
 
 const Atom = require("./atom");
 const GE = require("./gclasses");
+const HP = require("./helper");
 
 class STRScope {
   constructor(obj) {
@@ -84,6 +85,8 @@ class SScope {
     this.config["maxExecutionCmd"] = null;
     this.config["maxLogicalComp"] = null;
     this.config["runspeed"] = null;
+    this.config["runstep"] = false;
+    this.config["runstepflag"] = false;
 
     if (parent) {
       this.globalStorage = parent.globalStorage;
@@ -91,7 +94,6 @@ class SScope {
       this.statistics = parent.statistics;
       this.config = parent.config;
       this.cmdLineNo = parent.cmdLineNo;
-     
     }
   }
 
@@ -110,12 +112,20 @@ class SScope {
       let result = await promise;
     }
 
+
     if (typeof updateUI === "function" && this.config["runspeed"] != 0) {
       updateUI("line", line);
       updateUI("memory", this.localStorage);
     }
 
-    await sleepFunc(this.config["runspeed"]);
+    if (this.config["runstep"] == false) {
+      await sleepFunc(this.config["runspeed"]);
+    } else {
+      while (this.config["runstepflag"] == false) {
+        await sleepFunc(70);
+      }
+      this.config["runstepflag"] = false;
+    }
   }
 
   isLocked(name) {
@@ -204,7 +214,6 @@ class SScope {
 
     if (!obj) return;
 
-
     if (this.getSymbolObject(name) instanceof STRTableName)
       throw new GE.GError(
         "Δεν επιτρέπονται αναθέσεις σε ολόκληρο πίνακα.",
@@ -253,15 +262,16 @@ class SScope {
       this.getSymbolObject(name) instanceof STRInt ||
       this.getSymbolObject(name) instanceof STRFuncNameInt
     ) {
-      if (!(obj instanceof STRInt || obj instanceof Atom.MNumber))
+      if (
+        !(obj instanceof STRInt || obj instanceof Atom.MNumber) ||
+        !HP.isInt(obj.val)
+      )
         throw new GE.GError(
-          "Το αναγνωριστικό " + name + " λαμβάνει μόνο ΑΚΕΡΑΙΕΣ τιμές.",
-          this.cmdLineNo
-        ); //FIXME:
-
-      if (!(Number(obj.val) === obj.val && obj.val % 1 === 0))
-        throw new GE.GError(
-          "Το αναγνωριστικό " + name + " λαμβάνει μόνο ΑΚΕΡΑΙΕΣ τιμές.",
+          "Το αναγνωριστικό " +
+            name +
+            " λαμβάνει μόνο ΑΚΕΡΑΙΕΣ τιμές." +
+            "\n" +
+            HP.valueTypeToString(obj),
           this.cmdLineNo
         ); //FIXME:
     } else if (
@@ -270,7 +280,11 @@ class SScope {
     ) {
       if (!(obj instanceof STRFloat || obj instanceof Atom.MNumber))
         throw new GE.GError(
-          "Το αναγνωριστικό " + name + " λαμβάνει μόνο ΠΡΑΓΜΑΤΙΚΕΣ τιμές.",
+          "Το αναγνωριστικό " +
+            name +
+            " λαμβάνει μόνο ΠΡΑΓΜΑΤΙΚΕΣ τιμές." +
+            "\n" +
+            HP.valueTypeToString(obj),
           this.cmdLineNo
         ); //FIXME:
     } else if (
@@ -279,7 +293,11 @@ class SScope {
     ) {
       if (!(obj instanceof STRString || obj instanceof Atom.MString))
         throw new GE.GError(
-          "Το αναγνωριστικό " + name + " λαμβάνει μόνο ΑΛΦΑΡΙΘΜΗΤΙΚΕΣ τιμές.",
+          "Το αναγνωριστικό " +
+            name +
+            " λαμβάνει μόνο ΑΛΦΑΡΙΘΜΗΤΙΚΕΣ τιμές." +
+            "\n" +
+            HP.valueTypeToString(obj),
           this.cmdLineNo
         ); //FIXME:
     } else if (
@@ -288,7 +306,11 @@ class SScope {
     ) {
       if (!(obj instanceof STRBoolean || obj instanceof Atom.MBoolean))
         throw new GE.GError(
-          "Το αναγνωριστικό " + name + " λαμβάνει μόνο ΛΟΓΙΚΕΣ τιμές.",
+          "Το αναγνωριστικό " +
+            name +
+            " λαμβάνει μόνο ΛΟΓΙΚΕΣ τιμές." +
+            "\n" +
+            HP.valueTypeToString(obj),
           this.cmdLineNo
         ); //FIXME:
     } else

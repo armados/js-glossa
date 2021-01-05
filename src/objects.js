@@ -15,8 +15,9 @@ class Stmt_Block {
   }
   async resolve(scope) {
     for (const stmt of this.block) {
+
       if (scope.stoprunning == true) {
-        //console.log("reject");
+
         return Promise.reject(
           new Error(
             "==> Έγινε διακοπή της εκτέλεσης του προγράμματος από τον χρήστη"
@@ -210,7 +211,9 @@ class Stmt_IfCond extends Stmt {
 
       if (!(condResult instanceof Atom.MBoolean))
         throw new GE.GError(
-          "Η συνθήκη της ΑΝ δεν αποτελεί λογική έκφραση.",
+          "Η συνθήκη της ΑΝ δεν αποτελεί λογική έκφραση." +
+          "\n" +
+          HP.valueTypeToString(condResult),
           arrLineNo[i]
         );
 
@@ -297,8 +300,9 @@ class Stmt_Select extends Stmt {
       );
 
     for (var i = 0; i < arrCond.length; ++i) {
+
       for (var j = 0; j < arrCond[i].length; ++j) {
-        await scope.setActiveLine(arrLineNo[i]);
+        await scope.setActiveLine(this.cmdLineNo);
 
         var condResult = await arrCond[i][j].resolve(scope);
         //console.log("select PERIPTOSI resolved value: " + condResult);
@@ -306,7 +310,9 @@ class Stmt_Select extends Stmt {
 
         if (!(condResult instanceof Atom.MBoolean))
           throw new GE.GError(
-            "Η συνθήκη της ΕΠΙΛΕΞΕ δεν αποτελεί λογική έκφραση.",
+            "Η συνθήκη της ΕΠΙΛΕΞΕ δεν αποτελεί λογική έκφραση." +
+            "\n" +
+            HP.valueTypeToString(condResult),
             arrLineNo[i]
           );
 
@@ -321,8 +327,8 @@ class Stmt_Select extends Stmt {
         scope.incrLogicalCounter();
 
         if (condResult.val == true) {
+//fixeme!  fix line here
           await arrBody[i].resolve(scope);
-          await scope.setActiveLine(cmdLineNoTelosEpilogwn);
           return;
         }
       }
@@ -360,7 +366,9 @@ class Stmt_WhileLoop extends Stmt {
 
       if (!(condResult instanceof Atom.MBoolean))
         throw new GE.GError(
-          "Η συνθήκη της ΟΣΟ δεν αποτελεί λογική έκφραση.",
+          "Η συνθήκη της ΟΣΟ δεν αποτελεί λογική έκφραση." +
+          "\n" +
+          HP.valueTypeToString(condResult),
           this.cmdLineNoOso
         );
 
@@ -404,7 +412,9 @@ class Stmt_Do_WhileLoop extends Stmt {
 
       if (!(condResult instanceof Atom.MBoolean))
         throw new GE.GError(
-          "Η συνθήκη της ΜΕΧΡΙΣ_ΟΤΟΥ δεν αποτελεί λογική έκφραση.",
+          "Η συνθήκη της ΜΕΧΡΙΣ_ΟΤΟΥ δεν αποτελεί λογική έκφραση." +
+          "\n" +
+          HP.valueTypeToString(condResult),
           this.cmdLineNoMexrisOtou
         );
 
@@ -582,6 +592,8 @@ class CallSubFunction extends Stmt {
 
     var valReturned = await fun.apply(this, sendData);
 
+    await scope.setActiveLine(this.cmdLineNo);
+
     scope.io.outputAddDetails(
       "Επιστροφή από την συνάρτηση " +
         this.fun.name +
@@ -628,6 +640,8 @@ class CallSubProcedure extends Stmt {
     sendData[1] = scope;
 
     var recvData = await fun.apply(null, sendData);
+
+    await scope.setActiveLine(this.cmdLineNo);
 
     scope.io.outputAddDetails(
       "Επιστροφή από την διαδικασία " + this.fun.name,

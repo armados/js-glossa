@@ -63,6 +63,12 @@
                 </div>
 
                 <div class="btn-group mr-2" role="group">
+                  <button class="btn btn-success btn-sm gloRunStep">
+                    <i class="fa fa-play"></i> Εκτέλεση βήμα-βήμα
+                  </button>
+                </div>
+
+                <div class="btn-group mr-2" role="group">
                   <button class="btn btn-danger btn-sm disabled gloStop">
                     <i class="fa fa-stop"></i> Διακοπή
                   </button>
@@ -106,7 +112,7 @@
                 </div>
 
                 <div
-                  class="spinner-border  spinner-border-sm text-primary gloSpinner"
+                  class="spinner-border spinner-border-sm text-primary gloSpinner"
                   role="status"
                   aria-hidden="true"
                 >
@@ -163,7 +169,7 @@
     <script type="text/javascript">
       $(".gloAceEditor").each(function (index) {
         var editor = ace.edit(this);
-        //var editor = ace.edit(".gloAceEditor");
+
         require("ace/config").setModuleUrl(
           "ace/theme/gruvbox",
           "https://ajaxorg.github.io/ace-builds/src/theme-gruvbox.js"

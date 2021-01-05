@@ -153,6 +153,12 @@ $(document).ready(function () {
     $(this).closest(".gloBox").find(".gloOutputTabDetails").show();
   });
 
+  $(".gloRunStep").click(function (e) {
+    e.preventDefault();
+
+    app.runNext();
+  });
+
   $(".gloRun").click(function (e) {
     e.preventDefault();
 

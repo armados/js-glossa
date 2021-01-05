@@ -330,6 +330,11 @@ class GlossaJS {
     console.log('user stopped programm execution');
   }
 
+async runNext() {
+  this.scope.config["runstep"] = true;
+  this.scope.config["runstepflag"] = true;
+}
+
   async run() {
     this.running = true;
 

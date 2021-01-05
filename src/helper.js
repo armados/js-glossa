@@ -19,9 +19,9 @@ function isBoolean(val) {
 }
 
 function valueTypeToString(obj) {
-  var val = obj.val;
+  const STR = require("./storage");
 
-  var STR = require("./storage");
+  var val = obj.val;
 
   if (obj instanceof STR.STRTableNameInt) {
     return "[ " + obj.tblname + " ] Πίνακας Ακεραίων";
@@ -50,5 +50,5 @@ module.exports = {
   isNumber,
   isString,
   isBoolean,
-  valueTypeToString
+  valueTypeToString,
 };

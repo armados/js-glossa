@@ -74,6 +74,7 @@ class SScope {
     this.lockedVariables = [];
     this.io = null;
     this.cmdLineNo = null;
+    this.stoprunning = false;
 
     this.statistics = {};
     this.statistics["totalAssignCmd"] = 0;
@@ -90,6 +91,7 @@ class SScope {
       this.statistics = parent.statistics;
       this.config = parent.config;
       this.cmdLineNo = parent.cmdLineNo;
+     
     }
   }
 
@@ -108,16 +110,14 @@ class SScope {
       let result = await promise;
     }
 
-
-    if (typeof updateUI === "function" && this.config["runspeed"] !=0) {
+    if (typeof updateUI === "function" && this.config["runspeed"] != 0) {
       updateUI("line", line);
       updateUI("memory", this.localStorage);
     }
 
     await sleepFunc(this.config["runspeed"]);
-  
   }
-  
+
   isLocked(name) {
     return this.lockedVariables.includes(name);
   }
@@ -203,6 +203,7 @@ class SScope {
       ); //FIXME:
 
     if (!obj) return;
+
 
     if (this.getSymbolObject(name) instanceof STRTableName)
       throw new GE.GError(

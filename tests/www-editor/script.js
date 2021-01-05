@@ -196,7 +196,6 @@ $(document).ready(function () {
   $(".gloStop").click(function (e) {
     e.preventDefault();
 
-    //gloWorker.terminate(); // FIXME:
     app.terminate();
 
     updateUI("stopped");

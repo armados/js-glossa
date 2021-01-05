@@ -15,6 +15,15 @@ class Stmt_Block {
   }
   async resolve(scope) {
     for (const stmt of this.block) {
+      if (scope.stoprunning == true) {
+        console.log("reject");
+        return Promise.reject(
+          new Error(
+            "==> Έγινε διακοπή της εκτέλεσης του προγράμματος από τον χρήστη"
+          )
+        );
+      }
+
       await stmt.resolve(scope);
     }
   }
@@ -34,7 +43,7 @@ class Stmt_Assignment extends Stmt {
 
     var sym = this.symbol;
 
-    if (sym instanceof Atom.MSymbolTableCell) sym = sym.eval(scope);
+    if (sym instanceof Atom.MSymbolTableCell) sym = await sym.eval(scope);
 
     var valResolved = await this.val.resolve(scope);
 
@@ -64,7 +73,7 @@ class Stmt_Write extends Stmt {
       var argParam = this.args[i];
 
       if (argParam instanceof Atom.MSymbolTableCell)
-        argParam = argParam.eval(scope);
+        argParam = await argParam.eval(scope);
 
       var arg = await argParam.resolve(scope);
 
@@ -107,7 +116,7 @@ class Stmt_Read extends Stmt {
       await scope.setActiveLine(this.cmdLineNo);
       var arg = this.args[i];
 
-      if (arg instanceof Atom.MSymbolTableCell) arg = arg.eval(scope);
+      if (arg instanceof Atom.MSymbolTableCell) arg = await arg.eval(scope);
 
       var data = scope.io.inputFetchValueFromBuffer();
 
@@ -463,7 +472,7 @@ class Stmt_ForLoop extends Stmt {
 
     if (variable instanceof Atom.MSymbolTableCell)
       //FIXME:
-      variable = variable.eval(scope);
+      variable = await variable.eval(scope);
 
     scope.setSymbol(variable.name, new Atom.MNumber(v_initial));
     scope.addLock(variable.name);
@@ -558,7 +567,11 @@ class CallSubFunction extends Stmt {
         this.cmdLineNo
       );
 
-    var argsResolved = this.args.map((arg) => arg.resolve(scope)); // FIXME: need await here
+    var argsResolved = [];
+    for (const arg of this.args) {
+      var argRes = await arg.resolve(scope);
+      argsResolved.push(argRes);
+    }
 
     var sendData = [];
     sendData[0] = argsResolved;
@@ -602,7 +615,11 @@ class CallSubProcedure extends Stmt {
         this.cmdLineNo
       );
 
-    var argsResolved = this.args.map((arg) => arg.resolve(scope)); // FIXME: need await here
+    var argsResolved = [];
+    for (const arg of this.args) {
+      var argRes = await arg.resolve(scope);
+      argsResolved.push(argRes);
+    }
 
     var fun = scope.getGlobalSymbol(this.fun.name);
 
@@ -620,7 +637,7 @@ class CallSubProcedure extends Stmt {
     var procScope = recvData[0];
     var procParams = recvData[1];
 
-    this.args.map(function (arg, i) {
+    this.args.map(async function (arg, i) {
       if (argsResolved[i] instanceof STR.STRTableName) {
         //console.log('detected table arg is : ', arg);
 
@@ -650,7 +667,7 @@ class CallSubProcedure extends Stmt {
           }
         }
       } else if (arg instanceof Atom.MSymbolTableCell) {
-        arg = arg.eval(scope);
+        arg = await arg.eval(scope);
         if (
           scope.getSymbol(arg.name) != procScope.getSymbol(procParams[i].name)
         )
@@ -898,6 +915,7 @@ class DefDeclarations extends Stmt {
         await a.resolve(scope);
       }
 
+    //scope.printMemory();
   }
 }
 
@@ -938,15 +956,22 @@ class DefVariables extends Stmt {
     var varType = this.varType;
     //console.log('======> DefVariables: : ', varType);
 
-    this.sym.forEach(function (e) {
+    for (const e of this.sym) {
+      //this.sym.forEach(function (e) {
       //console.log('======> DefVariables: Create variable symbol name: ', e.name, varType, e);
-
+      //console.log(e.args);
       if (e instanceof Atom.MSymbolTableCell) {
         //console.log('======> DefVariables: Create variable TABLE symbol name: ', e.name, varType);
 
-        var argsResolved = e.args.map(function (arg) {
-          return arg.resolve(scope).val;
-        });
+        var argsResolved = [];
+        for (const arg of e.args) {
+          //console.log('==> arg: ' + arg);
+          var argRes = await arg.resolve(scope);
+          argsResolved.push(argRes.val);
+        }
+        //var argsResolved = e.args.map(function (arg) {
+        //  return arg.resolve(scope).val;
+        //});
 
         if (varType == "ΑΚΕΡΑΙΕΣ")
           var ctype = new STR.STRTableNameInt(e.name, argsResolved);
@@ -1005,18 +1030,16 @@ class DefVariables extends Stmt {
             }
           }
         } else throw new GE.GError("Critical: Unsupported table dimensions");
+      } else {
+        if (varType == "ΑΚΕΡΑΙΕΣ") var ctype = new STR.STRInt(null);
+        else if (varType == "ΠΡΑΓΜΑΤΙΚΕΣ") var ctype = new STR.STRFloat(null);
+        else if (varType == "ΧΑΡΑΚΤΗΡΕΣ") var ctype = new STR.STRString(null);
+        else if (varType == "ΛΟΓΙΚΕΣ") var ctype = new STR.STRBoolean(null);
+        else throw new GE.GError("Critical: Cannot detect variable type");
 
-        return true;
+        scope.addSymbol(e.name, ctype);
       }
-
-      if (varType == "ΑΚΕΡΑΙΕΣ") var ctype = new STR.STRInt(null);
-      else if (varType == "ΠΡΑΓΜΑΤΙΚΕΣ") var ctype = new STR.STRFloat(null);
-      else if (varType == "ΧΑΡΑΚΤΗΡΕΣ") var ctype = new STR.STRString(null);
-      else if (varType == "ΛΟΓΙΚΕΣ") var ctype = new STR.STRBoolean(null);
-      else throw new GE.GError("Critical: Cannot detect variable type");
-
-      return scope.addSymbol(e.name, ctype);
-    });
+    }
   }
 }
 

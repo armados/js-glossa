@@ -15,6 +15,7 @@ const HP = require("./helper");
 class GlossaJS {
   constructor() {
     this.running = false;
+    this.stoprunning = false;
 
     this.sourceCode = null;
 
@@ -323,8 +324,10 @@ class GlossaJS {
 
   async terminate() {
     this.running = false;
-    //this.scope.cancel = true;
-    console.log('asked to termiate promises');
+
+    this.scope.stoprunning = true;
+
+    console.log('user stopped programm execution');
   }
 
   async run() {

@@ -7,7 +7,7 @@ class Atom {
   constructor(val) {
     this.val = val;
   }
-  resolve(scope) {
+  async resolve(scope) {
     return this;
   }
   getValue() {
@@ -33,9 +33,9 @@ class MathOpPow extends MathOperation {
     this.B = B;
     this.line = line;
   }
-  resolve(scope) {
-    var a = this.A.resolve(scope);
-    var b = this.B.resolve(scope);
+  async resolve(scope) {
+    var a = await this.A.resolve(scope);
+    var b = await this.B.resolve(scope);
 
     if (a == null)
       throw new GE.GError(
@@ -70,9 +70,9 @@ class MathOpMul extends MathOperation {
     this.B = B;
     this.line = line;
   }
-  resolve(scope) {
-    var a = this.A.resolve(scope);
-    var b = this.B.resolve(scope);
+  async resolve(scope) {
+    var a = await this.A.resolve(scope);
+    var b = await this.B.resolve(scope);
 
     if (a == null)
       throw new GE.GError(
@@ -107,9 +107,9 @@ class MathOpDiv extends MathOperation {
     this.B = B;
     this.line = line;
   }
-  resolve(scope) {
-    var a = this.A.resolve(scope);
-    var b = this.B.resolve(scope);
+  async resolve(scope) {
+    var a = await this.A.resolve(scope);
+    var b = await this.B.resolve(scope);
 
     if (a == null)
       throw new GE.GError(
@@ -147,9 +147,9 @@ class MathOpDivInt extends MathOperation {
     this.B = B;
     this.line = line;
   }
-  resolve(scope) {
-    var a = this.A.resolve(scope);
-    var b = this.B.resolve(scope);
+  async resolve(scope) {
+    var a = await this.A.resolve(scope);
+    var b = await this.B.resolve(scope);
 
     if (a == null)
       throw new GE.GError(
@@ -197,9 +197,9 @@ class MathOpModInt extends MathOperation {
     this.B = B;
     this.line = line;
   }
-  resolve(scope) {
-    var a = this.A.resolve(scope);
-    var b = this.B.resolve(scope);
+  async resolve(scope) {
+    var a = await this.A.resolve(scope);
+    var b = await this.B.resolve(scope);
 
     if (a == null)
       throw new GE.GError(
@@ -247,9 +247,9 @@ class MathOpAdd extends MathOperation {
     this.B = B;
     this.line = line;
   }
-  resolve(scope) {
-    var a = this.A.resolve(scope);
-    var b = this.B.resolve(scope);
+  async resolve(scope) {
+    var a = await this.A.resolve(scope);
+    var b = await this.B.resolve(scope);
 
     if (a == null)
       throw new GE.GError(
@@ -284,9 +284,9 @@ class MathOpSub extends MathOperation {
     this.B = B;
     this.line = line;
   }
-  resolve(scope) {
-    var a = this.A.resolve(scope);
-    var b = this.B.resolve(scope);
+  async resolve(scope) {
+    var a = await this.A.resolve(scope);
+    var b = await this.B.resolve(scope);
 
     if (a == null)
       throw new GE.GError(
@@ -321,9 +321,9 @@ class MathOpRelLt extends MathOperation {
     this.B = B;
     this.line = line;
   }
-  resolve(scope) {
-    var a = this.A.resolve(scope);
-    var b = this.B.resolve(scope);
+  async resolve(scope) {
+    var a = await this.A.resolve(scope);
+    var b = await this.B.resolve(scope);
 
     if (a == null)
       throw new GE.GError(
@@ -363,9 +363,9 @@ class MathOpRelGt extends MathOperation {
     this.B = B;
     this.line = line;
   }
-  resolve(scope) {
-    var a = this.A.resolve(scope);
-    var b = this.B.resolve(scope);
+  async resolve(scope) {
+    var a = await this.A.resolve(scope);
+    var b = await this.B.resolve(scope);
 
     if (a == null)
       throw new GE.GError(
@@ -405,9 +405,9 @@ class MathOpRelLte extends MathOperation {
     this.B = B;
     this.line = line;
   }
-  resolve(scope) {
-    var a = this.A.resolve(scope);
-    var b = this.B.resolve(scope);
+  async resolve(scope) {
+    var a = await this.A.resolve(scope);
+    var b = await this.B.resolve(scope);
 
     if (a == null)
       throw new GE.GError(
@@ -447,9 +447,9 @@ class MathOpRelGte extends MathOperation {
     this.B = B;
     this.line = line;
   }
-  resolve(scope) {
-    var a = this.A.resolve(scope);
-    var b = this.B.resolve(scope);
+  async resolve(scope) {
+    var a = await this.A.resolve(scope);
+    var b = await this.B.resolve(scope);
 
     if (a == null)
       throw new GE.GError(
@@ -489,9 +489,9 @@ class MathOpRelEq extends MathOperation {
     this.B = B;
     this.line = line;
   }
-  resolve(scope) {
-    var a = this.A.resolve(scope);
-    var b = this.B.resolve(scope);
+  async resolve(scope) {
+    var a = await this.A.resolve(scope);
+    var b = await this.B.resolve(scope);
 
     if (a == null)
       throw new GE.GError(
@@ -530,9 +530,9 @@ class MathOpRelNeq extends MathOperation {
     this.B = B;
     this.line = line;
   }
-  resolve(scope) {
-    var a = this.A.resolve(scope);
-    var b = this.B.resolve(scope);
+  async resolve(scope) {
+    var a = await this.A.resolve(scope);
+    var b = await this.B.resolve(scope);
 
     if (a == null)
       throw new GE.GError(
@@ -570,9 +570,9 @@ class MathOpLogAnd extends MathOperation {
     this.B = B;
     this.line = line;
   }
-  resolve(scope) {
-    var a = this.A.resolve(scope);
-    var b = this.B.resolve(scope);
+  async resolve(scope) {
+    var a = await this.A.resolve(scope);
+    var b = await this.B.resolve(scope);
 
     if (a == null)
       throw new GE.GError(
@@ -607,9 +607,9 @@ class MathOpLogOr extends MathOperation {
     this.B = B;
     this.line = line;
   }
-  resolve(scope) {
-    var a = this.A.resolve(scope);
-    var b = this.B.resolve(scope);
+  async resolve(scope) {
+    var a = await this.A.resolve(scope);
+    var b = await this.B.resolve(scope);
 
     if (a == null)
       throw new GE.GError(
@@ -643,8 +643,8 @@ class MathOpLogNot extends MathOperation {
     this.A = A;
     this.line = line;
   }
-  resolve(scope) {
-    var a = this.A.resolve(scope);
+  async resolve(scope) {
+    var a = await this.A.resolve(scope);
 
     if (a.val == null)
       throw new GE.GError(
@@ -670,9 +670,9 @@ class MSelectSubrange {
     this.B = B;
     this.line = line;
   }
-  resolve(scope) {
-    var a = this.A.resolve(scope);
-    var b = this.B.resolve(scope);
+  async resolve(scope) {
+    var a = await this.A.resolve(scope);
+    var b = await this.B.resolve(scope);
 
     if (a == null)
       throw new GE.GError(
@@ -706,10 +706,10 @@ class MSelectExpr {
     this.A = A;
     this.cmdLineNo = cmdLineNo;
   }
-  resolve(scope) {
+  async resolve(scope) {
     scope.cmdLineNo = this.cmdLineNo; //FIXME:
 
-    var a = this.A.resolve(scope);
+    var a = await this.A.resolve(scope);
 
     if (a.val == null)
       throw new GE.GError(
@@ -726,8 +726,8 @@ class MSymbol {
     this.name = name;
     this.cmdLineNo = cmdLineNo;
   }
-  resolve(scope) {
-    scope.cmdLineNo = this.cmdLineNo; //FIXME:
+  async resolve(scope) {
+    scope.cmdLineNo = await this.cmdLineNo; //FIXME:
 
     return scope.getSymbol(this.name);
   }
@@ -738,12 +738,14 @@ class MSymbolTableCell extends MSymbol {
     super(name, cmdLineNo);
     this.args = args;
   }
-  calcTableIndex(scope) {
+  async calcTableIndex(scope) {
     var name = this.name;
     var cmdLineNo = this.cmdLineNo;
 
-    var argsResolved = this.args.map(function (arg) {
-      var a = arg.resolve(scope);
+    var argsResolvedValue = [];
+    for (const arg of this.args) {
+      // var argsResolved = this.args.map(function (arg) {   //FIXME:  need async here
+      var a = await arg.resolve(scope);
 
       if (a == null)
         throw new GE.GError(
@@ -761,33 +763,30 @@ class MSymbolTableCell extends MSymbol {
           cmdLineNo
         );
 
-      return a;
-    });
-
-    var argsResolvedValue = argsResolved.map(function (arg) {
-      return arg.val;
-    });
+      //return a;
+      argsResolvedValue.push(a.val);
+    }
 
     var name = this.name + "[" + argsResolvedValue.join(",") + "]";
 
     return name;
   }
 
-  eval(scope) {
+  async eval(scope) {
     //scope.cmdLineNo = this.cmdLineNo; //FIXME:
 
-    var name = this.calcTableIndex(scope);
+    var name = await this.calcTableIndex(scope);
 
     // Check if symbol exist in scope
-    scope.getSymbol(name);
+    await scope.getSymbol(name);
 
     return new MSymbol(name);
   }
 
-  resolve(scope) {
+  async resolve(scope) {
     //scope.cmdLineNo = this.cmdLineNo; //FIXME:
 
-    var name = this.calcTableIndex(scope);
+    var name = await this.calcTableIndex(scope);
     return scope.getSymbol(name);
   }
 }

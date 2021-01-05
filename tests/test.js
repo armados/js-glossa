@@ -8,7 +8,7 @@ const GLO = require("../src/main.js");
 const filename = "../samples-dev/sample15.glo";
 
 (async function main() {
-
+  
   try {
     var sourceCode = fs.readFileSync(path.join(__dirname, filename)).toString();
   } catch (e) {

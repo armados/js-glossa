@@ -1,5 +1,7 @@
 var editorid = null;
 var aceeditor = null;
+var app = null;
+
 
 function objectToString(obj) {
   var variables = [];
@@ -115,24 +117,12 @@ function updateUI(method, data = null) {
 }
 
 async function runWorker(sourcecode, inputdata, slowrun) {
-  var app = new GLO.GlossaJS();
+  app = new GLO.GlossaJS();
 
   app.setSourceCode(sourcecode);
   app.setInputBuffer(inputdata);
   app.setSlowRun(slowrun);
-
-  var errorMsg = null;
-
-  try {
-    await app.run();
-  } catch (e) {
-    errorMsg = e.message;
-  }
-
-  if (errorMsg != null) {
-    console.log("ERROR IN EXEC: " + errorMsg);
-    updateUI("error");
-  }
+  await app.run();
 
   updateUI("finished");
 }
@@ -207,6 +197,7 @@ $(document).ready(function () {
     e.preventDefault();
 
     //gloWorker.terminate(); // FIXME:
+    app.terminate();
 
     updateUI("stopped");
   });

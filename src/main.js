@@ -321,6 +321,12 @@ class GlossaJS {
     delete this.scope.globalStorage[name];
   }
 
+  async terminate() {
+    this.running = false;
+    //this.scope.cancel = true;
+    console.log('asked to termiate promises');
+  }
+
   async run() {
     this.running = true;
 
@@ -364,7 +370,6 @@ class GlossaJS {
     } finally {
       this.running = false;
     }
-    this.running = false;
 
     //console.log('IO: ', this.io);
 

@@ -108,7 +108,8 @@ class SScope {
       let result = await promise;
     }
 
-    if (typeof updateUI === "function") {
+
+    if (typeof updateUI === "function" && this.config["runspeed"] !=0) {
       updateUI("line", line);
       updateUI("memory", this.localStorage);
     }
@@ -299,9 +300,9 @@ class SScope {
 
     this.localStorage[name].set(obj);
 
-    if (typeof updateUI === "function") {
-      updateUI("memory", this.localStorage);
-    }
+    //if (typeof updateUI === "function" && this.config["runspeed"] !=0) {
+    //  updateUI("memory", this.localStorage);
+    //}
     //FIXME: oxi edw mono tis entoles this.incrAssignCounter();
   }
 

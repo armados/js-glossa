@@ -16,7 +16,7 @@ class Stmt_Block {
   async resolve(scope) {
     for (const stmt of this.block) {
       if (scope.stoprunning == true) {
-        console.log("reject");
+        //console.log("reject");
         return Promise.reject(
           new Error(
             "==> Έγινε διακοπή της εκτέλεσης του προγράμματος από τον χρήστη"

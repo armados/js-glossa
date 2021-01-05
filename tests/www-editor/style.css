@@ -50,13 +50,13 @@ pre,
 
 #memory {
   font-family: "Fira Mono", monospace;
-  overflow: auto;
+  overflow-y: scroll;
   word-wrap: break-word !important;
   white-space: pre-wrap;
   margin: 0px;
   padding: 15px;
   width: 100%;
-  height: 100%;
+  height: 580px;
   background-color: #252526;
   border-left: 1px solid #333;
   color: #efefef;

@@ -102,7 +102,7 @@ class SScope {
 
     async function sleepFunc(ms) {
       let promise = new Promise((resolve, reject) => {
-        setTimeout(() => resolve("done!"), ms);
+        setTimeout(() => resolve(), ms);
       });
 
       let result = await promise;
@@ -114,13 +114,9 @@ class SScope {
     }
 
     await sleepFunc(this.config["runspeed"]);
+  
   }
-
-  sleepme(time) {
-    var stop = new Date().getTime();
-    while (new Date().getTime() < stop + time) {}
-  }
-
+  
   isLocked(name) {
     return this.lockedVariables.includes(name);
   }

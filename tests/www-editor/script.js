@@ -43,17 +43,18 @@ function updateUI(method, data = null) {
           return value + data + "\n";
         });
 
-        $("#"+editorid)
+      $("#" + editorid)
         .closest(".gloBox")
         .find(".gloResultPre")
         .animate(
           {
-            scrollTop: $("#"+editorid).closest(".gloBox").find(".gloResultPre").get(0)
-              .scrollHeight,
+            scrollTop: $("#" + editorid)
+              .closest(".gloBox")
+              .find(".gloResultPre")
+              .get(0).scrollHeight,
           },
           0
         );
-
 
       break;
     case "outputdetailtsappend":

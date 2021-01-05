@@ -5,24 +5,26 @@ const path = require("path");
 
 const GLO = require("../src/main.js");
 
-const filename = "../samples-dev/sample26.glo";
+const filename = "../samples-dev/sample15.glo";
 
-try {
-  var sourceCode = fs.readFileSync(path.join(__dirname, filename)).toString();
-} catch (e) {
-  console.log("Σφάλμα. Το αρχείο δεν βρέθηκε.");
-  return;
-}
+(async function main() {
 
-var app = new GLO.GlossaJS();
-app.setSourceCode(sourceCode);
-app.setInputBuffer(null);
-app.run();
+  try {
+    var sourceCode = fs.readFileSync(path.join(__dirname, filename)).toString();
+  } catch (e) {
+    console.log("Σφάλμα. Το αρχείο δεν βρέθηκε.");
+    return;
+  }
 
+  var app = new GLO.GlossaJS();
+  app.setSourceCode(sourceCode);
+  app.setInputBuffer(null);
+  await app.run();
 
-//console.log('=========================');
-//console.log(app.getOutput());
-//console.log('=========================');
-//console.log(app.getOutputDetails());
+  //console.log("=========================");
+  //console.log(app.getOutput());
+  //console.log('=========================');
+  //console.log(app.getOutputDetails());
 
-//console.log('Total commands: ', app.getStats());
+  //console.log('Total commands: ', app.getStats());
+})();

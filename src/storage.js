@@ -82,11 +82,6 @@ class SScope {
     this.statistics["totalLogicalComp"] = 0;
 
     this.config = {};
-    this.config["maxExecutionCmd"] = null;
-    this.config["maxLogicalComp"] = null;
-    this.config["runspeed"] = null;
-    this.config["runstep"] = false;
-    this.config["runstepflag"] = false;
 
     if (parent) {
       this.globalStorage = parent.globalStorage;
@@ -101,17 +96,16 @@ class SScope {
     return new SScope(this);
   }
 
-  async setActiveLine(line) {
+  async sleepFunc(ms) {
+    let promise = new Promise((resolve, reject) => {
+      setTimeout(() => resolve(), ms);
+    });
+
+    await promise;
+  }
+
+  async setActiveLine(line, msdelay = 70) {
     this.cmdLineNo = line;
-
-    async function sleepFunc(ms) {
-      let promise = new Promise((resolve, reject) => {
-        setTimeout(() => resolve(), ms);
-      });
-
-      let result = await promise;
-    }
-
 
     if (typeof updateUI === "function" && this.config["runspeed"] != 0) {
       updateUI("line", line);
@@ -119,12 +113,40 @@ class SScope {
     }
 
     if (this.config["runstep"] == false) {
-      await sleepFunc(this.config["runspeed"]);
+      await this.sleepFunc(this.config["runspeed"]);
     } else {
       while (this.config["runstepflag"] == false) {
-        await sleepFunc(70);
+        await this.sleepFunc(msdelay);
       }
       this.config["runstepflag"] = false;
+    }
+
+    if (this.stoprunning == true) {
+      return Promise.reject(
+        new Error(
+          "[#] Έγινε διακοπή της εκτέλεσης του προγράμματος από τον χρήστη."
+        )
+      );
+    }
+  }
+
+  async setActiveLineWithoutStep(line, msdelay = 20) {
+    this.cmdLineNo = line;
+
+    if (typeof updateUI === "function" && this.config["runspeed"] != 0) {
+      updateUI("line", line);
+      updateUI("memory", this.localStorage);
+    }
+
+      await this.sleepFunc(msdelay);
+    
+
+    if (this.stoprunning == true) {
+      return Promise.reject(
+        new Error(
+          "[#] Έγινε διακοπή της εκτέλεσης του προγράμματος από τον χρήστη."
+        )
+      );
     }
   }
 

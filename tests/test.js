@@ -5,7 +5,7 @@ const path = require("path");
 
 const GLO = require("../src/main.js");
 
-const filename = "../samples-dev/sample22.glo";
+const filename = "../samples-dev/sample24.glo";
 
 (async function main() {
 

@@ -69,7 +69,7 @@
                 </div>
 
                 <div class="btn-group mr-2" role="group">
-                  <button class="btn btn-danger btn-sm disabled gloStop">
+                  <button class="btn btn-danger btn-sm gloStop disabled">
                     <i class="fa fa-stop"></i> Διακοπή
                   </button>
                 </div>
@@ -166,47 +166,5 @@
     <script src="../../dist/glossajs.min.js"></script>
     <script src="script.js"></script>
 
-    <script type="text/javascript">
-      $(".gloAceEditor").each(function (index) {
-        var editor = ace.edit(this);
-
-        require("ace/config").setModuleUrl(
-          "ace/theme/gruvbox",
-          "https://ajaxorg.github.io/ace-builds/src/theme-gruvbox.js"
-        );
-        editor.setTheme("ace/theme/gruvbox");
-        require("ace/config").setModuleUrl("ace/mode/glossa", "acemodeglo.js");
-        editor.session.setMode("ace/mode/glossa");
-        editor.setDisplayIndentGuides(false);
-        editor.setShowPrintMargin(false);
-        editor.setHighlightActiveLine(false);
-        editor.renderer.setShowGutter(true);
-        editor.clearSelection();
-
-        var cookieData = Cookies.get("editorSourceCode");
-
-        //console.log('#'+cookieData+'#');
-
-        if (typeof cookieData !== "undefined" && cookieData != "")
-          editor.setValue(cookieData);
-        else
-          editor.setValue(
-            "ΠΡΟΓΡΑΜΜΑ Άσκηση\n\nΜΕΤΑΒΛΗΤΕΣ\nΑΚΕΡΑΙΕΣ: α\n\nΑΡΧΗ\n\nΓΙΑ α ΑΠΟ 1 ΜΕΧΡΙ 10\n  ΓΡΑΨΕ 'Καλημέρα κόσμε', α\nΤΕΛΟΣ_ΕΠΑΝΑΛΗΨΗΣ\n\nΤΕΛΟΣ_ΠΡΟΓΡΑΜΜΑΤΟΣ\n"
-          );
-
-        //Cookies.set("editorSourceCode", editor.getValue(), { expires: 7 });
-
-        editor.clearSelection();
-
-        editor.getSession().on("change", function () {
-          //console.log("editor was changed by user typing or copy paste");
-          Cookies.set("editorSourceCode", editor.getValue());
-        });
-        //  editor.gotoLine(3);
-        //  editor.setReadOnly(true);
-
-        //editor.focus();
-      });
-    </script>
   </body>
 </html>

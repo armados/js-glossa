@@ -19,13 +19,13 @@ class GlossaJS {
 
     this.sourceCode = null;
 
-    this.io = new IO.IOBuffer();
-
     this.scope = new STR.SScope();
-    this.scope.io = this.io;
+    this.scope.io = new IO.IOBuffer();
     this.scope.config["maxExecutionCmd"] = 100000;
     this.scope.config["maxLogicalComp"] = 100000;
     this.scope.config["runspeed"] = 0;
+    this.scope.config["runstep"] = false;
+    this.scope.config["runstepflag"] = false;
 
     this.initGlobalFunction();
   }
@@ -36,6 +36,10 @@ class GlossaJS {
 
   isrunning() {
     return this.running;
+  }
+
+  setStepRun(flag) {
+    this.scope.config["runstep"] = flag;
   }
 
   setSourceCode(data) {
@@ -54,7 +58,7 @@ class GlossaJS {
   }
 
   setSlowRun(flag) {
-    this.scope.config["runspeed"] = (flag) ? 430 : 0;
+    this.scope.config["runspeed"] = flag ? 430 : 0;
   }
 
   initGlobalFunction() {
@@ -327,34 +331,47 @@ class GlossaJS {
 
     this.scope.stoprunning = true;
 
-    console.log('user stopped programm execution');
+    if (typeof updateUI === "function") {
+      updateUI("stopped");
+    }
+
+    console.log("user stopped programm execution");
   }
 
-async runNext() {
-  this.scope.config["runstep"] = true;
-  this.scope.config["runstepflag"] = true;
-}
+  async runNext() {
+    this.scope.config["runstep"] = true; // switch to step mode
+    this.scope.config["runstepflag"] = true;
+  }
 
   async run() {
     this.running = true;
 
-    var gram = ohm.grammar(new GOhm.GrammarOhm().getGrammar());
-    var sem = Semantics.load(gram);
+    if (typeof updateUI === "function") {
+      updateUI("started");
+    }
 
-    var match = gram.match(this.sourceCode);
+    try {
+      var gram = ohm.grammar(new GOhm.GrammarOhm().getGrammar());
+      var sem = Semantics.load(gram);
 
+      var match = gram.match(this.sourceCode);
+
+      if (!match.succeeded()) throw new GE.GError(match.message);
+
+      /*
     if (!match.succeeded()) {
-      this.io.outputAdd(match.message);
-      this.io.outputAddDetails(match.message);
+      this.scope.io.outputAdd(match.message);
+      this.scope.io.outputAddDetails(match.message);
       this.running = false;
       return false;
     }
+*/
+      var result = sem(match).toAST();
+      if (!result) throw new GE.GError(result);
 
-    var result = sem(match).toAST();
-
-    if (!result) {
-      this.io.outputAdd("Error in toAST to give results" + result);
-      this.io.outputAddDetails("Error in toAST to give results" + result);
+      /*    if (!result) {
+      this.scope.io.outputAdd("Error in toAST to give results" + result);
+      this.scope.io.outputAddDetails("Error in toAST to give results" + result);
       this.running = false;
       return false;
     }
@@ -365,31 +382,33 @@ async runNext() {
       var outast = astree.generate();
       console.log(outast);
     }
-
-    try {
+*/
 
       await result.resolve(this.scope);
-
     } catch (e) {
-      console.log("Console ErrorMsg: ", e.message);
+      console.log("ErrorMsg: ", e.message);
       console.log(e);
-      this.io.outputAdd(e.message);
-      this.io.outputAddDetails(e.message);
+      //this.scope.io.outputAdd(e.message);
+      //this.scope.io.outputAddDetails(e.message);
+      if (typeof updateUI === "function") {
+        updateUI("error", e.message);
+      }
     } finally {
       this.running = false;
+      if (typeof updateUI === "function") {
+        updateUI("finished");
+      }
     }
 
-    //console.log('IO: ', this.io);
-
-    //return this.io.getOutput().join('\n');
-    return true;
+    //console.log('IO: ', this.scope.io);
+    //return this.scope.io.getOutput().join('\n');
   }
 
   getOutput() {
-    return this.io.getOutput().join("\n");
+    return this.scope.io.getOutput().join("\n");
   }
   getOutputDetails() {
-    return this.io.getOutputDetails().join("\n");
+    return this.scope.io.getOutputDetails().join("\n");
   }
 }
 

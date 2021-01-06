@@ -16,14 +16,7 @@ class Stmt_Block {
   async resolve(scope) {
     for (const stmt of this.block) {
 
-      if (scope.stoprunning == true) {
 
-        return Promise.reject(
-          new Error(
-            "==> Έγινε διακοπή της εκτέλεσης του προγράμματος από τον χρήστη"
-          )
-        );
-      }
 
       await stmt.resolve(scope);
     }
@@ -71,6 +64,9 @@ class Stmt_Write extends Stmt {
     var output = [];
 
     for (var i = 0, len = this.args.length; i < len; i++) {
+
+      await scope.setActiveLineWithoutStep(this.cmdLineNo);
+
       var argParam = this.args[i];
 
       if (argParam instanceof Atom.MSymbolTableCell)
@@ -109,12 +105,17 @@ class Stmt_Read extends Stmt {
     this.cmdLineNo = cmdLineNo;
   }
   async resolve(scope) {
+
+    await scope.setActiveLine(this.cmdLineNo);
+
     scope.io.outputAddDetails("Διάβασε από το πληκτρολόγιο", this.cmdLineNo);
 
     var output = [];
 
     for (var i = 0, len = this.args.length; i < len; i++) {
-      await scope.setActiveLine(this.cmdLineNo);
+
+      await scope.setActiveLineWithoutStep(this.cmdLineNo);
+
       var arg = this.args[i];
 
       if (arg instanceof Atom.MSymbolTableCell) arg = await arg.eval(scope);
@@ -592,7 +593,7 @@ class CallSubFunction extends Stmt {
 
     var valReturned = await fun.apply(this, sendData);
 
-    await scope.setActiveLine(this.cmdLineNo);
+    //await scope.setActiveLine(this.cmdLineNo);
 
     scope.io.outputAddDetails(
       "Επιστροφή από την συνάρτηση " +

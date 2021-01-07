@@ -73,81 +73,17 @@ class SScope {
     this.globalStorage = {};
     this.localStorage = {};
     this.lockedVariables = [];
-    this.io = null;
+
     this.cmdLineNo = null;
-    this.stoprunning = false;
-
-    this.statistics = {};
-    this.statistics["totalAssignCmd"] = 0;
-    this.statistics["totalLogicalComp"] = 0;
-
-    this.config = {};
 
     if (parent) {
       this.globalStorage = parent.globalStorage;
-      this.io = parent.io;
-      this.statistics = parent.statistics;
-      this.config = parent.config;
       this.cmdLineNo = parent.cmdLineNo;
     }
   }
 
   makeSubScope() {
     return new SScope(this);
-  }
-
-  async sleepFunc(ms) {
-    let promise = new Promise((resolve, reject) => {
-      setTimeout(() => resolve(), ms);
-    });
-
-    await promise;
-  }
-
-  async setActiveLine(line, msdelay = 70) {
-    this.cmdLineNo = line;
-
-    if (typeof updateUI === "function" && this.config["runspeed"] != 0) {
-      updateUI("line", line);
-      updateUI("memory", this.localStorage);
-    }
-
-    if (this.config["runstep"] == false) {
-      await this.sleepFunc(this.config["runspeed"]);
-    } else {
-      while (this.config["runstepflag"] == false) {
-        await this.sleepFunc(msdelay);
-      }
-      this.config["runstepflag"] = false;
-    }
-
-    if (this.stoprunning == true) {
-      return Promise.reject(
-        new Error(
-          "[#] Έγινε διακοπή της εκτέλεσης του προγράμματος από τον χρήστη."
-        )
-      );
-    }
-  }
-
-  async setActiveLineWithoutStep(line, msdelay = 20) {
-    this.cmdLineNo = line;
-
-    if (typeof updateUI === "function" && this.config["runspeed"] != 0) {
-      updateUI("line", line);
-      updateUI("memory", this.localStorage);
-    }
-
-      await this.sleepFunc(msdelay);
-    
-
-    if (this.stoprunning == true) {
-      return Promise.reject(
-        new Error(
-          "[#] Έγινε διακοπή της εκτέλεσης του προγράμματος από τον χρήστη."
-        )
-      );
-    }
   }
 
   isLocked(name) {
@@ -167,31 +103,6 @@ class SScope {
 
     const index = this.lockedVariables.indexOf(name);
     this.lockedVariables.splice(index, 1);
-  }
-
-  incrAssignCounter() {
-    this.statistics["totalAssignCmd"] = this.statistics["totalAssignCmd"] + 1;
-
-    if (this.statistics["totalAssignCmd"] >= this.config["maxExecutionCmd"])
-      throw new GE.GError(
-        "Το πρόγραμμα έφτασε το μέγιστο επιτρεπτό όριο των " +
-          this.config["maxExecutionCmd"] +
-          " εντολών εκχώρησης.",
-        this.cmdLineNo
-      ); //FIXME:
-  }
-
-  incrLogicalCounter() {
-    this.statistics["totalLogicalComp"] =
-      this.statistics["totalLogicalComp"] + 1;
-
-    if (this.statistics["totalLogicalComp"] >= this.config["maxLogicalComp"])
-      throw new GE.GError(
-        "Το πρόγραμμα έφτασε το μέγιστο επιτρεπτό όριο των " +
-          this.config["maxLogicalComp"] +
-          " συνθηκών.",
-        this.cmdLineNo
-      ); //FIXME:
   }
 
   printMemory() {
@@ -348,7 +259,6 @@ class SScope {
     //if (typeof updateUI === "function" && this.config["runspeed"] !=0) {
     //  updateUI("memory", this.localStorage);
     //}
-    //FIXME: oxi edw mono tis entoles this.incrAssignCounter();
   }
 
   getSymbol(name) {

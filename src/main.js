@@ -9,29 +9,201 @@ const Atom = require("./atom");
 const GE = require("./gclasses");
 const STR = require("./storage");
 
-const IO = require("./io");
 const HP = require("./helper");
 
-class GlossaJS {
+const EventEmitter = require("events");
+
+class GlossaJS extends EventEmitter {
   constructor() {
+    super();
+
+    this.init();
+  }
+
+  init() {
     this.running = false;
-    this.stoprunning = false;
+    this.stoprunning = false; // FIXME:
 
     this.sourceCode = null;
 
     this.scope = new STR.SScope();
-    this.scope.io = new IO.IOBuffer();
-    this.scope.config["maxExecutionCmd"] = 100000;
-    this.scope.config["maxLogicalComp"] = 100000;
-    this.scope.config["runspeed"] = 0;
-    this.scope.config["runstep"] = false;
-    this.scope.config["runstepflag"] = false;
 
     this.initGlobalFunction();
+
+    this.app = {
+      config: {},
+
+      statistics: {},
+
+      inputData: [],
+      outputData: [],
+      outputDataDetails: [],
+
+      outputAdd: async (val) => {
+        //console.log(val);
+        this.app.outputData.push(val);
+
+        this.emit("outputappend", val);
+      },
+
+      outputAddDetails: async (val, line = null) => {
+        var val2 = (line != null ? "Γραμμή " + line + ". " : "") + val;
+        this.app.outputDataDetails.push(val2);
+
+        this.emit("outputdetailsappend", val2);
+      },
+
+      getOutput: () => {
+        return this.app.outputData.join("\n");
+      },
+
+      getOutputDetails: () => {
+        return this.app.outputDataDetails;
+      },
+
+      inputAddToBuffer: (val) => {
+        this.app.inputData.push(val);
+      },
+
+      inputSetBuffer: (val) => {
+        this.app.inputData = val;
+      },
+
+      inputIsEmptyBuffer: () => {
+        return this.app.inputData.length == 0;
+      },
+
+      inputFetchValueFromBuffer: () => {
+        if (this.app.inputIsEmptyBuffer()) return null;
+
+        var value = this.app.inputData.shift();
+
+        if (typeof value == "boolean") return value;
+
+        if (!isNaN(parseFloat(value))) return Number(value);
+        else return String(value.replace(/['"]+/g, ""));
+      },
+
+      // ===========================
+
+      sleepFunc: async (ms) => {
+        let promise = new Promise((resolve, reject) => {
+          setTimeout(() => resolve(), ms);
+        });
+
+        await promise;
+      },
+
+      setActiveLine: async (scope, line) => {
+        scope.cmdLineNo = line;
+
+        if (
+          this.app.config["slowrunflag"] == true ||
+          this.app.config["runstep"] == true
+        ) {
+          this.emit("line", line);
+          this.emit("memory", scope.localStorage);
+        }
+
+        if (this.app.config["runstep"] == false) {
+          if (this.app.config["slowrunflag"] == false) {
+            await this.app.sleepFunc(this.app.config["runspeed"]);
+          } else {
+            await this.app.sleepFunc(this.app.config["slowrunspeed"]);
+          }
+        } else {
+          while (
+            this.app.config["runstepflag"] == false &&
+            this.app.config["runstep"] == true
+          ) {
+            await this.app.sleepFunc(80);
+          }
+          this.app.config["runstepflag"] = false;
+        }
+
+        if (this.stoprunning == true) {
+          this.stoprunning = false;
+          return Promise.reject(
+            new Error(
+              "[#] Έγινε διακοπή της εκτέλεσης του προγράμματος από τον χρήστη."
+            )
+          );
+        }
+      },
+
+      setActiveLineWithoutStep: async (scope, line, msdelay = 20) => {
+        /*  scope.cmdLineNo = line;
+      
+          if (this.config["slowrunflag"] == true || this.config["runstep"] == true) {
+            this.emit("line", line);
+            this.emit("memory", scope.localStorage);
+          }
+      
+          await this.sleepFunc(msdelay);
+      
+          if (this.stoprunning == true) {
+            this.stoprunning = false;
+            return Promise.reject(
+              new Error(
+                "[#] Έγινε διακοπή της εκτέλεσης του προγράμματος από τον χρήστη."
+              )
+            );
+          } */
+      },
+
+      incrAssignCounter: () => {
+        this.app.statistics["totalAssignCmd"] =
+          this.app.statistics["totalAssignCmd"] + 1;
+
+        if (
+          this.app.statistics["totalAssignCmd"] >=
+          this.app.config["maxExecutionCmd"]
+        )
+          throw new GE.GError(
+            "Το πρόγραμμα έφτασε το μέγιστο επιτρεπτό όριο των " +
+              this.app.config["maxExecutionCmd"] +
+              " εντολών εκχώρησης.",
+            this.cmdLineNo
+          ); //FIXME:
+      },
+
+      incrLogicalCounter: () => {
+        this.app.statistics["totalLogicalComp"] =
+          this.app.statistics["totalLogicalComp"] + 1;
+
+        if (
+          this.app.statistics["totalLogicalComp"] >=
+          this.app.config["maxLogicalComp"]
+        )
+          throw new GE.GError(
+            "Το πρόγραμμα έφτασε το μέγιστο επιτρεπτό όριο των " +
+              this.app.config["maxLogicalComp"] +
+              " συνθηκών.",
+            this.cmdLineNo
+          ); //FIXME:
+      },
+    };
+
+    this.app["config"]["maxExecutionCmd"] = 100000;
+    this.app["config"]["maxLogicalComp"] = 100000;
+    this.app["config"]["slowrunflag"] = false;
+    this.app["config"]["runspeed"] = 0;
+    this.app["config"]["slowrunspeed"] = 300;
+    this.app["config"]["runstep"] = false;
+    this.app["config"]["runstepflag"] = false;
+
+    this.app["statistics"]["totalAssignCmd"] = 0;
+    this.app["statistics"]["totalLogicalComp"] = 0;
   }
 
+  // ======================
+
+  // =====================================
+
+  // ==============================
+
   getStats() {
-    return this.scope.statistics;
+    //return this.scope.statistics;
   }
 
   isrunning() {
@@ -39,12 +211,16 @@ class GlossaJS {
   }
 
   setStepRun(flag) {
-    this.scope.config["runstep"] = flag;
+    this.app.config["runstep"] = flag;
+  }
+  setSlowRun(flag) {
+    this.app.config["slowrunflag"] = flag;
   }
 
   setSourceCode(data) {
     this.sourceCode = data;
   }
+
   getSourceCode() {
     return this.sourceCode;
   }
@@ -53,14 +229,11 @@ class GlossaJS {
     if (data != null && data.trim() != "") {
       //console.log('Keyboard buffer argIOKeyboard: ', argIOKeyboard);
       var arrKeyboard = data.split(",").map((item) => item.trim());
-      arrKeyboard.forEach((e) => this.scope.io.inputAddToBuffer(e));
+      arrKeyboard.forEach((e) => this.app.inputAddToBuffer(e));
     }
   }
 
-  setSlowRun(flag) {
-    this.scope.config["runspeed"] = flag ? 430 : 0;
-  }
-
+  // ===================================================
   initGlobalFunction() {
     this.scope.addSymbol(
       "Α_Μ",
@@ -329,26 +502,21 @@ class GlossaJS {
   async terminate() {
     this.running = false;
 
-    this.scope.stoprunning = true;
+    this.stoprunning = true;
 
-    if (typeof updateUI === "function") {
-      updateUI("stopped");
-    }
-
-    console.log("user stopped programm execution");
+    this.emit("stopped");
   }
 
   async runNext() {
-    this.scope.config["runstep"] = true; // switch to step mode
-    this.scope.config["runstepflag"] = true;
+    this.app.config["runstep"] = true; // switch to step mode
+    this.app.config["runstepflag"] = true;
+    this.emit("runnext");
   }
 
   async run() {
-    this.running = true;
+    this.emit("started");
 
-    if (typeof updateUI === "function") {
-      updateUI("started");
-    }
+    this.running = true;
 
     try {
       var gram = ohm.grammar(new GOhm.GrammarOhm().getGrammar());
@@ -358,57 +526,25 @@ class GlossaJS {
 
       if (!match.succeeded()) throw new GE.GError(match.message);
 
-      /*
-    if (!match.succeeded()) {
-      this.scope.io.outputAdd(match.message);
-      this.scope.io.outputAddDetails(match.message);
-      this.running = false;
-      return false;
-    }
-*/
       var result = sem(match).toAST();
       if (!result) throw new GE.GError(result);
 
-      /*    if (!result) {
-      this.scope.io.outputAdd("Error in toAST to give results" + result);
-      this.scope.io.outputAddDetails("Error in toAST to give results" + result);
-      this.running = false;
-      return false;
-    }
-
-    if (false) {
-      var AST = require("./ast");
-      var astree = new AST.ASTree(result);
-      var outast = astree.generate();
-      console.log(outast);
-    }
-*/
-
-      await result.resolve(this.scope);
+      await result.resolve(this.app, this.scope);
     } catch (e) {
-      console.log("ErrorMsg: ", e.message);
-      console.log(e);
-      //this.scope.io.outputAdd(e.message);
-      //this.scope.io.outputAddDetails(e.message);
-      if (typeof updateUI === "function") {
-        updateUI("error", e.message);
-      }
+      console.log(e.message);
+      //console.log(e);
+      this.emit("error", e.message);
     } finally {
       this.running = false;
-      if (typeof updateUI === "function") {
-        updateUI("finished");
-      }
+      this.emit("finished");
     }
-
-    //console.log('IO: ', this.scope.io);
-    //return this.scope.io.getOutput().join('\n');
   }
 
   getOutput() {
-    return this.scope.io.getOutput().join("\n");
+    return this.getOutput().join("\n");
   }
   getOutputDetails() {
-    return this.scope.io.getOutputDetails().join("\n");
+    return this.getOutputDetails().join("\n");
   }
 }
 

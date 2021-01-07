@@ -13,12 +13,9 @@ class Stmt_Block {
   constructor(block) {
     this.block = block;
   }
-  async resolve(scope) {
+  async resolve(app, scope) {
     for (const stmt of this.block) {
-
-
-
-      await stmt.resolve(scope);
+      await stmt.resolve(app, scope);
     }
   }
 }
@@ -32,23 +29,20 @@ class Stmt_Assignment extends Stmt {
     this.cmdStrB = cmdStrB;
     this.cmdLineNo = cmdLineNo;
   }
-  async resolve(scope) {
-    await scope.setActiveLine(this.cmdLineNo);
+  async resolve(app, scope) {
+    await app.setActiveLine(scope, this.cmdLineNo);
 
     var sym = this.symbol;
 
-    if (sym instanceof Atom.MSymbolTableCell) sym = await sym.eval(scope);
+    if (sym instanceof Atom.MSymbolTableCell) sym = await sym.eval(app, scope);
 
-    var valResolved = await this.val.resolve(scope);
+    var valResolved = await this.val.resolve(app, scope);
 
-    scope.io.outputAddDetails(
-      this.cmdStrA + " <- " + this.cmdStrB,
-      this.cmdLineNo
-    );
+    app.outputAddDetails(this.cmdStrA + " <- " + this.cmdStrB, this.cmdLineNo);
 
     scope.setSymbol(sym.name, valResolved);
 
-    scope.incrAssignCounter();
+    app.incrAssignCounter();
   }
 }
 
@@ -58,21 +52,20 @@ class Stmt_Write extends Stmt {
     this.args = args;
     this.cmdLineNo = cmdLineNo;
   }
-  async resolve(scope) {
-    await scope.setActiveLine(this.cmdLineNo);
+  async resolve(app, scope) {
+    await app.setActiveLine(scope, this.cmdLineNo);
 
     var output = [];
 
     for (var i = 0, len = this.args.length; i < len; i++) {
-
-      await scope.setActiveLineWithoutStep(this.cmdLineNo);
+      await app.setActiveLineWithoutStep(scope, this.cmdLineNo);
 
       var argParam = this.args[i];
 
       if (argParam instanceof Atom.MSymbolTableCell)
-        argParam = await argParam.eval(scope);
+        argParam = await argParam.eval(app, scope);
 
-      var arg = await argParam.resolve(scope);
+      var arg = await argParam.resolve(app, scope);
 
       if (arg == null)
         throw new GE.GError(
@@ -88,13 +81,18 @@ class Stmt_Write extends Stmt {
       output.push(out);
     }
 
-    //console.log ( output.join(' ') );
-
-    scope.io.outputAdd(output.join(" "));
-    scope.io.outputAddDetails(
-      "Εμφάνισε στην οθόνη: " + output.join(" "),
+    var str = output.join(" ");
+    app.outputAdd(str);
+    app.outputAddDetails(
+      "Εμφάνισε στην οθόνη: " + str,
       this.cmdLineNo
     );
+    /*
+    app.outputAdd(output.join(" "));
+    app.outputAddDetails(
+      "Εμφάνισε στην οθόνη: " + output.join(" "),
+      this.cmdLineNo
+    );*/
   }
 }
 
@@ -104,32 +102,45 @@ class Stmt_Read extends Stmt {
     this.args = args;
     this.cmdLineNo = cmdLineNo;
   }
-  async resolve(scope) {
+  async resolve(app, scope) {
+    await app.setActiveLine(scope, this.cmdLineNo);
 
-    await scope.setActiveLine(this.cmdLineNo);
-
-    scope.io.outputAddDetails("Διάβασε από το πληκτρολόγιο", this.cmdLineNo);
+    app.outputAddDetails("Διάβασε από το πληκτρολόγιο", this.cmdLineNo);
 
     var output = [];
 
     for (var i = 0, len = this.args.length; i < len; i++) {
-
-      await scope.setActiveLineWithoutStep(this.cmdLineNo);
+      await app.setActiveLineWithoutStep(scope, this.cmdLineNo);
 
       var arg = this.args[i];
 
-      if (arg instanceof Atom.MSymbolTableCell) arg = await arg.eval(scope);
+      if (arg instanceof Atom.MSymbolTableCell)
+        arg = await arg.eval(app, scope);
 
-      var data = scope.io.inputFetchValueFromBuffer();
+      var data = app.inputFetchValueFromBuffer();
 
       if (data == null) {
-        if (typeof updateUI === "function") {
-          data = updateUI("prompt", arg.name);
-          if (!isNaN(parseFloat(data))) {
-            data = Number(data);
-          }
-          if (scope.getSymbolObject(arg.name) instanceof STR.STRString) {
-            data = String(data);
+        if (typeof UIStatePromptUserForInput === "function") {
+          data = UIStatePromptUserForInput("prompt", arg.name);
+
+          if (data != null) {
+            if (scope.getSymbolObject(arg.name) instanceof STR.STRString) {
+              data = String(data);
+            } else if (
+              scope.getSymbolObject(arg.name) instanceof STR.STRFloat
+            ) {
+              if (!isNaN(parseFloat(data))) {
+                data = parseFloat(data);
+              } else {
+                data = String(data);
+              }
+            } else if (scope.getSymbolObject(arg.name) instanceof STR.STRInt) {
+              if (!isNaN(parseInt(data))) {
+                data = parseInt(data);
+              } else {
+                data = String(data);
+              }
+            }
           }
         }
       }
@@ -155,15 +166,13 @@ class Stmt_Read extends Stmt {
           this.cmdLineNo
         );
 
-      scope.io.outputAddDetails(
+      app.outputAddDetails(
         "Εισαγωγή από το πληκτρολόγιο της τιμής " +
           data +
           " στο αναγνωριστικό " +
           arg.name,
         this.cmdLineNo
       );
-
-      output.push(data);
 
       if (typeof data == "string") var sym = new Atom.MString(data);
       else if (typeof data == "number") var sym = new Atom.MNumber(data);
@@ -173,7 +182,7 @@ class Stmt_Read extends Stmt {
       scope.setSymbol(arg.name, sym);
     }
 
-    //scope.io.outputAddDetails('Εισαγωγή από το πληκτρολόγιο: ' + output.join(" "), this.cmdLineNo);
+    //app.outputAddDetails('Εισαγωγή από το πληκτρολόγιο: ' + output.join(" "), this.cmdLineNo);
   }
 }
 
@@ -197,7 +206,7 @@ class Stmt_IfCond extends Stmt {
     this.telosAnLine = telosAnLine;
   }
 
-  async resolve(scope) {
+  async resolve(app, scope) {
     var arrCond = this.arrCond;
     var arrCondStr = this.arrCondStr;
     var arrLineNo = this.arrLineNo;
@@ -206,19 +215,19 @@ class Stmt_IfCond extends Stmt {
     var elseBodyLine = this.elseBodyLine;
 
     for (var i = 0; i < arrCond.length; ++i) {
-      await scope.setActiveLine(this.arrLineNo[i]);
+      await app.setActiveLine(scope, this.arrLineNo[i]);
 
-      var condResult = await arrCond[i].resolve(scope);
+      var condResult = await arrCond[i].resolve(app, scope);
 
       if (!(condResult instanceof Atom.MBoolean))
         throw new GE.GError(
           "Η συνθήκη της ΑΝ δεν αποτελεί λογική έκφραση." +
-          "\n" +
-          HP.valueTypeToString(condResult),
+            "\n" +
+            HP.valueTypeToString(condResult),
           arrLineNo[i]
         );
 
-      scope.io.outputAddDetails(
+      app.outputAddDetails(
         "Η συνθήκη της ΑΝ " +
           arrCondStr[i] +
           " έχει τιμή " +
@@ -226,29 +235,29 @@ class Stmt_IfCond extends Stmt {
         arrLineNo[i]
       );
 
-      scope.incrLogicalCounter();
+      app.incrLogicalCounter();
 
       if (condResult.val == true) {
-        await arrBody[i].resolve(scope);
-        await scope.setActiveLine(this.telosAnLine);
+        await arrBody[i].resolve(app, scope);
+        await app.setActiveLine(scope, this.telosAnLine);
         return;
       }
     }
 
     if (elseBody != null) {
-      await scope.setActiveLine(this.elseBodyLine);
+      await app.setActiveLine(scope, this.elseBodyLine);
 
-      scope.io.outputAddDetails(
+      app.outputAddDetails(
         "Εκτέλεση του τμήματος εντολών της ΑΛΛΙΩΣ",
         elseBodyLine
       );
 
-      await elseBody.resolve(scope);
-      await scope.setActiveLine(this.telosAnLine);
+      await elseBody.resolve(app, scope);
+      await app.setActiveLine(scope, this.telosAnLine);
       return;
     }
 
-    await scope.setActiveLine(this.telosAnLine);
+    await app.setActiveLine(scope, this.telosAnLine);
   }
 }
 
@@ -276,8 +285,8 @@ class Stmt_Select extends Stmt {
     this.cmdLineNoTelosEpilogwn = cmdLineNoTelosEpilogwn;
   }
 
-  async resolve(scope) {
-    await scope.setActiveLine(this.cmdLineNo);
+  async resolve(app, scope) {
+    await app.setActiveLine(scope, this.cmdLineNo);
 
     var expr = this.expr;
     var arrCond = this.arrCond;
@@ -288,11 +297,8 @@ class Stmt_Select extends Stmt {
     var elseBodyLine = this.elseBodyLine;
     var cmdLineNoTelosEpilogwn = this.cmdLineNoTelosEpilogwn;
 
-    //console.log('select expression: ', this.expr);
-    //console.log('select expression value: ', this.expr.async resolve(scope));
-
     //console.log(arrCond);
-    var exprResult = await expr.resolve(scope);
+    var exprResult = await expr.resolve(app, scope);
 
     if (exprResult instanceof STR.STRTableName)
       throw new GE.GError(
@@ -301,23 +307,22 @@ class Stmt_Select extends Stmt {
       );
 
     for (var i = 0; i < arrCond.length; ++i) {
-
       for (var j = 0; j < arrCond[i].length; ++j) {
-        await scope.setActiveLine(this.cmdLineNo);
+        await app.setActiveLine(scope, arrLineNo[i]);
 
-        var condResult = await arrCond[i][j].resolve(scope);
+        var condResult = await arrCond[i][j].resolve(app, scope);
         //console.log("select PERIPTOSI resolved value: " + condResult);
         //console.log(condResult);
 
         if (!(condResult instanceof Atom.MBoolean))
           throw new GE.GError(
             "Η συνθήκη της ΕΠΙΛΕΞΕ δεν αποτελεί λογική έκφραση." +
-            "\n" +
-            HP.valueTypeToString(condResult),
+              "\n" +
+              HP.valueTypeToString(condResult),
             arrLineNo[i]
           );
 
-        scope.io.outputAddDetails(
+        app.outputAddDetails(
           "Η συνθήκη της ΕΠΙΛΕΞΕ " +
             arrCondStr[i] +
             " έχει τιμή " +
@@ -325,28 +330,31 @@ class Stmt_Select extends Stmt {
           arrLineNo[i]
         );
 
-        scope.incrLogicalCounter();
+        app.incrLogicalCounter();
 
         if (condResult.val == true) {
-//fixeme!  fix line here
-          await arrBody[i].resolve(scope);
+          //fixeme!  fix line here
+          await arrBody[i].resolve(app, scope);
+          await app.setActiveLine(scope, cmdLineNoTelosEpilogwn);
           return;
         }
       }
     }
 
     if (elseBody != null) {
-      await scope.setActiveLine(elseBodyLine);
+      await app.setActiveLine(scope, elseBodyLine);
 
-      scope.io.outputAddDetails(
+      app.outputAddDetails(
         "Εκτέλεση του τμήματος εντολών της ΑΛΛΙΩΣ",
         elseBodyLine
       );
 
-      await elseBody.resolve(scope);
-      await scope.setActiveLine(cmdLineNoTelosEpilogwn);
+      await elseBody.resolve(app, scope);
+      await app.setActiveLine(scope, cmdLineNoTelosEpilogwn);
       return;
     }
+
+    await app.setActiveLine(scope, cmdLineNoTelosEpilogwn);
   }
 }
 
@@ -359,21 +367,21 @@ class Stmt_WhileLoop extends Stmt {
     this.cmdLineNoOso = cmdLineNoOso;
     this.cmdLineNoTelosEpanalhpshs = cmdLineNoTelosEpanalhpshs;
   }
-  async resolve(scope) {
+  async resolve(app, scope) {
     while (true) {
-      await scope.setActiveLine(this.cmdLineNoOso);
+      await app.setActiveLine(scope, this.cmdLineNoOso);
 
-      var condResult = await this.cond.resolve(scope);
+      var condResult = await this.cond.resolve(app, scope);
 
       if (!(condResult instanceof Atom.MBoolean))
         throw new GE.GError(
           "Η συνθήκη της ΟΣΟ δεν αποτελεί λογική έκφραση." +
-          "\n" +
-          HP.valueTypeToString(condResult),
+            "\n" +
+            HP.valueTypeToString(condResult),
           this.cmdLineNoOso
         );
 
-      scope.io.outputAddDetails(
+      app.outputAddDetails(
         "Η συνθήκη της ΟΣΟ " +
           this.condstr +
           " έχει τιμή " +
@@ -383,11 +391,11 @@ class Stmt_WhileLoop extends Stmt {
 
       if (!condResult.val) break;
 
-      scope.incrLogicalCounter();
+      app.incrLogicalCounter();
 
-      await this.body.resolve(scope);
+      await this.body.resolve(app, scope);
 
-      await scope.setActiveLine(this.cmdLineNoTelosEpanalhpshs);
+      await app.setActiveLine(scope, this.cmdLineNoTelosEpanalhpshs);
     }
   }
 }
@@ -401,25 +409,25 @@ class Stmt_Do_WhileLoop extends Stmt {
     this.cmdLineNoArxh = cmdLineNoArxh;
     this.cmdLineNoMexrisOtou = cmdLineNoMexrisOtou;
   }
-  async resolve(scope) {
+  async resolve(app, scope) {
     do {
-      await scope.setActiveLine(this.cmdLineNoArxh);
+      await app.setActiveLine(scope, this.cmdLineNoArxh);
 
-      await this.body.resolve(scope);
+      await this.body.resolve(app, scope);
 
-      await scope.setActiveLine(this.cmdLineNoMexrisOtou);
+      await app.setActiveLine(scope, this.cmdLineNoMexrisOtou);
 
-      var condResult = await this.cond.resolve(scope);
+      var condResult = await this.cond.resolve(app, scope);
 
       if (!(condResult instanceof Atom.MBoolean))
         throw new GE.GError(
           "Η συνθήκη της ΜΕΧΡΙΣ_ΟΤΟΥ δεν αποτελεί λογική έκφραση." +
-          "\n" +
-          HP.valueTypeToString(condResult),
+            "\n" +
+            HP.valueTypeToString(condResult),
           this.cmdLineNoMexrisOtou
         );
 
-      scope.io.outputAddDetails(
+      app.outputAddDetails(
         "Η συνθήκη της ΜΕΧΡΙΣ_ΟΤΟΥ " +
           this.condstr +
           " έχει τιμή " +
@@ -427,7 +435,7 @@ class Stmt_Do_WhileLoop extends Stmt {
         this.cmdLineNoMexrisOtou
       );
 
-      scope.incrLogicalCounter();
+      app.incrLogicalCounter();
 
       if (condResult.val) break;
     } while (true);
@@ -453,8 +461,8 @@ class Stmt_ForLoop extends Stmt {
     this.cmdLineNoGia = cmdLineNoGia;
     this.cmdLineNoTelosEpanalhpshs = cmdLineNoTelosEpanalhpshs;
   }
-  async resolve(scope) {
-    await scope.setActiveLine(this.cmdLineNoGia);
+  async resolve(app, scope) {
+    await app.setActiveLine(scope, this.cmdLineNoGia);
 
     var variable = this.variable;
     var initval = this.initval;
@@ -465,7 +473,7 @@ class Stmt_ForLoop extends Stmt {
     var v_step = 1;
 
     if (stepval != "") {
-      var tmp = await stepval[0].resolve(scope);
+      var tmp = await stepval[0].resolve(app, scope);
       v_step = tmp.val;
     }
 
@@ -475,22 +483,22 @@ class Stmt_ForLoop extends Stmt {
         this.cmdLineNoGia
       );
 
-    var tmp = await initval.resolve(scope);
+    var tmp = await initval.resolve(app, scope);
     var v_initial = tmp.val;
 
-    var tmp = await finalval.resolve(scope);
+    var tmp = await finalval.resolve(app, scope);
     var v_final = tmp.val;
 
     if (variable instanceof Atom.MSymbolTableCell)
       //FIXME:
-      variable = await variable.eval(scope);
+      variable = await variable.eval(app, scope);
 
     scope.setSymbol(variable.name, new Atom.MNumber(v_initial));
     scope.addLock(variable.name);
 
     if (v_initial <= v_final && v_step > 0) {
       while (scope.getSymbol(variable.name).val <= v_final) {
-        scope.io.outputAddDetails(
+        app.outputAddDetails(
           "Η συνθήκη της ΓΙΑ " +
             variable.name +
             "<=" +
@@ -499,13 +507,13 @@ class Stmt_ForLoop extends Stmt {
           this.cmdLineNoGia
         );
 
-        scope.incrLogicalCounter();
+        app.incrLogicalCounter();
 
-        await body.resolve(scope);
+        await body.resolve(app, scope);
 
-        await scope.setActiveLine(this.cmdLineNoTelosEpanalhpshs);
+        await app.setActiveLine(scope, this.cmdLineNoTelosEpanalhpshs);
 
-        await scope.setActiveLine(this.cmdLineNoGia);
+        await app.setActiveLine(scope, this.cmdLineNoGia);
 
         scope.removeLock(variable.name);
 
@@ -516,13 +524,13 @@ class Stmt_ForLoop extends Stmt {
         scope.addLock(variable.name);
       }
 
-      scope.io.outputAddDetails(
+      app.outputAddDetails(
         "Η συνθήκη της ΓΙΑ " + variable.name + "<=" + v_final + " είναι ΨΕΥΔΗΣ",
         this.cmdLineNoGia
       );
     } else if (v_initial >= v_final && v_step < 0) {
       while (scope.getSymbol(variable.name).val >= v_final) {
-        scope.io.outputAddDetails(
+        app.outputAddDetails(
           "Η συνθήκη της ΓΙΑ " +
             variable.name +
             ">=" +
@@ -531,13 +539,13 @@ class Stmt_ForLoop extends Stmt {
           this.cmdLineNoGia
         );
 
-        scope.incrLogicalCounter();
+        app.incrLogicalCounter();
 
-        await body.resolve(scope);
+        await body.resolve(app, scope);
 
-        await scope.setActiveLine(this.cmdLineNoTelosEpanalhpshs);
+        await app.setActiveLine(scope, this.cmdLineNoTelosEpanalhpshs);
 
-        await scope.setActiveLine(this.cmdLineNoGia);
+        await app.setActiveLine(scope, this.cmdLineNoGia);
 
         scope.removeLock(variable.name);
         scope.setSymbol(
@@ -547,7 +555,7 @@ class Stmt_ForLoop extends Stmt {
         scope.addLock(variable.name);
       }
 
-      scope.io.outputAddDetails(
+      app.outputAddDetails(
         "Η συνθήκη της ΓΙΑ " + variable.name + ">=" + v_final + " είναι ΨΕΥΔΗΣ",
         this.cmdLineNoGia
       );
@@ -564,10 +572,10 @@ class CallSubFunction extends Stmt {
     this.args = args;
     this.cmdLineNo = cmdLineNo;
   }
-  async resolve(scope) {
+  async resolve(app, scope) {
     //scope.cmdLineNo = this.cmdLineNo; //FIXME: not wanted here
 
-    scope.io.outputAddDetails(
+    app.outputAddDetails(
       "Κλήση της Συνάρτησης " + this.fun.name,
       this.cmdLineNo
     );
@@ -580,7 +588,7 @@ class CallSubFunction extends Stmt {
 
     var argsResolved = [];
     for (const arg of this.args) {
-      var argRes = await arg.resolve(scope);
+      var argRes = await arg.resolve(app, scope);
       argsResolved.push(argRes);
     }
 
@@ -593,9 +601,9 @@ class CallSubFunction extends Stmt {
 
     var valReturned = await fun.apply(this, sendData);
 
-    //await scope.setActiveLine(this.cmdLineNo);
+    //await app.setActiveLine(scope, this.cmdLineNo);
 
-    scope.io.outputAddDetails(
+    app.outputAddDetails(
       "Επιστροφή από την συνάρτηση " +
         this.fun.name +
         " με τιμή επιστροφής " +
@@ -614,10 +622,10 @@ class CallSubProcedure extends Stmt {
     this.args = args;
     this.cmdLineNo = cmdLineNo;
   }
-  async resolve(scope) {
-    await scope.setActiveLine(this.cmdLineNo);
+  async resolve(app, scope) {
+    await app.setActiveLine(scope, this.cmdLineNo);
 
-    scope.io.outputAddDetails(
+    app.outputAddDetails(
       "Κλήση της Διαδικασίας " + this.fun.name,
       this.cmdLineNo
     );
@@ -630,7 +638,7 @@ class CallSubProcedure extends Stmt {
 
     var argsResolved = [];
     for (const arg of this.args) {
-      var argRes = await arg.resolve(scope);
+      var argRes = await arg.resolve(app, scope);
       argsResolved.push(argRes);
     }
 
@@ -642,9 +650,9 @@ class CallSubProcedure extends Stmt {
 
     var recvData = await fun.apply(null, sendData);
 
-    await scope.setActiveLine(this.cmdLineNo);
+    await app.setActiveLine(scope, this.cmdLineNo);
 
-    scope.io.outputAddDetails(
+    app.outputAddDetails(
       "Επιστροφή από την διαδικασία " + this.fun.name,
       this.cmdLineNo
     );
@@ -682,7 +690,7 @@ class CallSubProcedure extends Stmt {
           }
         }
       } else if (arg instanceof Atom.MSymbolTableCell) {
-        arg = await arg.eval(scope);
+        arg = await arg.eval(app, scope);
         if (
           scope.getSymbol(arg.name) != procScope.getSymbol(procParams[i].name)
         )
@@ -708,7 +716,7 @@ class SubFunction extends Stmt {
     this.cmdLineNo = cmdLineNo;
   }
 
-  async resolve(scope) {
+  async resolve(app, scope) {
     var name = this.name.name;
     var params = this.params;
     var funType = this.funType;
@@ -720,7 +728,7 @@ class SubFunction extends Stmt {
       name,
       new STR.STRUserFunction(
         async function (...arrargs) {
-          await scope.setActiveLine(cmdLineNo);
+          await app.setActiveLine(scope, cmdLineNo);
 
           var args = arrargs[0];
           var parentScope = arrargs[1];
@@ -756,7 +764,7 @@ class SubFunction extends Stmt {
           // Add function name as variable
           scope2.addSymbolFuncName(name, ftype);
 
-          await declarations.resolve(scope2);
+          await declarations.resolve(app, scope2);
 
           params.forEach(function (param, i) {
             if (!scope2.hasSymbol(param.name))
@@ -805,7 +813,7 @@ class SubFunction extends Stmt {
             }
           });
 
-          await body.resolve(scope2);
+          await body.resolve(app, scope2);
 
           if (!scope2.getSymbol(name))
             throw new GE.GError(
@@ -829,7 +837,7 @@ class SubProcedure extends Stmt {
     this.cmdLineNo = cmdLineNo;
   }
 
-  async resolve(scope) {
+  async resolve(app, scope) {
     var name = this.name.name;
     var params = this.params;
     var declarations = this.declarations;
@@ -839,7 +847,7 @@ class SubProcedure extends Stmt {
       name,
       new STR.STRUserProcedure(
         async function (...arrargs) {
-          await scope.setActiveLine(this.cmdLineNo);
+          await app.setActiveLine(scope, this.cmdLineNo);
 
           var args = arrargs[0];
           var parentScope = arrargs[1];
@@ -852,7 +860,7 @@ class SubProcedure extends Stmt {
           var scope2 = scope.makeSubScope();
 
           // Declare constants and variables
-          await declarations.resolve(scope2);
+          await declarations.resolve(app, scope2);
 
           // Sent values to procedure
           params.forEach(function (param, i) {
@@ -902,7 +910,7 @@ class SubProcedure extends Stmt {
             }
           });
 
-          await body.resolve(scope2);
+          await body.resolve(app, scope2);
 
           var procExecArr = [scope2, params];
 
@@ -919,15 +927,15 @@ class DefDeclarations extends Stmt {
     this.constants = constants;
     this.variables = variables;
   }
-  async resolve(scope) {
+  async resolve(app, scope) {
     if (this.constants[0])
       for (const a of this.constants[0]) {
-        await a.resolve(scope);
+        await a.resolve(app, scope);
       }
 
     if (this.variables[0])
       for (const a of this.variables[0]) {
-        await a.resolve(scope);
+        await a.resolve(app, scope);
       }
 
     //scope.printMemory();
@@ -941,10 +949,10 @@ class DefConstant extends Stmt {
     this.val = val;
     this.cmdLineNo = cmdLineNo;
   }
-  async resolve(scope) {
-    await scope.setActiveLine(this.cmdLineNo);
+  async resolve(app, scope) {
+    await app.setActiveLine(scope, this.cmdLineNo);
 
-    var obj = await this.val.resolve(scope);
+    var obj = await this.val.resolve(app, scope);
 
     if (HP.isInt(obj.val)) var newObj = new STR.STRInt(obj);
     else if (HP.isFloat(obj.val)) var newObj = new STR.STRFloat(obj);
@@ -965,8 +973,8 @@ class DefVariables extends Stmt {
     this.sym = sym;
     this.cmdLineNo = cmdLineNo;
   }
-  async resolve(scope) {
-    await scope.setActiveLine(this.cmdLineNo);
+  async resolve(app, scope) {
+    await app.setActiveLine(scope, this.cmdLineNo);
 
     var varType = this.varType;
     //console.log('======> DefVariables: : ', varType);
@@ -981,12 +989,9 @@ class DefVariables extends Stmt {
         var argsResolved = [];
         for (const arg of e.args) {
           //console.log('==> arg: ' + arg);
-          var argRes = await arg.resolve(scope);
+          var argRes = await arg.resolve(app, scope);
           argsResolved.push(argRes.val);
         }
-        //var argsResolved = e.args.map(function (arg) {
-        //  return arg.resolve(scope).val;
-        //});
 
         if (varType == "ΑΚΕΡΑΙΕΣ")
           var ctype = new STR.STRTableNameInt(e.name, argsResolved);
@@ -1076,18 +1081,18 @@ class Program extends Stmt {
     this.cmdLineNoTelosProgrammatos = cmdLineNoTelosProgrammatos;
   }
 
-  async resolve(scope) {
+  async resolve(app, scope) {
     scope.addSymbol(this.progname.name, new STR.STRReservedName(null));
 
-    await scope.setActiveLine(this.cmdLineNoProgramma);
+    await app.setActiveLine(scope, this.cmdLineNoProgramma);
 
-    await this.declarations.resolve(scope);
+    await this.declarations.resolve(app, scope);
 
-    await scope.setActiveLine(this.cmdLineNoArxh);
+    await app.setActiveLine(scope, this.cmdLineNoArxh);
 
-    await this.body.resolve(scope);
+    await this.body.resolve(app, scope);
 
-    await scope.setActiveLine(this.cmdLineNoTelosProgrammatos);
+    await app.setActiveLine(scope, this.cmdLineNoTelosProgrammatos);
   }
 }
 
@@ -1095,10 +1100,10 @@ class InlineKeyboardInput {
   constructor(args) {
     this.args = args;
   }
-  async resolve(scope) {
+  async resolve(app, scope) {
     for (const arg of this.args) {
-      var argResolved = await arg.resolve(scope);
-      scope.io.inputAddToBuffer(argResolved.val);
+      var argResolved = await arg.resolve(app, scope);
+      app.inputAddToBuffer(argResolved.val);
     }
   }
 }
@@ -1109,18 +1114,18 @@ class Application {
     this.program = program;
     this.subprograms = subprograms;
   }
-  async resolve(scope) {
-    if (scope.io.inputIsEmptyBuffer())
+  async resolve(app, scope) {
+    if (app.inputIsEmptyBuffer())
       for (const a of this.inputdata) {
-        await a.resolve(scope);
+        await a.resolve(app, scope);
       }
 
     if (this.subprograms.length)
       for (const a of this.subprograms) {
-        await a.resolve(scope);
+        await a.resolve(app, scope);
       }
 
-    await this.program.resolve(scope);
+    await this.program.resolve(app, scope);
   }
 }
 

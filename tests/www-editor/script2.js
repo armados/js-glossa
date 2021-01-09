@@ -97,7 +97,8 @@ function UIStateFinished(gloBoxID) {
 function UIStateUpdateCodeLine(gloBoxID, line) {
   var editorInstance = editorsArr[0];
 
- 
+  editorInstance.revealLine(line);
+
   decorations = editorInstance.deltaDecorations(
     decorations,
     [

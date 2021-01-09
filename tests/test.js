@@ -29,10 +29,10 @@ obs.observe({ entryTypes: ['measure'] , buffer: true});
   app.setSourceCode(sourceCode);
   app.setInputBuffer(null);
 
-  performance.mark("app-start");
+  //performance.mark("app-start");
   await app.run();
-  performance.mark("app-end");
-  performance.measure("apprun", "app-start", "app-end");
+  //performance.mark("app-end");
+  //performance.measure("apprun", "app-start", "app-end");
 
   //console.log(app.app.getOutput());
   //console.log('Total commands: ', app.app.getStats());

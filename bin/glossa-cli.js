@@ -8,6 +8,14 @@ var GE = require("../src/gclasses");
 var fs = require("fs");
 var minimist = require("minimist");
 
+const { PerformanceObserver, performance } = require('perf_hooks');
+
+const obs = new PerformanceObserver((items) => {
+  console.log(items.getEntries()[0].duration);
+  performance.clearMarks();
+});
+obs.observe({ entryTypes: ['measure'] , buffer: true});
+
 
 var args = minimist(process.argv.slice(2), {
   string: ["input", "keyboard"],
@@ -58,34 +66,53 @@ if (args["keyboard"]) {
 }
 
 
-var app = new GLO.GlossaJS();
-app.setSourceCode(sourceCode);
-app.setInputBuffer(keyboardInput);
 
-if (args["rmfuncat"])
-  app.removeGlobalFunction('Α_Τ');
+(async function main() {
 
-if (args["rmfuncam"])
-  app.removeGlobalFunction('Α_Μ');
 
-if (args["rmfunctr"])
-  app.removeGlobalFunction('Τ_Ρ');
 
-if (args["rmfunchm"])
-  app.removeGlobalFunction('ΗΜ');
+  var app = new GLO.GlossaJS();
+  app.setSourceCode(sourceCode);
+  app.setInputBuffer(null);
 
-if (args["rmfuncsyn"])
-  app.removeGlobalFunction('ΣΥΝ');
 
-if (args["rmfuncef"])
-  app.removeGlobalFunction('ΕΦ');
 
-if (args["rmfunce"])
-  app.removeGlobalFunction('Ε');
 
-if (args["rmfunclog"])
-  app.removeGlobalFunction('ΛΟΓ');
 
-app.run();
+  var app = new GLO.GlossaJS();
+  app.setSourceCode(sourceCode);
+  app.setInputBuffer(keyboardInput);
+  
+  if (args["rmfuncat"])
+    app.removeGlobalFunction('Α_Τ');
+  
+  if (args["rmfuncam"])
+    app.removeGlobalFunction('Α_Μ');
+  
+  if (args["rmfunctr"])
+    app.removeGlobalFunction('Τ_Ρ');
+  
+  if (args["rmfunchm"])
+    app.removeGlobalFunction('ΗΜ');
+  
+  if (args["rmfuncsyn"])
+    app.removeGlobalFunction('ΣΥΝ');
+  
+  if (args["rmfuncef"])
+    app.removeGlobalFunction('ΕΦ');
+  
+  if (args["rmfunce"])
+    app.removeGlobalFunction('Ε');
+  
+  if (args["rmfunclog"])
+    app.removeGlobalFunction('ΛΟΓ');
+  
 
-console.log(app.getOutput());
+  performance.mark("app-start");
+  await app.run();
+  performance.mark("app-end");
+  performance.measure("apprun", "app-start", "app-end");
+
+  //console.log(app.app.getOutput());
+  //console.log('Total commands: ', app.app.getStats());
+})();

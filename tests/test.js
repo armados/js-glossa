@@ -17,6 +17,8 @@ obs.observe({ entryTypes: ['measure'] , buffer: true});
 
 
 (async function main() {
+
+
   try {
     var sourceCode = fs.readFileSync(path.join(__dirname, filename)).toString();
   } catch (e) {

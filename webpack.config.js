@@ -6,7 +6,7 @@ module.exports = {
         glossajs: './src/main.js'
     },
     optimization: {
-        minimize: false
+        minimize: true
     },
     output: {
         path: path.join(__dirname, 'dist'),

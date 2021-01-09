@@ -1,5 +1,8 @@
 //var app = null;
 
+var editorsArr = [];
+var decorations = [];
+
 function objectToString(obj) {
   var variables = [];
 
@@ -22,12 +25,8 @@ function objectToString(obj) {
 }
 
 function UIStateStarted(gloBoxID) {
-  var editorid = $("#" + gloBoxID)
-    .find(".gloAceEditor")
-    .attr("id");
-  var aceeditor = ace.edit(editorid);
-
-  aceeditor.setReadOnly(true);
+  var editorInstance = editorsArr[0];
+  editorInstance.updateOptions({ readOnly: true });
 
   $("#" + gloBoxID)
     .find(".gloSpinner")
@@ -77,13 +76,10 @@ function UIStateStopped(gloBoxID) {
 }
 
 function UIStateFinished(gloBoxID) {
-  var editorid = $("#" + gloBoxID)
-    .find(".gloAceEditor")
-    .attr("id");
-  var aceeditor = ace.edit(editorid);
-
-  aceeditor.setHighlightActiveLine(false);
-  aceeditor.setReadOnly(false);
+  var editorInstance = editorsArr[0];
+  editorInstance.updateOptions({ readOnly: false });
+  
+  decorations = editorInstance.deltaDecorations(decorations,[]);
 
   $("#" + gloBoxID)
     .find(".gloSpinner")
@@ -99,13 +95,25 @@ function UIStateFinished(gloBoxID) {
 }
 
 function UIStateUpdateCodeLine(gloBoxID, line) {
-  var editorid = $("#" + gloBoxID)
-    .find(".gloAceEditor")
-    .attr("id");
-  var aceeditor = ace.edit(editorid);
+  var editorInstance = editorsArr[0];
 
-  aceeditor.setHighlightActiveLine(true);
-  aceeditor.gotoLine(line);
+ 
+  decorations = editorInstance.deltaDecorations(
+    decorations,
+    [
+      {
+        range: new monaco.Range(line, 1, line, 1),
+        options: {
+          isWholeLine: true,
+          className: "myContentClass",
+          glyphMarginClassName: "myGlyphMarginClass"
+        },
+      }
+    ]
+  );
+
+  //console.log(decorations);
+
 }
 
 function UIStateUpdateMemory(gloBoxID, data) {
@@ -140,12 +148,9 @@ function UIStateOutputDetailsAppend(gloBoxID, data) {
 // ==============================
 
 async function startProgramExecution(gloBoxID, runstep) {
-  var editorid = $("#" + gloBoxID)
-    .find(".gloAceEditor")
-    .attr("id");
-  var aceeditor = ace.edit(editorid);
+  var editor = editorsArr[0];
 
-  var sourcecode = aceeditor.getValue();
+  var sourcecode = editor.getValue();
 
   var inputdata = $("#" + gloBoxID)
     .find(".gloCodeKeyboardInput")
@@ -253,14 +258,58 @@ $(document).ready(function () {
       $(this).attr("id", gloBoxID);
     }
 
-    var app = GLO.newGlossaApp(gloBoxID);
-
     var randomID = Math.floor(Math.random() * 1000000 + 1);
     $(this)
       .find(".gloAceEditor")
       .attr("id", "gloAceEditorID" + randomID);
 
-    var editor = ace.edit("gloAceEditorID" + randomID);
+    // Based on https://jsfiddle.net/developit/bwgkr6uq/ which just works but is based on unpkg.com.
+    // Provided by loader.min.js.
+    require.config({
+      paths: {
+        vs:
+          "https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.21.2/min/vs",
+      },
+    });
+    window.MonacoEnvironment = { getWorkerUrl: () => proxy };
+    let proxy = URL.createObjectURL(
+      new Blob(
+        [
+          `
+            self.MonacoEnvironment = {
+                baseUrl: 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.21.2/min'
+            };
+            importScripts('https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.21.2/min/vs/base/worker/workerMain.min.js');
+        `,
+        ],
+        { type: "text/javascript" }
+      )
+    );
+
+    require(["vs/editor/editor.main"], function () {
+      let editor = monaco.editor.create($(".gloAceEditor")[0], {
+        value: "",
+        language: "pascal",
+        scrollBeyondLastLine: true,
+        readOnly: false,
+        lineNumbers: "on",
+        glyphMargin: true,
+        folding: false,
+        //fontFamily: "Arial",
+        //fontSize: 20,
+        theme: "vs-dark",
+      });
+
+      editor.setValue(
+        "ΠΡΟΓΡΑΜΜΑ Άσκηση\n\nΜΕΤΑΒΛΗΤΕΣ\nΑΚΕΡΑΙΕΣ: α\n\nΑΡΧΗ\n\nΓΙΑ α ΑΠΟ 1 ΜΕΧΡΙ 700\n  ΓΡΑΨΕ 'Καλημέρα κόσμε', α\nΤΕΛΟΣ_ΕΠΑΝΑΛΗΨΗΣ\n\nΤΕΛΟΣ_ΠΡΟΓΡΑΜΜΑΤΟΣ"
+      );
+
+      editorsArr.push(editor);
+    });
+
+    var app = GLO.newGlossaApp(gloBoxID);
+
+    /*
     editor.renderer.setDisplayIndentGuides(true);
     editor.renderer.setShowPrintMargin(false);
     editor.renderer.setShowGutter(true);
@@ -292,6 +341,8 @@ $(document).ready(function () {
       Cookies.set("editorSourceCode", editor.getValue());
     });
 
+    */
+
     app.on("started", () => {
       UIStateStarted(gloBoxID);
     });
@@ -316,7 +367,5 @@ $(document).ready(function () {
     app.on("outputdetailsappend", (data) => {
       UIStateOutputDetailsAppend(gloBoxID, data);
     });
-
-
   });
 });

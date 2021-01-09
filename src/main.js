@@ -13,6 +13,12 @@ const HP = require("./helper");
 
 const EventEmitter = require("events");
 
+class GlossaJSStorage extends EventEmitter {
+  constructor() {
+    super();
+  }
+}
+
 class GlossaJS extends EventEmitter {
   constructor() {
     super();
@@ -40,7 +46,7 @@ class GlossaJS extends EventEmitter {
       outputDataDetails: [],
 
       outputAdd: async (val) => {
-        //console.log(val);
+        console.log(val);
         this.app.outputData.push(val);
 
         this.emit("outputappend", val);
@@ -116,7 +122,7 @@ class GlossaJS extends EventEmitter {
             this.app.config["runstepflag"] == false &&
             this.app.config["runstep"] == true
           ) {
-            await this.app.sleepFunc(80);
+            await this.app.sleepFunc(15);
           }
           this.app.config["runstepflag"] = false;
         }
@@ -131,24 +137,27 @@ class GlossaJS extends EventEmitter {
         }
       },
 
-      setActiveLineWithoutStep: async (scope, line, msdelay = 20) => {
-        /*  scope.cmdLineNo = line;
-      
-          if (this.config["slowrunflag"] == true || this.config["runstep"] == true) {
-            this.emit("line", line);
-            this.emit("memory", scope.localStorage);
-          }
-      
-          await this.sleepFunc(msdelay);
-      
-          if (this.stoprunning == true) {
-            this.stoprunning = false;
-            return Promise.reject(
-              new Error(
-                "[#] Έγινε διακοπή της εκτέλεσης του προγράμματος από τον χρήστη."
-              )
-            );
-          } */
+      setActiveLineWithoutStep: async (scope, line) => {
+        scope.cmdLineNo = line;
+
+        if (
+          this.app.config["slowrunflag"] == true ||
+          this.app.config["runstep"] == true
+        ) {
+          this.emit("line", line);
+          this.emit("memory", scope.localStorage);
+        }
+
+        await this.app.sleepFunc(40);
+
+        if (this.stoprunning == true) {
+          this.stoprunning = false;
+          return Promise.reject(
+            new Error(
+              "[#] Έγινε διακοπή της εκτέλεσης του προγράμματος από τον χρήστη."
+            )
+          );
+        }
       },
 
       incrAssignCounter: () => {
@@ -188,7 +197,7 @@ class GlossaJS extends EventEmitter {
     this.app["config"]["maxLogicalComp"] = 100000;
     this.app["config"]["slowrunflag"] = false;
     this.app["config"]["runspeed"] = 0;
-    this.app["config"]["slowrunspeed"] = 300;
+    this.app["config"]["slowrunspeed"] = 200;
     this.app["config"]["runstep"] = false;
     this.app["config"]["runstepflag"] = false;
 
@@ -327,9 +336,10 @@ class GlossaJS extends EventEmitter {
 
         if (A.val < 0)
           throw new GE.GError(
-            "Δεν ορίζεται ρίζα αρνητικού αριθμού.",
+            "Η συνάρτηση Τ_Ρ δεν μπορεί να λάβει αρνητική τιμή.",
             cmdLineNo
           );
+
         return new Atom.MNumber(Math.sqrt(A.val));
       })
     );
@@ -361,7 +371,9 @@ class GlossaJS extends EventEmitter {
             cmdLineNo
           );
 
-        return new Atom.MNumber(Math.sin(A.val));
+          const degrees = (A.val * Math.PI) / 180;
+
+        return new Atom.MNumber(Math.sin(degrees));
       })
     );
 
@@ -392,7 +404,9 @@ class GlossaJS extends EventEmitter {
             cmdLineNo
           );
 
-        return new Atom.MNumber(Math.cos(A.val));
+          const degrees = (A.val * Math.PI) / 180;
+
+        return new Atom.MNumber(Math.cos(degrees));
       })
     );
 
@@ -454,7 +468,9 @@ class GlossaJS extends EventEmitter {
             cmdLineNo
           );
 
-        return new Atom.MNumber(Math.tan(A.val));
+          const degrees = (A.val * Math.PI) / 180;
+
+        return new Atom.MNumber(Math.tan(degrees));
       })
     );
 
@@ -482,6 +498,12 @@ class GlossaJS extends EventEmitter {
             "Η συνάρτηση ΛΟΓ δεν μπορεί να δεχτεί αυτό το όρισμα." +
               "\n" +
               HP.valueTypeToString(A),
+            cmdLineNo
+          );
+
+          if (A.val <= 0)
+          throw new GE.GError(
+            "Η συνάρτηση ΛΟΓ δεν μπορεί να δεχτεί αρνητικές τιμές ή το μηδέν.",
             cmdLineNo
           );
 
@@ -548,6 +570,26 @@ class GlossaJS extends EventEmitter {
   }
 }
 
+var gloObjectsID = [];
+var gloObjectsAPP = [];
+
+function newGlossaApp(id) {
+  const index = gloObjectsID.indexOf(id);
+  if (index >= 0) return false;
+
+  var app = new GlossaJS();
+  gloObjectsID.push(id);
+  gloObjectsAPP.push(app);
+  return app;
+}
+
+function getGlossaApp(id) {
+  const index = gloObjectsID.indexOf(id);
+  return index >= 0 ? gloObjectsAPP[index] : false;
+}
+
 module.exports = {
   GlossaJS,
+  newGlossaApp,
+  getGlossaApp,
 };

@@ -152,129 +152,17 @@
           </div>
         </div>
       </div>
-
-<h2>new</h2>
-
-<div class="gloBox">
-  <div class="row no-gutters">
-    <div class="col-9">
-      <div class="gloAceEditor"></div>
-
-      <div class="gloControls">
-        <div
-          class="btn-toolbar"
-          role="toolbar"
-          aria-label="Toolbar with button groups"
-        >
-
-          <div class="btn-group mr-2" role="group">
-            <button class="btn btn-success btn-sm gloRun">
-              <i class="fas fa-play"></i>
-            </button>
-          </div>
-
-          <div class="btn-group mr-2" role="group">
-            <button class="btn btn-danger btn-sm gloStop disabled">
-              <i class="fas fa-stop" ></i>
-            </button>
-          </div>
-          
-          <div class="btn-group mr-2" role="group">
-            <button class="btn btn-success btn-sm gloRunStep">
-              <i class="fas fa-indent"></i>
-            </button>
-          </div>
-
-
-          <div
-            class="btn-group btn-group-toggle mr-2"
-            role="group"
-            data-toggle="buttons"
-          >
-            <label class="btn btn-info btn-sm">
-              <input
-                type="radio"
-                name="options"
-                class="gloBtnShowInput"
-              />
-              Είσοδος
-            </label>
-            <label class="btn btn-info btn-sm active">
-              <input
-                type="radio"
-                name="options"
-                class="gloBtnShowOutput"
-                checked
-              />
-              Έξοδος
-            </label>
-            <label class="btn btn-info btn-sm">
-              <input
-                type="radio"
-                name="options"
-                class="gloBtnShowOutputDetails"
-              />
-              Αναλυτική Έξοδος
-            </label>
-          </div>
-
-          <div class="form-check form-check-inline">
-            <input class="gloSlowRun" type="checkbox" value="1" checked />
-            <label class="form-check-label">Αργή εκτέλεση</label>
-          </div>
-
-          <div
-            class="spinner-border spinner-border-sm text-primary gloSpinner"
-            role="status"
-            aria-hidden="true"
-          >
-            <span class="sr-only">Loading...</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="tab-content">
-        <div class="tab-pane gloInputTab" role="tabpanel">
-          <div class="gloTabHeader gloInputHeader">Είσοδος</div>
-          <textarea
-            class="gloCodeKeyboardInput"
-            placeholder="Οι τιμές που θα εισαχθούν εδώ θα δoθούν ως είσοδος στο πρόγραμμα. Αν έχουν δηλωθεί τιμές εισόδου εντός του πηγαίου προγράμματος αυτές δεν θα ληφθούν υπόψη."
-          ></textarea>
-        </div>
-
-        <div class="tab-pane show active gloOutputTab" role="tabpanel">
-          <div class="gloTabHeader gloOutputHeader">Έξοδος</div>
-          <pre class="gloResultPre"><div class="gloResult"></div></pre>
-        </div>
-
-        <div class="tab-pane gloOutputTabDetails" role="tabpanel">
-          <div class="gloTabHeader gloOutputHeaderDetails">
-            Έξοδος με αναλυτική περιγραφή των βημάτων εκτέλεσης του
-            προγράμματος
-          </div>
-          <pre
-            class="gloResultDetailsPre"
-          ><div class="gloResultDetails"></div></pre>
-        </div>
-      </div>
-    </div>
-
-    <div class="col-3">
-      <div class="gloMemory"></div>
-    </div>
-  </div>
-</div>
-
-
-
     </div>
 
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/js-cookie/2.2.1/js.cookie.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.3/js/bootstrap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.12/ace.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.21.2/min/vs/loader.min.js"></script>
+
     <script src="../../dist/glossajs.min.js"></script>
-    <script src="script.js"></script>
+    <script src="script2.js"></script>
+
   </body>
 </html>

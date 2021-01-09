@@ -462,7 +462,7 @@ var operation = {
     decl,
     _7,
     mBlock,
-    _8
+    _TelosSynartisis
   ) {
     return new MO.SubFunction(
       name.toAST(),
@@ -470,17 +470,19 @@ var operation = {
       funType.sourceString,
       decl.toAST(),
       mBlock.toAST(),
-      getLineNo(name)
+      getLineNo(name),
+      getLineNo(_TelosSynartisis)
     );
   },
 
-  SubProcedure: function (_1, name, _2, params, _3, decl, _6, mBlock, _7) {
+  SubProcedure: function (_1, name, _2, params, _3, decl, _6, mBlock, _TelosDiadikasias) {
     return new MO.SubProcedure(
       name.toAST(),
       params.toAST(),
       decl.toAST(),
       mBlock.toAST(),
-      getLineNo(name)
+      getLineNo(name),
+      getLineNo(_TelosDiadikasias)
     );
   },
 

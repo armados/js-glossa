@@ -58,7 +58,7 @@ class Stmt_Write extends Stmt {
     var output = [];
 
     for (var i = 0, len = this.args.length; i < len; i++) {
-      await app.setActiveLineWithoutStep(scope, this.cmdLineNo);
+      //await app.setActiveLineWithoutStep(scope, this.cmdLineNo); FIXME: not nedded here??
 
       var argParam = this.args[i];
 
@@ -706,7 +706,7 @@ class CallSubProcedure extends Stmt {
 }
 
 class SubFunction extends Stmt {
-  constructor(name, params, funType, declarations, body, cmdLineNo) {
+  constructor(name, params, funType, declarations, body, cmdLineNo, cmdLineNoTelosSynartisis) {
     super();
     this.name = name;
     this.params = params;
@@ -714,6 +714,7 @@ class SubFunction extends Stmt {
     this.declarations = declarations;
     this.body = body;
     this.cmdLineNo = cmdLineNo;
+    this.cmdLineNoTelosSynartisis = cmdLineNoTelosSynartisis;
   }
 
   async resolve(app, scope) {
@@ -722,13 +723,15 @@ class SubFunction extends Stmt {
     var funType = this.funType;
     var declarations = this.declarations;
     var body = this.body;
-    var cmdLineNo = this.cmdLineNo;
+    //var cmdLineNo = this.cmdLineNo;
 
     scope.addSymbol(
       name,
       new STR.STRUserFunction(
         async function (...arrargs) {
-          await app.setActiveLine(scope, cmdLineNo);
+          var scope2 = scope.makeSubScope();
+
+          await app.setActiveLine(scope2, this.cmdLineNo);
 
           var args = arrargs[0];
           var parentScope = arrargs[1];
@@ -737,8 +740,6 @@ class SubFunction extends Stmt {
             throw new GE.GError(
               "Λάθος αριθμός παραμέτρων κατά την κλήση της συνάρτησης."
             );
-
-          var scope2 = scope.makeSubScope();
 
           var ftype = null;
 
@@ -815,6 +816,8 @@ class SubFunction extends Stmt {
 
           await body.resolve(app, scope2);
 
+          await app.setActiveLine(scope2, this.cmdLineNoTelosSynartisis);
+
           if (!scope2.getSymbol(name))
             throw new GE.GError(
               "Η συνάρτηση δεν επέστρεψε τιμή με το όνομά της."
@@ -828,13 +831,14 @@ class SubFunction extends Stmt {
 }
 
 class SubProcedure extends Stmt {
-  constructor(name, params, declarations, body, cmdLineNo) {
+  constructor(name, params, declarations, body, cmdLineNo, cmdLineNoTelosDiadikasias) {
     super();
     this.name = name;
     this.params = params;
     this.declarations = declarations;
     this.body = body;
     this.cmdLineNo = cmdLineNo;
+    this.cmdLineNoTelosDiadikasias = cmdLineNoTelosDiadikasias;
   }
 
   async resolve(app, scope) {
@@ -847,7 +851,9 @@ class SubProcedure extends Stmt {
       name,
       new STR.STRUserProcedure(
         async function (...arrargs) {
-          await app.setActiveLine(scope, this.cmdLineNo);
+          var scope2 = scope.makeSubScope();
+
+          await app.setActiveLine(scope2, this.cmdLineNo);
 
           var args = arrargs[0];
           var parentScope = arrargs[1];
@@ -857,7 +863,6 @@ class SubProcedure extends Stmt {
               "Λάθος αριθμός παραμέτρων κατά την κλήση της διαδικασίας."
             );
 
-          var scope2 = scope.makeSubScope();
 
           // Declare constants and variables
           await declarations.resolve(app, scope2);
@@ -911,6 +916,8 @@ class SubProcedure extends Stmt {
           });
 
           await body.resolve(app, scope2);
+
+          await app.setActiveLine(scope2, this.cmdLineNoTelosDiadikasias);
 
           var procExecArr = [scope2, params];
 

@@ -28,26 +28,34 @@ function getGlossaApp(id) {
 var editorsArr = [];
 var decorations = [];
 
-function objectToString(obj) {
-  var variables = [];
 
-  for (var key in obj) {
-    if (obj[key]["obj"] != null)
-      variables.push(key + " = " + obj[key]["obj"]["val"]);
-    else variables.push(key + " =");
+function renderMemory(data) {
+  var html = '<table class="table table-sm table-borderless">';
+  html += "<thead>";
+  html += '<tr class="bg-info">';
+  html += '<td scope="col">Όνομα</td>';
+  html += '<td scope="col">Τιμή</td>';
+  html += '<td scope="col">Τύπος</td>';
+  html += "</tr>";
+  html += "</thead>";
+  html += "<tbody>";
+
+  for (const rec of data) {
+    html += "<tr>";
+    html += '<td scope="row">' + rec.id + "</td>";
+    html += "<td>";
+    if (rec.value != null) html += rec.value;
+    html += "</td>";
+    html += "<td>" + rec.description + "</td>";
+    html += "</tr>";
   }
 
-  var html =
-    "<ul>" +
-    variables
-      .map(function (variable) {
-        return "<li>" + variable + "</li>";
-      })
-      .join("") +
-    "</ul>";
+  html += "</tbody>";
+  html += "</table>";
 
   return html;
 }
+
 
 function UIStateStarted(gloBoxID) {
   var editorInstance = editorsArr[0];
@@ -145,7 +153,7 @@ function UIStateUpdateCodeLine(gloBoxID, line) {
 function UIStateUpdateMemory(gloBoxID, data) {
   $("#" + gloBoxID)
     .find(".gloMemory")
-    .html(objectToString(data));
+    .html(renderMemory(data));
 }
 
 function UIStatePromptUserForInput(data) {

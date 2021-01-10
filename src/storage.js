@@ -115,6 +115,60 @@ class SScope {
     console.log("\n");
   }
 
+  getMemory() {
+    var arr = [];
+
+    for (const [key, value] of Object.entries(this.localStorage)) {
+      //ignore tables
+      if (value instanceof STRTableName) continue;
+
+      var symType = null;
+      var symTypeClass = null;
+
+      if (value instanceof STRInt) {
+        symType = "ΑΚΕΡΑΙΑ";
+        symTypeClass = "STRInt";
+      } else if (value instanceof STRFuncNameInt) {
+        symType = "ΑΚΕΡΑΙΑ (όνομα συνάρτησης)";
+        symTypeClass = "STRFuncNameInt";
+      } else if (value instanceof STRFloat) {
+        symType = "ΠΡΑΓΜΑΤΙΚΗ";
+        symTypeClass = "STRFloat";
+      } else if (value instanceof STRFuncNameFloat) {
+        symType = "ΠΡΑΓΜΑΤΙΚΗ (όνομα συνάρτησης)";
+        symTypeClass = "STRFuncNameFloat";
+      } else if (value instanceof STRString) {
+        symType = "ΧΑΡΑΚΤΗΡΑΣ";
+        symTypeClass = "STRString";
+      } else if (value instanceof STRFuncNameString) {
+        symType = "ΧΑΡΑΚΤΗΡΑΣ (όνομα συνάρτησης)";
+        symTypeClass = "STRFuncNameString";
+      } else if (value instanceof STRBoolean) {
+        symType = "ΛΟΓΙΚΗ";
+        symTypeClass = "STRBoolean";
+      } else if (value instanceof STRFuncNameBoolean) {
+        symType = "ΛΟΓΙΚΗ (όνομα συνάρτησης)";
+        symTypeClass = "STRFuncNameBoolean";
+      } else throw new GE.GError("Critical: 01 Unknown symbol type" + value);
+
+      var sym = value.get();
+      var symValue = sym != null ? sym.val : null;
+
+      if (sym instanceof Atom.MBoolean)
+        symValue = sym.getValue() ? "ΑΛΗΘΗΣ" : "ΨΕΥΔΗΣ";
+
+      var ret = {
+        id: key,
+        type: symTypeClass,
+        description: symType,
+        value: symValue,
+      };
+      arr.push(ret);
+    }
+
+    return arr;
+  }
+
   hasSymbol(name) {
     return name in this.localStorage || name in this.globalStorage;
   }
@@ -253,14 +307,8 @@ class SScope {
         "Critical: 02 Unknown symbol type" + this.getSymbol(name)
       );
 
-    //console.log("Θέσε στο " +  name + " την τιμή " + obj.val);
-    //this.io.outputAddDetails('[#] Θέσε στο ' +  name + ' την τιμή ' + obj.val);
-
     this.localStorage[name].set(obj);
 
-    //if (typeof updateUI === "function" && this.config["runspeed"] !=0) {
-    //  updateUI("memory", this.localStorage);
-    //}
   }
 
   getSymbol(name) {

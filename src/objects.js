@@ -113,7 +113,7 @@ class Stmt_Read extends Stmt {
 
       if (data == null) {
         if (typeof UIStatePromptUserForInput === "function") {
-          data = UIStatePromptUserForInput("prompt", arg.name);
+          data = UIStatePromptUserForInput(arg.name);
 
           if (data != null) {
             if (scope.getSymbolObject(arg.name) instanceof STR.STRString) {
@@ -172,6 +172,7 @@ class Stmt_Read extends Stmt {
       else throw new GE.GError("Critical: Unknown input value type: " + data);
 
       scope.setSymbol(arg.name, sym);
+      app.postMessage('inputread', data);
     }
 
     //app.outputAddDetails('Εισαγωγή από το πληκτρολόγιο: ' + output.join(" "), this.cmdLineNo);

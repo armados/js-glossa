@@ -1,11 +1,9 @@
-
 // =================================
 
 var gloObjectsID = [];
 var gloObjectsAPP = [];
 
 // =================================
-
 
 function newGlossaApp(id) {
   const index = gloObjectsID.indexOf(id);
@@ -24,27 +22,61 @@ function getGlossaApp(id) {
 
 // =================================
 
+function renderMemory(data) {
+  var html = '<table class="table table-sm table-borderless">';
+  html += "<thead>";
+  html += '<tr class="bg-info">';
+  html += '<td scope="col">Όνομα</td>';
+  html += '<td scope="col">Τιμή</td>';
+  html += '<td scope="col">Τύπος</td>';
+  html += "</tr>";
+  html += "</thead>";
+  html += "<tbody>";
 
-function objectToString(obj) {
-  var variables = [];
-
-  for (var key in obj) {
-    if (obj[key]["obj"] != null)
-      variables.push(key + " = " + obj[key]["obj"]["val"]);
-    else variables.push(key + " =");
+  for (const rec of data) {
+    html += "<tr>";
+    html += '<td scope="row">' + rec.id + "</td>";
+    html += "<td>";
+    if (rec.value != null) html += rec.value;
+    html += "</td>";
+    html += "<td>" + rec.description + "</td>";
+    html += "</tr>";
   }
 
-  var html =
-    "<ul>" +
-    variables
-      .map(function (variable) {
-        return "<li>" + variable + "</li>";
-      })
-      .join("") +
-    "</ul>";
+  html += "</tbody>";
+  html += "</table>";
 
   return html;
 }
+
+// ==============================
+
+async function startProgramExecution(gloBoxID, runstep) {
+  var editorid = $("#" + gloBoxID)
+    .find(".gloAceEditor")
+    .attr("id");
+  var aceeditor = ace.edit(editorid);
+
+  var sourcecode = aceeditor.getValue();
+
+  var inputdata = $("#" + gloBoxID)
+    .find(".gloCodeKeyboardInput")
+    .val();
+
+  var slowrun = $("#" + gloBoxID)
+    .find(".gloSlowRun")
+    .is(":checked");
+
+  var app = getGlossaApp(gloBoxID);
+  app.init();
+  app.setSourceCode(sourcecode);
+  app.setInputBuffer(inputdata);
+  app.setSlowRun(slowrun);
+  app.setStepRun(runstep);
+  app.run();
+}
+
+// ======================================
 
 function UIStateStarted(gloBoxID) {
   var editorid = $("#" + gloBoxID)
@@ -87,14 +119,30 @@ function UIStateError(gloBoxID, msg) {
   $("#" + gloBoxID)
     .find(".gloResult")
     .html(function (index, value) {
-      return value + "<span class=\"errorMsg\">" + msg + "</span>\n";
+      return value + '<span class="errorMsg">' + msg + "</span>\n";
     });
+
+  var textBox = $("#" + gloBoxID).find(".gloResultPre");
+  textBox.scrollTop(textBox[0].scrollHeight);
 
   $("#" + gloBoxID)
     .find(".gloResultDetails")
     .html(function (index, value) {
-      return value + "<span class=\"errorMsg\">" + msg + "</span>\n";
+      return value + '<span class="errorMsg">' + msg + "</span>\n";
     });
+}
+
+
+function UIStateInputRead(gloBoxID, msg) {
+  $("#" + gloBoxID)
+    .find(".gloResult")
+    .html(function (index, value) {
+      return value + '<span class="readValue">' + msg + "</span>\n";
+    });
+
+  var textBox = $("#" + gloBoxID).find(".gloResultPre");
+  textBox.scrollTop(textBox[0].scrollHeight);
+
 }
 
 function UIStateStopped(gloBoxID) {
@@ -136,7 +184,7 @@ function UIStateUpdateCodeLine(gloBoxID, line) {
 function UIStateUpdateMemory(gloBoxID, data) {
   $("#" + gloBoxID)
     .find(".gloMemory")
-    .html(objectToString(data));
+    .html(renderMemory(data));
 }
 
 function UIStatePromptUserForInput(data) {
@@ -160,33 +208,6 @@ function UIStateOutputDetailsAppend(gloBoxID, data) {
     .html(function (index, value) {
       return value + data + "\n";
     });
-}
-
-// ==============================
-
-async function startProgramExecution(gloBoxID, runstep) {
-  var editorid = $("#" + gloBoxID)
-    .find(".gloAceEditor")
-    .attr("id");
-  var aceeditor = ace.edit(editorid);
-
-  var sourcecode = aceeditor.getValue();
-
-  var inputdata = $("#" + gloBoxID)
-    .find(".gloCodeKeyboardInput")
-    .val();
-
-  var slowrun = $("#" + gloBoxID)
-    .find(".gloSlowRun")
-    .is(":checked");
-
-  var app = getGlossaApp(gloBoxID);
-  app.init();
-  app.setSourceCode(sourcecode);
-  app.setInputBuffer(inputdata);
-  app.setSlowRun(slowrun);
-  app.setStepRun(runstep);
-  app.run();
 }
 
 function UIStateOutputDetailsAppend(gloBoxID, data) {
@@ -341,7 +362,8 @@ $(document).ready(function () {
     app.on("outputdetailsappend", (data) => {
       UIStateOutputDetailsAppend(gloBoxID, data);
     });
-
-
-  });
+    app.on("inputread", (data) => {
+      UIStateInputRead(gloBoxID, data);
+    });
+    });
 });

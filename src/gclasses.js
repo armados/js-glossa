@@ -15,6 +15,23 @@ class GError extends Error {
   }
 }
 
+
+class GInterrupt extends Error {
+  constructor(message, line = null) {
+    super(message);
+
+    Error.captureStackTrace(this, this.constructor);
+
+    this.name = this.constructor.name;
+    
+    this.message =
+      "Τερματισμός." +
+      (line != null ? " Γραμμή " + line + ". " : " ") +
+      this.message;
+  }
+}
+
 module.exports = {
-  GError
+  GError,
+  GInterrupt
 };

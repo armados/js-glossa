@@ -5,7 +5,7 @@ const path = require("path");
 
 const GLO = require("../src/main.js");
 
-const filename = "../samples-dev/sample1.glo";
+const filename = "../samples-dev/sample29.glo";
 
 const { PerformanceObserver, performance } = require("perf_hooks");
 
@@ -35,6 +35,7 @@ obs.observe({ entryTypes: ["measure"], buffer: true });
     console.log(msg);
   });
 
+  
   //performance.mark("app-start");
   try {
     await app.run();

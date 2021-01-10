@@ -10,7 +10,7 @@
 
 .gloControls {
   padding: 12px 15px;
-  background-color: #f5f5f5;
+  background-color: rgb(231, 231, 231);
 }
 
 .gloTabHeader {
@@ -61,8 +61,9 @@ pre,
   color: #efefef;
   font-size: 75%;
 }
-.gloMemory ul { list-style: none; margin: 0; padding: 0; }
-.gloMemory ul li { margin: 0; padding: 3px 10px; border-bottom: 1px solid #333; }
+.gloMemory table {
+  color: #efefef;
+}
 
 .gloResultPre,
 .gloResultDetailsPre {
@@ -95,15 +96,17 @@ textarea.gloCodeKeyboardInput {
   font-size: 80%;
 }
 
-.errorMsg {
+span.errorMsg {
   color: rgb(243, 62, 62);
 }
 
-.myGlyphMarginClass {
+span.readValue {
+  color: rgb(236, 154, 30);
+  font-style: italic;
+}
 
+.myGlyphMarginClass {
 }
 .myContentClass {
   background: rgb(18, 105, 25);
 }
-
-

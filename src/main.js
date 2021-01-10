@@ -38,15 +38,19 @@ class GlossaJS extends EventEmitter {
       outputData: [],
       outputDataDetails: [],
 
+      postMessage: async (msg, data = null) => {
+        this.emit(msg, data);
+      },
+
       outputAdd: async (val) => {
         this.app.outputData.push(val);
-        this.emit("outputappend", val);
+        this.app.postMessage("outputappend", val);
       },
 
       outputAddDetails: async (val, line = null) => {
         var val2 = (line != null ? "Γραμμή " + line + ". " : "") + val;
         this.app.outputDataDetails.push(val2);
-        this.emit("outputdetailsappend", val2);
+        this.app.postMessage("outputdetailsappend", val2);
       },
 
       getOutput: () => {
@@ -93,12 +97,22 @@ class GlossaJS extends EventEmitter {
       setActiveLine: async (scope, line) => {
         scope.cmdLineNo = line;
 
+        if (this.stoprunning == true) {
+          this.stoprunning = false;
+          return Promise.reject(
+            new GE.GInterrupt(
+              "Διακοπή της εκτέλεσης του προγράμματος από τον χρήστη.",
+              line
+            )
+          );
+        }
+
         if (
           this.app.config["slowrunflag"] == true ||
           this.app.config["runstep"] == true
         ) {
-          this.emit("line", line);
-          this.emit("memory", scope.localStorage);
+          this.app.postMessage("line", line);
+          this.app.postMessage("memory", scope.getMemory());
         }
 
         if (this.app.config["runstep"] == false) {
@@ -117,37 +131,31 @@ class GlossaJS extends EventEmitter {
           this.app.config["runstepflag"] = false;
         }
 
-        if (this.stoprunning == true) {
-          this.stoprunning = false;
-          return Promise.reject(
-            new Error(
-              "[#] Έγινε διακοπή της εκτέλεσης του προγράμματος από τον χρήστη."
-            )
-          );
-        }
       },
 
       setActiveLineWithoutStep: async (scope, line) => {
         scope.cmdLineNo = line;
 
+        if (this.stoprunning == true) {
+          this.stoprunning = false;
+          return Promise.reject(
+            new GE.GInterrupt(
+              "Διακοπή της εκτέλεσης του προγράμματος από τον χρήστη.",
+              line
+            )
+          );
+        }
+
         if (
           this.app.config["slowrunflag"] == true ||
           this.app.config["runstep"] == true
         ) {
-          this.emit("line", line);
-          this.emit("memory", scope.localStorage);
+          this.app.postMessage("line", line);
+          this.app.postMessage("memory", scope.getMemory());
         }
 
         await this.app.sleepFunc(40);
 
-        if (this.stoprunning == true) {
-          this.stoprunning = false;
-          return Promise.reject(
-            new Error(
-              "[#] Έγινε διακοπή της εκτέλεσης του προγράμματος από τον χρήστη."
-            )
-          );
-        }
       },
 
       incrAssignCounter: () => {
@@ -187,7 +195,7 @@ class GlossaJS extends EventEmitter {
     this.app["config"]["maxLogicalComp"] = 100000;
     this.app["config"]["slowrunflag"] = false;
     this.app["config"]["runspeed"] = 0;
-    this.app["config"]["slowrunspeed"] = 200;
+    this.app["config"]["slowrunspeed"] = 350;
     this.app["config"]["runstep"] = false;
     this.app["config"]["runstepflag"] = false;
 
@@ -516,17 +524,17 @@ class GlossaJS extends EventEmitter {
 
     this.stoprunning = true;
 
-    this.emit("stopped");
+    this.app.postMessage("stopped");
   }
 
   async runNext() {
     this.app.config["runstep"] = true; // switch to step mode
     this.app.config["runstepflag"] = true;
-    this.emit("runnext");
+    this.app.postMessage("runnext");
   }
 
   async run() {
-    this.emit("started");
+    this.app.postMessage("started");
 
     this.running = true;
 
@@ -544,10 +552,10 @@ class GlossaJS extends EventEmitter {
       await result.resolve(this.app, this.scope);
     } catch (e) {
       //console.log('GlossaJS: Main(): Error catch: ' + e);
-      this.emit("error", e.message);
+      this.app.postMessage("error", e.message);
     } finally {
       this.running = false;
-      this.emit("finished");
+      this.app.postMessage("finished");
     }
   }
 

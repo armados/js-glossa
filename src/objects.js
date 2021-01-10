@@ -84,12 +84,7 @@ class Stmt_Write extends Stmt {
     var str = output.join(" ");
     app.outputAdd(str);
     app.outputAddDetails("Εμφάνισε στην οθόνη: " + str, this.cmdLineNo);
-    /*
-    app.outputAdd(output.join(" "));
-    app.outputAddDetails(
-      "Εμφάνισε στην οθόνη: " + output.join(" "),
-      this.cmdLineNo
-    );*/
+
   }
 }
 

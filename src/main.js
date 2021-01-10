@@ -39,16 +39,13 @@ class GlossaJS extends EventEmitter {
       outputDataDetails: [],
 
       outputAdd: async (val) => {
-        console.log(val);
         this.app.outputData.push(val);
-
         this.emit("outputappend", val);
       },
 
       outputAddDetails: async (val, line = null) => {
         var val2 = (line != null ? "Γραμμή " + line + ". " : "") + val;
         this.app.outputDataDetails.push(val2);
-
         this.emit("outputdetailsappend", val2);
       },
 
@@ -205,7 +202,7 @@ class GlossaJS extends EventEmitter {
   // ==============================
 
   getStats() {
-    //return this.scope.statistics;
+    return this.app["statistics"];
   }
 
   isrunning() {
@@ -546,8 +543,7 @@ class GlossaJS extends EventEmitter {
 
       await result.resolve(this.app, this.scope);
     } catch (e) {
-      console.log(e.message);
-      //console.log(e);
+      //console.log('GlossaJS: Main(): Error catch: ' + e);
       this.emit("error", e.message);
     } finally {
       this.running = false;

@@ -8,31 +8,32 @@ var GE = require("../src/gclasses");
 var fs = require("fs");
 var minimist = require("minimist");
 
-const { PerformanceObserver, performance } = require('perf_hooks');
-
-const obs = new PerformanceObserver((items) => {
-  console.log(items.getEntries()[0].duration);
-  performance.clearMarks();
-});
-obs.observe({ entryTypes: ['measure'] , buffer: true});
-
-
 var args = minimist(process.argv.slice(2), {
   string: ["input", "keyboard"],
-  boolean: ["version", "rmfuncat", "rmfuncam", "rmfunctr", "rmfunchm", "rmfuncsyn", "rmfuncef", "rmfunce", "rmfunclog"],
-  alias: { 
-    v: "version", 
-    i: "input", 
+  boolean: [
+    "version",
+    "rmfuncat",
+    "rmfuncam",
+    "rmfunctr",
+    "rmfunchm",
+    "rmfuncsyn",
+    "rmfuncef",
+    "rmfunce",
+    "rmfunclog",
+  ],
+  alias: {
+    v: "version",
+    i: "input",
     k: "keyboard",
-    rmat: "rmfuncat", 
+    rmat: "rmfuncat",
     rmam: "rmfuncam",
-    rmtr: "rmfunctr",  
-    rmhm: "rmfunchm",  
-    rmsyn: "rmfuncsyn",  
-    rmef: "rmfuncef",  
-    rme: "rmfunce",  
-    rmlog: "rmfunclog",  
-    },
+    rmtr: "rmfunctr",
+    rmhm: "rmfunchm",
+    rmsyn: "rmfuncsyn",
+    rmef: "rmfuncef",
+    rme: "rmfunce",
+    rmlog: "rmfunclog",
+  },
   default: {},
   stopEarly: true /* populate _ with first non-option */,
   unknown: function () {
@@ -41,13 +42,11 @@ var args = minimist(process.argv.slice(2), {
 });
 
 if (args["version"]) {
-  console.log('v0.1');
+  console.log("v0.1");
   return;
 }
 
-
-if (!args["input"])
-  throw new GE.GError("Missing input file");
+if (!args["input"]) throw new GE.GError("Missing input file");
 
 var sourceCode = null;
 try {
@@ -65,53 +64,34 @@ if (args["keyboard"]) {
   }
 }
 
-
-
 (async function main() {
-
-
-
   var app = new GLO.GlossaJS();
   app.setSourceCode(sourceCode);
   app.setInputBuffer(null);
 
-
-
-
-
   var app = new GLO.GlossaJS();
   app.setSourceCode(sourceCode);
   app.setInputBuffer(keyboardInput);
-  
-  if (args["rmfuncat"])
-    app.removeGlobalFunction('Α_Τ');
-  
-  if (args["rmfuncam"])
-    app.removeGlobalFunction('Α_Μ');
-  
-  if (args["rmfunctr"])
-    app.removeGlobalFunction('Τ_Ρ');
-  
-  if (args["rmfunchm"])
-    app.removeGlobalFunction('ΗΜ');
-  
-  if (args["rmfuncsyn"])
-    app.removeGlobalFunction('ΣΥΝ');
-  
-  if (args["rmfuncef"])
-    app.removeGlobalFunction('ΕΦ');
-  
-  if (args["rmfunce"])
-    app.removeGlobalFunction('Ε');
-  
-  if (args["rmfunclog"])
-    app.removeGlobalFunction('ΛΟΓ');
-  
 
-  //performance.mark("app-start");
-  await app.run();
-  //performance.mark("app-end");
-  //performance.measure("apprun", "app-start", "app-end");
+  if (args["rmfuncat"]) app.removeGlobalFunction("Α_Τ");
+
+  if (args["rmfuncam"]) app.removeGlobalFunction("Α_Μ");
+
+  if (args["rmfunctr"]) app.removeGlobalFunction("Τ_Ρ");
+
+  if (args["rmfunchm"]) app.removeGlobalFunction("ΗΜ");
+
+  if (args["rmfuncsyn"]) app.removeGlobalFunction("ΣΥΝ");
+
+  if (args["rmfuncef"]) app.removeGlobalFunction("ΕΦ");
+
+  if (args["rmfunce"]) app.removeGlobalFunction("Ε");
+
+  if (args["rmfunclog"]) app.removeGlobalFunction("ΛΟΓ");
+
+  try {
+    await app.run();
+  } catch (e) {}
 
   //console.log(app.app.getOutput());
   //console.log('Total commands: ', app.app.getStats());

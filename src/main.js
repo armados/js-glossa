@@ -13,16 +13,9 @@ const HP = require("./helper");
 
 const EventEmitter = require("events");
 
-class GlossaJSStorage extends EventEmitter {
-  constructor() {
-    super();
-  }
-}
-
 class GlossaJS extends EventEmitter {
   constructor() {
     super();
-
     this.init();
   }
 
@@ -371,7 +364,7 @@ class GlossaJS extends EventEmitter {
             cmdLineNo
           );
 
-          const degrees = (A.val * Math.PI) / 180;
+        const degrees = (A.val * Math.PI) / 180;
 
         return new Atom.MNumber(Math.sin(degrees));
       })
@@ -404,7 +397,7 @@ class GlossaJS extends EventEmitter {
             cmdLineNo
           );
 
-          const degrees = (A.val * Math.PI) / 180;
+        const degrees = (A.val * Math.PI) / 180;
 
         return new Atom.MNumber(Math.cos(degrees));
       })
@@ -468,7 +461,7 @@ class GlossaJS extends EventEmitter {
             cmdLineNo
           );
 
-          const degrees = (A.val * Math.PI) / 180;
+        const degrees = (A.val * Math.PI) / 180;
 
         return new Atom.MNumber(Math.tan(degrees));
       })
@@ -501,7 +494,7 @@ class GlossaJS extends EventEmitter {
             cmdLineNo
           );
 
-          if (A.val <= 0)
+        if (A.val <= 0)
           throw new GE.GError(
             "Η συνάρτηση ΛΟΓ δεν μπορεί να δεχτεί αρνητικές τιμές ή το μηδέν.",
             cmdLineNo
@@ -563,33 +556,16 @@ class GlossaJS extends EventEmitter {
   }
 
   getOutput() {
-    return this.getOutput().join("\n");
+    return this.app.getOutput().join("\n");
   }
   getOutputDetails() {
-    return this.getOutputDetails().join("\n");
+    return this.app.getOutputDetails().join("\n");
   }
 }
 
-var gloObjectsID = [];
-var gloObjectsAPP = [];
 
-function newGlossaApp(id) {
-  const index = gloObjectsID.indexOf(id);
-  if (index >= 0) return false;
 
-  var app = new GlossaJS();
-  gloObjectsID.push(id);
-  gloObjectsAPP.push(app);
-  return app;
-}
-
-function getGlossaApp(id) {
-  const index = gloObjectsID.indexOf(id);
-  return index >= 0 ? gloObjectsAPP[index] : false;
-}
 
 module.exports = {
-  GlossaJS,
-  newGlossaApp,
-  getGlossaApp,
+  GlossaJS
 };

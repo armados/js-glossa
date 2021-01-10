@@ -1,4 +1,29 @@
-//var app = null;
+
+// =================================
+
+var gloObjectsID = [];
+var gloObjectsAPP = [];
+
+// =================================
+
+
+function newGlossaApp(id) {
+  const index = gloObjectsID.indexOf(id);
+  if (index >= 0) return false;
+
+  var app = new GLO.GlossaJS();
+  gloObjectsID.push(id);
+  gloObjectsAPP.push(app);
+  return app;
+}
+
+function getGlossaApp(id) {
+  const index = gloObjectsID.indexOf(id);
+  return index >= 0 ? gloObjectsAPP[index] : false;
+}
+
+// =================================
+
 
 function objectToString(obj) {
   var variables = [];
@@ -62,13 +87,13 @@ function UIStateError(gloBoxID, msg) {
   $("#" + gloBoxID)
     .find(".gloResult")
     .html(function (index, value) {
-      return value + msg + "\n";
+      return value + "<span class=\"errorMsg\">" + msg + "</span>\n";
     });
 
   $("#" + gloBoxID)
     .find(".gloResultDetails")
     .html(function (index, value) {
-      return value + msg + "\n";
+      return value + "<span class=\"errorMsg\">" + msg + "</span>\n";
     });
 }
 
@@ -155,7 +180,7 @@ async function startProgramExecution(gloBoxID, runstep) {
     .find(".gloSlowRun")
     .is(":checked");
 
-  var app = GLO.getGlossaApp(gloBoxID);
+  var app = getGlossaApp(gloBoxID);
   app.init();
   app.setSourceCode(sourcecode);
   app.setInputBuffer(inputdata);
@@ -207,7 +232,7 @@ $(document).ready(function () {
 
       var gloBoxID = $(this).closest(".gloBox").attr("id");
 
-      var app = GLO.getGlossaApp(gloBoxID);
+      var app = getGlossaApp(gloBoxID);
 
       if (!app.isrunning()) {
         startProgramExecution(gloBoxID, true);
@@ -223,7 +248,7 @@ $(document).ready(function () {
 
       var gloBoxID = $(this).closest(".gloBox").attr("id");
 
-      var app = GLO.getGlossaApp(gloBoxID);
+      var app = getGlossaApp(gloBoxID);
 
       if (!app.isrunning()) {
         startProgramExecution(gloBoxID, false);
@@ -239,7 +264,7 @@ $(document).ready(function () {
 
       var gloBoxID = $(this).closest(".gloBox").attr("id");
 
-      var app = GLO.getGlossaApp(gloBoxID);
+      var app = getGlossaApp(gloBoxID);
 
       app.runNext();
       app.terminate();
@@ -253,7 +278,7 @@ $(document).ready(function () {
       $(this).attr("id", gloBoxID);
     }
 
-    var app = GLO.newGlossaApp(gloBoxID);
+    var app = newGlossaApp(gloBoxID);
 
     var randomID = Math.floor(Math.random() * 1000000 + 1);
     $(this)

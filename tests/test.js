@@ -5,7 +5,7 @@ const path = require("path");
 
 const GLO = require("../src/main.js");
 
-const filename = "../samples-dev/sample1.glo";
+const filename = "../samples-dev/sample30.glo";
 
 const { PerformanceObserver, performance } = require('perf_hooks');
 

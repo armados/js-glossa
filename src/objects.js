@@ -83,10 +83,7 @@ class Stmt_Write extends Stmt {
 
     var str = output.join(" ");
     app.outputAdd(str);
-    app.outputAddDetails(
-      "Εμφάνισε στην οθόνη: " + str,
-      this.cmdLineNo
-    );
+    app.outputAddDetails("Εμφάνισε στην οθόνη: " + str, this.cmdLineNo);
     /*
     app.outputAdd(output.join(" "));
     app.outputAddDetails(
@@ -573,14 +570,15 @@ class CallSubFunction extends Stmt {
     this.cmdLineNo = cmdLineNo;
   }
   async resolve(app, scope) {
-    //scope.cmdLineNo = this.cmdLineNo; //FIXME: not wanted here
-
     app.outputAddDetails(
       "Κλήση της Συνάρτησης " + this.fun.name,
       this.cmdLineNo
     );
 
-    if (!scope.hasSymbol(this.fun.name))
+    if (
+      !scope.hasSymbol(this.fun.name) ||
+      !(scope.getSymbolObject(this.fun.name) instanceof STR.STRUserFunction)
+    )
       throw new GE.GError(
         "Η συνάρτηση " + this.fun.name + " δεν βρέθηκε.",
         this.cmdLineNo
@@ -630,9 +628,12 @@ class CallSubProcedure extends Stmt {
       this.cmdLineNo
     );
 
-    if (!scope.hasSymbol(this.fun.name))
+    if (
+      !scope.hasSymbol(this.fun.name) ||
+      !(scope.getSymbolObject(this.fun.name) instanceof STR.STRUserProcedure)
+    )
       throw new GE.GError(
-        "Η διαδικασία " + this.fun.name + "δεν βρέθηκε.",
+        "Η διαδικασία " + this.fun.name + " δεν βρέθηκε.",
         this.cmdLineNo
       );
 
@@ -706,7 +707,15 @@ class CallSubProcedure extends Stmt {
 }
 
 class SubFunction extends Stmt {
-  constructor(name, params, funType, declarations, body, cmdLineNo, cmdLineNoTelosSynartisis) {
+  constructor(
+    name,
+    params,
+    funType,
+    declarations,
+    body,
+    cmdLineNo,
+    cmdLineNoTelosSynartisis
+  ) {
     super();
     this.name = name;
     this.params = params;
@@ -723,7 +732,6 @@ class SubFunction extends Stmt {
     var funType = this.funType;
     var declarations = this.declarations;
     var body = this.body;
-    //var cmdLineNo = this.cmdLineNo;
 
     scope.addSymbol(
       name,
@@ -831,7 +839,14 @@ class SubFunction extends Stmt {
 }
 
 class SubProcedure extends Stmt {
-  constructor(name, params, declarations, body, cmdLineNo, cmdLineNoTelosDiadikasias) {
+  constructor(
+    name,
+    params,
+    declarations,
+    body,
+    cmdLineNo,
+    cmdLineNoTelosDiadikasias
+  ) {
     super();
     this.name = name;
     this.params = params;
@@ -862,7 +877,6 @@ class SubProcedure extends Stmt {
             throw new GE.GError(
               "Λάθος αριθμός παραμέτρων κατά την κλήση της διαδικασίας."
             );
-
 
           // Declare constants and variables
           await declarations.resolve(app, scope2);

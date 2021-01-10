@@ -95,6 +95,9 @@ textarea.gloCodeKeyboardInput {
   font-size: 80%;
 }
 
+.errorMsg {
+  color: rgb(243, 62, 62);
+}
 
 .myGlyphMarginClass {
 

@@ -64,6 +64,13 @@ if (args["keyboard"]) {
   }
 }
 
+
+
+process.on('unhandledRejection', function(err) {
+  //console.log(err);
+});
+
+
 (async function main() {
   var app = new GLO.GlossaJS();
   app.setSourceCode(sourceCode);
@@ -88,6 +95,14 @@ if (args["keyboard"]) {
   if (args["rmfunce"]) app.removeGlobalFunction("Ε");
 
   if (args["rmfunclog"]) app.removeGlobalFunction("ΛΟΓ");
+
+  app.on("outputappend", (data) => {
+    console.log(data);
+  });
+
+  app.on("error", (msg) => {
+    console.log(msg);
+  });
 
   try {
     await app.run();

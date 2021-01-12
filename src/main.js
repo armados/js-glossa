@@ -100,14 +100,6 @@ class GlossaJS extends EventEmitter {
         scope.cmdLineNo = line;
 
         if (this.stoprunning == true) {
-          /*
-          this.stoprunning = false;
-          return Promise.reject(
-            new GE.GInterrupt(
-              "Διακοπή της εκτέλεσης του προγράμματος από τον χρήστη.",
-              line
-            )
-          );*/
           throw new GE.GInterrupt(
             "Διακοπή της εκτέλεσης του προγράμματος από τον χρήστη.",
             line
@@ -143,7 +135,6 @@ class GlossaJS extends EventEmitter {
         scope.cmdLineNo = line;
 
         if (this.stoprunning == true) {
-          this.stoprunning = false;
           throw new GE.GInterrupt(
             "Διακοπή της εκτέλεσης του προγράμματος από τον χρήστη.",
             line

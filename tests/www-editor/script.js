@@ -352,8 +352,7 @@ $(document).ready(function () {
       ΓΡΑΨΕ 'Καλημέρα κόσμε', α
     ΤΕΛΟΣ_ΕΠΑΝΑΛΗΨΗΣ
     
-    ΤΕΛΟΣ_ΠΡΟΓΡΑΜΜΑΤΟΣ
-    
+    ΤΕΛΟΣ_ΠΡΟΓΡΑΜΜΑΤΟΣ    
     `;
 
     if (typeof cookieData !== "undefined" && cookieData != "")

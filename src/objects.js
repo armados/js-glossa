@@ -9,17 +9,6 @@ class Stmt {}
 
 // ========================
 
-class Stmt_Block {
-  constructor(block) {
-    this.block = block;
-  }
-  async resolve(app, scope) {
-    for (const stmt of this.block) {
-      await stmt.resolve(app, scope);
-    }
-  }
-}
-
 class Stmt_Assignment extends Stmt {
   constructor(sym, val, cmdStrA, cmdStrB, cmdLineNo) {
     super();
@@ -38,7 +27,10 @@ class Stmt_Assignment extends Stmt {
 
     var valResolved = await this.val.resolve(app, scope);
 
-    app.outputAddDetails(this.cmdStrA + " <- " + this.cmdStrB, this.cmdLineNo);
+    app.outputAddDetails(
+      "Εντολή εκχώρησης: " + this.cmdStrA + " <- " + this.cmdStrB,
+      this.cmdLineNo
+    );
 
     scope.setSymbol(sym.name, valResolved);
 
@@ -58,7 +50,7 @@ class Stmt_Write extends Stmt {
     var output = [];
 
     for (var i = 0, len = this.args.length; i < len; i++) {
-      //await app.setActiveLineWithoutStep(scope, this.cmdLineNo); FIXME: not nedded here??
+      //await app.setActiveLineWithoutStep(scope, this.cmdLineNo); FIXME: not needed here??
 
       var argParam = this.args[i];
 
@@ -95,10 +87,6 @@ class Stmt_Read extends Stmt {
   }
   async resolve(app, scope) {
     await app.setActiveLine(scope, this.cmdLineNo);
-
-    app.outputAddDetails("Διάβασε από το πληκτρολόγιο", this.cmdLineNo);
-
-    var output = [];
 
     for (var i = 0, len = this.args.length; i < len; i++) {
       await app.setActiveLineWithoutStep(scope, this.cmdLineNo);
@@ -146,16 +134,23 @@ class Stmt_Read extends Stmt {
         this.cmdLineNo
       );
 
-      if (typeof data == "string") var sym = new Atom.MString(data);
-      else if (typeof data == "number") var sym = new Atom.MNumber(data);
-      else if (typeof data == "boolean") var sym = new Atom.MBoolean(data);
-      else throw new GE.GError("Critical: Unknown input value type: " + data);
+      switch (typeof data) {
+        case "string":
+          var sym = new Atom.MString(data);
+          break;
+        case "number":
+          var sym = new Atom.MNumber(data);
+          break;
+        case "boolean":
+          var sym = new Atom.MBoolean(data);
+          break;
+        default:
+          throw new GE.GError("Critical: Unknown input value type: " + data);
+      }
 
       scope.setSymbol(arg.name, sym);
       app.postMessage("inputread", data);
     }
-
-    //app.outputAddDetails('Εισαγωγή από το πληκτρολόγιο: ' + output.join(" "), this.cmdLineNo);
   }
 }
 
@@ -362,9 +357,9 @@ class Stmt_WhileLoop extends Stmt {
         this.cmdLineNoOso
       );
 
-      if (!condResult.val) break;
-
       app.incrLogicalCounter();
+
+      if (condResult.val == true) break;
 
       await this.body.resolve(app, scope);
 
@@ -409,9 +404,7 @@ class Stmt_Do_WhileLoop extends Stmt {
       );
 
       app.incrLogicalCounter();
-
-      if (condResult.val) break;
-    } while (true);
+    } while (condResult.val == false);
   }
 }
 
@@ -463,14 +456,13 @@ class Stmt_ForLoop extends Stmt {
     var v_final = tmp.val;
 
     if (variable instanceof Atom.MSymbolTableCell)
-      //FIXME:
       variable = await variable.eval(app, scope);
 
     scope.setSymbol(variable.name, new Atom.MNumber(v_initial));
     scope.addLock(variable.name);
 
     if (v_initial <= v_final && v_step > 0) {
-      while (scope.getSymbol(variable.name).val <= v_final) {
+      do {
         app.outputAddDetails(
           "Η συνθήκη της ΓΙΑ " +
             variable.name +
@@ -495,14 +487,16 @@ class Stmt_ForLoop extends Stmt {
           new Atom.MNumber(scope.getSymbol(variable.name).val + v_step)
         );
         scope.addLock(variable.name);
-      }
+      } while (scope.getSymbol(variable.name).val <= v_final);
 
       app.outputAddDetails(
         "Η συνθήκη της ΓΙΑ " + variable.name + "<=" + v_final + " είναι ΨΕΥΔΗΣ",
         this.cmdLineNoGia
       );
+
+      app.incrLogicalCounter();
     } else if (v_initial >= v_final && v_step < 0) {
-      while (scope.getSymbol(variable.name).val >= v_final) {
+      do {
         app.outputAddDetails(
           "Η συνθήκη της ΓΙΑ " +
             variable.name +
@@ -526,12 +520,14 @@ class Stmt_ForLoop extends Stmt {
           new Atom.MNumber(scope.getSymbol(variable.name).val + v_step)
         );
         scope.addLock(variable.name);
-      }
+      } while (scope.getSymbol(variable.name).val >= v_final);
 
       app.outputAddDetails(
         "Η συνθήκη της ΓΙΑ " + variable.name + ">=" + v_final + " είναι ΨΕΥΔΗΣ",
         this.cmdLineNoGia
       );
+
+      app.incrLogicalCounter();
     }
 
     scope.removeLock(variable.name);
@@ -569,13 +565,10 @@ class CallSubFunction extends Stmt {
     var sendData = [];
     sendData[0] = argsResolved;
     sendData[1] = scope;
-    sendData[2] = this.cmdLineNo;
 
     var fun = scope.getGlobalSymbol(this.fun.name);
 
     var valReturned = await fun.apply(this, sendData);
-
-    //await app.setActiveLine(scope, this.cmdLineNo);
 
     app.outputAddDetails(
       "Επιστροφή από την συνάρτηση " +
@@ -934,8 +927,6 @@ class DefDeclarations extends Stmt {
       for (const a of this.variables[0]) {
         await a.resolve(app, scope);
       }
-
-    //scope.printMemory();
   }
 }
 
@@ -1060,6 +1051,17 @@ class DefVariables extends Stmt {
   }
 }
 
+class Stmt_Block {
+  constructor(block) {
+    this.block = block;
+  }
+  async resolve(app, scope) {
+    for (const stmt of this.block) {
+      await stmt.resolve(app, scope);
+    }
+  }
+}
+
 class Program extends Stmt {
   constructor(
     progname,
@@ -1127,8 +1129,6 @@ class Application {
 }
 
 module.exports = {
-  Stmt_Block,
-
   Stmt_Assignment,
 
   Stmt_Write,
@@ -1140,6 +1140,8 @@ module.exports = {
   Stmt_WhileLoop,
   Stmt_Do_WhileLoop,
   Stmt_ForLoop,
+
+  Stmt_Block,
 
   Application,
   Program,

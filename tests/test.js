@@ -7,7 +7,7 @@ const GLO = require("../src/main.js");
 
 var prompt = require("prompt-sync")();
 
-const filename = "../samples-dev/sample28.glo";
+const filename = "../samples-dev/sample1.glo";
 
 const { PerformanceObserver, performance } = require("perf_hooks");
 

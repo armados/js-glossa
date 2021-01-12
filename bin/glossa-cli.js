@@ -8,7 +8,7 @@ var GE = require("../src/gclasses");
 var fs = require("fs");
 var minimist = require("minimist");
 
-var prompt = require("prompt-sync")({echo: 'yes'});
+var prompt = require("prompt-sync")({ echo: "yes" });
 
 const { PerformanceObserver, performance } = require("perf_hooks");
 
@@ -18,13 +18,11 @@ const obs = new PerformanceObserver((items) => {
 });
 obs.observe({ entryTypes: ["measure"], buffer: true });
 
-
-
-
 var args = minimist(process.argv.slice(2), {
   string: ["input", "keyboard"],
   boolean: [
     "version",
+    "noninteractive",
     "rmfuncat",
     "rmfuncam",
     "rmfunctr",
@@ -38,6 +36,7 @@ var args = minimist(process.argv.slice(2), {
     v: "version",
     i: "input",
     k: "keyboard",
+    non: "noninteractive",
     rmat: "rmfuncat",
     rmam: "rmfuncam",
     rmtr: "rmfunctr",
@@ -77,13 +76,6 @@ if (args["keyboard"]) {
   }
 }
 
-
-
-//process.on('unhandledRejection', function(err) {
-  //console.log(err);
-//});
-
-
 (async function main() {
   var app = new GLO.GlossaJS();
   app.setSourceCode(sourceCode);
@@ -97,9 +89,11 @@ if (args["keyboard"]) {
     console.log(msg);
   });
 
-  app.setReadInputFunction(function (name) {
-    return prompt();
-  });
+  if (!args["noninteractive"]) {
+    app.setReadInputFunction(function (name) {
+      return prompt();
+    });
+  }
 
   performance.mark("app-start");
   try {
@@ -109,9 +103,9 @@ if (args["keyboard"]) {
   performance.mark("app-end");
   performance.measure("apprun", "app-start", "app-end");
 
-  console.log('=======[ output buffer ] ========');
+  console.log("=======[ output buffer ] ========");
   console.log(app.app.getOutput());
 
-  console.log('=======[ stats ] ========');
-  console.log('Total commands: ', app.getStats());
+  console.log("=======[ stats ] ========");
+  console.log("Total commands: ", app.getStats());
 })();

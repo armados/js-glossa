@@ -75,11 +75,11 @@ if (args["keyboard"]) {
     throw new GE.GError("Keyboard input file not found");
   }
 }
-console.log(keyboardInput);
+
 (async function main() {
   var app = new GLO.GlossaJS();
   app.setSourceCode(sourceCode);
-  app.setInputBuffer(null);
+  app.setInputBuffer(keyboardInput);
 
   app.on("outputappend", (data) => {
     console.log(data);

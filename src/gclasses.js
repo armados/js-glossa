@@ -4,8 +4,6 @@ class GError extends Error {
   constructor(message, line = null) {
     super(message);
 
-    Error.captureStackTrace(this, this.constructor);
-
     this.name = this.constructor.name;
     
     this.message =
@@ -19,8 +17,6 @@ class GError extends Error {
 class GInterrupt extends Error {
   constructor(message, line = null) {
     super(message);
-
-    Error.captureStackTrace(this, this.constructor);
 
     this.name = this.constructor.name;
     

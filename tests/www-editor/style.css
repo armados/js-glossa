@@ -99,7 +99,9 @@ textarea.gloCodeKeyboardInput {
 span.errorMsg {
   color: rgb(243, 62, 62);
 }
-
+span.noticeMsg {
+  color: rgb(240, 108, 20);
+}
 span.readValue {
   color: rgb(236, 154, 30);
   font-style: italic;

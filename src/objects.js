@@ -84,7 +84,6 @@ class Stmt_Write extends Stmt {
     var str = output.join(" ");
     app.outputAdd(str);
     app.outputAddDetails("Εμφάνισε στην οθόνη: " + str, this.cmdLineNo);
-
   }
 }
 
@@ -111,47 +110,28 @@ class Stmt_Read extends Stmt {
 
       var data = app.inputFetchValueFromBuffer();
 
-      if (data == null) {
-        if (typeof UIStatePromptUserForInput === "function") {
-          data = UIStatePromptUserForInput(arg.name);
+      if (data == null && typeof app["inputFunction"] === "function") {
+        data = await app["inputFunction"].apply(this, [arg.name]);
 
-          if (data != null) {
-            if (scope.getSymbolObject(arg.name) instanceof STR.STRString) {
+        if (data != null) {
+          if (scope.getSymbolObject(arg.name) instanceof STR.STRString) {
+            data = String(data);
+          } else if (scope.getSymbolObject(arg.name) instanceof STR.STRFloat) {
+            if (!isNaN(parseFloat(data))) {
+              data = parseFloat(data);
+            } else {
               data = String(data);
-            } else if (
-              scope.getSymbolObject(arg.name) instanceof STR.STRFloat
-            ) {
-              if (!isNaN(parseFloat(data))) {
-                data = parseFloat(data);
-              } else {
-                data = String(data);
-              }
-            } else if (scope.getSymbolObject(arg.name) instanceof STR.STRInt) {
-              if (!isNaN(parseInt(data))) {
-                data = parseInt(data);
-              } else {
-                data = String(data);
-              }
+            }
+          } else if (scope.getSymbolObject(arg.name) instanceof STR.STRInt) {
+            if (!isNaN(parseInt(data))) {
+              data = parseInt(data);
+            } else {
+              data = String(data);
             }
           }
         }
       }
 
-      /*
-      if (data == null) {
-
-        if (typeof prompt === 'function') {
-          const prompt = require('prompt-sync')();
-
-        data = prompt();
-        if  (!isNaN(parseFloat(data))) 
-         data= Number(data);
-         if (scope.getSymbolObject(arg.name) instanceof STR.STRString) { data= String(data);}
-        }
-
-
-      }
-*/
       if (data == null)
         throw new GE.GError(
           "Τα δεδομένα εισόδου δεν επαρκούν για την εκτέλεση του προγράμματος.",
@@ -172,7 +152,7 @@ class Stmt_Read extends Stmt {
       else throw new GE.GError("Critical: Unknown input value type: " + data);
 
       scope.setSymbol(arg.name, sym);
-      app.postMessage('inputread', data);
+      app.postMessage("inputread", data);
     }
 
     //app.outputAddDetails('Εισαγωγή από το πληκτρολόγιο: ' + output.join(" "), this.cmdLineNo);
@@ -472,7 +452,7 @@ class Stmt_ForLoop extends Stmt {
 
     if (v_step == 0)
       throw new GE.GError(
-        "Μη επιτρεπτή ενέργεια. Το βήμα της εντολή ΓΙΑ δεν μπορεί να λάβει την τιμή μηδέν.",
+        "Το βήμα της εντολή ΓΙΑ δεν μπορεί να λάβει την τιμή μηδέν.",
         this.cmdLineNoGia
       );
 

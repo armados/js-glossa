@@ -5,7 +5,9 @@ const path = require("path");
 
 const GLO = require("../src/main.js");
 
-const filename = "../samples-dev/sample29.glo";
+var prompt = require("prompt-sync")();
+
+const filename = "../samples-dev/sample1.glo";
 
 const { PerformanceObserver, performance } = require("perf_hooks");
 
@@ -35,16 +37,21 @@ obs.observe({ entryTypes: ["measure"], buffer: true });
     console.log(msg);
   });
 
-  
-  //performance.mark("app-start");
+  app.setReadInputFunction(function (name) {
+    return prompt();
+  });
+
+  performance.mark("app-start");
   try {
     await app.run();
   } catch (e) {}
 
-  //performance.mark("app-end");
-  //performance.measure("apprun", "app-start", "app-end");
+  performance.mark("app-end");
+  performance.measure("apprun", "app-start", "app-end");
 
-  //console.log('=======[ output ] ========')
-  //console.log(app.app.getOutput());
-  //console.log('Total commands: ', app.getStats());
+  console.log('=======[ output buffer ] ========');
+  console.log(app.app.getOutput());
+
+  console.log('=======[ stats ] ========');
+  console.log('Total commands: ', app.getStats());
 })();

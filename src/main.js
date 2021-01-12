@@ -35,6 +35,8 @@ class GlossaJS extends EventEmitter {
       statistics: {},
 
       inputData: [],
+      inputFunction: null,
+
       outputData: [],
       outputDataDetails: [],
 
@@ -98,12 +100,17 @@ class GlossaJS extends EventEmitter {
         scope.cmdLineNo = line;
 
         if (this.stoprunning == true) {
+          /*
           this.stoprunning = false;
           return Promise.reject(
             new GE.GInterrupt(
               "Διακοπή της εκτέλεσης του προγράμματος από τον χρήστη.",
               line
             )
+          );*/
+          throw new GE.GInterrupt(
+            "Διακοπή της εκτέλεσης του προγράμματος από τον χρήστη.",
+            line
           );
         }
 
@@ -130,7 +137,6 @@ class GlossaJS extends EventEmitter {
           }
           this.app.config["runstepflag"] = false;
         }
-
       },
 
       setActiveLineWithoutStep: async (scope, line) => {
@@ -138,11 +144,9 @@ class GlossaJS extends EventEmitter {
 
         if (this.stoprunning == true) {
           this.stoprunning = false;
-          return Promise.reject(
-            new GE.GInterrupt(
-              "Διακοπή της εκτέλεσης του προγράμματος από τον χρήστη.",
-              line
-            )
+          throw new GE.GInterrupt(
+            "Διακοπή της εκτέλεσης του προγράμματος από τον χρήστη.",
+            line
           );
         }
 
@@ -155,7 +159,6 @@ class GlossaJS extends EventEmitter {
         }
 
         await this.app.sleepFunc(40);
-
       },
 
       incrAssignCounter: () => {
@@ -195,7 +198,7 @@ class GlossaJS extends EventEmitter {
     this.app["config"]["maxLogicalComp"] = 100000;
     this.app["config"]["slowrunflag"] = false;
     this.app["config"]["runspeed"] = 0;
-    this.app["config"]["slowrunspeed"] = 350;
+    this.app["config"]["slowrunspeed"] = 250;
     this.app["config"]["runstep"] = false;
     this.app["config"]["runstepflag"] = false;
 
@@ -207,6 +210,9 @@ class GlossaJS extends EventEmitter {
 
   // =====================================
 
+  setReadInputFunction(func) {
+    this.app["inputFunction"] = func;
+  }
   // ==============================
 
   getStats() {
@@ -520,11 +526,7 @@ class GlossaJS extends EventEmitter {
   }
 
   async terminate() {
-    this.running = false;
-
     this.stoprunning = true;
-
-    this.app.postMessage("stopped");
   }
 
   async runNext() {
@@ -552,7 +554,14 @@ class GlossaJS extends EventEmitter {
       await result.resolve(this.app, this.scope);
     } catch (e) {
       //console.log('GlossaJS: Main(): Error catch: ' + e);
-      this.app.postMessage("error", e.message);
+      if (e instanceof GE.GError) {
+        this.app.postMessage("error", e.message);
+      } else if (e instanceof GE.GInterrupt) {
+        this.app.postMessage("stopped", e.message);
+      } else {
+        console.log("=== unknown catch code");
+        console.log(e);
+      }
     } finally {
       this.running = false;
       this.app.postMessage("finished");
@@ -567,9 +576,6 @@ class GlossaJS extends EventEmitter {
   }
 }
 
-
-
-
 module.exports = {
-  GlossaJS
+  GlossaJS,
 };

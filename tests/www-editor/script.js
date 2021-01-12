@@ -1,3 +1,4 @@
+
 // =================================
 
 var gloObjectsID = [];
@@ -69,6 +70,10 @@ async function startProgramExecution(gloBoxID, runstep) {
 
   var app = getGlossaApp(gloBoxID);
   app.init();
+  app.setReadInputFunction(function (name) {
+    var value = prompt("Εισαγωγή τιμής στο αναγνωριστικό " + name);
+    return value
+  });
   app.setSourceCode(sourcecode);
   app.setInputBuffer(inputdata);
   app.setSlowRun(slowrun);
@@ -132,7 +137,6 @@ function UIStateError(gloBoxID, msg) {
     });
 }
 
-
 function UIStateInputRead(gloBoxID, msg) {
   $("#" + gloBoxID)
     .find(".gloResult")
@@ -142,11 +146,25 @@ function UIStateInputRead(gloBoxID, msg) {
 
   var textBox = $("#" + gloBoxID).find(".gloResultPre");
   textBox.scrollTop(textBox[0].scrollHeight);
-
 }
 
-function UIStateStopped(gloBoxID) {
-  UIStateFinished(gloBoxID);
+function UIStateStopped(gloBoxID, msg) {
+  $("#" + gloBoxID)
+  .find(".gloResult")
+  .html(function (index, value) {
+    return value + '<span class="noticeMsg">' + msg + "</span>\n";
+  });
+
+var textBox = $("#" + gloBoxID).find(".gloResultPre");
+textBox.scrollTop(textBox[0].scrollHeight);
+
+$("#" + gloBoxID)
+  .find(".gloResultDetails")
+  .html(function (index, value) {
+    return value + '<span class="noticeMsg">' + msg + "</span>\n";
+  });
+
+  //UIStateFinished(gloBoxID);
 }
 
 function UIStateFinished(gloBoxID) {
@@ -185,10 +203,6 @@ function UIStateUpdateMemory(gloBoxID, data) {
   $("#" + gloBoxID)
     .find(".gloMemory")
     .html(renderMemory(data));
-}
-
-function UIStatePromptUserForInput(data) {
-  return prompt("Εισαγωγή τιμής στο αναγνωριστικό " + data);
 }
 
 function UIStateOutputAppend(gloBoxID, data) {
@@ -323,12 +337,29 @@ $(document).ready(function () {
 
     var cookieData = Cookies.get("editorSourceCode");
 
+    const mycode=`ΠΡΟΓΡΑΜΜΑ Άσκηση
+
+    ΜΕΤΑΒΛΗΤΕΣ
+    ΑΚΕΡΑΙΕΣ: α
+    
+    ΑΡΧΗ
+    
+    ΓΡΑΨΕ 'Δωσε τιμή:'
+    ΔΙΑΒΑΣΕ α
+    ΓΡΑΨΕ 'Έδωσες τον αριθμό ', α
+    
+    ΓΙΑ α ΑΠΟ 1 ΜΕΧΡΙ α
+      ΓΡΑΨΕ 'Καλημέρα κόσμε', α
+    ΤΕΛΟΣ_ΕΠΑΝΑΛΗΨΗΣ
+    
+    ΤΕΛΟΣ_ΠΡΟΓΡΑΜΜΑΤΟΣ
+    
+    `;
+
     if (typeof cookieData !== "undefined" && cookieData != "")
       editor.setValue(cookieData);
     else
-      editor.setValue(
-        "ΠΡΟΓΡΑΜΜΑ Άσκηση\n\nΜΕΤΑΒΛΗΤΕΣ\nΑΚΕΡΑΙΕΣ: α\n\nΑΡΧΗ\n\nΓΙΑ α ΑΠΟ 1 ΜΕΧΡΙ 700\n  ΓΡΑΨΕ 'Καλημέρα κόσμε', α\nΤΕΛΟΣ_ΕΠΑΝΑΛΗΨΗΣ\n\nΤΕΛΟΣ_ΠΡΟΓΡΑΜΜΑΤΟΣ\n"
-      );
+      editor.setValue(mycode);
 
     editor.clearSelection();
 
@@ -338,11 +369,13 @@ $(document).ready(function () {
       Cookies.set("editorSourceCode", editor.getValue());
     });
 
+
+
     app.on("started", () => {
       UIStateStarted(gloBoxID);
     });
-    app.on("stopped", () => {
-      UIStateStopped(gloBoxID);
+    app.on("stopped", (msg) => {
+      UIStateStopped(gloBoxID, msg);
     });
     app.on("finished", () => {
       UIStateFinished(gloBoxID);
@@ -365,5 +398,6 @@ $(document).ready(function () {
     app.on("inputread", (data) => {
       UIStateInputRead(gloBoxID, data);
     });
-    });
+
+  });
 });

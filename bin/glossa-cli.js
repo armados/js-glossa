@@ -103,20 +103,20 @@ var errorMsg = '';
   }
 
   try {
-    performance.mark("app-start");
+    //performance.mark("app-start");
     await app.run();
-    performance.mark("app-end");
+    //performance.mark("app-end");
 
-    if (args["output"]) await fs.writeFileSync(args["output"], app.app.getOutput()+errorMsg);
+    //if (args["output"]) await fs.writeFileSync(args["output"], app.app.getOutput()+errorMsg);
   } catch (e) {
-    console.log(e);
+    //console.log(e);
   }
 
-  performance.measure("apprun", "app-start", "app-end");
+  //performance.measure("apprun", "app-start", "app-end");
 
   //console.log("=======[ output buffer ] ========");
   //console.log(app.app.getOutput());
 
-  console.log("=======[ stats ] ========");
-  console.log("Total commands: ", app.getStats());
+  //console.log("=======[ stats ] ========");
+  //console.log("Total commands: ", app.getStats());
 })();

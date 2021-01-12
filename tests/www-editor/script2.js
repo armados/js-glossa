@@ -448,6 +448,7 @@ async function startProgramExecution(gloBoxID, runstep) {
 
   var app = getGlossaApp(gloBoxID);
   app.init();
+  app.setDebugMode(true);
   app.setReadInputFunction(function (name) {
     var value = prompt("Εισαγωγή τιμής στο αναγνωριστικό " + name);
     return value;

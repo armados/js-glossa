@@ -79,6 +79,7 @@ if (args["keyboard"]) {
 (async function main() {
   var app = new GLO.GlossaJS();
   app.setSourceCode(sourceCode);
+  app.setDebugMode(false);
   app.setInputBuffer(keyboardInput);
 
   app.on("outputappend", (data) => {

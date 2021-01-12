@@ -21,7 +21,8 @@ class GlossaJS extends EventEmitter {
 
   init() {
     this.running = false;
-    this.stoprunning = false; // FIXME:
+
+    this.stoprunning = false;
 
     this.sourceCode = null;
 
@@ -102,6 +103,8 @@ class GlossaJS extends EventEmitter {
       setActiveLine: async (scope, line) => {
         scope.cmdLineNo = line;
 
+        if (!this.app["config"]["debugmode"]) return;
+
         if (this.stoprunning == true) {
           throw new GE.GInterrupt(
             "Διακοπή της εκτέλεσης του προγράμματος από τον χρήστη.",
@@ -136,6 +139,8 @@ class GlossaJS extends EventEmitter {
 
       setActiveLineWithoutStep: async (scope, line) => {
         scope.cmdLineNo = line;
+
+        if (!this.app["config"]["debugmode"]) return;
 
         if (this.stoprunning == true) {
           throw new GE.GInterrupt(
@@ -190,6 +195,8 @@ class GlossaJS extends EventEmitter {
 
     this.app["config"]["maxExecutionCmd"] = 100000;
     this.app["config"]["maxLogicalComp"] = 100000;
+
+    this.app["config"]["debugmode"] = false;
     this.app["config"]["slowrunflag"] = false;
     this.app["config"]["runspeed"] = 0;
     this.app["config"]["slowrunspeed"] = 250;
@@ -222,6 +229,10 @@ class GlossaJS extends EventEmitter {
   }
   setSlowRun(flag) {
     this.app.config["slowrunflag"] = flag;
+  }
+
+  setDebugMode(flag) {
+    this.app["config"]["debugmode"] = flag;
   }
 
   setSourceCode(data) {

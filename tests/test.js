@@ -27,6 +27,7 @@ obs.observe({ entryTypes: ["measure"], buffer: true });
 
   var app = new GLO.GlossaJS();
   app.setSourceCode(sourceCode);
+  app.setDebugMode(false);
   app.setInputBuffer(null);
 
   app.on("outputappend", (data) => {

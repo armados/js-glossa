@@ -19,7 +19,7 @@ const obs = new PerformanceObserver((items) => {
 obs.observe({ entryTypes: ["measure"], buffer: true });
 
 var args = minimist(process.argv.slice(2), {
-  string: ["input", "keyboard"],
+  string: ["input", "output", "keyboard"],
   boolean: [
     "version",
     "noninteractive",
@@ -35,6 +35,7 @@ var args = minimist(process.argv.slice(2), {
   alias: {
     v: "version",
     i: "input",
+    o: "output",
     k: "keyboard",
     non: "noninteractive",
     rmat: "rmfuncat",
@@ -58,7 +59,9 @@ if (args["version"]) {
   return;
 }
 
-if (!args["input"]) throw new GE.GError("Missing input file");
+if (!args["input"]) {
+  throw new GE.GError("Missing input file");
+}
 
 var sourceCode = null;
 try {
@@ -96,16 +99,18 @@ if (args["keyboard"]) {
     });
   }
 
-  performance.mark("app-start");
   try {
+    performance.mark("app-start");
     await app.run();
+    performance.mark("app-end");
+
+    if (args["output"]) fs.writeFile(args["output"], app.app.getOutput());
   } catch (e) {}
 
-  performance.mark("app-end");
   performance.measure("apprun", "app-start", "app-end");
 
-  console.log("=======[ output buffer ] ========");
-  console.log(app.app.getOutput());
+  //console.log("=======[ output buffer ] ========");
+  //console.log(app.app.getOutput());
 
   console.log("=======[ stats ] ========");
   console.log("Total commands: ", app.getStats());

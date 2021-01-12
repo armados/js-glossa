@@ -55,4 +55,7 @@ obs.observe({ entryTypes: ["measure"], buffer: true });
 
   console.log('=======[ stats ] ========');
   console.log('Total commands: ', app.getStats());
+
+
+
 })();

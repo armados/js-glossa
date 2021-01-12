@@ -104,8 +104,10 @@ if (args["keyboard"]) {
     await app.run();
     performance.mark("app-end");
 
-    if (args["output"]) fs.writeFile(args["output"], app.app.getOutput());
-  } catch (e) {}
+    if (args["output"]) await fs.writeFileSync(args["output"], app.app.getOutput());
+  } catch (e) {
+    console.log(e);
+  }
 
   performance.measure("apprun", "app-start", "app-end");
 

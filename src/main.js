@@ -82,8 +82,11 @@ class GlossaJS extends EventEmitter {
 
         if (typeof value == "boolean") return value;
 
-        if (!isNaN(parseFloat(value))) return Number(value);
-        else return String(value.replace(/['"]+/g, ""));
+        if (HP.StringIsNumFloat(value)) {
+          return Number(value);
+        } else {
+          return String(value.replace(/['"]+/g, ""));
+        }
       },
 
       // ===========================

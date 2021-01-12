@@ -1,4 +1,3 @@
-
 // =================================
 
 var gloObjectsID = [];
@@ -72,7 +71,7 @@ async function startProgramExecution(gloBoxID, runstep) {
   app.init();
   app.setReadInputFunction(function (name) {
     var value = prompt("Εισαγωγή τιμής στο αναγνωριστικό " + name);
-    return value
+    return value;
   });
   app.setSourceCode(sourcecode);
   app.setInputBuffer(inputdata);
@@ -150,21 +149,19 @@ function UIStateInputRead(gloBoxID, msg) {
 
 function UIStateStopped(gloBoxID, msg) {
   $("#" + gloBoxID)
-  .find(".gloResult")
-  .html(function (index, value) {
-    return value + '<span class="noticeMsg">' + msg + "</span>\n";
-  });
+    .find(".gloResult")
+    .html(function (index, value) {
+      return value + '<span class="noticeMsg">' + msg + "</span>\n";
+    });
 
-var textBox = $("#" + gloBoxID).find(".gloResultPre");
-textBox.scrollTop(textBox[0].scrollHeight);
+  var textBox = $("#" + gloBoxID).find(".gloResultPre");
+  textBox.scrollTop(textBox[0].scrollHeight);
 
-$("#" + gloBoxID)
-  .find(".gloResultDetails")
-  .html(function (index, value) {
-    return value + '<span class="noticeMsg">' + msg + "</span>\n";
-  });
-
-  //UIStateFinished(gloBoxID);
+  $("#" + gloBoxID)
+    .find(".gloResultDetails")
+    .html(function (index, value) {
+      return value + '<span class="noticeMsg">' + msg + "</span>\n";
+    });
 }
 
 function UIStateFinished(gloBoxID) {
@@ -337,7 +334,7 @@ $(document).ready(function () {
 
     var cookieData = Cookies.get("editorSourceCode");
 
-    const mycode=`ΠΡΟΓΡΑΜΜΑ Άσκηση
+    const mycode = `ΠΡΟΓΡΑΜΜΑ Άσκηση
 
     ΜΕΤΑΒΛΗΤΕΣ
     ΑΚΕΡΑΙΕΣ: α
@@ -357,8 +354,7 @@ $(document).ready(function () {
 
     if (typeof cookieData !== "undefined" && cookieData != "")
       editor.setValue(cookieData);
-    else
-      editor.setValue(mycode);
+    else editor.setValue(mycode);
 
     editor.clearSelection();
 
@@ -367,8 +363,6 @@ $(document).ready(function () {
     editor.getSession().on("change", function () {
       Cookies.set("editorSourceCode", editor.getValue());
     });
-
-
 
     app.on("started", () => {
       UIStateStarted(gloBoxID);
@@ -397,6 +391,5 @@ $(document).ready(function () {
     app.on("inputread", (data) => {
       UIStateInputRead(gloBoxID, data);
     });
-
   });
 });

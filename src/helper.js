@@ -18,6 +18,14 @@ function isBoolean(val) {
   return typeof val == "boolean";
 }
 
+function StringIsNumFloat(val) {
+  return !isNaN(parseFloat(val));
+}
+
+function StringIsNumInt(val) {
+  return !isNaN(parseInt(val));
+}
+
 function valueTypeToString(obj) {
   const STR = require("./storage");
 
@@ -50,5 +58,7 @@ module.exports = {
   isNumber,
   isString,
   isBoolean,
+  StringIsNumFloat,
+  StringIsNumInt,
   valueTypeToString,
 };

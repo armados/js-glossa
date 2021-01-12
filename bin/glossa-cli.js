@@ -8,6 +8,19 @@ var GE = require("../src/gclasses");
 var fs = require("fs");
 var minimist = require("minimist");
 
+var prompt = require("prompt-sync")({echo: 'yes'});
+
+const { PerformanceObserver, performance } = require("perf_hooks");
+
+const obs = new PerformanceObserver((items) => {
+  console.log(items.getEntries()[0].duration);
+  performance.clearMarks();
+});
+obs.observe({ entryTypes: ["measure"], buffer: true });
+
+
+
+
 var args = minimist(process.argv.slice(2), {
   string: ["input", "keyboard"],
   boolean: [
@@ -66,35 +79,15 @@ if (args["keyboard"]) {
 
 
 
-process.on('unhandledRejection', function(err) {
+//process.on('unhandledRejection', function(err) {
   //console.log(err);
-});
+//});
 
 
 (async function main() {
   var app = new GLO.GlossaJS();
   app.setSourceCode(sourceCode);
   app.setInputBuffer(null);
-
-  var app = new GLO.GlossaJS();
-  app.setSourceCode(sourceCode);
-  app.setInputBuffer(keyboardInput);
-
-  if (args["rmfuncat"]) app.removeGlobalFunction("Α_Τ");
-
-  if (args["rmfuncam"]) app.removeGlobalFunction("Α_Μ");
-
-  if (args["rmfunctr"]) app.removeGlobalFunction("Τ_Ρ");
-
-  if (args["rmfunchm"]) app.removeGlobalFunction("ΗΜ");
-
-  if (args["rmfuncsyn"]) app.removeGlobalFunction("ΣΥΝ");
-
-  if (args["rmfuncef"]) app.removeGlobalFunction("ΕΦ");
-
-  if (args["rmfunce"]) app.removeGlobalFunction("Ε");
-
-  if (args["rmfunclog"]) app.removeGlobalFunction("ΛΟΓ");
 
   app.on("outputappend", (data) => {
     console.log(data);
@@ -104,10 +97,21 @@ process.on('unhandledRejection', function(err) {
     console.log(msg);
   });
 
+  app.setReadInputFunction(function (name) {
+    return prompt();
+  });
+
+  performance.mark("app-start");
   try {
     await app.run();
   } catch (e) {}
 
-  //console.log(app.app.getOutput());
-  //console.log('Total commands: ', app.app.getStats());
+  performance.mark("app-end");
+  performance.measure("apprun", "app-start", "app-end");
+
+  console.log('=======[ output buffer ] ========');
+  console.log(app.app.getOutput());
+
+  console.log('=======[ stats ] ========');
+  console.log('Total commands: ', app.getStats());
 })();

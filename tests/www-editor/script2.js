@@ -1,4 +1,3 @@
-
 // =================================
 
 var gloObjectsID = [];
@@ -6,6 +5,243 @@ var gloObjectsAPP = [];
 
 // =================================
 
+var glossaConf2222 = {
+  // the default separators except `@$`
+  wordPattern: /(-?\d*\.\d\w*)|([^\`\~\!\#\%\^\&\*\(\)\-\=\+\[\{\]\}\\\|\;\:\'\"\,\.\<\>\/\?\s]+)/g,
+  comments: {
+    lineComment: "//",
+    blockComment: ["{", "}"],
+  },
+  brackets: [
+    ["{", "}"],
+    ["[", "]"],
+    ["(", ")"],
+    ["<", ">"],
+  ],
+  autoClosingPairs: [
+    { open: "{", close: "}" },
+    { open: "[", close: "]" },
+    { open: "(", close: ")" },
+    { open: "<", close: ">" },
+    { open: "'", close: "'" },
+  ],
+  surroundingPairs: [
+    { open: "{", close: "}" },
+    { open: "[", close: "]" },
+    { open: "(", close: ")" },
+    { open: "<", close: ">" },
+    { open: "'", close: "'" },
+  ],
+  folding: {
+    markers: {
+      start: new RegExp("^\\s*\\{\\$REGION(\\s\\'.*\\')?\\}"),
+      end: new RegExp("^\\s*\\{\\$ENDREGION\\}"),
+    },
+  },
+};
+
+var glossaConf = {
+  defaultToken: "",
+  tokenPostfix: ".glo",
+  ignoreCase: true,
+  brackets: [
+    { open: "{", close: "}", token: "delimiter.curly" },
+    { open: "[", close: "]", token: "delimiter.square" },
+    { open: "(", close: ")", token: "delimiter.parenthesis" },
+    { open: "<", close: ">", token: "delimiter.angle" },
+  ],
+  keywords: [
+    "ΠΡΟΓΡΑΜΜΑ",
+    "ΤΕΛΟΣ_ΠΡΟΓΡΑΜΜΑΤΟΣ",
+    "all",
+    "and_then",
+    "array",
+    "as",
+    "asm",
+    "attribute",
+    "begin",
+    "bindable",
+    "case",
+    "class",
+    "const",
+    "contains",
+    "default",
+    "div",
+    "else",
+    "end",
+    "except",
+    "exports",
+    "external",
+    "far",
+    "file",
+    "finalization",
+    "finally",
+    "forward",
+    "generic",
+    "goto",
+    "if",
+    "implements",
+    "import",
+    "in",
+    "index",
+    "inherited",
+    "initialization",
+    "interrupt",
+    "is",
+    "label",
+    "library",
+    "mod",
+    "module",
+    "name",
+    "near",
+    "not",
+    "object",
+    "of",
+    "on",
+    "only",
+    "operator",
+    "or_else",
+    "otherwise",
+    "override",
+    "package",
+    "packed",
+    "pow",
+    "private",
+    "program",
+    "protected",
+    "public",
+    "published",
+    "interface",
+    "implementation",
+    "qualified",
+    "read",
+    "record",
+    "resident",
+    "requires",
+    "resourcestring",
+    "restricted",
+    "segment",
+    "set",
+    "shl",
+    "shr",
+    "specialize",
+    "stored",
+    "then",
+    "threadvar",
+    "to",
+    "try",
+    "type",
+    "unit",
+    "uses",
+    "var",
+    "view",
+    "virtual",
+    "dynamic",
+    "overload",
+    "reintroduce",
+    "with",
+    "write",
+    "xor",
+    "true",
+    "false",
+    "procedure",
+    "function",
+    "constructor",
+    "destructor",
+    "property",
+    "break",
+    "continue",
+    "exit",
+    "abort",
+    "while",
+    "do",
+    "for",
+    "raise",
+    "repeat",
+    "until",
+  ],
+  typeKeywords: [
+    "ΑΚΕΡΑΙΕΣ",
+    "ΠΡΑΓΜΑΤΙΚΕΣ",
+    "byte",
+    "integer",
+    "shortint",
+    "char",
+    "longint",
+    "float",
+    "string",
+  ],
+  operators: [
+    "=",
+    ">",
+    "<",
+    "<=",
+    ">=",
+    "<>",
+    ":",
+    "<-",
+    "KAI",
+    "ΚΑΊ",
+    "Η",
+    "Ή",
+    "ΌΧΙ",
+    "ΟΧΙ",
+    "+",
+    "-",
+    "*",
+    "/",
+    "@",
+    "&",
+    "^",
+    "%",
+  ],
+  // we include these common regular expressions
+  symbols: /[=><:@\^&|+\-*\/\^%]+/,
+  // The main tokenizer for our languages
+  tokenizer: {
+    root: [
+      // identifiers and keywords
+      [
+        /[Ά-Ώά-ώΑ-Ωα-ωA-Za-z$][Ά-Ώά-ώΑ-Ωα-ωA-Za-z0-9_$]*/,
+        {
+          cases: {
+            "@keywords": { token: "keyword.$0" },
+            "@default": "identifier",
+          },
+        },
+      ],
+      // whitespace
+      { include: "@whitespace" },
+      // delimiters and operators
+      [/[()\[\]]/, "@brackets"],
+      [/[<>](?!@symbols)/, "@brackets"],
+      // numbers
+      [/\d*\.\d+([eE][\-+]?\d+)?/, "number.float"],
+      [/\$[0-9a-fA-F]{1,16}/, "number.hex"],
+      [/\d+/, "number"],
+      // strings
+      [/'([^'\\]|\\.)*$/, "string.invalid"],
+      [/'/, "string", "@string"],
+      // characters
+      [/'[^\\']'/, "string"],
+      [/'/, "string.invalid"],
+      [/\#\d+/, "string"],
+    ],
+    comment: [
+      //[/[^\*\}]+/, 'comment'],
+      //[/\(\*/,    'comment', '@push' ],    // nested comment  not allowed :-(
+    ],
+    string: [
+      [/[^\\']+/, "string"],
+      [/\\./, "string.escape.invalid"],
+      [/'/, { token: "string.quote", bracket: "@close", next: "@pop" }],
+    ],
+    whitespace: [
+      [/[ \t\r\n]+/, "white"],
+      [/!.*$/, "comment"],
+    ],
+  },
+};
 
 function newGlossaApp(id) {
   const index = gloObjectsID.indexOf(id);
@@ -24,10 +260,8 @@ function getGlossaApp(id) {
 
 // =================================
 
-
 var editorsArr = [];
 var decorations = [];
-
 
 function renderMemory(data) {
   var html = '<table class="table table-sm table-borderless">';
@@ -55,7 +289,6 @@ function renderMemory(data) {
 
   return html;
 }
-
 
 function UIStateStarted(gloBoxID) {
   var editorInstance = editorsArr[0];
@@ -94,25 +327,52 @@ function UIStateError(gloBoxID, msg) {
   $("#" + gloBoxID)
     .find(".gloResult")
     .html(function (index, value) {
-      return value + "<span class=\"errorMsg\">" + msg + "</span>\n";
+      return value + '<span class="errorMsg">' + msg + "</span>\n";
     });
+
+  var textBox = $("#" + gloBoxID).find(".gloResultPre");
+  textBox.scrollTop(textBox[0].scrollHeight);
 
   $("#" + gloBoxID)
     .find(".gloResultDetails")
     .html(function (index, value) {
-      return value + "<span class=\"errorMsg\">" + msg + "</span>\n";
+      return value + '<span class="errorMsg">' + msg + "</span>\n";
     });
 }
 
-function UIStateStopped(gloBoxID) {
-  UIStateFinished(gloBoxID);
+function UIStateInputRead(gloBoxID, msg) {
+  $("#" + gloBoxID)
+    .find(".gloResult")
+    .html(function (index, value) {
+      return value + '<span class="readValue">' + msg + "</span>\n";
+    });
+
+  var textBox = $("#" + gloBoxID).find(".gloResultPre");
+  textBox.scrollTop(textBox[0].scrollHeight);
+}
+
+function UIStateStopped(gloBoxID, msg) {
+  $("#" + gloBoxID)
+    .find(".gloResult")
+    .html(function (index, value) {
+      return value + '<span class="noticeMsg">' + msg + "</span>\n";
+    });
+
+  var textBox = $("#" + gloBoxID).find(".gloResultPre");
+  textBox.scrollTop(textBox[0].scrollHeight);
+
+  $("#" + gloBoxID)
+    .find(".gloResultDetails")
+    .html(function (index, value) {
+      return value + '<span class="noticeMsg">' + msg + "</span>\n";
+    });
 }
 
 function UIStateFinished(gloBoxID) {
   var editorInstance = editorsArr[0];
   editorInstance.updateOptions({ readOnly: false });
-  
-  decorations = editorInstance.deltaDecorations(decorations,[]);
+
+  decorations = editorInstance.deltaDecorations(decorations, []);
 
   $("#" + gloBoxID)
     .find(".gloSpinner")
@@ -132,32 +392,24 @@ function UIStateUpdateCodeLine(gloBoxID, line) {
 
   editorInstance.revealLine(line);
 
-  decorations = editorInstance.deltaDecorations(
-    decorations,
-    [
-      {
-        range: new monaco.Range(line, 1, line, 1),
-        options: {
-          isWholeLine: true,
-          className: "myContentClass",
-          glyphMarginClassName: "myGlyphMarginClass"
-        },
-      }
-    ]
-  );
+  decorations = editorInstance.deltaDecorations(decorations, [
+    {
+      range: new monaco.Range(line, 1, line, 1),
+      options: {
+        isWholeLine: true,
+        className: "myContentClass",
+        glyphMarginClassName: "myGlyphMarginClass",
+      },
+    },
+  ]);
 
   //console.log(decorations);
-
 }
 
 function UIStateUpdateMemory(gloBoxID, data) {
   $("#" + gloBoxID)
     .find(".gloMemory")
     .html(renderMemory(data));
-}
-
-function UIStatePromptUserForInput(data) {
-  return prompt("Εισαγωγή τιμής στο αναγνωριστικό " + data);
 }
 
 function UIStateOutputAppend(gloBoxID, data) {
@@ -196,6 +448,10 @@ async function startProgramExecution(gloBoxID, runstep) {
 
   var app = getGlossaApp(gloBoxID);
   app.init();
+  app.setReadInputFunction(function (name) {
+    var value = prompt("Εισαγωγή τιμής στο αναγνωριστικό " + name);
+    return value;
+  });
   app.setSourceCode(sourcecode);
   app.setInputBuffer(inputdata);
   app.setSlowRun(slowrun);
@@ -321,6 +577,9 @@ $(document).ready(function () {
     );
 
     require(["vs/editor/editor.main"], function () {
+      monaco.languages.register({ id: "glossa" });
+      monaco.languages.setMonarchTokensProvider("glossa", glossaConf);
+
       let editor = monaco.editor.create($(".gloAceEditor")[0], {
         value: "",
         language: "pascal",
@@ -332,6 +591,7 @@ $(document).ready(function () {
         //fontFamily: "Arial",
         //fontSize: 20,
         theme: "vs-dark",
+        language: "glossa",
       });
 
       editor.setValue(
@@ -380,8 +640,8 @@ $(document).ready(function () {
     app.on("started", () => {
       UIStateStarted(gloBoxID);
     });
-    app.on("stopped", () => {
-      UIStateStopped(gloBoxID);
+    app.on("stopped", (msg) => {
+      UIStateStopped(gloBoxID, msg);
     });
     app.on("finished", () => {
       UIStateFinished(gloBoxID);
@@ -400,6 +660,9 @@ $(document).ready(function () {
     });
     app.on("outputdetailsappend", (data) => {
       UIStateOutputDetailsAppend(gloBoxID, data);
+    });
+    app.on("inputread", (data) => {
+      UIStateInputRead(gloBoxID, data);
     });
   });
 });

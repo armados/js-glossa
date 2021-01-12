@@ -660,7 +660,7 @@ class MathOpLogNot extends MathOperation {
         this.line
       );
 
-    return new MBoolean(!a);
+    return new MBoolean(!a.val);
   }
 }
 

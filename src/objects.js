@@ -105,13 +105,13 @@ class Stmt_Read extends Stmt {
           if (scope.getSymbolObject(arg.name) instanceof STR.STRString) {
             data = String(data);
           } else if (scope.getSymbolObject(arg.name) instanceof STR.STRFloat) {
-            if (!isNaN(parseFloat(data))) {
+            if (HP.StringIsNumFloat(data)) {
               data = parseFloat(data);
             } else {
               data = String(data);
             }
           } else if (scope.getSymbolObject(arg.name) instanceof STR.STRInt) {
-            if (!isNaN(parseInt(data))) {
+            if (HP.StringIsNumInt(data)) {
               data = parseInt(data);
             } else {
               data = String(data);
@@ -359,7 +359,7 @@ class Stmt_WhileLoop extends Stmt {
 
       app.incrLogicalCounter();
 
-      if (condResult.val == true) break;
+      if (condResult.val == false) break;
 
       await this.body.resolve(app, scope);
 

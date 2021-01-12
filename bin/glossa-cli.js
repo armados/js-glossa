@@ -79,6 +79,8 @@ if (args["keyboard"]) {
   }
 }
 
+var errorMsg = '';
+
 (async function main() {
   var app = new GLO.GlossaJS();
   app.setSourceCode(sourceCode);
@@ -86,6 +88,7 @@ if (args["keyboard"]) {
   app.setInputBuffer(keyboardInput);
 
   app.on("outputappend", (data) => {
+    errorMsg = data;
     console.log(data);
   });
 
@@ -104,7 +107,7 @@ if (args["keyboard"]) {
     await app.run();
     performance.mark("app-end");
 
-    if (args["output"]) await fs.writeFileSync(args["output"], app.app.getOutput());
+    if (args["output"]) await fs.writeFileSync(args["output"], app.app.getOutput()+errorMsg);
   } catch (e) {
     console.log(e);
   }

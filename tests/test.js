@@ -50,8 +50,8 @@ obs.observe({ entryTypes: ["measure"], buffer: true });
   performance.mark("app-end");
   performance.measure("apprun", "app-start", "app-end");
 
-  console.log('=======[ output buffer ] ========');
-  console.log(app.app.getOutput());
+  //console.log('=======[ output buffer ] ========');
+  //console.log(app.app.getOutput());
 
   console.log('=======[ stats ] ========');
   console.log('Total commands: ', app.getStats());

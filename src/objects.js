@@ -548,8 +548,8 @@ class CallSubFunction extends Stmt {
     );
 
     if (
-      !scope.hasSymbol(this.fun.name) ||
-      !(scope.getSymbolObject(this.fun.name) instanceof STR.STRUserFunction)
+      !scope.hasSymbol(this.fun.name) &&
+      !(scope.getSymbolObject(this.fun.name) instanceof STR.STRFunctionMethod) 
     )
       throw new GE.GError(
         "Η συνάρτηση " + this.fun.name + " δεν βρέθηκε.",
@@ -598,8 +598,8 @@ class CallSubProcedure extends Stmt {
     );
 
     if (
-      !scope.hasSymbol(this.fun.name) ||
-      !(scope.getSymbolObject(this.fun.name) instanceof STR.STRUserProcedure)
+      !scope.hasSymbol(this.fun.name) &&
+      !(scope.getSymbolObject(this.fun.name) instanceof STR.STRProcedureMethod)
     )
       throw new GE.GError(
         "Η διαδικασία " + this.fun.name + " δεν βρέθηκε.",

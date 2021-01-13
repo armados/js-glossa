@@ -28,7 +28,7 @@ class GlossaJS extends EventEmitter {
 
     this.scope = new STR.SScope();
 
-    this.initGlobalFunction();
+    this.initGlobalFunction(this.scope);
 
     this.app = {
       config: {},
@@ -252,8 +252,8 @@ class GlossaJS extends EventEmitter {
   }
 
   // ===================================================
-  initGlobalFunction() {
-    this.scope.addSymbol(
+  initGlobalFunction(scope) {
+    scope.addSymbol(
       "Α_Μ",
       new STR.STRBuiltinFunction(function (...arrArgs) {
         var args = arrArgs[0];
@@ -284,7 +284,7 @@ class GlossaJS extends EventEmitter {
       })
     );
 
-    this.scope.addSymbol(
+    scope.addSymbol(
       "Α_Τ",
       new STR.STRBuiltinFunction(function (...arrArgs) {
         var args = arrArgs[0];
@@ -316,7 +316,7 @@ class GlossaJS extends EventEmitter {
       })
     );
 
-    this.scope.addSymbol(
+    scope.addSymbol(
       "Τ_Ρ",
       new STR.STRBuiltinFunction(function (...arrArgs) {
         var args = arrArgs[0];
@@ -353,7 +353,7 @@ class GlossaJS extends EventEmitter {
       })
     );
 
-    this.scope.addSymbol(
+    scope.addSymbol(
       "ΗΜ",
       new STR.STRBuiltinFunction(function (...arrArgs) {
         var args = arrArgs[0];
@@ -386,7 +386,7 @@ class GlossaJS extends EventEmitter {
       })
     );
 
-    this.scope.addSymbol(
+    scope.addSymbol(
       "ΣΥΝ",
       new STR.STRBuiltinFunction(function (...arrArgs) {
         var args = arrArgs[0];
@@ -419,7 +419,7 @@ class GlossaJS extends EventEmitter {
       })
     );
 
-    this.scope.addSymbol(
+    scope.addSymbol(
       "Ε",
       new STR.STRBuiltinFunction(function (...arrArgs) {
         var args = arrArgs[0];
@@ -450,7 +450,7 @@ class GlossaJS extends EventEmitter {
       })
     );
 
-    this.scope.addSymbol(
+    scope.addSymbol(
       "ΕΦ",
       new STR.STRBuiltinFunction(function (...arrArgs) {
         var args = arrArgs[0];
@@ -483,7 +483,7 @@ class GlossaJS extends EventEmitter {
       })
     );
 
-    this.scope.addSymbol(
+    scope.addSymbol(
       "ΛΟΓ",
       new STR.STRBuiltinFunction(function (...arrArgs) {
         var args = arrArgs[0];

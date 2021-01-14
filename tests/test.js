@@ -9,14 +9,6 @@ var prompt = require("prompt-sync")();
 
 const filename = "../samples-dev/sample1.glo";
 
-const { PerformanceObserver, performance } = require("perf_hooks");
-
-const obs = new PerformanceObserver((items) => {
-  console.log(items.getEntries()[0].duration);
-  performance.clearMarks();
-});
-obs.observe({ entryTypes: ["measure"], buffer: true });
-
 (async function main() {
   try {
     var sourceCode = fs.readFileSync(path.join(__dirname, filename)).toString();
@@ -42,13 +34,9 @@ obs.observe({ entryTypes: ["measure"], buffer: true });
     return prompt();
   });
 
-  performance.mark("app-start");
-  try {
+ try {
     await app.run();
   } catch (e) {}
-
-  performance.mark("app-end");
-  performance.measure("apprun", "app-start", "app-end");
 
   //console.log('=======[ output buffer ] ========');
   //console.log(app.app.getOutput());

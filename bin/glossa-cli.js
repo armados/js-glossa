@@ -10,14 +10,6 @@ var minimist = require("minimist");
 
 var prompt = require("prompt-sync")({ echo: "yes" });
 
-const { PerformanceObserver, performance } = require("perf_hooks");
-
-const obs = new PerformanceObserver((items) => {
-  console.log(items.getEntries()[0].duration);
-  performance.clearMarks();
-});
-obs.observe({ entryTypes: ["measure"], buffer: true });
-
 var args = minimist(process.argv.slice(2), {
   string: ["input", "output", "keyboard"],
   boolean: [
@@ -79,7 +71,7 @@ if (args["keyboard"]) {
   }
 }
 
-var errorMsg = '';
+var errorMsg = "";
 
 (async function main() {
   var app = new GLO.GlossaJS();
@@ -103,11 +95,12 @@ var errorMsg = '';
   }
 
   try {
-    //performance.mark("app-start");
     await app.run();
-    //performance.mark("app-end");
 
-    //if (args["output"]) await fs.writeFileSync(args["output"], app.app.getOutput()+errorMsg);
+    if (args["output"]) {
+      await fs.writeFileSync(args["output"], app.app.getOutput() + errorMsg);
+    }
+    
   } catch (e) {
     //console.log(e);
   }

@@ -280,7 +280,8 @@ class GlossaJS extends EventEmitter {
             cmdLineNo
           );
 
-        return new Atom.MNumber(Math.trunc(A.val / 1));
+        // Use Math.floor or Math.trunc
+        return new Atom.MNumber(Math.floor(A.val));
       })
     );
 

@@ -26,65 +26,68 @@ var operation = {
     return new Atom.MBoolean(false);
   },
 
-  Exp7_parens: function (_1, a, _2) {
+  PriExp_parens: function (_1, a, _2) {
     return a.toAST();
   },
 
-  Exp5_powop: function (a, _, b) {
+  ExpExp_powop: function (a, _, b) {
     return new Atom.MathOpPow(a.toAST(), b.toAST(), getLineNo(a));
   },
 
-  Exp4_mul: function (a, _, b) {
+  MulExp_mul: function (a, _, b) {
     return new Atom.MathOpMul(a.toAST(), b.toAST(), getLineNo(a));
   },
-  Exp4_div: function (a, _, b) {
+  MulExp_div: function (a, _, b) {
     return new Atom.MathOpDiv(a.toAST(), b.toAST(), getLineNo(a));
   },
-
-  Exp4_intdiv: function (a, _, b) {
+  MulExp_intdiv: function (a, _, b) {
     return new Atom.MathOpDivInt(a.toAST(), b.toAST(), getLineNo(a));
   },
-  Exp4_intmod: function (a, _, b) {
+  MulExp_intmod: function (a, _, b) {
     return new Atom.MathOpModInt(a.toAST(), b.toAST(), getLineNo(a));
   },
 
-  Exp3_add: function (a, _, b) {
+  AddExp_add: function (a, _, b) {
     return new Atom.MathOpAdd(a.toAST(), b.toAST(), getLineNo(a));
   },
-  Exp3_sub: function (a, _, b) {
+  AddExp_sub: function (a, _, b) {
     return new Atom.MathOpSub(a.toAST(), b.toAST(), getLineNo(a));
   },
 
-  Exp2_lt: function (a, _, b) {
+  ExpRel_lt: function (a, _, b) {
     return new Atom.MathOpRelLt(a.toAST(), b.toAST(), getLineNo(a));
   },
-  Exp2_gt: function (a, _, b) {
+  ExpRel_gt: function (a, _, b) {
     return new Atom.MathOpRelGt(a.toAST(), b.toAST(), getLineNo(a));
   },
-  Exp2_lte: function (a, _, b) {
+  ExpRel_lte: function (a, _, b) {
     return new Atom.MathOpRelLte(a.toAST(), b.toAST(), getLineNo(a));
   },
-  Exp2_gte: function (a, _, b) {
+  ExpRel_gte: function (a, _, b) {
     return new Atom.MathOpRelGte(a.toAST(), b.toAST(), getLineNo(a));
   },
-  Exp2_eq: function (a, _, b) {
+  ExpRel_eq: function (a, _, b) {
     return new Atom.MathOpRelEq(a.toAST(), b.toAST(), getLineNo(a));
   },
-  Exp2_neq: function (a, _, b) {
+  ExpRel_neq: function (a, _, b) {
     return new Atom.MathOpRelNeq(a.toAST(), b.toAST(), getLineNo(a));
   },
 
-  Exp6_not: function (_, a) {
+  PriExp_not: function (_, a) {
     return new Atom.MathOpLogNot(a.toAST(), getLineNo(a));
   },
-  Exp1_andop: function (a, _, b) {
+  
+  ExpAnd_andop: function (a, _, b) {
     return new Atom.MathOpLogAnd(a.toAST(), b.toAST(), getLineNo(a));
   },
-  Exp_orop: function (a, _, b) {
+  ExpOr_orop: function (a, _, b) {
     return new Atom.MathOpLogOr(a.toAST(), b.toAST(), getLineNo(a));
   },
 
-  Exp6_neq: function (_, a) {
+  PriExp_pos: function (_, a) {
+    return a.toAST();
+  },
+  PriExp_neg: function (_, a) {
     return new Atom.MathOpMul(a.toAST(), new Atom.MNumber(-1), getLineNo(a));
   },
 

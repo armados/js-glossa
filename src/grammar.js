@@ -22,38 +22,56 @@ class GrammarOhm {
         
             Expr =      Exp  
         
-            Exp         =  Exp or Exp1               -- orop
-                        |  Exp1
-            Exp1        =  Exp1 and Exp2             -- andop
-                        |  Exp2
-            Exp2        =  Exp3 "<" Exp3             -- lt
-                        |  Exp3 ">" Exp3             -- gt
-                        |  Exp3 "<=" Exp3            -- lte
-                        |  Exp3 ">=" Exp3            -- gte
-                        |  Exp3 "=" Exp3             -- eq
-                        |  Exp3 "<>" Exp3            -- neq
-                        |  Exp3
-            Exp3        =  Exp3 "+" Exp4             -- add
-                        |  Exp3 "-" Exp4             -- sub
-                        |  Exp4
-            Exp4        =  Exp4 "*" Exp5             -- mul
-                        |  Exp4 "/" Exp5             -- div
-                        |  Exp4 div Exp5             -- intdiv
-                        |  Exp4 mod Exp5             -- intmod
-                        |  Exp5
-            Exp5        =  Exp5 powop  Exp6          -- powop
-                        |  Exp6
-            Exp6        =  not Exp7                  -- not
-                        |  neq Exp7                  -- neq
-                        |  Exp7
-            Exp7        =  boollit
-                        |  floatlit
-                        |  intlit
-                        |  strlit
-                        |  FunCall
-                        |  IdTbl
-                        |  id
-                        |  "(" Exp ")"               -- parens
+          Exp
+            = ExpOr
+            
+          ExpOr
+            =  ExpOr or ExpAnd               -- orop
+            |  ExpAnd
+                    
+          ExpAnd
+            =  ExpAnd and ExpRel             -- andop
+            |  ExpRel    
+                         
+        
+          ExpRel
+            =  ExpRel "<"  AddExp             -- lt
+            |  ExpRel ">"  AddExp             -- gt
+            |  ExpRel "<=" AddExp             -- lte
+            |  ExpRel ">=" AddExp             -- gte
+            |  ExpRel "="  AddExp             -- eq
+            |  ExpRel "<>" AddExp             -- neq
+            |  AddExp    
+           
+            
+          AddExp
+            =  AddExp "+" MulExp              -- add
+            |  AddExp "-" MulExp              -- sub
+            |  MulExp
+        
+          MulExp
+            =  MulExp "*" ExpExp             -- mul
+            |  MulExp "/" ExpExp             -- div
+            |  MulExp div ExpExp             -- intdiv
+            |  MulExp mod ExpExp             -- intmod
+            |  ExpExp
+        
+          ExpExp
+            = ExpExp "^" PriExp              -- powop
+            | PriExp
+        
+          PriExp
+            = "(" Exp ")"                    -- parens
+            | "+" ExpExp                     -- pos
+            | "-" ExpExp                     -- neg
+            |  not ExpOr                     -- not
+            |  boollit
+            |  floatlit
+            |  intlit
+            |  strlit
+            |  FunCall
+            |  IdTbl
+            |  id
         
         
             Block = InnerCommand*

@@ -18,7 +18,10 @@ class Atom {
 class MNumber extends Atom {
   constructor(val) {
     super(val);
-    if (HP.isFloat(val)) this.val = +parseFloat(val).toFixed(2);
+    if (HP.isFloat(val)) {
+      this.val = +parseFloat(val).toFixed(8);
+      this.val = Math.round(this.val * 100) / 100;
+    }
   }
 }
 class MString extends Atom {}

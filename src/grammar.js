@@ -20,7 +20,7 @@ class GrammarOhm {
            
             AssignExpr   = (IdTbl | id) "<-" Expr
         
-            Expr =      Exp  
+            Expr =      Exp 
         
           Exp
             = ExpOr
@@ -80,7 +80,7 @@ class GrammarOhm {
             InnerCommand         = AssignExpr | WhileExpr | DoWhileExpr | ForExpr | IfExpr | Stmt_Select | comment | CallSubProcedure | Stmt_Write | Stmt_Read
             InnerCommandFunction = AssignExpr | WhileExprFunction | DoWhileExprFunction | ForExprFunction | IfExprFunction | Stmt_Select | comment //FIXME:
         
-            Stmt_Write = grapse Arguments
+            Stmt_Write = grapse Arguments 
             Stmt_Read  = diavase VarParameters
         
             WhileExpr     = "ΟΣΟ" Expr "ΕΠΑΝΑΛΑΒΕ" Block "ΤΕΛΟΣ_ΕΠΑΝΑΛΗΨΗΣ"
@@ -109,7 +109,7 @@ class GrammarOhm {
             CallSubProcedure    = "ΚΑΛΕΣΕ" id "(" Arguments ")" 
         
             AtLeastOneArguments = NonemptyListOf<Expr, ",">
-            Arguments           = ListOf<Expr, ",">
+            Arguments           = ListOf<Expr, ","> 
         
             AtLeastOneParameters = NonemptyListOf<id, ",">
             Parameters           = ListOf<id, ",">
@@ -158,7 +158,7 @@ class GrammarOhm {
             floatlit    = digit* "." digit+ 
             intlit      = digit+
             qq          = "'" | "\\""
-            strlit      = qq (~qq any)+ qq
+            strlit      = qq (~qq any)* qq
             boollit     = true | false
         
         

@@ -55,7 +55,7 @@ pre,
   margin: 0px;
   padding: 0px;
   width: 100%;
-  height: 580px;
+  height: 500px;
   background-color: #252526;
   border-left: 1px solid #333;
   color: #efefef;
@@ -63,6 +63,9 @@ pre,
 }
 .gloMemory table {
   color: #efefef;
+}
+.gloMemory table td {
+  padding: 0px;
 }
 
 .gloResultPre,
@@ -109,6 +112,7 @@ span.readValue {
 
 .myGlyphMarginClass {
 }
+
 .myContentClass {
   background: rgb(18, 105, 25);
 }

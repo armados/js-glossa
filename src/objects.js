@@ -549,7 +549,7 @@ class CallSubFunction extends Stmt {
 
     if (
       !scope.hasSymbol(this.fun.name) &&
-      !(scope.getSymbolObject(this.fun.name) instanceof STR.STRFunctionMethod) 
+      !(scope.getSymbolObject(this.fun.name) instanceof STR.STRFunctionMethod)
     )
       throw new GE.GError(
         "Η συνάρτηση " + this.fun.name + " δεν βρέθηκε.",
@@ -564,7 +564,8 @@ class CallSubFunction extends Stmt {
 
     var sendData = [];
     sendData[0] = argsResolved;
-    sendData[1] = scope;
+    sendData[1] = app;
+    sendData[2] = scope;
 
     var fun = scope.getGlobalSymbol(this.fun.name);
 
@@ -616,7 +617,8 @@ class CallSubProcedure extends Stmt {
 
     var sendData = [];
     sendData[0] = argsResolved;
-    sendData[1] = scope;
+    sendData[1] = app;
+    sendData[2] = scope;
 
     var recvData = await fun.apply(null, sendData);
 
@@ -708,10 +710,11 @@ class SubFunction extends Stmt {
         async function (...arrargs) {
           var scope2 = scope.makeSubScope();
 
-          await app.setActiveLine(scope2, this.cmdLineNo);
-
           var args = arrargs[0];
-          var parentScope = arrargs[1];
+          var app = arrargs[1];
+          var parentScope = arrargs[2];
+
+          await app.setActiveLine(scope2, this.cmdLineNo);
 
           if (args.length != params.length)
             throw new GE.GError(
@@ -837,10 +840,11 @@ class SubProcedure extends Stmt {
         async function (...arrargs) {
           var scope2 = scope.makeSubScope();
 
-          await app.setActiveLine(scope2, this.cmdLineNo);
-
           var args = arrargs[0];
-          var parentScope = arrargs[1];
+          var app = arrargs[1];
+          var parentScope = arrargs[2];
+
+          await app.setActiveLine(scope2, this.cmdLineNo);
 
           if (args.length != params.length)
             throw new GE.GError(

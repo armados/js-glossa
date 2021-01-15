@@ -625,6 +625,8 @@ $(document).ready(function () {
         //fontSize: 20,
         theme: "vs-dark",
         language: "glossa",
+        //fixedOverflowWidgets: true,
+        //automaticLayout: true
       });
 
       const mycode = `

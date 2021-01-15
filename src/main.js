@@ -257,19 +257,21 @@ class GlossaJS extends EventEmitter {
       "Α_Μ",
       new STR.STRBuiltinFunction(function (...arrArgs) {
         var args = arrArgs[0];
-        var cmdLineNo = arrArgs[2];
+        var app = arrArgs[1];
+        var parentScope = arrArgs[2];
+
         var A = args[0];
 
         if (args.length != 1)
           throw new GE.GError(
             "Λάθος αριθμός παραμέτρων κατά την κλήση της συνάρτησης.",
-            cmdLineNo
+            parentScope.cmdLineNo
           );
 
         if (A == null)
           throw new GE.GError(
             "Το αναγνωριστικό " + A + " δεν έχει αρχικοποιηθεί.",
-            cmdLineNo
+            parentScope.cmdLineNo
           );
 
         if (!HP.isNumber(A.val))
@@ -277,7 +279,7 @@ class GlossaJS extends EventEmitter {
             "Η συνάρτηση Α_Μ δεν μπορεί να δεχτεί αυτό το όρισμα." +
               "\n" +
               HP.valueTypeToString(A),
-            cmdLineNo
+            parentScope.cmdLineNo
           );
 
         // Use Math.floor or Math.trunc
@@ -289,19 +291,21 @@ class GlossaJS extends EventEmitter {
       "Α_Τ",
       new STR.STRBuiltinFunction(function (...arrArgs) {
         var args = arrArgs[0];
-        var cmdLineNo = arrArgs[2];
+        var app = arrArgs[1];
+        var parentScope = arrArgs[2];
+
         var A = args[0];
 
         if (args.length != 1)
           throw new GE.GError(
             "Λάθος αριθμός παραμέτρων κατά την κλήση της συνάρτησης.",
-            cmdLineNo
+            parentScope.cmdLineNo
           );
 
         if (A == null)
           throw new GE.GError(
             "Το αναγνωριστικό " + A + " δεν έχει αρχικοποιηθεί.",
-            cmdLineNo
+            parentScope.cmdLineNo
           );
 
         if (!HP.isNumber(A.val))
@@ -309,7 +313,7 @@ class GlossaJS extends EventEmitter {
             "Η συνάρτηση Α_Τ δεν μπορεί να δεχτεί αυτό το όρισμα." +
               "\n" +
               HP.valueTypeToString(A),
-            cmdLineNo
+            parentScope.cmdLineNo
           );
 
         if (A.val < 0) return new Atom.MNumber(-A.val);
@@ -321,19 +325,21 @@ class GlossaJS extends EventEmitter {
       "Τ_Ρ",
       new STR.STRBuiltinFunction(function (...arrArgs) {
         var args = arrArgs[0];
-        var cmdLineNo = arrArgs[2];
+        var app = arrArgs[1];
+        var parentScope = arrArgs[2];
+
         var A = args[0];
 
         if (args.length != 1)
           throw new GE.GError(
             "Λάθος αριθμός παραμέτρων κατά την κλήση της συνάρτησης.",
-            cmdLineNo
+            parentScope.cmdLineNo
           );
 
         if (A == null)
           throw new GE.GError(
             "Το αναγνωριστικό " + A + " δεν έχει αρχικοποιηθεί.",
-            cmdLineNo
+            parentScope.cmdLineNo
           );
 
         if (!HP.isNumber(A.val))
@@ -341,13 +347,13 @@ class GlossaJS extends EventEmitter {
             "Η συνάρτηση Τ_Ρ δεν μπορεί να δεχτεί αυτό το όρισμα." +
               "\n" +
               HP.valueTypeToString(A),
-            cmdLineNo
+            parentScope.cmdLineNo
           );
 
         if (A.val < 0)
           throw new GE.GError(
             "Η συνάρτηση Τ_Ρ δεν μπορεί να λάβει αρνητική τιμή.",
-            cmdLineNo
+            parentScope.cmdLineNo
           );
 
         return new Atom.MNumber(Math.sqrt(A.val));
@@ -358,19 +364,21 @@ class GlossaJS extends EventEmitter {
       "ΗΜ",
       new STR.STRBuiltinFunction(function (...arrArgs) {
         var args = arrArgs[0];
-        var cmdLineNo = arrArgs[2];
+        var app = arrArgs[1];
+        var parentScope = arrArgs[2];
+
         var A = args[0];
 
         if (args.length != 1)
           throw new GE.GError(
             "Λάθος αριθμός παραμέτρων κατά την κλήση της συνάρτησης.",
-            cmdLineNo
+            parentScope.cmdLineNo
           );
 
         if (A == null)
           throw new GE.GError(
             "Το αναγνωριστικό " + A + " δεν έχει αρχικοποιηθεί.",
-            cmdLineNo
+            parentScope.cmdLineNo
           );
 
         if (!HP.isNumber(A.val))
@@ -378,7 +386,7 @@ class GlossaJS extends EventEmitter {
             "Η συνάρτηση ΗΜ δεν μπορεί να δεχτεί αυτό το όρισμα." +
               "\n" +
               HP.valueTypeToString(A),
-            cmdLineNo
+            parentScope.cmdLineNo
           );
 
         const degrees = (A.val * Math.PI) / 180;
@@ -391,19 +399,21 @@ class GlossaJS extends EventEmitter {
       "ΣΥΝ",
       new STR.STRBuiltinFunction(function (...arrArgs) {
         var args = arrArgs[0];
-        var cmdLineNo = arrArgs[2];
+        var app = arrArgs[1];
+        var parentScope = arrArgs[2];
+
         var A = args[0];
 
         if (args.length != 1)
           throw new GE.GError(
             "Λάθος αριθμός παραμέτρων κατά την κλήση της συνάρτησης.",
-            cmdLineNo
+            parentScope.cmdLineNo
           );
 
         if (A == null)
           throw new GE.GError(
             "Το αναγνωριστικό " + A + " δεν έχει αρχικοποιηθεί.",
-            cmdLineNo
+            parentScope.cmdLineNo
           );
 
         if (!HP.isNumber(A.val))
@@ -411,7 +421,7 @@ class GlossaJS extends EventEmitter {
             "Η συνάρτηση ΣΥΝ δεν μπορεί να δεχτεί αυτό το όρισμα." +
               "\n" +
               HP.valueTypeToString(A),
-            cmdLineNo
+            parentScope.cmdLineNo
           );
 
         const degrees = (A.val * Math.PI) / 180;
@@ -424,19 +434,21 @@ class GlossaJS extends EventEmitter {
       "Ε",
       new STR.STRBuiltinFunction(function (...arrArgs) {
         var args = arrArgs[0];
-        var cmdLineNo = arrArgs[2];
+        var app = arrArgs[1];
+        var parentScope = arrArgs[2];
+
         var A = args[0];
 
         if (args.length != 1)
           throw new GE.GError(
             "Λάθος αριθμός παραμέτρων κατά την κλήση της συνάρτησης.",
-            cmdLineNo
+            parentScope.cmdLineNo
           );
 
         if (A == null)
           throw new GE.GError(
             "Το αναγνωριστικό " + A + " δεν έχει αρχικοποιηθεί.",
-            cmdLineNo
+            parentScope.cmdLineNo
           );
 
         if (!HP.isNumber(A.val))
@@ -444,7 +456,7 @@ class GlossaJS extends EventEmitter {
             "Η συνάρτηση Ε δεν μπορεί να δεχτεί αυτό το όρισμα." +
               "\n" +
               HP.valueTypeToString(A),
-            cmdLineNo
+            parentScope.cmdLineNo
           );
 
         return new Atom.MNumber(Math.exp(A.val));
@@ -455,7 +467,9 @@ class GlossaJS extends EventEmitter {
       "ΕΦ",
       new STR.STRBuiltinFunction(function (...arrArgs) {
         var args = arrArgs[0];
-        var cmdLineNo = arrArgs[2];
+        var app = arrArgs[1];
+        var parentScope = arrArgs[2];
+
         var A = args[0];
 
         if (args.length != 1)
@@ -488,7 +502,9 @@ class GlossaJS extends EventEmitter {
       "ΛΟΓ",
       new STR.STRBuiltinFunction(function (...arrArgs) {
         var args = arrArgs[0];
-        var cmdLineNo = arrArgs[2];
+        var app = arrArgs[1];
+        var parentScope = arrArgs[2];
+
         var A = args[0];
 
         if (args.length != 1)

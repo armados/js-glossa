@@ -7,7 +7,7 @@ class GrammarOhm {
 
             Application  = nl* KeyboardData* Program (SubFunction | SubProcedure)*
          
-            Program      = "ΠΡΟΓΡΑΜΜΑ" id nl+ DefDeclarations "ΑΡΧΗ" nl+ Block "ΤΕΛΟΣ_ΠΡΟΓΡΑΜΜΑΤΟΣ" nl*
+            Program      = "ΠΡΟΓΡΑΜΜΑ" id nl+ DefDeclarations "ΑΡΧΗ" nl+ Block "ΤΕΛΟΣ_ΠΡΟΓΡΑΜΜΑΤΟΣ" id? nl*
         
             SubFunction  = "ΣΥΝΑΡΤΗΣΗ"  id "(" AtLeastOneParameters ")" ":" ("ΑΚΕΡΑΙΑ" | "ΠΡΑΓΜΑΤΙΚΗ" | "ΧΑΡΑΚΤΗΡΑΣ" | "ΛΟΓΙΚΗ") nl+ DefDeclarations "ΑΡΧΗ" nl+ BlockFunction "ΤΕΛΟΣ_ΣΥΝΑΡΤΗΣΗΣ" nl*
             SubProcedure = "ΔΙΑΔΙΚΑΣΙΑ" id "(" Parameters ")" nl+ DefDeclarations "ΑΡΧΗ" nl+ Block "ΤΕΛΟΣ_ΔΙΑΔΙΚΑΣΙΑΣ" nl*
@@ -181,5 +181,5 @@ class GrammarOhm {
 }
 
 module.exports = {
-  GrammarOhm
+  GrammarOhm,
 };

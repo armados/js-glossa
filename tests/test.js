@@ -41,6 +41,6 @@ const filename = "../samples-dev/sample30.glo";
   //console.log('=======[ output buffer ] ========');
   //console.log(app.app.getOutput());
 
-  console.log("=======[ stats ] ========");
-  console.log("Total commands: ", app.getStats());
+  //console.log("=======[ stats ] ========");
+  //console.log("Total commands: ", app.getStats());
 })();

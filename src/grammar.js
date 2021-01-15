@@ -5,18 +5,18 @@ class GrammarOhm {
     const grammar = `
         Glwssa {
 
-            Application  = KeyboardData* Program (SubFunction | SubProcedure)*
+            Application  = nl* KeyboardData* Program (SubFunction | SubProcedure)*
          
-            Program      = "ΠΡΟΓΡΑΜΜΑ" id DefDeclarations "ΑΡΧΗ" Block "ΤΕΛΟΣ_ΠΡΟΓΡΑΜΜΑΤΟΣ"
+            Program      = "ΠΡΟΓΡΑΜΜΑ" id nl+ DefDeclarations "ΑΡΧΗ" nl+ Block "ΤΕΛΟΣ_ΠΡΟΓΡΑΜΜΑΤΟΣ" nl*
         
-            SubFunction  = "ΣΥΝΑΡΤΗΣΗ"  id "(" AtLeastOneParameters ")" ":" ("ΑΚΕΡΑΙΑ" | "ΠΡΑΓΜΑΤΙΚΗ" | "ΧΑΡΑΚΤΗΡΑΣ" | "ΛΟΓΙΚΗ")  DefDeclarations "ΑΡΧΗ" BlockFunction "ΤΕΛΟΣ_ΣΥΝΑΡΤΗΣΗΣ"
-            SubProcedure = "ΔΙΑΔΙΚΑΣΙΑ" id "(" Parameters ")" DefDeclarations "ΑΡΧΗ" Block "ΤΕΛΟΣ_ΔΙΑΔΙΚΑΣΙΑΣ"
+            SubFunction  = "ΣΥΝΑΡΤΗΣΗ"  id "(" AtLeastOneParameters ")" ":" ("ΑΚΕΡΑΙΑ" | "ΠΡΑΓΜΑΤΙΚΗ" | "ΧΑΡΑΚΤΗΡΑΣ" | "ΛΟΓΙΚΗ") nl+ DefDeclarations "ΑΡΧΗ" nl+ BlockFunction "ΤΕΛΟΣ_ΣΥΝΑΡΤΗΣΗΣ" nl*
+            SubProcedure = "ΔΙΑΔΙΚΑΣΙΑ" id "(" Parameters ")" nl+ DefDeclarations "ΑΡΧΗ" nl+ Block "ΤΕΛΟΣ_ΔΙΑΔΙΚΑΣΙΑΣ" nl*
         
-            DefDeclarations = ("ΣΤΑΘΕΡΕΣ" DefConstant+)?
-                              ("ΜΕΤΑΒΛΗΤΕΣ" DefVariables*)?
+            DefDeclarations = ("ΣΤΑΘΕΡΕΣ" nl+ DefConstant*)?
+                              ("ΜΕΤΑΒΛΗΤΕΣ" nl+ DefVariables*)?
         
-            DefConstant  = id "=" Expr
-            DefVariables = ("ΑΚΕΡΑΙΕΣ" | "ΠΡΑΓΜΑΤΙΚΕΣ" | "ΧΑΡΑΚΤΗΡΕΣ" | "ΛΟΓΙΚΕΣ") ":" VarParameters
+            DefConstant  = id "=" Expr nl+
+            DefVariables = ("ΑΚΕΡΑΙΕΣ" | "ΠΡΑΓΜΑΤΙΚΕΣ" | "ΧΑΡΑΚΤΗΡΕΣ" | "ΛΟΓΙΚΕΣ") ":" VarParameters nl+
            
             AssignExpr   = (IdTbl | id) "<-" Expr
         
@@ -74,8 +74,8 @@ class GrammarOhm {
             |  id
         
         
-            Block = InnerCommand*
-            BlockFunction = InnerCommandFunction*
+            Block = (InnerCommand nl+)*
+            BlockFunction = (InnerCommandFunction nl+)*
         
             InnerCommand         = AssignExpr | WhileExpr | DoWhileExpr | ForExpr | IfExpr | Stmt_Select | comment | CallSubProcedure | Stmt_Write | Stmt_Read
             InnerCommandFunction = AssignExpr | WhileExprFunction | DoWhileExprFunction | ForExprFunction | IfExprFunction | Stmt_Select | comment //FIXME:
@@ -83,22 +83,22 @@ class GrammarOhm {
             Stmt_Write = grapse Arguments 
             Stmt_Read  = diavase VarParameters
         
-            WhileExpr     = "ΟΣΟ" Expr "ΕΠΑΝΑΛΑΒΕ" Block "ΤΕΛΟΣ_ΕΠΑΝΑΛΗΨΗΣ"
-            DoWhileExpr   = "ΑΡΧΗ_ΕΠΑΝΑΛΗΨΗΣ" Block "ΜΕΧΡΙΣ_ΟΤΟΥ" Expr
-            ForExpr       = "ΓΙΑ" (IdTbl | id) "ΑΠΟ" Expr "ΜΕΧΡΙ" Expr (("ΜΕ_ΒΗΜΑ" | "ΜΕ ΒΗΜΑ") Expr)? nl* Block "ΤΕΛΟΣ_ΕΠΑΝΑΛΗΨΗΣ"
-            IfExpr        = "ΑΝ" Expr "ΤΟΤΕ" Block ("ΑΛΛΙΩΣ_ΑΝ" Expr "ΤΟΤΕ" Block)* ("ΑΛΛΙΩΣ" Block)? "ΤΕΛΟΣ_ΑΝ"
+            WhileExpr     = "ΟΣΟ" Expr "ΕΠΑΝΑΛΑΒΕ" nl+ Block "ΤΕΛΟΣ_ΕΠΑΝΑΛΗΨΗΣ"
+            DoWhileExpr   = "ΑΡΧΗ_ΕΠΑΝΑΛΗΨΗΣ" nl+ Block "ΜΕΧΡΙΣ_ΟΤΟΥ" Expr
+            ForExpr       = "ΓΙΑ" (IdTbl | id) "ΑΠΟ" Expr "ΜΕΧΡΙ" Expr (("ΜΕ_ΒΗΜΑ" | "ΜΕ ΒΗΜΑ") Expr)? nl+ Block "ΤΕΛΟΣ_ΕΠΑΝΑΛΗΨΗΣ"
+            IfExpr        = "ΑΝ" Expr "ΤΟΤΕ" nl+ Block ("ΑΛΛΙΩΣ_ΑΝ" Expr "ΤΟΤΕ" nl+ Block)* ("ΑΛΛΙΩΣ" nl+ Block)? "ΤΕΛΟΣ_ΑΝ"
         
             Subrange      = Expr ".." Expr
             SelectExpr    = "<" Expr | "<=" Expr | ">" Expr | ">=" Expr | "=" Expr | "<>" Expr
             SelectCase    = Subrange | SelectExpr | Expr 
             AtLeastOneSelectCase = NonemptyListOf<SelectCase, ",">
-            Stmt_Select   = "ΕΠΙΛΕΞΕ" Expr ("ΠΕΡΙΠΤΩΣΗ" ~"ΑΛΛΙΩΣ" AtLeastOneSelectCase Block)* ("ΠΕΡΙΠΤΩΣΗ" "ΑΛΛΙΩΣ" Block)? "ΤΕΛΟΣ_ΕΠΙΛΟΓΩΝ"
+            Stmt_Select   = "ΕΠΙΛΕΞΕ" Expr nl+ ("ΠΕΡΙΠΤΩΣΗ" ~"ΑΛΛΙΩΣ" AtLeastOneSelectCase nl+ Block)* ("ΠΕΡΙΠΤΩΣΗ" "ΑΛΛΙΩΣ" nl+ Block)? "ΤΕΛΟΣ_ΕΠΙΛΟΓΩΝ"
 
 
-            WhileExprFunction     = "ΟΣΟ" Expr "ΕΠΑΝΑΛΑΒΕ" BlockFunction "ΤΕΛΟΣ_ΕΠΑΝΑΛΗΨΗΣ"
-            DoWhileExprFunction   = "ΑΡΧΗ_ΕΠΑΝΑΛΗΨΗΣ" BlockFunction "ΜΕΧΡΙΣ_ΟΤΟΥ" Expr
-            ForExprFunction       = "ΓΙΑ" (IdTbl | id) "ΑΠΟ" Expr "ΜΕΧΡΙ" Expr (("ΜΕ_ΒΗΜΑ" | "ΜΕ ΒΗΜΑ") Expr)? nl* BlockFunction "ΤΕΛΟΣ_ΕΠΑΝΑΛΗΨΗΣ"
-            IfExprFunction        = "ΑΝ" Expr "ΤΟΤΕ" BlockFunction ("ΑΛΛΙΩΣ_ΑΝ" Expr "ΤΟΤΕ" BlockFunction)* ("ΑΛΛΙΩΣ" BlockFunction)? "ΤΕΛΟΣ_ΑΝ"
+            WhileExprFunction     = "ΟΣΟ" Expr "ΕΠΑΝΑΛΑΒΕ" nl+ BlockFunction "ΤΕΛΟΣ_ΕΠΑΝΑΛΗΨΗΣ"
+            DoWhileExprFunction   = "ΑΡΧΗ_ΕΠΑΝΑΛΗΨΗΣ" nl+ BlockFunction "ΜΕΧΡΙΣ_ΟΤΟΥ" Expr
+            ForExprFunction       = "ΓΙΑ" (IdTbl | id) "ΑΠΟ" Expr "ΜΕΧΡΙ" Expr (("ΜΕ_ΒΗΜΑ" | "ΜΕ ΒΗΜΑ") Expr)? nl+ BlockFunction "ΤΕΛΟΣ_ΕΠΑΝΑΛΗΨΗΣ"
+            IfExprFunction        = "ΑΝ" Expr "ΤΟΤΕ" nl+ BlockFunction ("ΑΛΛΙΩΣ_ΑΝ" Expr "ΤΟΤΕ" nl+ BlockFunction)* ("ΑΛΛΙΩΣ" nl+ BlockFunction)? "ΤΕΛΟΣ_ΑΝ"
         
 
 
@@ -117,7 +117,7 @@ class GrammarOhm {
             VarParameters       = NonemptyListOf<(IdTbl | id), ",">   // parameters when define variables
   
             AtLeastOneLit       = NonemptyListOf<Expr, ",">
-            KeyboardData = keyboardinput AtLeastOneLit
+            KeyboardData        = keyboardinput AtLeastOneLit nl+
         
             reservedWord = grapse | diavase | and | or | not | div | mod | boollit
         
@@ -165,12 +165,14 @@ class GrammarOhm {
             keyboardinput =  "!" whitespace* "KEYBOARD_INPUT:"
         
             comment = ~keyboardinput "!" (~nl any)*
-        
-            nl = "\\n" | "\\r"
+
+            nl = "\\n" | "\\r"        
 
             whitespace = "\t" | " "
-            breakLine  = "&"
-            space := whitespace | nl | comment | breakLine  
+            breakLine  = ("\\n" | "\\r")+ whitespace* "&"
+            space := breakLine | whitespace | comment  
+
+
         }
                 
         `;

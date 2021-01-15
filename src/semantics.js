@@ -76,7 +76,7 @@ var operation = {
   PriExp_not: function (_, a) {
     return new Atom.MathOpLogNot(a.toAST(), getLineNo(a));
   },
-  
+
   ExpAnd_andop: function (a, _, b) {
     return new Atom.MathOpLogAnd(a.toAST(), b.toAST(), getLineNo(a));
   },
@@ -101,7 +101,7 @@ var operation = {
     );
   },
 
-  KeyboardData: function (_1, a) {
+  KeyboardData: function (_1, a, _nl) {
     return new MO.InlineKeyboardInput(a.toAST());
   },
 
@@ -117,12 +117,15 @@ var operation = {
     _1,
     cond,
     _2,
+    _nl0,
     tb,
     _AlliosAn,
     condElseIf,
     _Tote,
+    _nl1,
     blockElseIf,
     _Allios,
+    _nl2,
     eb,
     _TelosAn
   ) {
@@ -161,7 +164,7 @@ var operation = {
     );
   },
 
-  WhileExpr: function (_OSO, cond, _EPANALAVE, body, _TELOS_EPANALHPSHS) {
+  WhileExpr: function (_OSO, cond, _EPANALAVE, _nl, body, _TELOS_EPANALHPSHS) {
     return new MO.Stmt_WhileLoop(
       cond.toAST(),
       cond.sourceString,
@@ -171,7 +174,7 @@ var operation = {
     );
   },
 
-  DoWhileExpr: function (_ARXH_EPANALHPSHS, body, _MEXRIS_OTOU, cond) {
+  DoWhileExpr: function (_ARXH_EPANALHPSHS, _nl, body, _MEXRIS_OTOU, cond) {
     return new MO.Stmt_Do_WhileLoop(
       cond.toAST(),
       cond.sourceString,
@@ -210,12 +213,15 @@ var operation = {
     _1,
     cond,
     _2,
+    _nl0,
     tb,
     _AlliosAn,
     condElseIf,
     _Tote,
+    _nl1,
     blockElseIf,
     _Allios,
+    _nl2,
     eb,
     _TelosAn
   ) {
@@ -261,7 +267,20 @@ var operation = {
     return new Atom.MSelectExpr(a.sourceString, b.toAST(), getLineNo(a));
   },
 
-  Stmt_Select: function (_EPILEXE, expr, _PERIPTOSH, exprcase, exprbody, _PERIPTOSH2, _ALLIOS, eb, _TELOS_EPILOGON) {
+  Stmt_Select: function (
+    _EPILEXE,
+    expr,
+    _nl0,
+    _PERIPTOSH,
+    exprcase,
+    _nl1,
+    exprbody,
+    _PERIPTOSH2,
+    _ALLIOS,
+    _nl2,
+    eb,
+    _TELOS_EPILOGON
+  ) {
     var arrCond = [];
     var arrCondStr = [];
     var arrLineNo = [];
@@ -351,6 +370,7 @@ var operation = {
     _OSO,
     cond,
     _EPANALAVE,
+    _nl,
     body,
     _TELOS_EPANALHPSHS
   ) {
@@ -363,7 +383,13 @@ var operation = {
     );
   },
 
-  DoWhileExprFunction: function (_ARXH_EPANALHPSHS, body, _MEXRIS_OTOU, cond) {
+  DoWhileExprFunction: function (
+    _ARXH_EPANALHPSHS,
+    _nl,
+    body,
+    _MEXRIS_OTOU,
+    cond
+  ) {
     return new MO.Stmt_Do_WhileLoop(
       cond.toAST(),
       cond.sourceString,
@@ -428,7 +454,7 @@ var operation = {
     return a.asIteration().toAST();
   },
 
-  Application: function (keyboardData, mainProg, subPrograms) {
+  Application: function (_nl0, keyboardData, mainProg, subPrograms) {
     return new MO.Application(
       keyboardData.toAST(),
       mainProg.toAST(),
@@ -439,10 +465,13 @@ var operation = {
   Program: function (
     _PROGRAMMA,
     name,
+    _nl0,
     decl,
     _ARXH,
+    _nl1,
     mBlock,
-    _TELOS_PROGRAMMATOS
+    _TELOS_PROGRAMMATOS,
+    _nl2
   ) {
     return new MO.Program(
       name.toAST(),
@@ -462,10 +491,13 @@ var operation = {
     _3,
     _4,
     funType,
+    _nl0,
     decl,
     _7,
+    _nl1,
     mBlock,
-    _TelosSynartisis
+    _TelosSynartisis,
+    _nl2
   ) {
     return new MO.SubFunction(
       name.toAST(),
@@ -478,7 +510,20 @@ var operation = {
     );
   },
 
-  SubProcedure: function (_1, name, _2, params, _3, decl, _6, mBlock, _TelosDiadikasias) {
+  SubProcedure: function (
+    _1,
+    name,
+    _2,
+    params,
+    _3,
+    _nl0,
+    decl,
+    _6,
+    _nl1,
+    mBlock,
+    _TelosDiadikasias,
+    _nl2
+  ) {
     return new MO.SubProcedure(
       name.toAST(),
       params.toAST(),
@@ -489,22 +534,22 @@ var operation = {
     );
   },
 
-  DefDeclarations: function (_1, statheres, _2, metavlites) {
+  DefDeclarations: function (_1, _nl0, statheres, _2, _nl1, metavlites) {
     return new MO.DefDeclarations(statheres.toAST(), metavlites.toAST());
   },
 
-  DefConstant: function (a, _, b) {
+  DefConstant: function (a, _, b, _nl) {
     return new MO.DefConstant(a.toAST(), b.toAST(), getLineNo(a));
   },
 
-  DefVariables: function (a, _, b) {
+  DefVariables: function (a, _, b, _nl) {
     return new MO.DefVariables(a.sourceString, b.toAST(), getLineNo(a));
   },
 
-  Block: function (a) {
+  Block: function (a, _nl) {
     return new MO.Stmt_Block(a.toAST());
   },
-  BlockFunction: function (a) {
+  BlockFunction: function (a, _nl) {
     return new MO.Stmt_Block(a.toAST());
   },
 

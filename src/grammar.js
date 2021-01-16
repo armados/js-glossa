@@ -76,10 +76,10 @@ function getGrammar() {
       AtLeastOneParameters   = NonemptyListOf<id, ",">
       Parameters             = ListOf<id, ",">
 
-      VarParameters          = NonemptyListOf<(IdTbl | id), ",">   // parameters when define variables
+      VarParameters          = NonemptyListOf<(IdTbl | id), ",">
 
       AtLeastOneLit          = NonemptyListOf<Expr, ",">
-      CommentInlineInput           = keyboardinput AtLeastOneLit nl+
+      CommentInlineInput     = keyboardinput AtLeastOneLit nl+
 
       reservedWord = grapse | diavase | and | or | not | div | mod | boollit
 

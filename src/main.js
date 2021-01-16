@@ -2,7 +2,7 @@
 
 const ohm = require("ohm-js");
 
-const GOhm = require("./grammar.js");
+const Gram = require("./grammar.js");
 const Semantics = require("./semantics");
 
 const Atom = require("./atom");
@@ -563,7 +563,7 @@ class GlossaJS extends EventEmitter {
     this.running = true;
 
     try {
-      var gram = ohm.grammar(new GOhm.GrammarOhm().getGrammar());
+      var gram = ohm.grammar(Gram.getGrammar());
       var sem = Semantics.load(gram);
 
       var match = gram.match(this.sourceCode);

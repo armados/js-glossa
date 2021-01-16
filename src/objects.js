@@ -154,7 +154,7 @@ class Stmt_Read extends Stmt {
   }
 }
 
-class Stmt_IfCond extends Stmt {
+class Stmt_If extends Stmt {
   constructor(
     arrCond,
     arrCondStr,
@@ -326,7 +326,7 @@ class Stmt_Select extends Stmt {
   }
 }
 
-class Stmt_WhileLoop extends Stmt {
+class Stmt_While extends Stmt {
   constructor(cond, condstr, body, cmdLineNoOso, cmdLineNoTelosEpanalhpshs) {
     super();
     this.cond = cond;
@@ -368,7 +368,7 @@ class Stmt_WhileLoop extends Stmt {
   }
 }
 
-class Stmt_Do_WhileLoop extends Stmt {
+class Stmt_Do_While extends Stmt {
   constructor(cond, condstr, body, cmdLineNoArxh, cmdLineNoMexrisOtou) {
     super();
     this.cond = cond;
@@ -408,7 +408,7 @@ class Stmt_Do_WhileLoop extends Stmt {
   }
 }
 
-class Stmt_ForLoop extends Stmt {
+class Stmt_For extends Stmt {
   constructor(
     variable,
     initval,
@@ -534,7 +534,7 @@ class Stmt_ForLoop extends Stmt {
   }
 }
 
-class CallSubFunction extends Stmt {
+class FunctionCall extends Stmt {
   constructor(fun, args, cmdLineNo) {
     super();
     this.fun = fun;
@@ -583,7 +583,7 @@ class CallSubFunction extends Stmt {
   }
 }
 
-class CallSubProcedure extends Stmt {
+class ProcedureCall extends Stmt {
   constructor(fun, args, cmdLineNo) {
     super();
     this.fun = fun;
@@ -677,7 +677,7 @@ class CallSubProcedure extends Stmt {
   }
 }
 
-class SubFunction extends Stmt {
+class UserFunction extends Stmt {
   constructor(
     name,
     params,
@@ -810,7 +810,7 @@ class SubFunction extends Stmt {
   }
 }
 
-class SubProcedure extends Stmt {
+class UserProcedure extends Stmt {
   constructor(
     name,
     params,
@@ -831,6 +831,7 @@ class SubProcedure extends Stmt {
   async resolve(app, scope) {
     var name = this.name.name;
     var params = this.params;
+
     var declarations = this.declarations;
     var body = this.body;
 
@@ -915,7 +916,7 @@ class SubProcedure extends Stmt {
   }
 }
 
-class DefDeclarations extends Stmt {
+class Declaration_Block extends Stmt {
   constructor(constants, variables) {
     super();
     this.constants = constants;
@@ -1066,7 +1067,7 @@ class Stmt_Block {
   }
 }
 
-class Program extends Stmt {
+class MainProgram extends Stmt {
   constructor(
     progname,
     declarations,
@@ -1099,7 +1100,7 @@ class Program extends Stmt {
   }
 }
 
-class InlineKeyboardInput {
+class CommentInlineInput {
   constructor(args) {
     this.args = args;
   }
@@ -1138,28 +1139,29 @@ module.exports = {
   Stmt_Write,
   Stmt_Read,
 
-  Stmt_IfCond,
+  Stmt_If,
   Stmt_Select,
 
-  Stmt_WhileLoop,
-  Stmt_Do_WhileLoop,
-  Stmt_ForLoop,
+  Stmt_While,
+  Stmt_Do_While,
+  Stmt_For,
 
   Stmt_Block,
 
-  Application,
-  Program,
+  MainProgram,
 
-  DefDeclarations,
+  Application,
+
+  Declaration_Block,
 
   DefConstant,
   DefVariables,
 
-  CallSubFunction,
-  CallSubProcedure,
+  FunctionCall,
+  ProcedureCall,
 
-  SubFunction,
-  SubProcedure,
+  UserFunction,
+  UserProcedure,
 
-  InlineKeyboardInput,
+  CommentInlineInput,
 };

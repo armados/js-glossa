@@ -101,8 +101,8 @@ var operation = {
     );
   },
 
-  KeyboardData: function (_1, a, _nl) {
-    return new MO.InlineKeyboardInput(a.toAST());
+  CommentInlineInput: function (_1, a, _nl) {
+    return new MO.CommentInlineInput(a.toAST());
   },
 
   id: function (a, b) {
@@ -153,7 +153,7 @@ var operation = {
     }
 
     var elseBody = eb ? eb.toAST()[0] : null;
-    return new MO.Stmt_IfCond(
+    return new MO.Stmt_If(
       arrCond,
       arrCondStr,
       arrLineNo,
@@ -165,7 +165,7 @@ var operation = {
   },
 
   WhileExpr: function (_OSO, cond, _EPANALAVE, _nl, body, _TELOS_EPANALHPSHS) {
-    return new MO.Stmt_WhileLoop(
+    return new MO.Stmt_While(
       cond.toAST(),
       cond.sourceString,
       body.toAST(),
@@ -175,7 +175,7 @@ var operation = {
   },
 
   DoWhileExpr: function (_ARXH_EPANALHPSHS, _nl, body, _MEXRIS_OTOU, cond) {
-    return new MO.Stmt_Do_WhileLoop(
+    return new MO.Stmt_Do_While(
       cond.toAST(),
       cond.sourceString,
       body.toAST(),
@@ -197,7 +197,7 @@ var operation = {
     body,
     _TELOS_EPANALHPSHS
   ) {
-    return new MO.Stmt_ForLoop(
+    return new MO.Stmt_For(
       variable.toAST(),
       initval.toAST(),
       finalval.toAST(),
@@ -249,7 +249,7 @@ var operation = {
     }
 
     var elseBody = eb ? eb.toAST()[0] : null;
-    return new MO.Stmt_IfCond(
+    return new MO.Stmt_If(
       arrCond,
       arrCondStr,
       arrLineNo,
@@ -374,7 +374,7 @@ var operation = {
     body,
     _TELOS_EPANALHPSHS
   ) {
-    return new MO.Stmt_WhileLoop(
+    return new MO.Stmt_While(
       cond.toAST(),
       cond.sourceString,
       body.toAST(),
@@ -390,7 +390,7 @@ var operation = {
     _MEXRIS_OTOU,
     cond
   ) {
-    return new MO.Stmt_Do_WhileLoop(
+    return new MO.Stmt_Do_While(
       cond.toAST(),
       cond.sourceString,
       body.toAST(),
@@ -412,7 +412,7 @@ var operation = {
     body,
     _TELOS_EPANALHPSHS
   ) {
-    return new MO.Stmt_ForLoop(
+    return new MO.Stmt_For(
       variable.toAST(),
       initval.toAST(),
       finalval.toAST(),
@@ -423,11 +423,13 @@ var operation = {
     );
   },
 
-  FunCall: function (a, _1, b, _2) {
-    return new MO.CallSubFunction(a.toAST(), b.toAST(), getLineNo(a));
+  FunctionCall: function (a, _1, b, _2) {
+    return new MO.FunctionCall(a.toAST(), b.toAST(), getLineNo(a));
   },
-  CallSubProcedure: function (_1, a, _2, b, _3) {
-    return new MO.CallSubProcedure(a.toAST(), b.toAST(), getLineNo(a));
+  ProcedureCall: function (_1, a, _2, b, _3) {
+    var params = b.toAST();
+    if (params.length > 0) params = params[0];
+    return new MO.ProcedureCall(a.toAST(), params, getLineNo(a));
   },
 
   Arguments: function (a) {
@@ -462,7 +464,7 @@ var operation = {
     );
   },
 
-  Program: function (
+  MainProgram: function (
     _PROGRAMMA,
     name,
     _nl0,
@@ -474,7 +476,7 @@ var operation = {
     name2,
     _nl2
   ) {
-    return new MO.Program(
+    return new MO.MainProgram(
       name.toAST(),
       decl.toAST(),
       mBlock.toAST(),
@@ -484,7 +486,7 @@ var operation = {
     );
   },
 
-  SubFunction: function (
+  UserFunction: function (
     _1,
     name,
     _2,
@@ -500,7 +502,7 @@ var operation = {
     _TelosSynartisis,
     _nl2
   ) {
-    return new MO.SubFunction(
+    return new MO.UserFunction(
       name.toAST(),
       params.toAST(),
       funType.sourceString,
@@ -511,11 +513,11 @@ var operation = {
     );
   },
 
-  SubProcedure: function (
+  UserProcedure: function (
     _1,
     name,
     _2,
-    params,
+    b,
     _3,
     _nl0,
     decl,
@@ -525,9 +527,11 @@ var operation = {
     _TelosDiadikasias,
     _nl2
   ) {
-    return new MO.SubProcedure(
+    var params = b.toAST();
+    if (params.length > 0) params = params[0];
+    return new MO.UserProcedure(
       name.toAST(),
-      params.toAST(),
+      params,
       decl.toAST(),
       mBlock.toAST(),
       getLineNo(name),
@@ -535,8 +539,8 @@ var operation = {
     );
   },
 
-  DefDeclarations: function (_1, _nl0, statheres, _2, _nl1, metavlites) {
-    return new MO.DefDeclarations(statheres.toAST(), metavlites.toAST());
+  Declaration_Block: function (_1, _nl0, statheres, _2, _nl1, metavlites) {
+    return new MO.Declaration_Block(statheres.toAST(), metavlites.toAST());
   },
 
   DefConstant: function (a, _, b, _nl) {

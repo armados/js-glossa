@@ -45,9 +45,7 @@
 
       <div class="gloBox">
         <div class="row no-gutters">
-          <div class="col-9">
-            <div class="gloAceEditor"></div>
-
+          <div class="col-12">
             <div class="gloControls">
               <div
                 class="btn-toolbar"
@@ -72,36 +70,16 @@
                   </button>
                 </div>
 
-                <div
-                  class="btn-group btn-group-toggle mr-2"
-                  role="group"
-                  data-toggle="buttons"
-                >
-                  <label class="btn btn-info btn-sm">
-                    <input
-                      type="radio"
-                      name="options"
-                      class="gloBtnShowInput"
-                    />
+                <div class="btn-group mr-2" role="group">
+                  <button class="btn btn-info btn-sm gloBtnShowInput">
                     Είσοδος
-                  </label>
-                  <label class="btn btn-info btn-sm active">
-                    <input
-                      type="radio"
-                      name="options"
-                      class="gloBtnShowOutput"
-                      checked
-                    />
+                  </button>
+                  <button class="btn btn-info btn-sm gloBtnShowOutput">
                     Έξοδος
-                  </label>
-                  <label class="btn btn-info btn-sm">
-                    <input
-                      type="radio"
-                      name="options"
-                      class="gloBtnShowOutputDetails"
-                    />
+                  </button>
+                  <button class="btn btn-info btn-sm gloBtnShowOutputDetails">
                     Αναλυτική Έξοδος
-                  </label>
+                  </button>
                 </div>
 
                 <div class="form-check form-check-inline">
@@ -118,6 +96,12 @@
                 </div>
               </div>
             </div>
+          </div>
+        </div>
+
+        <div class="row no-gutters">
+          <div class="col-9">
+            <div class="gloAceEditor"></div>
 
             <div class="tab-content">
               <div class="tab-pane gloInputTab" role="tabpanel">

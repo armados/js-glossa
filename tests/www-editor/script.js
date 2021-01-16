@@ -74,7 +74,7 @@ async function startProgramExecution(gloBoxID, runstep) {
     var value = prompt("Εισαγωγή τιμής στο αναγνωριστικό " + name);
     return value;
   });
-  
+
   app.setSourceCode(sourcecode);
   app.setInputBuffer(inputdata);
   app.setSlowRun(slowrun);
@@ -149,6 +149,20 @@ function UIStateInputRead(gloBoxID, msg) {
   textBox.scrollTop(textBox[0].scrollHeight);
 }
 
+function UIStateContinueRunning(gloBoxID) {
+  $("#" + gloBoxID)
+    .find(".gloRun i")
+    .removeClass("fa-play")
+    .addClass("fa-pause");
+}
+
+function UIStatePaused(gloBoxID) {
+  $("#" + gloBoxID)
+    .find(".gloRun i")
+    .removeClass("fa-pause")
+    .addClass("fa-play");
+}
+
 function UIStateStopped(gloBoxID, msg) {
   $("#" + gloBoxID)
     .find(".gloResult")
@@ -178,6 +192,11 @@ function UIStateFinished(gloBoxID) {
   $("#" + gloBoxID)
     .find(".gloSpinner")
     .hide();
+
+  $("#" + gloBoxID)
+    .find(".gloRun i")
+    .removeClass("fa-pause")
+    .addClass("fa-play");
 
   $("#" + gloBoxID)
     .find(".gloStop")
@@ -287,7 +306,11 @@ $(document).ready(function () {
       if (!app.isrunning()) {
         startProgramExecution(gloBoxID, false);
       } else {
-        app.setStepRun(false);
+        if (app.isPaused() == true) {
+          app.runContinue();
+        } else {
+          app.runPause();
+        }
       }
     });
 
@@ -336,32 +359,32 @@ $(document).ready(function () {
 
     var cookieData = Cookies.get("editorSourceCode");
 
-    const mycode = `
-    !Το πρόγραμμα αυτό επιδεικνύει την προτεραιότητα των τελεστών.
-    !Οι κανόνες προτεραιότητας από τον υψηλότερο στον χαμηλότερο:
-    !  8. Αναγνωριστικά, σταθερές, συναρτήσεις, παρενθέσεις
-    !  7. ^
-    !  6. πρόσημα -, +
-    !  5. *, /, div, mod
-    !  4. δυαδικοί τελεστές +, -,
-    !  3. < , <=, =, <>, >, >=
-    !  2. όχι
-    !  1. και
-    !  0. ή
-    ΠΡΟΓΡΑΜΜΑ ΠροτεραιότηταΤελεστών
-    ΑΡΧΗ
-    !Τα *, /, div, mod εκτελούνται από αριστερά προς δεξιά:
-      ΓΡΑΨΕ 4/3/2                                           !(4/3)/2
-    !Η δύναμη αποτιμάται από αριστερά προς τα δεξιά, εκτός κι αν
-    !το ρυθμίσετε διαφορετικά από τις επιλογές του Διερμηνευτή.
-      ΓΡΑΨΕ 4^3^2                                           !(4^3)^2
-    !Η δύναμη έχει μεγαλύτερη προτεραιότητα από τα πρόσημα:
-      ΓΡΑΨΕ -2^-2                                         !-(2^(-2))
-    !Το και έχει μεγαλύτερη προτεραιότητα από το ή:
-      ΓΡΑΨΕ ΑΛΗΘΗΣ Η ΑΛΗΘΗΣ ΚΑΙ ΨΕΥΔΗΣ                !Α ή (Α και Ψ)
-    !Το = έχει μεγαλύτερη προτεραιότητα από το όχι:
-      ΓΡΑΨΕ 1 = 2 = ΟΧΙ ΑΛΗΘΗΣ = ΨΕΥΔΗΣ       !(1 = 2) = όχι (Α = Ψ)
-    ΤΕΛΟΣ_ΠΡΟΓΡΑΜΜΑΤΟΣ 
+    const mycode = `!Το πρόγραμμα αυτό επιδεικνύει την προτεραιότητα των τελεστών.
+!Οι κανόνες προτεραιότητας από τον υψηλότερο στον χαμηλότερο:
+!  8. Αναγνωριστικά, σταθερές, συναρτήσεις, παρενθέσεις
+!  7. ^
+!  6. πρόσημα -, +
+!  5. *, /, div, mod
+!  4. δυαδικοί τελεστές +, -,
+!  3. < , <=, =, <>, >, >=
+!  2. όχι
+!  1. και
+!  0. ή
+ΠΡΟΓΡΑΜΜΑ ΠροτεραιότηταΤελεστών
+ΑΡΧΗ
+!Τα *, /, div, mod εκτελούνται από αριστερά προς δεξιά:
+  ΓΡΑΨΕ 4/3/2                                           !(4/3)/2
+!Η δύναμη αποτιμάται από αριστερά προς τα δεξιά, εκτός κι αν
+!το ρυθμίσετε διαφορετικά από τις επιλογές του Διερμηνευτή.
+  ΓΡΑΨΕ 4^3^2                                           !(4^3)^2
+!Η δύναμη έχει μεγαλύτερη προτεραιότητα από τα πρόσημα:
+  ΓΡΑΨΕ -2^-2                                         !-(2^(-2))
+!Το και έχει μεγαλύτερη προτεραιότητα από το ή:
+  ΓΡΑΨΕ ΑΛΗΘΗΣ Η ΑΛΗΘΗΣ ΚΑΙ ΨΕΥΔΗΣ                !Α ή (Α και Ψ)
+!Το = έχει μεγαλύτερη προτεραιότητα από το όχι:
+  ΓΡΑΨΕ 1 = 2 = ΟΧΙ ΑΛΗΘΗΣ = ΨΕΥΔΗΣ       !(1 = 2) = όχι (Α = Ψ)
+ΤΕΛΟΣ_ΠΡΟΓΡΑΜΜΑΤΟΣ 
+
     `;
 
     if (typeof cookieData !== "undefined" && cookieData != "")
@@ -402,6 +425,12 @@ $(document).ready(function () {
     });
     app.on("inputread", (data) => {
       UIStateInputRead(gloBoxID, data);
+    });
+    app.on("paused", () => {
+      UIStatePaused(gloBoxID);
+    });
+    app.on("continuerunning", () => {
+      UIStateContinueRunning(gloBoxID);
     });
   });
 });

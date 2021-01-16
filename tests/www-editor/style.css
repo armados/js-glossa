@@ -1,3 +1,9 @@
+.btn:focus {
+  outline: none  !important;
+  box-shadow: none !important;
+}
+
+
 .gloBox {
   border: 0px solid #ddd;
 }
@@ -9,8 +15,9 @@
 }
 
 .gloControls {
-  padding: 12px 15px;
-  background-color: rgb(231, 231, 231);
+  padding: 8px 8px;
+  background-color: rgb(32, 32, 29);
+  border-bottom: 1px solid #333;
 }
 
 .gloTabHeader {

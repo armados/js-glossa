@@ -113,27 +113,29 @@ class GlossaJS extends EventEmitter {
         }
 
         if (
-          this.app.config["slowrunflag"] == true ||
-          this.app.config["runstep"] == true
+          this.app["config"]["slowrunflag"] == true ||
+          this.app["config"]["runstep"] == true
         ) {
           this.app.postMessage("line", line);
           this.app.postMessage("memory", scope.getMemory());
         }
 
-        if (this.app.config["runstep"] == false) {
-          if (this.app.config["slowrunflag"] == false) {
-            await this.app.sleepFunc(this.app.config["runspeed"]);
+        if (this.app["config"]["runstep"] == false) {
+          if (this.app["config"]["slowrunflag"] == false) {
+            await this.app.sleepFunc(this.app["config"]["runspeed"]);
           } else {
-            await this.app.sleepFunc(this.app.config["slowrunspeed"]);
+            await this.app.sleepFunc(this.app["config"]["slowrunspeed"]);
           }
         } else {
+          this.app.postMessage("paused");
           while (
-            this.app.config["runstepflag"] == false &&
-            this.app.config["runstep"] == true
+            this.app["config"]["runstepflag"] == false &&
+            this.app["config"]["runstep"] == true
           ) {
-            await this.app.sleepFunc(15);
+            await this.app.sleepFunc(25);
           }
-          this.app.config["runstepflag"] = false;
+          this.app["config"]["runstepflag"] = false;
+          this.app.postMessage("continuerunning");
         }
       },
 
@@ -150,8 +152,8 @@ class GlossaJS extends EventEmitter {
         }
 
         if (
-          this.app.config["slowrunflag"] == true ||
-          this.app.config["runstep"] == true
+          this.app["config"]["slowrunflag"] == true ||
+          this.app["config"]["runstep"] == true
         ) {
           this.app.postMessage("line", line);
           this.app.postMessage("memory", scope.getMemory());
@@ -166,11 +168,11 @@ class GlossaJS extends EventEmitter {
 
         if (
           this.app.statistics["totalAssignCmd"] >=
-          this.app.config["maxExecutionCmd"]
+          this.app["config"]["maxExecutionCmd"]
         )
           throw new GE.GError(
             "Το πρόγραμμα έφτασε το μέγιστο επιτρεπτό όριο των " +
-              this.app.config["maxExecutionCmd"] +
+              this.app["config"]["maxExecutionCmd"] +
               " εντολών εκχώρησης.",
             this.cmdLineNo
           ); //FIXME:
@@ -182,11 +184,11 @@ class GlossaJS extends EventEmitter {
 
         if (
           this.app.statistics["totalLogicalComp"] >=
-          this.app.config["maxLogicalComp"]
+          this.app["config"]["maxLogicalComp"]
         )
           throw new GE.GError(
             "Το πρόγραμμα έφτασε το μέγιστο επιτρεπτό όριο των " +
-              this.app.config["maxLogicalComp"] +
+              this.app["config"]["maxLogicalComp"] +
               " συνθηκών.",
             this.cmdLineNo
           ); //FIXME:
@@ -218,21 +220,6 @@ class GlossaJS extends EventEmitter {
 
   getStats() {
     return this.app["statistics"];
-  }
-
-  isrunning() {
-    return this.running;
-  }
-
-  setStepRun(flag) {
-    this.app.config["runstep"] = flag;
-  }
-  setSlowRun(flag) {
-    this.app.config["slowrunflag"] = flag;
-  }
-
-  setDebugMode(flag) {
-    this.app["config"]["debugmode"] = flag;
   }
 
   setSourceCode(data) {
@@ -475,13 +462,13 @@ class GlossaJS extends EventEmitter {
         if (args.length != 1)
           throw new GE.GError(
             "Λάθος αριθμός παραμέτρων κατά την κλήση της συνάρτησης.",
-            cmdLineNo
+            parentScope.cmdLineNo
           );
 
         if (A == null)
           throw new GE.GError(
             "Το αναγνωριστικό " + A + " δεν έχει αρχικοποιηθεί.",
-            cmdLineNo
+            parentScope.cmdLineNo
           );
 
         if (!HP.isNumber(A.val))
@@ -489,7 +476,7 @@ class GlossaJS extends EventEmitter {
             "Η συνάρτηση ΕΦ δεν μπορεί να δεχτεί αυτό το όρισμα." +
               "\n" +
               HP.valueTypeToString(A),
-            cmdLineNo
+            parentScope.cmdLineNo
           );
 
         const degrees = (A.val * Math.PI) / 180;
@@ -510,13 +497,13 @@ class GlossaJS extends EventEmitter {
         if (args.length != 1)
           throw new GE.GError(
             "Λάθος αριθμός παραμέτρων κατά την κλήση της συνάρτησης.",
-            cmdLineNo
+            parentScope.cmdLineNo
           );
 
         if (A == null)
           throw new GE.GError(
             "Το αναγνωριστικό " + A + " δεν έχει αρχικοποιηθεί.",
-            cmdLineNo
+            parentScope.cmdLineNo
           );
 
         if (!HP.isNumber(A.val))
@@ -524,13 +511,13 @@ class GlossaJS extends EventEmitter {
             "Η συνάρτηση ΛΟΓ δεν μπορεί να δεχτεί αυτό το όρισμα." +
               "\n" +
               HP.valueTypeToString(A),
-            cmdLineNo
+            parentScope.cmdLineNo
           );
 
         if (A.val <= 0)
           throw new GE.GError(
             "Η συνάρτηση ΛΟΓ δεν μπορεί να δεχτεί αρνητικές τιμές ή το μηδέν.",
-            cmdLineNo
+            parentScope.cmdLineNo
           );
 
         return new Atom.MNumber(Math.log(A.val));
@@ -547,14 +534,42 @@ class GlossaJS extends EventEmitter {
     delete this.scope.globalStorage[name];
   }
 
-  async terminate() {
+  isrunning() {
+    return this.running;
+  }
+
+  setStepRun(flag) {
+    this.app["config"]["runstep"] = flag;
+  }
+  setSlowRun(flag) {
+    this.app["config"]["slowrunflag"] = flag;
+  }
+
+  setDebugMode(flag) {
+    this.app["config"]["debugmode"] = flag;
+  }
+
+  terminate() {
     this.stoprunning = true;
   }
 
-  async runNext() {
-    this.app.config["runstep"] = true; // switch to step mode
-    this.app.config["runstepflag"] = true;
-    this.app.postMessage("runnext");
+  runNext() {
+    this.app["config"]["runstep"] = true; // switch to step mode
+    this.app["config"]["runstepflag"] = true;
+  }
+
+  runPause() {
+    this.app["config"]["runstep"] = true;
+    this.app["config"]["runstepflag"] = false;
+  }
+
+  runContinue() {
+    this.app["config"]["runstep"] = false;
+    this.app["config"]["runstepflag"] = true;
+  }
+
+  isPaused() {
+    return this.app["config"]["runstep"];
   }
 
   async run() {
@@ -573,6 +588,7 @@ class GlossaJS extends EventEmitter {
       var result = sem(match).toAST();
       if (!result) throw new GE.GError(result);
 
+      this.app.postMessage("continuerunning");
       await result.resolve(this.app, this.scope);
     } catch (e) {
       //console.log('GlossaJS: Main(): Error catch: ' + e);

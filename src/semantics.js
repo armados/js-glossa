@@ -473,13 +473,14 @@ var operation = {
     _nl1,
     mBlock,
     _TELOS_PROGRAMMATOS,
-    name2,
+    nameend,
     _nl2
   ) {
     return new MO.MainProgram(
       name.toAST(),
       decl.toAST(),
       mBlock.toAST(),
+      nameend.toAST(),
       getLineNo(_PROGRAMMA),
       getLineNo(_ARXH),
       getLineNo(_TELOS_PROGRAMMATOS)

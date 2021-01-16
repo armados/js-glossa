@@ -1072,6 +1072,7 @@ class MainProgram extends Stmt {
     progname,
     declarations,
     body,
+    prognameend,
     cmdLineNoProgramma,
     cmdLineNoArxh,
     cmdLineNoTelosProgrammatos
@@ -1080,12 +1081,23 @@ class MainProgram extends Stmt {
     this.progname = progname;
     this.declarations = declarations;
     this.body = body;
+    this.prognameend = prognameend;
     this.cmdLineNoProgramma = cmdLineNoProgramma;
     this.cmdLineNoArxh = cmdLineNoArxh;
     this.cmdLineNoTelosProgrammatos = cmdLineNoTelosProgrammatos;
   }
 
   async resolve(app, scope) {
+
+    if (this.prognameend.length > 0) {
+      if (this.progname.name != this.prognameend[0].name) {
+        throw new GE.GError(
+          "Το όνομα του κυρίως προγράμματος στο ΤΕΛΟΣ_ΠΡΟΓΡΑΜΜΑΤΟΣ δεν είναι το ίδιο με το αρχικό.",
+          this.cmdLineNoTelosProgrammatos
+        );
+      }
+    }
+
     scope.addSymbol(this.progname.name, new STR.STRReservedName(null));
 
     await app.setActiveLine(scope, this.cmdLineNoProgramma);

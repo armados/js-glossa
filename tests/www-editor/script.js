@@ -69,14 +69,17 @@ async function startProgramExecution(gloBoxID, runstep) {
 
   var app = getGlossaApp(gloBoxID);
   app.init();
+
+  app.setSourceCode(sourcecode);
+  app.setInputBuffer(inputdata);
+
   app.setDebugMode(true);
+
   app.setReadInputFunction(function (name) {
     var value = prompt("Εισαγωγή τιμής στο αναγνωριστικό " + name);
     return value;
   });
 
-  app.setSourceCode(sourcecode);
-  app.setInputBuffer(inputdata);
   app.setSlowRun(slowrun);
   app.setStepRun(runstep);
   app.run();
@@ -92,8 +95,7 @@ function UIStateStarted(gloBoxID) {
 
   aceeditor.setReadOnly(true);
 
-  $("#" + gloBoxID)
-  .addClass("running");
+  $("#" + gloBoxID).addClass("running");
 
   $("#" + gloBoxID)
     .find(".gloSpinner")
@@ -157,6 +159,10 @@ function UIStateContinueRunning(gloBoxID) {
     .find(".gloRun i")
     .removeClass("fa-play")
     .addClass("fa-pause");
+
+  $("#" + gloBoxID)
+    .removeClass("paused")
+    .addClass("running");
 }
 
 function UIStatePaused(gloBoxID) {
@@ -164,6 +170,10 @@ function UIStatePaused(gloBoxID) {
     .find(".gloRun i")
     .removeClass("fa-pause")
     .addClass("fa-play");
+
+  $("#" + gloBoxID)
+    .removeClass("running")
+    .addClass("paused");
 }
 
 function UIStateStopped(gloBoxID, msg) {
@@ -192,8 +202,7 @@ function UIStateFinished(gloBoxID) {
   aceeditor.setHighlightActiveLine(false);
   aceeditor.setReadOnly(false);
 
-  $("#" + gloBoxID)
-  .removeClass("running");
+  $("#" + gloBoxID).removeClass("running");
 
   $("#" + gloBoxID)
     .find(".gloSpinner")
@@ -296,7 +305,7 @@ $(document).ready(function () {
       if (!app.isrunning()) {
         startProgramExecution(gloBoxID, true);
       } else {
-        app.runNext();
+        app.runNextStatement();
       }
     });
 
@@ -311,12 +320,10 @@ $(document).ready(function () {
 
       if (!app.isrunning()) {
         startProgramExecution(gloBoxID, false);
+      } else if (!app.runIsPaused()) {
+        app.runPause();
       } else {
-        if (app.isPaused() == true) {
-          app.runContinue();
-        } else {
-          app.runPause();
-        }
+        app.runContinue();
       }
     });
 
@@ -329,7 +336,6 @@ $(document).ready(function () {
 
       var app = getGlossaApp(gloBoxID);
 
-      app.runNext();
       app.terminate();
     });
 
@@ -365,18 +371,7 @@ $(document).ready(function () {
 
     var cookieData = Cookies.get("editorSourceCode");
 
-    const mycode = `!Το πρόγραμμα αυτό επιδεικνύει την προτεραιότητα των τελεστών.
-!Οι κανόνες προτεραιότητας από τον υψηλότερο στον χαμηλότερο:
-!  8. Αναγνωριστικά, σταθερές, συναρτήσεις, παρενθέσεις
-!  7. ^
-!  6. πρόσημα -, +
-!  5. *, /, div, mod
-!  4. δυαδικοί τελεστές +, -,
-!  3. < , <=, =, <>, >, >=
-!  2. όχι
-!  1. και
-!  0. ή
-ΠΡΟΓΡΑΜΜΑ ΠροτεραιότηταΤελεστών
+    const mycode = `ΠΡΟΓΡΑΜΜΑ ΠροτεραιότηταΤελεστών
 ΑΡΧΗ
 !Τα *, /, div, mod εκτελούνται από αριστερά προς δεξιά:
   ΓΡΑΨΕ 4/3/2                                           !(4/3)/2
@@ -389,9 +384,7 @@ $(document).ready(function () {
   ΓΡΑΨΕ ΑΛΗΘΗΣ Η ΑΛΗΘΗΣ ΚΑΙ ΨΕΥΔΗΣ                !Α ή (Α και Ψ)
 !Το = έχει μεγαλύτερη προτεραιότητα από το όχι:
   ΓΡΑΨΕ 1 = 2 = ΟΧΙ ΑΛΗΘΗΣ = ΨΕΥΔΗΣ       !(1 = 2) = όχι (Α = Ψ)
-ΤΕΛΟΣ_ΠΡΟΓΡΑΜΜΑΤΟΣ 
-
-    `;
+ΤΕΛΟΣ_ΠΡΟΓΡΑΜΜΑΤΟΣ`;
 
     if (typeof cookieData !== "undefined" && cookieData != "")
       editor.setValue(cookieData);

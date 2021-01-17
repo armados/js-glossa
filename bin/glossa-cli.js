@@ -15,29 +15,13 @@ var args = minimist(process.argv.slice(2), {
   boolean: [
     "version",
     "noninteractive",
-    "rmfuncat",
-    "rmfuncam",
-    "rmfunctr",
-    "rmfunchm",
-    "rmfuncsyn",
-    "rmfuncef",
-    "rmfunce",
-    "rmfunclog",
   ],
   alias: {
     v: "version",
     i: "input",
     o: "output",
     k: "keyboard",
-    non: "noninteractive",
-    rmat: "rmfuncat",
-    rmam: "rmfuncam",
-    rmtr: "rmfunctr",
-    rmhm: "rmfunchm",
-    rmsyn: "rmfuncsyn",
-    rmef: "rmfuncef",
-    rme: "rmfunce",
-    rmlog: "rmfunclog",
+    non: "noninteractive"
   },
   default: {},
   stopEarly: true /* populate _ with first non-option */,
@@ -74,9 +58,12 @@ if (args["keyboard"]) {
 var errorMsg = "";
 
 (async function main() {
+
   var app = new GLO.GlossaJS();
+
   app.setSourceCode(sourceCode);
   app.setDebugMode(false);
+
   app.setInputBuffer(keyboardInput);
 
   app.on("outputappend", (data) => {
@@ -105,11 +92,4 @@ var errorMsg = "";
     //console.log(e);
   }
 
-  //performance.measure("apprun", "app-start", "app-end");
-
-  //console.log("=======[ output buffer ] ========");
-  //console.log(app.app.getOutput());
-
-  //console.log("=======[ stats ] ========");
-  //console.log("Total commands: ", app.getStats());
 })();

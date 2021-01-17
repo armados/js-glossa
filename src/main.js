@@ -5,11 +5,11 @@ const ohm = require("ohm-js");
 const Gram = require("./grammar.js");
 const Semantics = require("./semantics");
 
-const Atom = require("./atom");
 const GE = require("./gclasses");
 const STR = require("./storage");
 
 const HP = require("./helper");
+const GLBF = require("./globalfunctions");
 
 const EventEmitter = require("events");
 
@@ -28,7 +28,8 @@ class GlossaJS extends EventEmitter {
 
     this.scope = new STR.SScope();
 
-    this.initGlobalFunction(this.scope);
+    var glbfunctions = new GLBF.GlobalFunctions();
+    glbfunctions.applyAllFunctionsToScope(this.scope);
 
     this.app = {
       config: {},
@@ -163,11 +164,11 @@ class GlossaJS extends EventEmitter {
       },
 
       incrAssignCounter: () => {
-        this.app.statistics["totalAssignCmd"] =
-          this.app.statistics["totalAssignCmd"] + 1;
+        this.app["statistics"]["totalAssignCmd"] =
+          this.app["statistics"]["totalAssignCmd"] + 1;
 
         if (
-          this.app.statistics["totalAssignCmd"] >=
+          this.app["statistics"]["totalAssignCmd"] >=
           this.app["config"]["maxExecutionCmd"]
         )
           throw new GE.GError(
@@ -179,11 +180,11 @@ class GlossaJS extends EventEmitter {
       },
 
       incrLogicalCounter: () => {
-        this.app.statistics["totalLogicalComp"] =
-          this.app.statistics["totalLogicalComp"] + 1;
+        this.app["statistics"]["totalLogicalComp"] =
+          this.app["statistics"]["totalLogicalComp"] + 1;
 
         if (
-          this.app.statistics["totalLogicalComp"] >=
+          this.app["statistics"]["totalLogicalComp"] >=
           this.app["config"]["maxLogicalComp"]
         )
           throw new GE.GError(
@@ -201,7 +202,7 @@ class GlossaJS extends EventEmitter {
     this.app["config"]["debugmode"] = false;
     this.app["config"]["slowrunflag"] = false;
     this.app["config"]["runspeed"] = 0;
-    this.app["config"]["slowrunspeed"] = 250;
+    this.app["config"]["slowrunspeed"] = 150;
     this.app["config"]["runstep"] = false;
     this.app["config"]["runstepflag"] = false;
 
@@ -209,14 +210,9 @@ class GlossaJS extends EventEmitter {
     this.app["statistics"]["totalLogicalComp"] = 0;
   }
 
-  // ======================
-
-  // =====================================
-
   setReadInputFunction(func) {
     this.app["inputFunction"] = func;
   }
-  // ==============================
 
   getStats() {
     return this.app["statistics"];
@@ -238,306 +234,6 @@ class GlossaJS extends EventEmitter {
     }
   }
 
-  // ===================================================
-  initGlobalFunction(scope) {
-    scope.addSymbol(
-      "Α_Μ",
-      new STR.STRBuiltinFunction(function (...arrArgs) {
-        var args = arrArgs[0];
-        var app = arrArgs[1];
-        var parentScope = arrArgs[2];
-
-        var A = args[0];
-
-        if (args.length != 1)
-          throw new GE.GError(
-            "Λάθος αριθμός παραμέτρων κατά την κλήση της συνάρτησης.",
-            parentScope.cmdLineNo
-          );
-
-        if (A == null)
-          throw new GE.GError(
-            "Το αναγνωριστικό " + A + " δεν έχει αρχικοποιηθεί.",
-            parentScope.cmdLineNo
-          );
-
-        if (!HP.isNumber(A.val))
-          throw new GE.GError(
-            "Η συνάρτηση Α_Μ δεν μπορεί να δεχτεί αυτό το όρισμα." +
-              "\n" +
-              HP.valueTypeToString(A),
-            parentScope.cmdLineNo
-          );
-
-        // Use Math.floor or Math.trunc
-        return new Atom.MNumber(Math.floor(A.val));
-      })
-    );
-
-    scope.addSymbol(
-      "Α_Τ",
-      new STR.STRBuiltinFunction(function (...arrArgs) {
-        var args = arrArgs[0];
-        var app = arrArgs[1];
-        var parentScope = arrArgs[2];
-
-        var A = args[0];
-
-        if (args.length != 1)
-          throw new GE.GError(
-            "Λάθος αριθμός παραμέτρων κατά την κλήση της συνάρτησης.",
-            parentScope.cmdLineNo
-          );
-
-        if (A == null)
-          throw new GE.GError(
-            "Το αναγνωριστικό " + A + " δεν έχει αρχικοποιηθεί.",
-            parentScope.cmdLineNo
-          );
-
-        if (!HP.isNumber(A.val))
-          throw new GE.GError(
-            "Η συνάρτηση Α_Τ δεν μπορεί να δεχτεί αυτό το όρισμα." +
-              "\n" +
-              HP.valueTypeToString(A),
-            parentScope.cmdLineNo
-          );
-
-        if (A.val < 0) return new Atom.MNumber(-A.val);
-        return new Atom.MNumber(A.val);
-      })
-    );
-
-    scope.addSymbol(
-      "Τ_Ρ",
-      new STR.STRBuiltinFunction(function (...arrArgs) {
-        var args = arrArgs[0];
-        var app = arrArgs[1];
-        var parentScope = arrArgs[2];
-
-        var A = args[0];
-
-        if (args.length != 1)
-          throw new GE.GError(
-            "Λάθος αριθμός παραμέτρων κατά την κλήση της συνάρτησης.",
-            parentScope.cmdLineNo
-          );
-
-        if (A == null)
-          throw new GE.GError(
-            "Το αναγνωριστικό " + A + " δεν έχει αρχικοποιηθεί.",
-            parentScope.cmdLineNo
-          );
-
-        if (!HP.isNumber(A.val))
-          throw new GE.GError(
-            "Η συνάρτηση Τ_Ρ δεν μπορεί να δεχτεί αυτό το όρισμα." +
-              "\n" +
-              HP.valueTypeToString(A),
-            parentScope.cmdLineNo
-          );
-
-        if (A.val < 0)
-          throw new GE.GError(
-            "Η συνάρτηση Τ_Ρ δεν μπορεί να λάβει αρνητική τιμή.",
-            parentScope.cmdLineNo
-          );
-
-        return new Atom.MNumber(Math.sqrt(A.val));
-      })
-    );
-
-    scope.addSymbol(
-      "ΗΜ",
-      new STR.STRBuiltinFunction(function (...arrArgs) {
-        var args = arrArgs[0];
-        var app = arrArgs[1];
-        var parentScope = arrArgs[2];
-
-        var A = args[0];
-
-        if (args.length != 1)
-          throw new GE.GError(
-            "Λάθος αριθμός παραμέτρων κατά την κλήση της συνάρτησης.",
-            parentScope.cmdLineNo
-          );
-
-        if (A == null)
-          throw new GE.GError(
-            "Το αναγνωριστικό " + A + " δεν έχει αρχικοποιηθεί.",
-            parentScope.cmdLineNo
-          );
-
-        if (!HP.isNumber(A.val))
-          throw new GE.GError(
-            "Η συνάρτηση ΗΜ δεν μπορεί να δεχτεί αυτό το όρισμα." +
-              "\n" +
-              HP.valueTypeToString(A),
-            parentScope.cmdLineNo
-          );
-
-        const degrees = (A.val * Math.PI) / 180;
-
-        return new Atom.MNumber(Math.sin(degrees));
-      })
-    );
-
-    scope.addSymbol(
-      "ΣΥΝ",
-      new STR.STRBuiltinFunction(function (...arrArgs) {
-        var args = arrArgs[0];
-        var app = arrArgs[1];
-        var parentScope = arrArgs[2];
-
-        var A = args[0];
-
-        if (args.length != 1)
-          throw new GE.GError(
-            "Λάθος αριθμός παραμέτρων κατά την κλήση της συνάρτησης.",
-            parentScope.cmdLineNo
-          );
-
-        if (A == null)
-          throw new GE.GError(
-            "Το αναγνωριστικό " + A + " δεν έχει αρχικοποιηθεί.",
-            parentScope.cmdLineNo
-          );
-
-        if (!HP.isNumber(A.val))
-          throw new GE.GError(
-            "Η συνάρτηση ΣΥΝ δεν μπορεί να δεχτεί αυτό το όρισμα." +
-              "\n" +
-              HP.valueTypeToString(A),
-            parentScope.cmdLineNo
-          );
-
-        const degrees = (A.val * Math.PI) / 180;
-
-        return new Atom.MNumber(Math.cos(degrees));
-      })
-    );
-
-    scope.addSymbol(
-      "Ε",
-      new STR.STRBuiltinFunction(function (...arrArgs) {
-        var args = arrArgs[0];
-        var app = arrArgs[1];
-        var parentScope = arrArgs[2];
-
-        var A = args[0];
-
-        if (args.length != 1)
-          throw new GE.GError(
-            "Λάθος αριθμός παραμέτρων κατά την κλήση της συνάρτησης.",
-            parentScope.cmdLineNo
-          );
-
-        if (A == null)
-          throw new GE.GError(
-            "Το αναγνωριστικό " + A + " δεν έχει αρχικοποιηθεί.",
-            parentScope.cmdLineNo
-          );
-
-        if (!HP.isNumber(A.val))
-          throw new GE.GError(
-            "Η συνάρτηση Ε δεν μπορεί να δεχτεί αυτό το όρισμα." +
-              "\n" +
-              HP.valueTypeToString(A),
-            parentScope.cmdLineNo
-          );
-
-        return new Atom.MNumber(Math.exp(A.val));
-      })
-    );
-
-    scope.addSymbol(
-      "ΕΦ",
-      new STR.STRBuiltinFunction(function (...arrArgs) {
-        var args = arrArgs[0];
-        var app = arrArgs[1];
-        var parentScope = arrArgs[2];
-
-        var A = args[0];
-
-        if (args.length != 1)
-          throw new GE.GError(
-            "Λάθος αριθμός παραμέτρων κατά την κλήση της συνάρτησης.",
-            parentScope.cmdLineNo
-          );
-
-        if (A == null)
-          throw new GE.GError(
-            "Το αναγνωριστικό " + A + " δεν έχει αρχικοποιηθεί.",
-            parentScope.cmdLineNo
-          );
-
-        if (!HP.isNumber(A.val))
-          throw new GE.GError(
-            "Η συνάρτηση ΕΦ δεν μπορεί να δεχτεί αυτό το όρισμα." +
-              "\n" +
-              HP.valueTypeToString(A),
-            parentScope.cmdLineNo
-          );
-
-        const degrees = (A.val * Math.PI) / 180;
-
-        return new Atom.MNumber(Math.tan(degrees));
-      })
-    );
-
-    scope.addSymbol(
-      "ΛΟΓ",
-      new STR.STRBuiltinFunction(function (...arrArgs) {
-        var args = arrArgs[0];
-        var app = arrArgs[1];
-        var parentScope = arrArgs[2];
-
-        var A = args[0];
-
-        if (args.length != 1)
-          throw new GE.GError(
-            "Λάθος αριθμός παραμέτρων κατά την κλήση της συνάρτησης.",
-            parentScope.cmdLineNo
-          );
-
-        if (A == null)
-          throw new GE.GError(
-            "Το αναγνωριστικό " + A + " δεν έχει αρχικοποιηθεί.",
-            parentScope.cmdLineNo
-          );
-
-        if (!HP.isNumber(A.val))
-          throw new GE.GError(
-            "Η συνάρτηση ΛΟΓ δεν μπορεί να δεχτεί αυτό το όρισμα." +
-              "\n" +
-              HP.valueTypeToString(A),
-            parentScope.cmdLineNo
-          );
-
-        if (A.val <= 0)
-          throw new GE.GError(
-            "Η συνάρτηση ΛΟΓ δεν μπορεί να δεχτεί αρνητικές τιμές ή το μηδέν.",
-            parentScope.cmdLineNo
-          );
-
-        return new Atom.MNumber(Math.log(A.val));
-      })
-    );
-  }
-
-  removeGlobalFunction(name) {
-    if (!this.scope.globalStorage.hasOwnProperty(name))
-      throw new GE.GError(
-        "Critical: removeGlobalFunction(): Global function not exist " + name
-      );
-
-    delete this.scope.globalStorage[name];
-  }
-
-  isrunning() {
-    return this.running;
-  }
-
   setStepRun(flag) {
     this.app["config"]["runstep"] = flag;
   }
@@ -549,11 +245,17 @@ class GlossaJS extends EventEmitter {
     this.app["config"]["debugmode"] = flag;
   }
 
-  terminate() {
-    this.stoprunning = true;
+  
+  isrunning() {
+    return this.running;
   }
 
-  runNext() {
+  terminate() {
+    this.stoprunning = true;
+    this.runNextStatement();
+  }
+
+  runNextStatement() {
     this.app["config"]["runstep"] = true; // switch to step mode
     this.app["config"]["runstepflag"] = true;
   }
@@ -568,8 +270,16 @@ class GlossaJS extends EventEmitter {
     this.app["config"]["runstepflag"] = true;
   }
 
-  isPaused() {
+  runIsPaused() {
     return this.app["config"]["runstep"];
+  }
+
+  getOutput() {
+    return this.app.getOutput().join("\n");
+  }
+
+  getOutputDetails() {
+    return this.app.getOutputDetails().join("\n");
   }
 
   async run() {
@@ -606,12 +316,6 @@ class GlossaJS extends EventEmitter {
     }
   }
 
-  getOutput() {
-    return this.app.getOutput().join("\n");
-  }
-  getOutputDetails() {
-    return this.app.getOutputDetails().join("\n");
-  }
 }
 
 module.exports = {

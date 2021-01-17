@@ -15,11 +15,14 @@
 
 .gloControls {
   padding: 8px 8px;
-  background-color: rgb(32, 32, 29);
-  border-bottom: 1px solid #333;
+  background-color: #f8f8f8;
 }
 .running .gloControls {
-  background-color: rgb(112, 47, 4);
+  background-color: rgb(42, 145, 73);
+}
+
+.paused .gloControls {
+  background-color: rgb(214, 152, 81);
 }
 
 .gloTabHeader {
@@ -74,7 +77,7 @@ pre,
   color: #efefef;
 }
 .gloMemory table td {
-  padding: 0px;
+  padding: 3px 5px;
 }
 
 .gloResultPre,

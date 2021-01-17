@@ -93,6 +93,9 @@ function UIStateStarted(gloBoxID) {
   aceeditor.setReadOnly(true);
 
   $("#" + gloBoxID)
+  .addClass("running");
+
+  $("#" + gloBoxID)
     .find(".gloSpinner")
     .show();
 
@@ -188,6 +191,9 @@ function UIStateFinished(gloBoxID) {
 
   aceeditor.setHighlightActiveLine(false);
   aceeditor.setReadOnly(false);
+
+  $("#" + gloBoxID)
+  .removeClass("running");
 
   $("#" + gloBoxID)
     .find(".gloSpinner")

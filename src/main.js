@@ -39,6 +39,8 @@ class GlossaJS extends EventEmitter {
       inputData: [],
       inputFunction: null,
 
+      breakPoints: [],
+
       outputData: [],
       outputDataDetails: [],
 
@@ -119,6 +121,12 @@ class GlossaJS extends EventEmitter {
         ) {
           this.app.postMessage("line", line);
           this.app.postMessage("memory", scope.getMemory());
+        }
+
+        if (this.app.breakPoints.includes(line)) {
+          this.app.postMessage("reachbreakpoint", line);
+          this.app["config"]["runstep"] = true;
+          this.app["config"]["runstepflag"] = false;
         }
 
         if (this.app["config"]["runstep"] == false) {
@@ -234,6 +242,8 @@ class GlossaJS extends EventEmitter {
     }
   }
 
+  // =====================================
+
   setStepRun(flag) {
     this.app["config"]["runstep"] = flag;
   }
@@ -245,7 +255,6 @@ class GlossaJS extends EventEmitter {
     this.app["config"]["debugmode"] = flag;
   }
 
-  
   isrunning() {
     return this.running;
   }
@@ -282,6 +291,10 @@ class GlossaJS extends EventEmitter {
     return this.app.getOutputDetails().join("\n");
   }
 
+  addBreakpoint(line) {
+    this.app.breakPoints.push(line);
+  }
+
   async run() {
     this.app.postMessage("started");
 
@@ -315,7 +328,6 @@ class GlossaJS extends EventEmitter {
       this.app.postMessage("finished");
     }
   }
-
 }
 
 module.exports = {

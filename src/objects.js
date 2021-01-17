@@ -1092,7 +1092,7 @@ class MainProgram extends Stmt {
     if (this.prognameend.length > 0) {
       if (this.progname.name != this.prognameend[0].name) {
         throw new GE.GError(
-          "Το όνομα του κυρίως προγράμματος δεν είναι το ίδιο που δηλώθηκε αρχικά.",
+          "Το όνομα του κυρίως προγράμματος δεν είναι το ίδιο με αυτό που δηλώθηκε αρχικά.",
           this.cmdLineNoTelosProgrammatos
         );
       }

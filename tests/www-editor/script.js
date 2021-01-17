@@ -67,6 +67,8 @@ async function startProgramExecution(gloBoxID, runstep) {
     .find(".gloSlowRun")
     .is(":checked");
 
+  var breakpointsArray = aceeditor.session.getBreakpoints();
+
   var app = getGlossaApp(gloBoxID);
   app.init();
 
@@ -82,6 +84,9 @@ async function startProgramExecution(gloBoxID, runstep) {
 
   app.setSlowRun(slowrun);
   app.setStepRun(runstep);
+
+  for (var line in breakpointsArray) app.addBreakpoint(Number(line) + 1);
+
   app.run();
 }
 
@@ -93,9 +98,8 @@ function UIStateStarted(gloBoxID) {
     .attr("id");
   var aceeditor = ace.edit(editorid);
 
+  aceeditor.setHighlightActiveLine(true);
   aceeditor.setReadOnly(true);
-
-  $("#" + gloBoxID).addClass("running");
 
   $("#" + gloBoxID)
     .find(".gloSpinner")
@@ -202,8 +206,6 @@ function UIStateFinished(gloBoxID) {
   aceeditor.setHighlightActiveLine(false);
   aceeditor.setReadOnly(false);
 
-  $("#" + gloBoxID).removeClass("running");
-
   $("#" + gloBoxID)
     .find(".gloSpinner")
     .hide();
@@ -228,7 +230,6 @@ function UIStateUpdateCodeLine(gloBoxID, line) {
     .attr("id");
   var aceeditor = ace.edit(editorid);
 
-  aceeditor.setHighlightActiveLine(true);
   aceeditor.gotoLine(line);
 }
 
@@ -371,20 +372,26 @@ $(document).ready(function () {
 
     var cookieData = Cookies.get("editorSourceCode");
 
-    const mycode = `ΠΡΟΓΡΑΜΜΑ ΠροτεραιότηταΤελεστών
-ΑΡΧΗ
-!Τα *, /, div, mod εκτελούνται από αριστερά προς δεξιά:
-  ΓΡΑΨΕ 4/3/2                                           !(4/3)/2
-!Η δύναμη αποτιμάται από αριστερά προς τα δεξιά, εκτός κι αν
-!το ρυθμίσετε διαφορετικά από τις επιλογές του Διερμηνευτή.
-  ΓΡΑΨΕ 4^3^2                                           !(4^3)^2
-!Η δύναμη έχει μεγαλύτερη προτεραιότητα από τα πρόσημα:
-  ΓΡΑΨΕ -2^-2                                         !-(2^(-2))
-!Το και έχει μεγαλύτερη προτεραιότητα από το ή:
-  ΓΡΑΨΕ ΑΛΗΘΗΣ Η ΑΛΗΘΗΣ ΚΑΙ ΨΕΥΔΗΣ                !Α ή (Α και Ψ)
-!Το = έχει μεγαλύτερη προτεραιότητα από το όχι:
-  ΓΡΑΨΕ 1 = 2 = ΟΧΙ ΑΛΗΘΗΣ = ΨΕΥΔΗΣ       !(1 = 2) = όχι (Α = Ψ)
-ΤΕΛΟΣ_ΠΡΟΓΡΑΜΜΑΤΟΣ`;
+    const mycode = `ΠΡΟΓΡΑΜΜΑ Άσκηση
+
+    ΜΕΤΑΒΛΗΤΕΣ
+    ΑΚΕΡΑΙΕΣ: α
+    
+    ΑΡΧΗ
+    ΓΡΑΨΕ Α_Μ(9.3), Α_Τ(-100),Τ_Ρ(9)
+    
+    ΓΡΑΨΕ 'Καλημέρα'
+    
+    ΓΡΑΨΕ 'Δωσε τιμή:'
+    ΔΙΑΒΑΣΕ α
+    ΓΡΑΨΕ 'Έδωσες τον αριθμό ', α
+    
+    ΓΙΑ α ΑΠΟ 1 ΜΕΧΡΙ α
+      ΓΡΑΨΕ 'Καλημέρα κόσμε', α
+    ΤΕΛΟΣ_ΕΠΑΝΑΛΗΨΗΣ
+    
+    ΤΕΛΟΣ_ΠΡΟΓΡΑΜΜΑΤΟΣ
+    `;
 
     if (typeof cookieData !== "undefined" && cookieData != "")
       editor.setValue(cookieData);
@@ -398,17 +405,76 @@ $(document).ready(function () {
       Cookies.set("editorSourceCode", editor.getValue());
     });
 
+    editor.on("guttermousedown", function (e) {
+      var target = e.domEvent.target;
+
+      if (target.className.indexOf("ace_gutter-cell") == -1) {
+        return;
+      }
+
+      if (!editor.isFocused()) {
+        return;
+      }
+
+      if (e.clientX > 25 + target.getBoundingClientRect().left) {
+        return;
+      }
+
+      var breakpoints = e.editor.session.getBreakpoints(row, 0);
+      var row = e.getDocumentPosition().row;
+
+      // If there's a breakpoint already defined, it should be removed, offering the toggle feature
+      if (typeof breakpoints[row] === typeof undefined) {
+        e.editor.session.setBreakpoint(row);
+      } else {
+        e.editor.session.clearBreakpoint(row);
+      }
+
+      e.stop();
+    });
+
+    editor.on("change", function (e) {
+      var breakpointsArray = editor.session.getBreakpoints();
+      if (Object.keys(editor.session.getBreakpoints()).length > 0) {
+        if (e.lines.length > 1) {
+          var breakpoint = parseInt(Object.keys(breakpointsArray)[0]);
+          var lines = e.lines.length - 1;
+          var start = e.start.row;
+          var end = e.end.row;
+          if (e.action === "insert") {
+            //console.log('new lines',breakpoint, start , end );
+            if (breakpoint > start) {
+              //console.log('breakpoint forward');
+              editor.session.clearBreakpoint(breakpoint);
+              editor.session.setBreakpoint(breakpoint + lines);
+            }
+          } else if (e.action === "remove") {
+            //console.log('removed lines',breakpoint, start , end);
+            if (breakpoint > start && breakpoint < end) {
+              //console.log('breakpoint remove');
+              editor.session.clearBreakpoint(breakpoint);
+            }
+            if (breakpoint >= end) {
+              //console.log('breakpoint behind');
+              editor.session.clearBreakpoint(breakpoint);
+              editor.session.setBreakpoint(breakpoint - lines);
+            }
+          }
+        }
+      }
+    });
+
     app.on("started", () => {
       UIStateStarted(gloBoxID);
     });
-    app.on("stopped", (msg) => {
-      UIStateStopped(gloBoxID, msg);
+    app.on("stopped", (data) => {
+      UIStateStopped(gloBoxID, data);
     });
     app.on("finished", () => {
       UIStateFinished(gloBoxID);
     });
-    app.on("error", (msg) => {
-      UIStateError(gloBoxID, msg);
+    app.on("error", (data) => {
+      UIStateError(gloBoxID, data);
     });
     app.on("line", (data) => {
       UIStateUpdateCodeLine(gloBoxID, data);
@@ -430,6 +496,9 @@ $(document).ready(function () {
     });
     app.on("continuerunning", () => {
       UIStateContinueRunning(gloBoxID);
+    });
+    app.on("reachbreakpoint", (data) => {
+      UIStateUpdateCodeLine(gloBoxID, data)
     });
   });
 });

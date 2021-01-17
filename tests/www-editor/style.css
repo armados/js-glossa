@@ -15,14 +15,7 @@
 
 .gloControls {
   padding: 8px 8px;
-  background-color: #f8f8f8;
-}
-.running .gloControls {
-  background-color: rgb(42, 145, 73);
-}
-
-.paused .gloControls {
-  background-color: rgb(214, 152, 81);
+  background-color: #faf9f9;
 }
 
 .gloTabHeader {
@@ -112,7 +105,7 @@ textarea.gloCodeKeyboardInput {
 }
 
 span.errorMsg {
-  color: rgb(243, 62, 62);
+  color: rgb(255, 92, 92);
 }
 span.noticeMsg {
   color: rgb(240, 108, 20);
@@ -127,4 +120,10 @@ span.readValue {
 
 .myContentClass {
   background: rgb(18, 105, 25);
+}
+
+.ace_gutter-cell.ace_breakpoint {
+  border-radius: 20px 0px 0px 20px;
+  /* Change the color of the breakpoint if you want */
+  box-shadow: 0px 0px 1px 1px #c59100 inset;
 }

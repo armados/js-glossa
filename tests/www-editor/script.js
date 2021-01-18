@@ -98,7 +98,6 @@ function UIStateStarted(gloBoxID) {
     .attr("id");
   var aceeditor = ace.edit(editorid);
 
-  aceeditor.setHighlightActiveLine(true);
   aceeditor.setReadOnly(true);
 
   $("#" + gloBoxID)
@@ -203,7 +202,6 @@ function UIStateFinished(gloBoxID) {
     .attr("id");
   var aceeditor = ace.edit(editorid);
 
-  aceeditor.setHighlightActiveLine(false);
   aceeditor.setReadOnly(false);
 
   $("#" + gloBoxID)
@@ -340,6 +338,26 @@ $(document).ready(function () {
       app.terminate();
     });
 
+  $(this)
+    .find(".gloSlowRunBtn")
+    .click(function (e) {
+      e.preventDefault();
+
+      var gloBoxID = $(this).closest(".gloBox").attr("id");
+
+      var app = getGlossaApp(gloBoxID);
+
+      if (app.getSlowRun()) {
+        app.setSlowRun(false);
+        //$(this).removeClass('btn-danger').addClass('btn-success');
+        $(this).html('<i class="fas fa-rocket"></i>');
+      } else {
+        app.setSlowRun(true);
+        //$(this).removeClass('btn-success').addClass('btn-danger');
+        $(this).html('<i class="fas fa-bicycle"></i>');
+      }
+    });
+
   $(".gloBox").each(function (index) {
     var gloBoxID = $(this).attr("id");
 
@@ -359,7 +377,7 @@ $(document).ready(function () {
     editor.renderer.setDisplayIndentGuides(true);
     editor.renderer.setShowPrintMargin(false);
     editor.renderer.setShowGutter(true);
-    editor.setHighlightActiveLine(false);
+    editor.setHighlightActiveLine(true);
     editor.clearSelection();
     require("ace/config").setModuleUrl(
       "ace/theme/gruvbox",
@@ -498,7 +516,7 @@ $(document).ready(function () {
       UIStateContinueRunning(gloBoxID);
     });
     app.on("reachbreakpoint", (data) => {
-      UIStateUpdateCodeLine(gloBoxID, data)
+      UIStateUpdateCodeLine(gloBoxID, data);
     });
   });
 });

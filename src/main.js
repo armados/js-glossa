@@ -250,6 +250,9 @@ class GlossaJS extends EventEmitter {
   setSlowRun(flag) {
     this.app["config"]["slowrunflag"] = flag;
   }
+  getSlowRun() {
+    return this.app["config"]["slowrunflag"];
+  }
 
   setDebugMode(flag) {
     this.app["config"]["debugmode"] = flag;

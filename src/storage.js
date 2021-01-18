@@ -315,20 +315,20 @@ class SScope {
     if (name in this.localStorage) return this.localStorage[name].get();
 
     throw new GE.GError(
-      "Το αναγνωριστικό " + name + " δεν βρέθηκε στο τμήμα δηλώσεων.",
+      "Το αναγνωριστικό " + name + " δεν βρέθηκε.",
       this.cmdLineNo
-    ); //FIXME:
+    );
   }
 
   getGlobalSymbol(name) {
     if (name in this.globalStorage) return this.globalStorage[name].get();
 
     throw new GE.GError(
-      "Critical:: 02 Internal??? Το αναγνωριστικό " +
+      "Το αναγνωριστικό " +
         name +
-        " δεν έχει δηλωθεί στο τμήμα δηλώσεων.",
+        " δεν βρέθηκε.",
       this.cmdLineNo
-    ); //FIXME:
+    );
   }
 
   getSymbolObject(name) {
@@ -337,11 +337,11 @@ class SScope {
     if (name in this.globalStorage) return this.globalStorage[name];
 
     throw new GE.GError(
-      "Critical:: 03 Internal???Το αναγνωριστικό " +
+      "Το αναγνωριστικό " +
         name +
-        " δεν έχει δηλωθεί στο τμήμα δηλώσεων.",
+        " δεν βρέθηκε.",
       this.cmdLineNo
-    ); //FIXME:
+    );
   }
 }
 

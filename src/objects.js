@@ -50,7 +50,6 @@ class Stmt_Write extends Stmt {
     var output = [];
 
     for (var i = 0, len = this.args.length; i < len; i++) {
-      //await app.setActiveLineWithoutStep(scope, this.cmdLineNo); FIXME: not needed here??
 
       var argParam = this.args[i];
 

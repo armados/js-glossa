@@ -247,6 +247,7 @@ class GlossaJS extends EventEmitter {
   setStepRun(flag) {
     this.app["config"]["runstep"] = flag;
   }
+  
   setSlowRun(flag) {
     this.app["config"]["slowrunflag"] = flag;
   }

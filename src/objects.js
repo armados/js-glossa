@@ -50,7 +50,6 @@ class Stmt_Write extends Stmt {
     var output = [];
 
     for (var i = 0, len = this.args.length; i < len; i++) {
-
       var argParam = this.args[i];
 
       if (argParam instanceof Atom.MSymbolTableCell)
@@ -799,7 +798,8 @@ class UserFunction extends Stmt {
 
           if (!scope2.getSymbol(name))
             throw new GE.GError(
-              "Η συνάρτηση δεν επέστρεψε τιμή με το όνομά της."
+              "Η συνάρτηση δεν επέστρεψε τιμή με το όνομά της.",
+              this.cmdLineNoTelosSynartisis
             );
 
           return scope2.getSymbol(name);
@@ -1087,7 +1087,6 @@ class MainProgram extends Stmt {
   }
 
   async resolve(app, scope) {
-
     if (this.prognameend.length > 0) {
       if (this.progname.name != this.prognameend[0].name) {
         throw new GE.GError(

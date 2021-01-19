@@ -8,7 +8,7 @@
     "watch": "webpack --watch --mode=development",
     "build": "webpack --mode=production",
     "build:dev": "webpack --mode=development",
-    "binary": "pkg -t latest-linux-x64,latest-win-x64,latest-macos-x64,latest-linux-armv6 -o ./dist/binary/glossa-cli ./bin/glossa-cli.js"
+    "binary": "pkg -t latest-linux-x64,latest-win-x64,latest-macos-x64 -o ./dist/binary/glossa-cli ./bin/glossa-cli.js"
   },
   "bin": {
     "glossa-cli": "bin/glossa-cli.js"

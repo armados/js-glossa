@@ -147,6 +147,7 @@ class Stmt_Read extends Stmt {
       }
 
       scope.setSymbol(arg.name, sym);
+
       app.postMessage("inputread", data);
     }
   }
@@ -277,8 +278,6 @@ class Stmt_Select extends Stmt {
         await app.setActiveLine(scope, arrLineNo[i]);
 
         var condResult = await arrCond[i][j].resolve(app, scope);
-        //console.log("select PERIPTOSI resolved value: " + condResult);
-        //console.log(condResult);
 
         if (!(condResult instanceof Atom.MBoolean))
           throw new GE.GError(
@@ -299,7 +298,6 @@ class Stmt_Select extends Stmt {
         app.incrLogicalCounter();
 
         if (condResult.val == true) {
-          //fixeme!  fix line here
           await arrBody[i].resolve(app, scope);
           await app.setActiveLine(scope, cmdLineNoTelosEpilogwn);
           return;
@@ -716,7 +714,8 @@ class UserFunction extends Stmt {
 
           if (args.length != params.length)
             throw new GE.GError(
-              "Λάθος αριθμός παραμέτρων κατά την κλήση της συνάρτησης."
+              "Λάθος αριθμός παραμέτρων κατά την κλήση της συνάρτησης.",
+              this.cmdLineNo
             );
 
           var ftype = null;
@@ -750,7 +749,8 @@ class UserFunction extends Stmt {
               throw new GE.GError(
                 "Η παράμετρος " +
                   param.name +
-                  "δεν έχει δηλωθεί στο τμήμα δηλώσεων."
+                  "δεν έχει δηλωθεί στο τμήμα δηλώσεων.",
+                this.cmdLineNo
               );
 
             if (!(args[i] instanceof STR.STRTableName))
@@ -760,10 +760,16 @@ class UserFunction extends Stmt {
                 scope2.getSymbol(param.name).constructor.name !=
                 args[i].constructor.name
               )
-                throw new GE.GError("Οι πίνακες έχουν διαφορετικό τύπο.");
+                throw new GE.GError(
+                  "Οι πίνακες έχουν διαφορετικό τύπο.",
+                  this.cmdLineNo
+                );
 
               if (!scope2.getSymbol(param.name).arraySizeEquals(args[i]))
-                throw new GE.GError("Οι πίνακες έχουν διαφορετικό μέγεθος.");
+                throw new GE.GError(
+                  "Οι πίνακες έχουν διαφορετικό μέγεθος.",
+                  this.cmdLineNo
+                );
 
               var tblDimensions = scope2.getSymbol(param.name).getSize().length;
 
@@ -848,7 +854,8 @@ class UserProcedure extends Stmt {
 
           if (args.length != params.length)
             throw new GE.GError(
-              "Λάθος αριθμός παραμέτρων κατά την κλήση της διαδικασίας."
+              "Λάθος αριθμός παραμέτρων κατά την κλήση της διαδικασίας.",
+              this.cmdLineNo
             );
 
           // Declare constants and variables
@@ -860,7 +867,8 @@ class UserProcedure extends Stmt {
               throw new GE.GError(
                 "Η παράμετρος " +
                   param.name +
-                  " δεν έχει δηλωθεί στο τμήμα δηλώσεων."
+                  " δεν έχει δηλωθεί στο τμήμα δηλώσεων.",
+                this.cmdLineNo
               );
 
             if (!(args[i] instanceof STR.STRTableName))
@@ -870,10 +878,16 @@ class UserProcedure extends Stmt {
                 scope2.getSymbol(param.name).constructor.name !=
                 args[i].constructor.name
               )
-                throw new GE.GError("Οι πίνακες έχουν διαφορετικό τύπο.");
+                throw new GE.GError(
+                  "Οι πίνακες έχουν διαφορετικό τύπο.",
+                  this.cmdLineNo
+                );
 
               if (!scope2.getSymbol(param.name).arraySizeEquals(args[i]))
-                throw new GE.GError("Οι πίνακες έχουν διαφορετικό μέγεθος.");
+                throw new GE.GError(
+                  "Οι πίνακες έχουν διαφορετικό μέγεθος.",
+                  this.cmdLineNo
+                );
 
               var tblDimensions = scope2.getSymbol(param.name).getSize().length;
 
@@ -923,14 +937,10 @@ class Declaration_Block extends Stmt {
   }
   async resolve(app, scope) {
     if (this.constants[0])
-      for (const a of this.constants[0]) {
-        await a.resolve(app, scope);
-      }
+      for (const a of this.constants[0]) await a.resolve(app, scope);
 
     if (this.variables[0])
-      for (const a of this.variables[0]) {
-        await a.resolve(app, scope);
-      }
+      for (const a of this.variables[0]) await a.resolve(app, scope);
   }
 }
 
@@ -969,7 +979,6 @@ class DefVariables extends Stmt {
     await app.setActiveLine(scope, this.cmdLineNo);
 
     var varType = this.varType;
-    //console.log('======> DefVariables: : ', varType);
 
     for (const e of this.sym) {
       //this.sym.forEach(function (e) {
@@ -1060,9 +1069,7 @@ class Stmt_Block {
     this.block = block;
   }
   async resolve(app, scope) {
-    for (const stmt of this.block) {
-      await stmt.resolve(app, scope);
-    }
+    for (const stmt of this.block) await stmt.resolve(app, scope);
   }
 }
 
@@ -1087,14 +1094,14 @@ class MainProgram extends Stmt {
   }
 
   async resolve(app, scope) {
-    if (this.prognameend.length > 0) {
-      if (this.progname.name != this.prognameend[0].name) {
-        throw new GE.GError(
-          "Το όνομα του κυρίως προγράμματος δεν είναι το ίδιο με αυτό που δηλώθηκε αρχικά.",
-          this.cmdLineNoTelosProgrammatos
-        );
-      }
-    }
+    if (
+      this.prognameend.length > 0 &&
+      this.progname.name != this.prognameend[0].name
+    )
+      throw new GE.GError(
+        "Το όνομα του κυρίως προγράμματος δεν είναι το ίδιο με αυτό που δηλώθηκε αρχικά.",
+        this.cmdLineNoTelosProgrammatos
+      );
 
     scope.addSymbol(this.progname.name, new STR.STRReservedName(null));
 
@@ -1130,14 +1137,10 @@ class Application {
   }
   async resolve(app, scope) {
     if (app.inputIsEmptyBuffer())
-      for (const a of this.inputdata) {
-        await a.resolve(app, scope);
-      }
+      for (const a of this.inputdata) await a.resolve(app, scope);
 
     if (this.subprograms.length)
-      for (const a of this.subprograms) {
-        await a.resolve(app, scope);
-      }
+      for (const a of this.subprograms) await a.resolve(app, scope);
 
     await this.program.resolve(app, scope);
   }

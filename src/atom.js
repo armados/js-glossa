@@ -704,13 +704,13 @@ class MSelectSubrange {
 }
 
 class MSelectExpr {
-  constructor(oper, A, cmdLineNo = null) {
+  constructor(oper, A, line = null) {
     this.oper = oper;
     this.A = A;
-    this.cmdLineNo = cmdLineNo;
+    this.line = line;
   }
   async resolve(app, scope) {
-    scope.cmdLineNo = this.cmdLineNo; //FIXME:
+    scope.cmdLineNo = this.line; //FIXME:
 
     var a = await this.A.resolve(app, scope);
 
@@ -725,35 +725,34 @@ class MSelectExpr {
 }
 
 class MSymbol {
-  constructor(name, cmdLineNo = null) {
+  constructor(name, line = null) {
     this.name = name;
-    this.cmdLineNo = cmdLineNo;
+    this.line = line;
   }
   async resolve(app, scope) {
-    scope.cmdLineNo = await this.cmdLineNo; //FIXME:
+    //scope.cmdLineNo = await this.line; //FIXME:
 
     return scope.getSymbol(this.name);
   }
 }
 
 class MSymbolTableCell extends MSymbol {
-  constructor(name, args, cmdLineNo = null) {
-    super(name, cmdLineNo);
+  constructor(name, args, line = null) {
+    super(name, line);
     this.args = args;
   }
   async calcTableIndex(app, scope) {
     var name = this.name;
-    var cmdLineNo = this.cmdLineNo;
+    var line = this.line;
 
     var argsResolvedValue = [];
     for (const arg of this.args) {
-      // var argsResolved = this.args.map(function (arg) {   //FIXME:  need async here
       var a = await arg.resolve(app, scope);
 
       if (a == null)
         throw new GE.GError(
           "Το αναγνωριστικό " + arg.name + " δεν έχει αρχικοποιηθεί.",
-          cmdLineNo
+          line
         );
 
       if (!HP.isInt(a.val) || a.val <= 0)
@@ -763,16 +762,13 @@ class MSymbolTableCell extends MSymbol {
             " πρέπει να είναι θετικός ακέραιος αριθμός." +
             "\n" +
             HP.valueTypeToString(a),
-          cmdLineNo
+            line
         );
 
-      //return a;
       argsResolvedValue.push(a.val);
     }
 
-    var name = this.name + "[" + argsResolvedValue.join(",") + "]";
-
-    return name;
+    return this.name + "[" + argsResolvedValue.join(",") + "]";
   }
 
   async eval(app, scope) {

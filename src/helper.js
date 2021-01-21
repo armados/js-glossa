@@ -19,11 +19,11 @@ function isBoolean(val) {
 }
 
 function StringIsNumFloat(val) {
-  return !isNaN(parseFloat(val));
+  return !isNaN(parseFloat(val)) && String(parseFloat(val)) == val;
 }
 
 function StringIsNumInt(val) {
-  return !isNaN(parseInt(val));
+  return !isNaN(parseInt(val)) && String(parseInt(val)) == val;
 }
 
 function valueTypeToString(obj) {
@@ -32,13 +32,29 @@ function valueTypeToString(obj) {
   var val = obj.val;
 
   if (obj instanceof STR.STRTableNameInt) {
-    return "[ " + obj.tblname + " ] Πίνακας Ακεραίων [" + obj.tblsize.join(',') + "]";
+    return (
+      "[ " + obj.tblname + " ] Πίνακας Ακεραίων [" + obj.tblsize.join(",") + "]"
+    );
   } else if (obj instanceof STR.STRTableNameFloat) {
-    return "[ " + obj.tblname + " ] Πίνακας Πραγματικών [" + obj.tblsize.join(',') + "]";
+    return (
+      "[ " +
+      obj.tblname +
+      " ] Πίνακας Πραγματικών [" +
+      obj.tblsize.join(",") +
+      "]"
+    );
   } else if (obj instanceof STR.STRTableNameString) {
-    return "[ " + obj.tblname + " ] Πίνακας Χαρακτήρων [" + obj.tblsize.join(',') + "]";
+    return (
+      "[ " +
+      obj.tblname +
+      " ] Πίνακας Χαρακτήρων [" +
+      obj.tblsize.join(",") +
+      "]"
+    );
   } else if (obj instanceof STR.STRTableNameBoolean) {
-    return "[ " + obj.tblname + " ] Πίνακας Λογικών [" + obj.tblsize.join(',') + "]";
+    return (
+      "[ " + obj.tblname + " ] Πίνακας Λογικών [" + obj.tblsize.join(",") + "]"
+    );
   } else if (isInt(val)) {
     return "[ " + val + " ] Ακέραια σταθερά";
   } else if (isFloat(val)) {

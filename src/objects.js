@@ -95,15 +95,15 @@ class Stmt_Read {
         if (data != null) {
           if (scope.getSymbolObject(arg.name) instanceof STR.STRString) {
             data = String(data);
-          } else if (scope.getSymbolObject(arg.name) instanceof STR.STRFloat) {
-            if (HP.StringIsNumFloat(data)) {
-              data = parseFloat(data);
-            } else {
-              data = String(data);
-            }
           } else if (scope.getSymbolObject(arg.name) instanceof STR.STRInt) {
             if (HP.StringIsNumInt(data)) {
               data = parseInt(data);
+            } else {
+              data = String(data);
+            }
+          } else if (scope.getSymbolObject(arg.name) instanceof STR.STRFloat) {
+            if (HP.StringIsNumFloat(data)) {
+              data = parseFloat(data);
             } else {
               data = String(data);
             }
@@ -424,6 +424,12 @@ class Stmt_For {
 
     if (stepval != "") {
       var tmp = await stepval[0].resolve(app, scope);
+      if (tmp == null)
+      throw new GE.GError(
+        "Μη έγκυρη τιμή για το βήμα της εντολής ΓΙΑ.",
+        this.cmdLineNoGia
+      );
+  
       v_step = tmp.val;
     }
 
@@ -434,9 +440,24 @@ class Stmt_For {
       );
 
     var tmp = await initval.resolve(app, scope);
+
+    if (tmp == null)
+    throw new GE.GError(
+      "Μη έγκυρη τιμή για την αρχική τιμή της εντολής ΓΙΑ.",
+      this.cmdLineNoGia
+    );
+
     var v_initial = tmp.val;
 
+
     var tmp = await finalval.resolve(app, scope);
+
+    if (tmp == null)
+    throw new GE.GError(
+      "Μη έγκυρη τιμή για την τελική τιμή της εντολής ΓΙΑ.",
+      this.cmdLineNoGia
+    );
+
     var v_final = tmp.val;
 
     if (variable instanceof Atom.MSymbolTableCell)

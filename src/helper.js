@@ -32,13 +32,13 @@ function valueTypeToString(obj) {
   var val = obj.val;
 
   if (obj instanceof STR.STRTableNameInt) {
-    return "[ " + obj.tblname + " ] Πίνακας Ακεραίων";
+    return "[ " + obj.tblname + " ] Πίνακας Ακεραίων [" + obj.tblsize.join(',') + "]";
   } else if (obj instanceof STR.STRTableNameFloat) {
-    return "[ " + obj.tblname + " ] Πίνακας Πραγματικών";
+    return "[ " + obj.tblname + " ] Πίνακας Πραγματικών [" + obj.tblsize.join(',') + "]";
   } else if (obj instanceof STR.STRTableNameString) {
-    return "[ " + obj.tblname + " ] Πίνακας Χαρακτήρων";
+    return "[ " + obj.tblname + " ] Πίνακας Χαρακτήρων [" + obj.tblsize.join(',') + "]";
   } else if (obj instanceof STR.STRTableNameBoolean) {
-    return "[ " + obj.tblname + " ] Πίνακας Λογικών";
+    return "[ " + obj.tblname + " ] Πίνακας Λογικών [" + obj.tblsize.join(',') + "]";
   } else if (isInt(val)) {
     return "[ " + val + " ] Ακέραια σταθερά";
   } else if (isFloat(val)) {

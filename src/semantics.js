@@ -208,58 +208,6 @@ var operation = {
     );
   },
 
-  // Function block
-  IfExprFunction: function (
-    _1,
-    cond,
-    _2,
-    _nl0,
-    tb,
-    _AlliosAn,
-    condElseIf,
-    _Tote,
-    _nl1,
-    blockElseIf,
-    _Allios,
-    _nl2,
-    eb,
-    _TelosAn
-  ) {
-    var arrCond = [];
-    var arrCondStr = [];
-    var arrLineNo = [];
-    var arrBody = [];
-
-    arrCond.push(cond.toAST());
-    arrCondStr.push(cond.sourceString);
-    arrLineNo.push(getLineNo(cond));
-    arrBody.push(tb.toAST());
-
-    if (condElseIf.numChildren) {
-      //console.log(blockElseIf.children);
-      var moreBody = blockElseIf.toAST();
-      for (var i = 0, len = condElseIf.numChildren; i < len; i++) {
-        var cond2 = condElseIf.children[i];
-
-        arrCond.push(cond2.toAST());
-        arrCondStr.push(cond2.sourceString);
-        arrLineNo.push(getLineNo(cond2));
-        arrBody.push(moreBody[i]);
-      }
-    }
-
-    var elseBody = eb ? eb.toAST()[0] : null;
-    return new MO.Stmt_If(
-      arrCond,
-      arrCondStr,
-      arrLineNo,
-      arrBody,
-      elseBody,
-      getLineNo(_Allios),
-      getLineNo(_TelosAn)
-    );
-  },
-
   Subrange: function (a, _1, b) {
     return new Atom.MSelectSubrange(a.toAST(), b.toAST(), getLineNo(a));
   },
@@ -363,63 +311,6 @@ var operation = {
       getLineNo(expr),
       getLineNo(_ALLIOS),
       getLineNo(_TELOS_EPILOGON)
-    );
-  },
-
-  WhileExprFunction: function (
-    _OSO,
-    cond,
-    _EPANALAVE,
-    _nl,
-    body,
-    _TELOS_EPANALHPSHS
-  ) {
-    return new MO.Stmt_While(
-      cond.toAST(),
-      cond.sourceString,
-      body.toAST(),
-      getLineNo(_OSO),
-      getLineNo(_TELOS_EPANALHPSHS)
-    );
-  },
-
-  DoWhileExprFunction: function (
-    _ARXH_EPANALHPSHS,
-    _nl,
-    body,
-    _MEXRIS_OTOU,
-    cond
-  ) {
-    return new MO.Stmt_Do_While(
-      cond.toAST(),
-      cond.sourceString,
-      body.toAST(),
-      getLineNo(_ARXH_EPANALHPSHS),
-      getLineNo(_MEXRIS_OTOU)
-    );
-  },
-
-  ForExprFunction: function (
-    _GIA,
-    variable,
-    _APO,
-    initval,
-    _MEXRI,
-    finalval,
-    _ME_BHMA,
-    stepval,
-    _nl,
-    body,
-    _TELOS_EPANALHPSHS
-  ) {
-    return new MO.Stmt_For(
-      variable.toAST(),
-      initval.toAST(),
-      finalval.toAST(),
-      stepval.toAST(),
-      body.toAST(),
-      getLineNo(_GIA),
-      getLineNo(_TELOS_EPANALHPSHS)
     );
   },
 
@@ -553,9 +444,6 @@ var operation = {
   },
 
   Block: function (a, _nl) {
-    return new MO.Stmt_Block(a.toAST());
-  },
-  BlockFunction: function (a, _nl) {
     return new MO.Stmt_Block(a.toAST());
   },
 

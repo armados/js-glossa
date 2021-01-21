@@ -3,8 +3,6 @@
 var gloObjectsID = [];
 var gloObjectsAPP = [];
 
-// =================================
-
 function newGlossaApp(id) {
   const index = gloObjectsID.indexOf(id);
   if (index >= 0) return false;
@@ -49,8 +47,6 @@ function renderMemory(data) {
   return html;
 }
 
-// ==============================
-
 async function startProgramExecution(gloBoxID, runstep) {
   var editorid = $("#" + gloBoxID)
     .find(".gloAceEditor")
@@ -78,8 +74,8 @@ async function startProgramExecution(gloBoxID, runstep) {
   app.setDebugMode(true);
 
   app.setReadInputFunction(function (name) {
-    var value = prompt("Εισαγωγή τιμής στο αναγνωριστικό " + name);
-    return value;
+    return prompt("Εισαγωγή τιμής στο αναγνωριστικό " + name);
+    
   });
 
   app.setSlowRun(slowrun);
@@ -339,22 +335,18 @@ $(document).ready(function () {
     });
 
   $(this)
-    .find(".gloSlowRunBtn")
+    .find(".gloSlowRun")
     .click(function (e) {
-      e.preventDefault();
-
       var gloBoxID = $(this).closest(".gloBox").attr("id");
 
       var app = getGlossaApp(gloBoxID);
 
-      if (app.getSlowRun()) {
-        app.setSlowRun(false);
-        //$(this).removeClass('btn-danger').addClass('btn-success');
-        $(this).html('<i class="fas fa-rocket"></i>');
-      } else {
+      if (!app.isrunning()) return;
+
+      if ($(this).is(":checked")) {
         app.setSlowRun(true);
-        //$(this).removeClass('btn-success').addClass('btn-danger');
-        $(this).html('<i class="fas fa-bicycle"></i>');
+      } else {
+        app.setSlowRun(false);
       }
     });
 
@@ -365,8 +357,6 @@ $(document).ready(function () {
       gloBoxID = "gloBoxID" + randomID;
       $(this).attr("id", gloBoxID);
     }
-
-    var app = newGlossaApp(gloBoxID);
 
     var randomID = Math.floor(Math.random() * 1000000 + 1);
     $(this)
@@ -392,24 +382,23 @@ $(document).ready(function () {
 
     const mycode = `ΠΡΟΓΡΑΜΜΑ Άσκηση
 
-    ΜΕΤΑΒΛΗΤΕΣ
-    ΑΚΕΡΑΙΕΣ: α
-    
-    ΑΡΧΗ
-    ΓΡΑΨΕ Α_Μ(9.3), Α_Τ(-100),Τ_Ρ(9)
-    
-    ΓΡΑΨΕ 'Καλημέρα'
-    
-    ΓΡΑΨΕ 'Δωσε τιμή:'
-    ΔΙΑΒΑΣΕ α
-    ΓΡΑΨΕ 'Έδωσες τον αριθμό ', α
-    
-    ΓΙΑ α ΑΠΟ 1 ΜΕΧΡΙ α
-      ΓΡΑΨΕ 'Καλημέρα κόσμε', α
-    ΤΕΛΟΣ_ΕΠΑΝΑΛΗΨΗΣ
-    
-    ΤΕΛΟΣ_ΠΡΟΓΡΑΜΜΑΤΟΣ
-    `;
+ΜΕΤΑΒΛΗΤΕΣ
+  ΑΚΕΡΑΙΕΣ: α, β
+
+ΑΡΧΗ
+  ΓΡΑΨΕ Α_Μ(9.3), Α_Τ(-100), Τ_Ρ(9) 
+
+  ΓΡΑΨΕ 'Καλημέρα'
+
+  ΓΡΑΨΕ 'Δωσε τιμή:'
+  ΔΙΑΒΑΣΕ α
+  ΓΡΑΨΕ 'Έδωσες τον αριθμό ', α
+
+  ΓΙΑ β ΑΠΟ 1 ΜΕΧΡΙ α
+    ΓΡΑΨΕ 'Καλημέρα κόσμε', β
+  ΤΕΛΟΣ_ΕΠΑΝΑΛΗΨΗΣ
+
+ΤΕΛΟΣ_ΠΡΟΓΡΑΜΜΑΤΟΣ`;
 
     if (typeof cookieData !== "undefined" && cookieData != "")
       editor.setValue(cookieData);
@@ -481,6 +470,8 @@ $(document).ready(function () {
         }
       }
     });
+
+    var app = newGlossaApp(gloBoxID);
 
     app.on("started", () => {
       UIStateStarted(gloBoxID);

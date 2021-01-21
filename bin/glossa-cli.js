@@ -36,7 +36,7 @@ if (args["version"]) {
 
 if (!args["input"]) {
   //throw new GE.GError("Missing input file");
-  console.log("Missing input file");
+  console.log("Σφάλμα. Δεν έχει δηλωθεί το πηγαίο πρόγραμμα.");
   process.exit(1);
 }
 
@@ -45,7 +45,7 @@ try {
   sourceCode = fs.readFileSync(args["input"]).toString();
 } catch (e) {
   //throw new GE.GError("Input file not found");
-  console.log("Input file not found");
+  console.log("Σφάλμα. Το αρχείο του πηγαίου προγράμματος δεν βρέθηκε.");
   process.exit(1);
 }
 
@@ -55,7 +55,7 @@ if (args["keyboard"]) {
     keyboardInput = fs.readFileSync(args["keyboard"]).toString();
   } catch (e) {
     // throw new GE.GError("Keyboard input file not found");
-    console.log("Keyboard input file not found");
+    console.log("Σφάλμα. Το αρχείο εισόδου δεν βρέθηκε.");
     process.exit(1);
   }
 }

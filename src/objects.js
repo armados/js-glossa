@@ -5,13 +5,8 @@ const GE = require("./gclasses");
 const STR = require("./storage");
 const HP = require("./helper");
 
-class Stmt {}
-
-// ========================
-
-class Stmt_Assignment extends Stmt {
+class Stmt_Assignment {
   constructor(sym, val, cmdStrA, cmdStrB, cmdLineNo) {
-    super();
     this.symbol = sym;
     this.val = val;
     this.cmdStrA = cmdStrA;
@@ -38,9 +33,8 @@ class Stmt_Assignment extends Stmt {
   }
 }
 
-class Stmt_Write extends Stmt {
+class Stmt_Write {
   constructor(args, cmdLineNo) {
-    super();
     this.args = args;
     this.cmdLineNo = cmdLineNo;
   }
@@ -77,9 +71,8 @@ class Stmt_Write extends Stmt {
   }
 }
 
-class Stmt_Read extends Stmt {
+class Stmt_Read {
   constructor(args, cmdLineNo) {
-    super();
     this.args = args;
     this.cmdLineNo = cmdLineNo;
   }
@@ -153,7 +146,7 @@ class Stmt_Read extends Stmt {
   }
 }
 
-class Stmt_If extends Stmt {
+class Stmt_If {
   constructor(
     arrCond,
     arrCondStr,
@@ -163,7 +156,6 @@ class Stmt_If extends Stmt {
     elseBodyLine,
     telosAnLine
   ) {
-    super();
     this.arrCond = arrCond;
     this.arrCondStr = arrCondStr;
     this.arrLineNo = arrLineNo;
@@ -228,7 +220,7 @@ class Stmt_If extends Stmt {
   }
 }
 
-class Stmt_Select extends Stmt {
+class Stmt_Select {
   constructor(
     expr,
     arrCond,
@@ -240,7 +232,6 @@ class Stmt_Select extends Stmt {
     elseBodyLine,
     cmdLineNoTelosEpilogwn
   ) {
-    super();
     this.expr = expr;
     this.arrCond = arrCond;
     this.arrCondStr = arrCondStr;
@@ -322,9 +313,8 @@ class Stmt_Select extends Stmt {
   }
 }
 
-class Stmt_While extends Stmt {
+class Stmt_While {
   constructor(cond, condstr, body, cmdLineNoOso, cmdLineNoTelosEpanalhpshs) {
-    super();
     this.cond = cond;
     this.condstr = condstr;
     this.body = body;
@@ -364,9 +354,8 @@ class Stmt_While extends Stmt {
   }
 }
 
-class Stmt_Do_While extends Stmt {
+class Stmt_Do_While {
   constructor(cond, condstr, body, cmdLineNoArxh, cmdLineNoMexrisOtou) {
-    super();
     this.cond = cond;
     this.condstr = condstr;
     this.body = body;
@@ -404,7 +393,7 @@ class Stmt_Do_While extends Stmt {
   }
 }
 
-class Stmt_For extends Stmt {
+class Stmt_For {
   constructor(
     variable,
     initval,
@@ -414,7 +403,6 @@ class Stmt_For extends Stmt {
     cmdLineNoGia,
     cmdLineNoTelosEpanalhpshs
   ) {
-    super();
     this.variable = variable;
     this.initval = initval;
     this.finalval = finalval;
@@ -530,9 +518,8 @@ class Stmt_For extends Stmt {
   }
 }
 
-class FunctionCall extends Stmt {
+class FunctionCall {
   constructor(fun, args, cmdLineNo) {
-    super();
     this.fun = fun;
     this.args = args;
     this.cmdLineNo = cmdLineNo;
@@ -562,6 +549,7 @@ class FunctionCall extends Stmt {
     sendData[0] = argsResolved;
     sendData[1] = app;
     sendData[2] = scope;
+    sendData[3] = this.cmdLineNo;
 
     var fun = scope.getGlobalSymbol(this.fun.name);
 
@@ -579,9 +567,8 @@ class FunctionCall extends Stmt {
   }
 }
 
-class ProcedureCall extends Stmt {
+class ProcedureCall {
   constructor(fun, args, cmdLineNo) {
-    super();
     this.fun = fun;
     this.args = args;
     this.cmdLineNo = cmdLineNo;
@@ -615,6 +602,7 @@ class ProcedureCall extends Stmt {
     sendData[0] = argsResolved;
     sendData[1] = app;
     sendData[2] = scope;
+    sendData[3] = this.cmdLineNo;
 
     var recvData = await fun.apply(null, sendData);
 
@@ -673,7 +661,7 @@ class ProcedureCall extends Stmt {
   }
 }
 
-class UserFunction extends Stmt {
+class UserFunction {
   constructor(
     name,
     params,
@@ -683,7 +671,6 @@ class UserFunction extends Stmt {
     cmdLineNo,
     cmdLineNoTelosSynartisis
   ) {
-    super();
     this.name = name;
     this.params = params;
     this.funType = funType;
@@ -709,13 +696,12 @@ class UserFunction extends Stmt {
           var args = arrargs[0];
           var app = arrargs[1];
           var parentScope = arrargs[2];
-
-          await app.setActiveLine(scope2, this.cmdLineNo);
+          var lineCalled = arrargs[3];
 
           if (args.length != params.length)
             throw new GE.GError(
               "Λάθος αριθμός παραμέτρων κατά την κλήση της συνάρτησης.",
-              this.cmdLineNo
+              lineCalled
             );
 
           var ftype = null;
@@ -745,12 +731,13 @@ class UserFunction extends Stmt {
           await declarations.resolve(app, scope2);
 
           params.forEach(function (param, i) {
+            //FIXME:
             if (!scope2.hasSymbol(param.name))
               throw new GE.GError(
                 "Η παράμετρος " +
                   param.name +
                   "δεν έχει δηλωθεί στο τμήμα δηλώσεων.",
-                this.cmdLineNo
+                lineCalled //FIXME: not working
               );
 
             if (!(args[i] instanceof STR.STRTableName))
@@ -761,14 +748,21 @@ class UserFunction extends Stmt {
                 args[i].constructor.name
               )
                 throw new GE.GError(
-                  "Οι πίνακες έχουν διαφορετικό τύπο.",
-                  this.cmdLineNo
+                  "Η πραγματική παράμετρος είναι διαφορετικού τύπου από την τυπική παράμετρο του υποπρογράμματος." +
+                    "\n" +
+                    HP.valueTypeToString(scope2.getSymbol(param.name)) + //FIXME:
+                    "\n" +
+                    HP.valueTypeToString(args[i]),
+                  lineCalled
                 );
 
               if (!scope2.getSymbol(param.name).arraySizeEquals(args[i]))
                 throw new GE.GError(
-                  "Οι πίνακες έχουν διαφορετικό μέγεθος.",
-                  this.cmdLineNo
+                  "Τα όρια της πραγματικής παραμέτρου - πίνακα " +
+                    args[i].tblname +
+                    " δεν είναι ίδια με της τυπικής παραμέτρου - πίνακα " +
+                    param.name,
+                  lineCalled
                 );
 
               var tblDimensions = scope2.getSymbol(param.name).getSize().length;
@@ -798,6 +792,8 @@ class UserFunction extends Stmt {
             }
           });
 
+          await app.setActiveLine(scope2, this.cmdLineNo);
+
           await body.resolve(app, scope2);
 
           await app.setActiveLine(scope2, this.cmdLineNoTelosSynartisis);
@@ -815,7 +811,7 @@ class UserFunction extends Stmt {
   }
 }
 
-class UserProcedure extends Stmt {
+class UserProcedure {
   constructor(
     name,
     params,
@@ -824,7 +820,6 @@ class UserProcedure extends Stmt {
     cmdLineNo,
     cmdLineNoTelosDiadikasias
   ) {
-    super();
     this.name = name;
     this.params = params;
     this.declarations = declarations;
@@ -849,13 +844,12 @@ class UserProcedure extends Stmt {
           var args = arrargs[0];
           var app = arrargs[1];
           var parentScope = arrargs[2];
-
-          await app.setActiveLine(scope2, this.cmdLineNo);
+          var lineCalled = arrargs[3];
 
           if (args.length != params.length)
             throw new GE.GError(
               "Λάθος αριθμός παραμέτρων κατά την κλήση της διαδικασίας.",
-              this.cmdLineNo
+              lineCalled
             );
 
           // Declare constants and variables
@@ -879,14 +873,14 @@ class UserProcedure extends Stmt {
                 args[i].constructor.name
               )
                 throw new GE.GError(
-                  "Οι πίνακες έχουν διαφορετικό τύπο.",
-                  this.cmdLineNo
+                  "Η πραγματική παράμετρος είναι διαφορετικού τύπου από την τυπική παράμετρο του υποπρογράμματος.",
+                  lineCalled
                 );
 
               if (!scope2.getSymbol(param.name).arraySizeEquals(args[i]))
                 throw new GE.GError(
                   "Οι πίνακες έχουν διαφορετικό μέγεθος.",
-                  this.cmdLineNo
+                  lineCalled
                 );
 
               var tblDimensions = scope2.getSymbol(param.name).getSize().length;
@@ -916,6 +910,8 @@ class UserProcedure extends Stmt {
             }
           });
 
+          await app.setActiveLine(scope2, this.cmdLineNo);
+
           await body.resolve(app, scope2);
 
           await app.setActiveLine(scope2, this.cmdLineNoTelosDiadikasias);
@@ -929,9 +925,8 @@ class UserProcedure extends Stmt {
   }
 }
 
-class Declaration_Block extends Stmt {
+class Declaration_Block {
   constructor(constants, variables) {
-    super();
     this.constants = constants;
     this.variables = variables;
   }
@@ -944,9 +939,8 @@ class Declaration_Block extends Stmt {
   }
 }
 
-class DefConstant extends Stmt {
+class DefConstant {
   constructor(sym, val, cmdLineNo) {
-    super();
     this.sym = sym;
     this.val = val;
     this.cmdLineNo = cmdLineNo;
@@ -968,9 +962,8 @@ class DefConstant extends Stmt {
   }
 }
 
-class DefVariables extends Stmt {
+class DefVariables {
   constructor(varType, sym, cmdLineNo) {
-    super();
     this.varType = varType;
     this.sym = sym;
     this.cmdLineNo = cmdLineNo;
@@ -1073,7 +1066,7 @@ class Stmt_Block {
   }
 }
 
-class MainProgram extends Stmt {
+class MainProgram {
   constructor(
     progname,
     declarations,
@@ -1083,7 +1076,6 @@ class MainProgram extends Stmt {
     cmdLineNoArxh,
     cmdLineNoTelosProgrammatos
   ) {
-    super();
     this.progname = progname;
     this.declarations = declarations;
     this.body = body;

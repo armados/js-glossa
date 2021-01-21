@@ -6,28 +6,27 @@ const HP = require("./helper");
 const Atom = require("./atom");
 
 class GlobalFunctions {
-
   applyAllFunctionsToScope(scope) {
-
     scope.addSymbol(
       "Α_Μ",
       new STR.STRBuiltinFunction(function (...arrArgs) {
         var args = arrArgs[0];
         var app = arrArgs[1];
         var parentScope = arrArgs[2];
+        var lineCalled = arrArgs[3];
 
         var A = args[0];
 
         if (args.length != 1)
           throw new GE.GError(
-            "Λάθος αριθμός παραμέτρων κατά την κλήση της συνάρτησης.",
-            parentScope.cmdLineNo
+            "Λάθος αριθμός παραμέτρων κατά την κλήση της συνάρτησης Α_Μ.",
+            lineCalled
           );
 
         if (A == null)
           throw new GE.GError(
-            "Το αναγνωριστικό " + A + " δεν έχει αρχικοποιηθεί.",
-            parentScope.cmdLineNo
+            "Η παράμετρος της συνάρτησης Α_Μ δεν έχει αρχικοποιηθεί.",
+            lineCalled
           );
 
         if (!HP.isNumber(A.val))
@@ -35,7 +34,7 @@ class GlobalFunctions {
             "Η συνάρτηση Α_Μ δεν μπορεί να δεχτεί αυτό το όρισμα." +
               "\n" +
               HP.valueTypeToString(A),
-            parentScope.cmdLineNo
+            lineCalled
           );
 
         // Use Math.floor or Math.trunc
@@ -49,19 +48,20 @@ class GlobalFunctions {
         var args = arrArgs[0];
         var app = arrArgs[1];
         var parentScope = arrArgs[2];
+        var lineCalled = arrArgs[3];
 
         var A = args[0];
 
         if (args.length != 1)
           throw new GE.GError(
-            "Λάθος αριθμός παραμέτρων κατά την κλήση της συνάρτησης.",
-            parentScope.cmdLineNo
+            "Λάθος αριθμός παραμέτρων κατά την κλήση της συνάρτησης Α_Τ.",
+            lineCalled
           );
 
         if (A == null)
           throw new GE.GError(
-            "Το αναγνωριστικό " + A + " δεν έχει αρχικοποιηθεί.",
-            parentScope.cmdLineNo
+            "Η παράμετρος της συνάρτησης Α_Τ δεν έχει αρχικοποιηθεί.",
+            lineCalled
           );
 
         if (!HP.isNumber(A.val))
@@ -69,7 +69,7 @@ class GlobalFunctions {
             "Η συνάρτηση Α_Τ δεν μπορεί να δεχτεί αυτό το όρισμα." +
               "\n" +
               HP.valueTypeToString(A),
-            parentScope.cmdLineNo
+            lineCalled
           );
 
         if (A.val < 0) return new Atom.MNumber(-A.val);
@@ -83,19 +83,20 @@ class GlobalFunctions {
         var args = arrArgs[0];
         var app = arrArgs[1];
         var parentScope = arrArgs[2];
+        var lineCalled = arrArgs[3];
 
         var A = args[0];
 
         if (args.length != 1)
           throw new GE.GError(
-            "Λάθος αριθμός παραμέτρων κατά την κλήση της συνάρτησης.",
-            parentScope.cmdLineNo
+            "Λάθος αριθμός παραμέτρων κατά την κλήση της συνάρτησης Τ_Ρ.",
+            lineCalled
           );
 
         if (A == null)
           throw new GE.GError(
-            "Το αναγνωριστικό " + A + " δεν έχει αρχικοποιηθεί.",
-            parentScope.cmdLineNo
+            "Η παράμετρος της συνάρτησης Τ_Ρ δεν έχει αρχικοποιηθεί.",
+            lineCalled
           );
 
         if (!HP.isNumber(A.val))
@@ -103,13 +104,13 @@ class GlobalFunctions {
             "Η συνάρτηση Τ_Ρ δεν μπορεί να δεχτεί αυτό το όρισμα." +
               "\n" +
               HP.valueTypeToString(A),
-            parentScope.cmdLineNo
+            lineCalled
           );
 
         if (A.val < 0)
           throw new GE.GError(
             "Η συνάρτηση Τ_Ρ δεν μπορεί να λάβει αρνητική τιμή.",
-            parentScope.cmdLineNo
+            lineCalled
           );
 
         return new Atom.MNumber(Math.sqrt(A.val));
@@ -122,19 +123,20 @@ class GlobalFunctions {
         var args = arrArgs[0];
         var app = arrArgs[1];
         var parentScope = arrArgs[2];
+        var lineCalled = arrArgs[3];
 
         var A = args[0];
 
         if (args.length != 1)
           throw new GE.GError(
-            "Λάθος αριθμός παραμέτρων κατά την κλήση της συνάρτησης.",
-            parentScope.cmdLineNo
+            "Λάθος αριθμός παραμέτρων κατά την κλήση της συνάρτησης ΗΜ.",
+            lineCalled
           );
 
         if (A == null)
           throw new GE.GError(
-            "Το αναγνωριστικό " + A + " δεν έχει αρχικοποιηθεί.",
-            parentScope.cmdLineNo
+            "Η παράμετρος της συνάρτησης ΗΜ δεν έχει αρχικοποιηθεί.",
+            lineCalled
           );
 
         if (!HP.isNumber(A.val))
@@ -142,7 +144,7 @@ class GlobalFunctions {
             "Η συνάρτηση ΗΜ δεν μπορεί να δεχτεί αυτό το όρισμα." +
               "\n" +
               HP.valueTypeToString(A),
-            parentScope.cmdLineNo
+            lineCalled
           );
 
         const degrees = (A.val * Math.PI) / 180;
@@ -157,19 +159,20 @@ class GlobalFunctions {
         var args = arrArgs[0];
         var app = arrArgs[1];
         var parentScope = arrArgs[2];
+        var lineCalled = arrArgs[3];
 
         var A = args[0];
 
         if (args.length != 1)
           throw new GE.GError(
-            "Λάθος αριθμός παραμέτρων κατά την κλήση της συνάρτησης.",
-            parentScope.cmdLineNo
+            "Λάθος αριθμός παραμέτρων κατά την κλήση της συνάρτησης ΣΥΝ.",
+            lineCalled
           );
 
         if (A == null)
           throw new GE.GError(
-            "Το αναγνωριστικό " + A + " δεν έχει αρχικοποιηθεί.",
-            parentScope.cmdLineNo
+            "Η παράμετρος της συνάρτησης ΣΥΝ δεν έχει αρχικοποιηθεί.",
+            lineCalled
           );
 
         if (!HP.isNumber(A.val))
@@ -177,7 +180,7 @@ class GlobalFunctions {
             "Η συνάρτηση ΣΥΝ δεν μπορεί να δεχτεί αυτό το όρισμα." +
               "\n" +
               HP.valueTypeToString(A),
-            parentScope.cmdLineNo
+            lineCalled
           );
 
         const degrees = (A.val * Math.PI) / 180;
@@ -192,19 +195,20 @@ class GlobalFunctions {
         var args = arrArgs[0];
         var app = arrArgs[1];
         var parentScope = arrArgs[2];
+        var lineCalled = arrArgs[3];
 
         var A = args[0];
 
         if (args.length != 1)
           throw new GE.GError(
-            "Λάθος αριθμός παραμέτρων κατά την κλήση της συνάρτησης.",
-            parentScope.cmdLineNo
+            "Λάθος αριθμός παραμέτρων κατά την κλήση της συνάρτησης Ε.",
+            lineCalled
           );
 
         if (A == null)
           throw new GE.GError(
-            "Το αναγνωριστικό " + A + " δεν έχει αρχικοποιηθεί.",
-            parentScope.cmdLineNo
+            "Η παράμετρος της συνάρτησης Ε δεν έχει αρχικοποιηθεί.",
+            lineCalled
           );
 
         if (!HP.isNumber(A.val))
@@ -212,7 +216,7 @@ class GlobalFunctions {
             "Η συνάρτηση Ε δεν μπορεί να δεχτεί αυτό το όρισμα." +
               "\n" +
               HP.valueTypeToString(A),
-            parentScope.cmdLineNo
+            lineCalled
           );
 
         return new Atom.MNumber(Math.exp(A.val));
@@ -225,19 +229,20 @@ class GlobalFunctions {
         var args = arrArgs[0];
         var app = arrArgs[1];
         var parentScope = arrArgs[2];
+        var lineCalled = arrArgs[3];
 
         var A = args[0];
 
         if (args.length != 1)
           throw new GE.GError(
-            "Λάθος αριθμός παραμέτρων κατά την κλήση της συνάρτησης.",
-            parentScope.cmdLineNo
+            "Λάθος αριθμός παραμέτρων κατά την κλήση της συνάρτησης ΕΦ.",
+            lineCalled
           );
 
         if (A == null)
           throw new GE.GError(
-            "Το αναγνωριστικό " + A + " δεν έχει αρχικοποιηθεί.",
-            parentScope.cmdLineNo
+            "Η παράμετρος της συνάρτησης ΕΦ δεν έχει αρχικοποιηθεί.",
+            lineCalled
           );
 
         if (!HP.isNumber(A.val))
@@ -245,7 +250,7 @@ class GlobalFunctions {
             "Η συνάρτηση ΕΦ δεν μπορεί να δεχτεί αυτό το όρισμα." +
               "\n" +
               HP.valueTypeToString(A),
-            parentScope.cmdLineNo
+            lineCalled
           );
 
         const degrees = (A.val * Math.PI) / 180;
@@ -260,19 +265,20 @@ class GlobalFunctions {
         var args = arrArgs[0];
         var app = arrArgs[1];
         var parentScope = arrArgs[2];
+        var lineCalled = arrArgs[3];
 
         var A = args[0];
 
         if (args.length != 1)
           throw new GE.GError(
-            "Λάθος αριθμός παραμέτρων κατά την κλήση της συνάρτησης.",
-            parentScope.cmdLineNo
+            "Λάθος αριθμός παραμέτρων κατά την κλήση της συνάρτησης ΛΟΓ.",
+            lineCalled
           );
 
         if (A == null)
           throw new GE.GError(
-            "Το αναγνωριστικό " + A + " δεν έχει αρχικοποιηθεί.",
-            parentScope.cmdLineNo
+            "Η παράμετρος της συνάρτησης ΛΟΓ δεν έχει αρχικοποιηθεί.",
+            lineCalled
           );
 
         if (!HP.isNumber(A.val))
@@ -280,22 +286,21 @@ class GlobalFunctions {
             "Η συνάρτηση ΛΟΓ δεν μπορεί να δεχτεί αυτό το όρισμα." +
               "\n" +
               HP.valueTypeToString(A),
-            parentScope.cmdLineNo
+            lineCalled
           );
 
         if (A.val <= 0)
           throw new GE.GError(
             "Η συνάρτηση ΛΟΓ δεν μπορεί να δεχτεί αρνητικές τιμές ή το μηδέν.",
-            parentScope.cmdLineNo
+            lineCalled
           );
 
         return new Atom.MNumber(Math.log(A.val));
       })
     );
   }
-
 }
 
 module.exports = {
-    GlobalFunctions,
+  GlobalFunctions,
 };

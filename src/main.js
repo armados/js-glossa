@@ -123,7 +123,7 @@ class GlossaJS extends EventEmitter {
           this.app.postMessage("memory", scope.getMemory());
         }
 
-        if (this.app.breakPoints.includes(line)) {
+        if (this.app.breakPoints.includes(line) == true) {
           this.app.postMessage("reachbreakpoint", line);
           this.app["config"]["runstep"] = true;
           this.app["config"]["runstepflag"] = false;
@@ -247,7 +247,7 @@ class GlossaJS extends EventEmitter {
   setStepRun(flag) {
     this.app["config"]["runstep"] = flag;
   }
-  
+
   setSlowRun(flag) {
     this.app["config"]["slowrunflag"] = flag;
   }
@@ -298,6 +298,8 @@ class GlossaJS extends EventEmitter {
   addBreakpoint(line) {
     this.app.breakPoints.push(line);
   }
+
+  removeBreakpoint(line) {}
 
   async run() {
     this.app.postMessage("started");

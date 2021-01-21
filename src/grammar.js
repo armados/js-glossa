@@ -20,7 +20,7 @@ function getGrammar() {
         "ΣΥΝΑΡΤΗΣΗ"  id "(" AtLeastOneParameters ")" ":" ("ΑΚΕΡΑΙΑ" | "ΠΡΑΓΜΑΤΙΚΗ" | "ΧΑΡΑΚΤΗΡΑΣ" | "ΛΟΓΙΚΗ") nl+
         Declaration_Block
         "ΑΡΧΗ" nl+
-        BlockFunction
+        Block
         "ΤΕΛΟΣ_ΣΥΝΑΡΤΗΣΗΣ" nl*
         
       UserProcedure = 
@@ -41,10 +41,8 @@ function getGrammar() {
       DefVariables = ("ΑΚΕΡΑΙΕΣ" | "ΠΡΑΓΜΑΤΙΚΕΣ" | "ΧΑΡΑΚΤΗΡΕΣ" | "ΛΟΓΙΚΕΣ") ":" VarParameters nl+
       
       Block = (InnerCommand nl+)*
-      BlockFunction = (InnerCommandFunction nl+)*
 
       InnerCommand         = AssignExpr | WhileExpr | DoWhileExpr | ForExpr | IfExpr | Stmt_Select | comment | ProcedureCall | Stmt_Write | Stmt_Read
-      InnerCommandFunction = AssignExpr | WhileExprFunction | DoWhileExprFunction | ForExprFunction | IfExprFunction | Stmt_Select | comment //FIXME:
 
       AssignExpr   = (IdTbl | id) "<-" Expr
 
@@ -61,11 +59,6 @@ function getGrammar() {
       SelectCase    = Subrange | SelectExpr | Expr 
       AtLeastOneSelectCase = NonemptyListOf<SelectCase, ",">
       Stmt_Select   = "ΕΠΙΛΕΞΕ" Expr nl+ ("ΠΕΡΙΠΤΩΣΗ" ~"ΑΛΛΙΩΣ" AtLeastOneSelectCase nl+ Block)* ("ΠΕΡΙΠΤΩΣΗ" "ΑΛΛΙΩΣ" nl+ Block)? "ΤΕΛΟΣ_ΕΠΙΛΟΓΩΝ"
-
-      WhileExprFunction     = "ΟΣΟ" Expr "ΕΠΑΝΑΛΑΒΕ" nl+ BlockFunction "ΤΕΛΟΣ_ΕΠΑΝΑΛΗΨΗΣ"
-      DoWhileExprFunction   = "ΑΡΧΗ_ΕΠΑΝΑΛΗΨΗΣ" nl+ BlockFunction "ΜΕΧΡΙΣ_ΟΤΟΥ" Expr
-      ForExprFunction       = "ΓΙΑ" (IdTbl | id) "ΑΠΟ" Expr "ΜΕΧΡΙ" Expr (("ΜΕ_ΒΗΜΑ" | "ΜΕ ΒΗΜΑ") Expr)? nl+ BlockFunction "ΤΕΛΟΣ_ΕΠΑΝΑΛΗΨΗΣ"
-      IfExprFunction        = "ΑΝ" Expr "ΤΟΤΕ" nl+ BlockFunction ("ΑΛΛΙΩΣ_ΑΝ" Expr "ΤΟΤΕ" nl+ BlockFunction)* ("ΑΛΛΙΩΣ" nl+ BlockFunction)? "ΤΕΛΟΣ_ΑΝ"
 
       FunctionCall          = id "(" Arguments ")"
       ProcedureCall         = "ΚΑΛΕΣΕ" id ("(" Arguments ")")? 

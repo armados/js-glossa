@@ -760,7 +760,7 @@ class MSymbolTableCell extends MSymbol {
         throw new GE.GError(
           "Ο δείκτης του πίνακα " +
             name +
-            " δεν είναι θετικός ακέραιος αριθμός." +
+            " πρέπει να είναι θετικός ακέραιος αριθμός." +
             "\n" +
             HP.valueTypeToString(a),
           cmdLineNo

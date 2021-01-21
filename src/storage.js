@@ -94,14 +94,14 @@ class SScope {
 
   addLock(name) {
     if (this.isLocked(name))
-      throw new GE.GError("Critical: addLock() Symbol already locked " + name);
+      throw new GE.GInternalError("addLock() Symbol already locked " + name);
 
     this.lockedVariables.push(name);
   }
 
   removeLock(name) {
     if (!this.isLocked(name))
-      throw new GE.GError("Critical: removeLock() Symbol not locked " + name);
+      throw new GE.GInternalError("removeLock() Symbol not locked " + name);
 
     const index = this.lockedVariables.indexOf(name);
     this.lockedVariables.splice(index, 1);
@@ -149,7 +149,7 @@ class SScope {
       } else if (value instanceof STRFuncNameBoolean) {
         symType = "ΛΟΓΙΚΗ (όνομα συνάρτησης)";
         symTypeClass = "STRFuncNameBoolean";
-      } else throw new GE.GError("Critical: 01 Unknown symbol type" + value);
+      } else throw new GE.GInternalError("01 Unknown symbol type" + value);
 
       var sym = value.get();
       var symValue = sym != null ? sym.val : null;
@@ -185,13 +185,13 @@ class SScope {
     if (obj instanceof STRLocalScope || obj instanceof STRTableName)
       return (this.localStorage[name] = obj);
 
-    throw new GE.GError("Critical: Unknown storage type");
+    throw new GE.GInternalError("Unknown storage type");
   }
 
   addSymbolFuncName(name, obj) {
     if (obj instanceof STRLocalScope) return (this.localStorage[name] = obj);
 
-    throw new GE.GError("Critical: addSymbolFuncName(): Unknown storage type");
+    throw new GE.GInternalError("addSymbolFuncName(): Unknown storage type");
   }
 
   setSymbol(name, obj) {
@@ -241,8 +241,8 @@ class SScope {
     //else if (this.getSymbolObject(name) instanceof STRTableNameBoolean)
     //  symType = "ΛΟΓΙΚΗ (στοιχείο σε πίνακα)";
     else
-      throw new GE.GError(
-        "Critical: 01 Unknown symbol type" + this.getSymbol(name)
+      throw new GE.GInternalError(
+        "01 Unknown symbol type" + this.getSymbol(name)
       );
 
     //console.log('setSymbol: ', name, symType, ' <--  ',  obj, obj.constructor.name);
@@ -303,8 +303,8 @@ class SScope {
           this.cmdLineNo
         ); //FIXME:
     } else
-      throw new GE.GError(
-        "Critical: 02 Unknown symbol type" + this.getSymbol(name)
+      throw new GE.GInternalError(
+        "02 Unknown symbol type" + this.getSymbol(name)
       );
 
     this.localStorage[name].set(obj);

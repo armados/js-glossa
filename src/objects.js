@@ -422,14 +422,26 @@ class Stmt_For {
 
     var v_step = 1;
 
+    // step value FOR
     if (stepval != "") {
+      if (stepval[0] instanceof Atom.MSymbolTableCell)
+        stepval[0] = await stepval[0].eval(app, scope);
+
       var tmp = await stepval[0].resolve(app, scope);
-      if (tmp == null)
-      throw new GE.GError(
-        "Μη έγκυρη τιμή για το βήμα της εντολής ΓΙΑ.",
-        this.cmdLineNoGia
-      );
-  
+
+      if (tmp == null) {
+        if (stepval[0] instanceof Atom.MSymbol)
+          throw new GE.GError(
+            "Το αναγνωριστικό " + stepval[0].name + " δεν έχει αρχικοποιηθεί.",
+            this.cmdLineNoGia
+          );
+        else
+          throw new GE.GInternalError(
+            "Μη έγκυρη τιμή για το βήμα της ΓΙΑ.",
+            this.cmdLineNoGia
+          );
+      }
+
       v_step = tmp.val;
     }
 
@@ -439,24 +451,45 @@ class Stmt_For {
         this.cmdLineNoGia
       );
 
+    // Init value FOR
+    if (initval instanceof Atom.MSymbolTableCell)
+      initval = await initval.eval(app, scope);
+
     var tmp = await initval.resolve(app, scope);
 
-    if (tmp == null)
-    throw new GE.GError(
-      "Μη έγκυρη τιμή για την αρχική τιμή της εντολής ΓΙΑ.",
-      this.cmdLineNoGia
-    );
+    if (tmp == null) {
+      if (initval instanceof Atom.MSymbol)
+        throw new GE.GError(
+          "Το αναγνωριστικό " + initval.name + " δεν έχει αρχικοποιηθεί.",
+          this.cmdLineNoGia
+        );
+      else
+        throw new GE.GInternalError(
+          "Μη έγκυρη τιμή για την αρχική τιμή της ΓΙΑ.",
+          this.cmdLineNoGia
+        );
+    }
 
     var v_initial = tmp.val;
 
+    // final value FOR
+    if (finalval instanceof Atom.MSymbolTableCell)
+      finalval = await finalval.eval(app, scope);
 
     var tmp = await finalval.resolve(app, scope);
 
-    if (tmp == null)
-    throw new GE.GError(
-      "Μη έγκυρη τιμή για την τελική τιμή της εντολής ΓΙΑ.",
-      this.cmdLineNoGia
-    );
+    if (tmp == null) {
+      if (finalval instanceof Atom.MSymbol)
+        throw new GE.GError(
+          "Το αναγνωριστικό " + finalval.name + " δεν έχει αρχικοποιηθεί.",
+          this.cmdLineNoGia
+        );
+      else
+        throw new GE.GInternalError(
+          "Μη έγκυρη τιμή για την τελική τιμή της ΓΙΑ.",
+          this.cmdLineNoGia
+        );
+    }
 
     var v_final = tmp.val;
 
@@ -741,8 +774,8 @@ class UserFunction {
               ftype = new STR.STRFuncNameBoolean(null);
               break;
             default:
-              throw new GE.GError(
-                "Critical: Cannot detect function return value type"
+              throw new GE.GInternalError(
+                "Cannot detect function return value type"
               );
           }
 
@@ -975,7 +1008,7 @@ class DefConstant {
     else if (HP.isFloat(obj.val)) var newObj = new STR.STRFloat(obj);
     else if (HP.isString(obj.val)) var newObj = new STR.STRString(obj);
     else if (HP.isBoolean(obj.val)) var newObj = new STR.STRBoolean(obj);
-    else throw new GE.GError("Critical: Unknown constant type");
+    else throw new GE.GInternalError("Unknown constant type");
 
     scope.addSymbol(this.sym.name, newObj);
 
@@ -1016,7 +1049,7 @@ class DefVariables {
           var ctype = new STR.STRTableNameString(e.name, argsResolved);
         else if (varType == "ΛΟΓΙΚΕΣ")
           var ctype = new STR.STRTableNameBoolean(e.name, argsResolved);
-        else throw new GE.GError("Critical: Unknown variable type");
+        else throw new GE.GInternalError("Unknown variable type");
 
         // Add to local STR symbol for table name
         scope.addSymbol(e.name, ctype);
@@ -1026,7 +1059,7 @@ class DefVariables {
           else if (varType == "ΠΡΑΓΜΑΤΙΚΕΣ") return new STR.STRFloat(null);
           else if (varType == "ΧΑΡΑΚΤΗΡΕΣ") return new STR.STRString(null);
           else if (varType == "ΛΟΓΙΚΕΣ") return new STR.STRBoolean(null);
-          else throw new GE.GError("Critical: Unknown variable type");
+          else throw new GE.GInternalError("Unknown variable type");
         }
 
         // Initialize table cells
@@ -1070,7 +1103,7 @@ class DefVariables {
         else if (varType == "ΠΡΑΓΜΑΤΙΚΕΣ") var ctype = new STR.STRFloat(null);
         else if (varType == "ΧΑΡΑΚΤΗΡΕΣ") var ctype = new STR.STRString(null);
         else if (varType == "ΛΟΓΙΚΕΣ") var ctype = new STR.STRBoolean(null);
-        else throw new GE.GError("Critical: Cannot detect variable type");
+        else throw new GE.GInternalError("Cannot detect variable type");
 
         scope.addSymbol(e.name, ctype);
       }

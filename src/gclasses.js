@@ -27,7 +27,22 @@ class GInterrupt extends Error {
   }
 }
 
+
+class GInternalError extends Error {
+  constructor(message, line = null) {
+    super(message);
+
+    this.name = this.constructor.name;
+    
+    this.message =
+      "FIXME Please.. Εσωτερικό Σφάλμα." +
+      (line != null ? " Γραμμή " + line + ". " : " ") +
+      this.message;
+  }
+}
+
 module.exports = {
   GError,
-  GInterrupt
+  GInterrupt,
+  GInternalError
 };

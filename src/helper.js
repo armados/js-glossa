@@ -64,7 +64,7 @@ function valueTypeToString(obj) {
   } else if (isBoolean(val)) {
     return "[ " + (val ? "ΑΛΗΘΗΣ" : "ΨΕΥΔΗΣ") + " ] Λογική σταθερά";
   } else {
-    throw new GE.GError("Critical: Unknown value type: " + val);
+    throw new GE.GInternalError("Άγνωστη τιμή: " + val);
   }
 }
 

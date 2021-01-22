@@ -6,6 +6,15 @@
 .gloBox {
   border: 0px solid #ddd;
 }
+.gloBox .gloControls {
+  border-bottom: 8px solid #ddd;
+}
+.gloBox.running .gloControls {
+  border-bottom: 8px solid rgb(92, 184, 64);
+}
+.gloBox.running.paused .gloControls {
+  border-bottom: 8px solid rgb(224, 193, 56);
+}
 
 .gloAceEditor {
   min-height: 350px;
@@ -60,17 +69,26 @@ pre,
   margin: 0px;
   padding: 0px;
   width: 100%;
-  height: 500px;
+  height: 525px;
   background-color: #252526;
   border-left: 1px solid #333;
   color: #efefef;
   font-size: 75%;
 }
+.gloMemory table td {
+  padding: 3px 5px;
+}
 .gloMemory table {
   color: #efefef;
 }
-.gloMemory table td {
-  padding: 3px 5px;
+.gloMemory table td.tdid {
+  color: #ffffff;
+}
+.gloMemory table td.tdvalue {
+  color: #f3e45c;
+}
+.gloMemory table td.tdtype {
+  color: #afafaf;
 }
 
 .gloResultPre,

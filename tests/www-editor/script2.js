@@ -1,9 +1,23 @@
-// =================================
-
 var gloObjectsID = [];
 var gloObjectsAPP = [];
 
+function newGlossaApp(id) {
+  const index = gloObjectsID.indexOf(id);
+  if (index >= 0) return false;
+
+  var app = new GLO.GlossaJS();
+  gloObjectsID.push(id);
+  gloObjectsAPP.push(app);
+  return app;
+}
+
+function getGlossaApp(id) {
+  const index = gloObjectsID.indexOf(id);
+  return index >= 0 ? gloObjectsAPP[index] : false;
+}
+
 // =================================
+
 var glossaConf2 = {
   keywords: [
     "ΠΡΟΓΡΑΜΜΑ",
@@ -275,25 +289,12 @@ var glossaConf = {
   },
 };
 
-function newGlossaApp(id) {
-  const index = gloObjectsID.indexOf(id);
-  if (index >= 0) return false;
-
-  var app = new GLO.GlossaJS();
-  gloObjectsID.push(id);
-  gloObjectsAPP.push(app);
-  return app;
-}
-
-function getGlossaApp(id) {
-  const index = gloObjectsID.indexOf(id);
-  return index >= 0 ? gloObjectsAPP[index] : false;
-}
 
 // =================================
 
 var editorsArr = [];
 var decorations = [];
+
 
 function renderMemory(data) {
   var html = '<table class="table table-sm table-borderless">';
@@ -308,11 +309,11 @@ function renderMemory(data) {
 
   for (const rec of data) {
     html += "<tr>";
-    html += '<td scope="row">' + rec.id + "</td>";
-    html += "<td>";
+    html += '<td scope="row" class="tdid">' + rec.id + "</td>";
+    html += '<td class="tdvalue">';
     if (rec.value != null) html += rec.value;
     html += "</td>";
-    html += "<td>" + rec.description + "</td>";
+    html += '<td class="tdtype">' + rec.description + "</td>";
     html += "</tr>";
   }
 
@@ -353,6 +354,8 @@ function UIStateStarted(gloBoxID) {
   $("#" + gloBoxID)
     .find(".gloMemory")
     .html("");
+
+  $("#" + gloBoxID).addClass("running");
 }
 
 function UIStateError(gloBoxID, msg) {
@@ -383,6 +386,25 @@ function UIStateInputRead(gloBoxID, msg) {
   textBox.scrollTop(textBox[0].scrollHeight);
 }
 
+
+function UIStateContinueRunning(gloBoxID) {
+  $("#" + gloBoxID)
+    .find(".gloRun i")
+    .removeClass("fa-play")
+    .addClass("fa-pause");
+
+  $("#" + gloBoxID).removeClass("paused");
+}
+
+function UIStatePaused(gloBoxID) {
+  $("#" + gloBoxID)
+    .find(".gloRun i")
+    .removeClass("fa-pause")
+    .addClass("fa-play");
+
+  $("#" + gloBoxID).addClass("paused");
+}
+
 function UIStateStopped(gloBoxID, msg) {
   $("#" + gloBoxID)
     .find(".gloResult")
@@ -407,8 +429,17 @@ function UIStateFinished(gloBoxID) {
   decorations = editorInstance.deltaDecorations(decorations, []);
 
   $("#" + gloBoxID)
+    .removeClass("running")
+    .removeClass("paused");
+
+  $("#" + gloBoxID)
     .find(".gloSpinner")
     .hide();
+
+  $("#" + gloBoxID)
+    .find(".gloRun i")
+    .removeClass("fa-pause")
+    .addClass("fa-play");
 
   $("#" + gloBoxID)
     .find(".gloStop")
@@ -478,17 +509,25 @@ async function startProgramExecution(gloBoxID, runstep) {
     .find(".gloSlowRun")
     .is(":checked");
 
+  //var breakpointsArray = aceeditor.session.getBreakpoints();
+
   var app = getGlossaApp(gloBoxID);
   app.init();
-  app.setDebugMode(true);
-  app.setReadInputFunction(function (name) {
-    var value = prompt("Εισαγωγή τιμής στο αναγνωριστικό " + name);
-    return value;
-  });
+
   app.setSourceCode(sourcecode);
   app.setInputBuffer(inputdata);
+
+  app.setDebugMode(true);
+
+  app.setReadInputFunction(function (name) {
+    return prompt("Εισαγωγή τιμής στο αναγνωριστικό " + name);
+  });
+
   app.setSlowRun(slowrun);
   app.setStepRun(runstep);
+
+  //for (var line in breakpointsArray) app.addBreakpoint(Number(line) + 1);
+
   app.run();
 }
 
@@ -576,12 +615,14 @@ $(document).ready(function () {
   $(".gloBox").each(function (index) {
     var gloBoxID = $(this).attr("id");
 
+    var randomID = Math.floor(Math.random() * 1000000 + 1);
+    
     if (typeof gloBoxID === "undefined") {
       gloBoxID = "gloBoxID" + randomID;
       $(this).attr("id", gloBoxID);
     }
 
-    var randomID = Math.floor(Math.random() * 1000000 + 1);
+
     $(this)
       .find(".gloAceEditor")
       .attr("id", "gloAceEditorID" + randomID);

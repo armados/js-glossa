@@ -1,5 +1,3 @@
-// =================================
-
 var gloObjectsID = [];
 var gloObjectsAPP = [];
 
@@ -33,11 +31,11 @@ function renderMemory(data) {
 
   for (const rec of data) {
     html += "<tr>";
-    html += '<td scope="row">' + rec.id + "</td>";
-    html += "<td>";
+    html += '<td scope="row" class="tdid">' + rec.id + "</td>";
+    html += '<td class="tdvalue">';
     if (rec.value != null) html += rec.value;
     html += "</td>";
-    html += "<td>" + rec.description + "</td>";
+    html += '<td class="tdtype">' + rec.description + "</td>";
     html += "</tr>";
   }
 
@@ -75,7 +73,6 @@ async function startProgramExecution(gloBoxID, runstep) {
 
   app.setReadInputFunction(function (name) {
     return prompt("Εισαγωγή τιμής στο αναγνωριστικό " + name);
-    
   });
 
   app.setSlowRun(slowrun);
@@ -123,6 +120,8 @@ function UIStateStarted(gloBoxID) {
   $("#" + gloBoxID)
     .find(".gloMemory")
     .html("");
+
+  $("#" + gloBoxID).addClass("running");
 }
 
 function UIStateError(gloBoxID, msg) {
@@ -159,9 +158,7 @@ function UIStateContinueRunning(gloBoxID) {
     .removeClass("fa-play")
     .addClass("fa-pause");
 
-  $("#" + gloBoxID)
-    .removeClass("paused")
-    .addClass("running");
+  $("#" + gloBoxID).removeClass("paused");
 }
 
 function UIStatePaused(gloBoxID) {
@@ -170,9 +167,7 @@ function UIStatePaused(gloBoxID) {
     .removeClass("fa-pause")
     .addClass("fa-play");
 
-  $("#" + gloBoxID)
-    .removeClass("running")
-    .addClass("paused");
+  $("#" + gloBoxID).addClass("paused");
 }
 
 function UIStateStopped(gloBoxID, msg) {
@@ -199,6 +194,10 @@ function UIStateFinished(gloBoxID) {
   var aceeditor = ace.edit(editorid);
 
   aceeditor.setReadOnly(false);
+
+  $("#" + gloBoxID)
+    .removeClass("running")
+    .removeClass("paused");
 
   $("#" + gloBoxID)
     .find(".gloSpinner")
@@ -251,16 +250,6 @@ function UIStateOutputDetailsAppend(gloBoxID, data) {
       return value + data + "\n";
     });
 }
-
-function UIStateOutputDetailsAppend(gloBoxID, data) {
-  $("#" + gloBoxID)
-    .find(".gloResultDetails")
-    .html(function (index, value) {
-      return value + data + "\n";
-    });
-}
-
-// ==============================
 
 // ==============================
 
@@ -353,12 +342,14 @@ $(document).ready(function () {
   $(".gloBox").each(function (index) {
     var gloBoxID = $(this).attr("id");
 
+    var randomID = Math.floor(Math.random() * 1000000 + 1);
+
     if (typeof gloBoxID === "undefined") {
       gloBoxID = "gloBoxID" + randomID;
       $(this).attr("id", gloBoxID);
     }
 
-    var randomID = Math.floor(Math.random() * 1000000 + 1);
+
     $(this)
       .find(".gloAceEditor")
       .attr("id", "gloAceEditorID" + randomID);

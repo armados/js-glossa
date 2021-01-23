@@ -30,15 +30,31 @@ class STRUserFunction extends STRFunctionMethod {}
 class STRUserProcedure extends STRProcedureMethod {}
 
 class STRNumber extends STRLocalScope {}
+
 class STRFloat extends STRNumber {}
 class STRInt extends STRFloat {}
 class STRString extends STRLocalScope {}
 class STRBoolean extends STRLocalScope {}
 
-class STRFuncNameFloat extends STRFloat {}
-class STRFuncNameInt extends STRInt {}
-class STRFuncNameString extends STRString {}
-class STRFuncNameBoolean extends STRBoolean {}
+class STRVariableFloat extends STRFloat {}
+class STRVariableInt extends STRInt {}
+class STRVariableString extends STRString {}
+class STRVariableBoolean extends STRBoolean {}
+
+class STRTableCellFloat extends STRFloat {}
+class STRTableCellInt extends STRInt {}
+class STRTableCellString extends STRString {}
+class STRTableCellBoolean extends STRBoolean {}
+
+class STRConstantFloat extends STRFloat {}
+class STRConstantInt extends STRInt {}
+class STRConstantString extends STRString {}
+class STRConstantBoolean extends STRBoolean {}
+
+class STRFuncNameFloat extends STRVariableFloat {}
+class STRFuncNameInt extends STRVariableInt {}
+class STRFuncNameString extends STRVariableString {}
+class STRFuncNameBoolean extends STRVariableBoolean {}
 
 class STRTableName {
   constructor(tblname, tblsize) {
@@ -119,36 +135,60 @@ class SScope {
     var arr = [];
 
     for (const [key, value] of Object.entries(this.localStorage)) {
-      //ignore tables
+      //ignore table ref
       if (value instanceof STRTableName) continue;
 
       var symType = null;
       var symTypeClass = null;
 
-      if (value instanceof STRInt) {
-        symType = "ΑΚΕΡΑΙΑ";
-        symTypeClass = "STRInt";
+      if (value instanceof STRTableCellInt) {
+        symType = "ΑΚΕΡΑΙΑ (κελί πίνακα)";
+        symTypeClass = "STRTableCellInt";
       } else if (value instanceof STRFuncNameInt) {
         symType = "ΑΚΕΡΑΙΑ (όνομα συνάρτησης)";
         symTypeClass = "STRFuncNameInt";
-      } else if (value instanceof STRFloat) {
-        symType = "ΠΡΑΓΜΑΤΙΚΗ";
-        symTypeClass = "STRFloat";
+      } else if (value instanceof STRVariableInt) {
+        symType = "ΑΚΕΡΑΙΑ";
+        symTypeClass = "STRVariableInt";
+      } else if (value instanceof STRConstantInt) {
+        symType = "ΑΚΕΡΑΙΑ";
+        symTypeClass = "STRConstantInt";
       } else if (value instanceof STRFuncNameFloat) {
         symType = "ΠΡΑΓΜΑΤΙΚΗ (όνομα συνάρτησης)";
         symTypeClass = "STRFuncNameFloat";
-      } else if (value instanceof STRString) {
-        symType = "ΧΑΡΑΚΤΗΡΑΣ";
-        symTypeClass = "STRString";
+      } else if (value instanceof STRTableCellFloat) {
+        symType = "ΠΡΑΓΜΑΤΙΚΗ (κελί πίνακα)";
+        symTypeClass = "STRTableCellFloat";
+      } else if (value instanceof STRVariableFloat) {
+        symType = "ΠΡΑΓΜΑΤΙΚΗ";
+        symTypeClass = "STRVariableFloat";
+      } else if (value instanceof STRConstantFloat) {
+        symType = "ΠΡΑΓΜΑΤΙΚΗ";
+        symTypeClass = "STRConstantFloat";
       } else if (value instanceof STRFuncNameString) {
         symType = "ΧΑΡΑΚΤΗΡΑΣ (όνομα συνάρτησης)";
         symTypeClass = "STRFuncNameString";
-      } else if (value instanceof STRBoolean) {
-        symType = "ΛΟΓΙΚΗ";
-        symTypeClass = "STRBoolean";
+      } else if (value instanceof STRTableCellString) {
+        symType = "ΧΑΡΑΚΤΗΡΑΣ (κελί πίνακα)";
+        symTypeClass = "STRTableCellString";
+      } else if (value instanceof STRVariableString) {
+        symType = "ΧΑΡΑΚΤΗΡΑΣ";
+        symTypeClass = "STRVariableString";
+      } else if (value instanceof STRConstantString) {
+        symType = "ΧΑΡΑΚΤΗΡΑΣ";
+        symTypeClass = "STRConstantString";
       } else if (value instanceof STRFuncNameBoolean) {
         symType = "ΛΟΓΙΚΗ (όνομα συνάρτησης)";
         symTypeClass = "STRFuncNameBoolean";
+      } else if (value instanceof STRTableCellBoolean) {
+        symType = "ΛΟΓΙΚΗ (κελί πίνακα)";
+        symTypeClass = "STRTableCellBoolean";
+      } else if (value instanceof STRVariableBoolean) {
+        symType = "ΛΟΓΙΚΗ";
+        symTypeClass = "STRVariableBoolean";
+      } else if (value instanceof STRConstantBoolean) {
+        symType = "ΛΟΓΙΚΗ";
+        symTypeClass = "STRConstantBoolean";
       } else throw new GE.GInternalError("01 Unknown symbol type" + value);
 
       var sym = value.get();
@@ -163,6 +203,7 @@ class SScope {
         description: symType,
         value: symValue,
       };
+
       arr.push(ret);
     }
 
@@ -215,37 +256,6 @@ class SScope {
         this.cmdLineNo
       ); //FIXME:
 
-    var symType = null;
-
-    if (this.getSymbolObject(name) instanceof STRInt) symType = "ΑΚΕΡΑΙΑ";
-    else if (this.getSymbolObject(name) instanceof STRFuncNameInt)
-      symType = "ΑΚΕΡΑΙΑ (ονομα συνάρτησης)";
-    //else if (this.getSymbolObject(name) instanceof STRTableNameInt)
-    //  symType = "ΑΚΕΡΑΙΑ (στοιχείο σε πίνακα)";
-    else if (this.getSymbolObject(name) instanceof STRFloat)
-      symType = "ΠΡΑΓΜΑΤΙΚΗ";
-    else if (this.getSymbolObject(name) instanceof STRFuncNameFloat)
-      symType = "ΠΡΑΓΜΑΤΙΚΗ (ονομα συνάρτησης)";
-    //else if (this.getSymbolObject(name) instanceof STRTableNameFloat)
-    //  symType = "ΠΡΑΓΜΑΤΙΚΗ (στοιχείο σε πίνακα)";
-    else if (this.getSymbolObject(name) instanceof STRString)
-      symType = "ΧΑΡΑΚΤΗΡΑΣ";
-    else if (this.getSymbolObject(name) instanceof STRFuncNameString)
-      symType = "ΧΑΡΑΚΤΗΡΑΣ (ονομα συνάρτησης)";
-    //else if (this.getSymbolObject(name) instanceof STRTableNameString)
-    //  symType = "ΧΑΡΑΚΤΗΡΑΣ (στοιχείο σε πίνακα)";
-    else if (this.getSymbolObject(name) instanceof STRBoolean)
-      symType = "ΛΟΓΙΚΗ";
-    else if (this.getSymbolObject(name) instanceof STRFuncNameBoolean)
-      symType = "ΛΟΓΙΚΗ (όνομα συνάρτησης)";
-    //else if (this.getSymbolObject(name) instanceof STRTableNameBoolean)
-    //  symType = "ΛΟΓΙΚΗ (στοιχείο σε πίνακα)";
-    else
-      throw new GE.GInternalError(
-        "01 Unknown symbol type" + this.getSymbol(name)
-      );
-
-    //console.log('setSymbol: ', name, symType, ' <--  ',  obj, obj.constructor.name);
 
     if (
       this.getSymbolObject(name) instanceof STRInt ||
@@ -308,7 +318,6 @@ class SScope {
       );
 
     this.localStorage[name].set(obj);
-
   }
 
   getSymbol(name) {
@@ -324,9 +333,7 @@ class SScope {
     if (name in this.globalStorage) return this.globalStorage[name].get();
 
     throw new GE.GError(
-      "Το αναγνωριστικό " +
-        name +
-        " δεν βρέθηκε.",
+      "Το αναγνωριστικό " + name + " δεν βρέθηκε.",
       this.cmdLineNo
     );
   }
@@ -337,9 +344,7 @@ class SScope {
     if (name in this.globalStorage) return this.globalStorage[name];
 
     throw new GE.GError(
-      "Το αναγνωριστικό " +
-        name +
-        " δεν βρέθηκε.",
+      "Το αναγνωριστικό " + name + " δεν βρέθηκε.",
       this.cmdLineNo
     );
   }
@@ -361,6 +366,21 @@ module.exports = {
   STRInt,
   STRString,
   STRBoolean,
+
+  STRVariableFloat,
+  STRVariableInt,
+  STRVariableString,
+  STRVariableBoolean,
+
+  STRTableCellFloat,
+  STRTableCellInt,
+  STRTableCellString,
+  STRTableCellBoolean,
+
+  STRConstantFloat,
+  STRConstantInt,
+  STRConstantString,
+  STRConstantBoolean,
 
   SScope,
 

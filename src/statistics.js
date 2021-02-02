@@ -6,18 +6,15 @@ class Statistics {
     this.statistics["totalAssignCmd"] = 0;
     this.statistics["totalLogicalComp"] = 0;
   }
+
   getStats() {
     return this.app["statistics"];
   }
 
-  incrAssignCounter () {
-    this.statistics["totalAssignCmd"] =
-      this.statistics["totalAssignCmd"] + 1;
+  incrAssignCounter() {
+    this.statistics["totalAssignCmd"] += 1;
 
-    if (
-      this.statistics["totalAssignCmd"] >=
-      this.app.config["maxExecutionCmd"]
-    )
+    if (this.statistics["totalAssignCmd"] >= this.app.config["maxExecutionCmd"])
       throw new GE.GError(
         "Το πρόγραμμα έφτασε το μέγιστο επιτρεπτό όριο των " +
           this.app.config["maxExecutionCmd"] +
@@ -26,13 +23,11 @@ class Statistics {
       ); //FIXME:
   }
 
-  incrLogicalCounter ()  {
-    this.statistics["totalLogicalComp"] =
-      this.statistics["totalLogicalComp"] + 1;
+  incrLogicalCounter() {
+    this.statistics["totalLogicalComp"] += 1;
 
     if (
-      this.statistics["totalLogicalComp"] >=
-      this.app.config["maxLogicalComp"]
+      this.statistics["totalLogicalComp"] >= this.app.config["maxLogicalComp"]
     )
       throw new GE.GError(
         "Το πρόγραμμα έφτασε το μέγιστο επιτρεπτό όριο των " +

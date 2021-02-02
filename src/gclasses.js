@@ -35,7 +35,7 @@ class GInternalError extends Error {
     this.name = this.constructor.name;
     
     this.message =
-      "FIXME Please.. Εσωτερικό Σφάλμα." +
+      "Εσωτερικό Σφάλμα." +
       (line != null ? " Γραμμή " + line + ". " : " ") +
       this.message;
   }

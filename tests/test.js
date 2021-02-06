@@ -7,7 +7,7 @@ const GLO = require("../src/main.js");
 
 const prompt = require("prompt-sync")();
 
-const filename = "../samples-private/sample1.glo";
+const filename = "../samples-private/sample5.glo";
 
 (async function main() {
   try {
@@ -38,6 +38,6 @@ const filename = "../samples-private/sample1.glo";
     await app.run();
   } catch (e) {}
 
-  console.log("=======[ stats ] ========");
-  console.log("Total commands: ", app.getStats());
+  //console.log("=======[ stats ] ========");
+  //console.log("Total commands: ", app.getStats());
 })();

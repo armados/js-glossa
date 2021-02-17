@@ -51,6 +51,13 @@ async function startProgramExecution(gloBoxID, runstep) {
     .attr("id");
   var aceeditor = ace.edit(editorid);
 
+
+  // beautify
+  var beautify = ace.require("ace/ext/beautify");
+  const session = aceeditor.getSession();
+  beautify.beautify(session);
+  // beautify end
+
   var sourcecode = aceeditor.getValue();
 
   var inputdata = $("#" + gloBoxID)

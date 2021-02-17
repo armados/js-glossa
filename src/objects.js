@@ -93,15 +93,24 @@ class Stmt_Read {
         data = await app["inputFunction"].apply(this, [arg.name]);
 
         if (data != null) {
-          if (scope.getSymbolObject(arg.name) instanceof STR.STRVariableString) {
+          if (
+            scope.getSymbolObject(arg.name) instanceof STR.STRVariableString ||
+            scope.getSymbolObject(arg.name) instanceof STR.STRTableCellString
+          ) {
             data = String(data);
-          } else if (scope.getSymbolObject(arg.name) instanceof STR.STRVariableInt) {
+          } else if (
+            scope.getSymbolObject(arg.name) instanceof STR.STRVariableInt ||
+            scope.getSymbolObject(arg.name) instanceof STR.STRTableCellInt
+          ) {
             if (HP.StringIsNumInt(data)) {
               data = parseInt(data);
             } else {
               data = String(data);
             }
-          } else if (scope.getSymbolObject(arg.name) instanceof STR.STRVariableFloat) {
+          } else if (
+            scope.getSymbolObject(arg.name) instanceof STR.STRVariableFloat ||
+            scope.getSymbolObject(arg.name) instanceof STR.STRTableCellFloat
+          ) {
             if (HP.StringIsNumFloat(data)) {
               data = parseFloat(data);
             } else {
@@ -1007,7 +1016,8 @@ class DefConstant {
     if (HP.isInt(obj.val)) var newObj = new STR.STRConstantInt(obj);
     else if (HP.isFloat(obj.val)) var newObj = new STR.STRConstantFloat(obj);
     else if (HP.isString(obj.val)) var newObj = new STR.STRConstantString(obj);
-    else if (HP.isBoolean(obj.val)) var newObj = new STR.STRConstantBoolean(obj);
+    else if (HP.isBoolean(obj.val))
+      var newObj = new STR.STRConstantBoolean(obj);
     else throw new GE.GInternalError("Unknown constant type");
 
     scope.addSymbol(this.sym.name, newObj);
@@ -1056,9 +1066,12 @@ class DefVariables {
 
         function helperCreateCellFromType(varType) {
           if (varType == "ΑΚΕΡΑΙΕΣ") return new STR.STRTableCellInt(null);
-          else if (varType == "ΠΡΑΓΜΑΤΙΚΕΣ") return new STR.STRTableCellFloat(null);
-          else if (varType == "ΧΑΡΑΚΤΗΡΕΣ") return new STR.STRTableCellString(null);
-          else if (varType == "ΛΟΓΙΚΕΣ") return new STR.STRTableCellBoolean(null);
+          else if (varType == "ΠΡΑΓΜΑΤΙΚΕΣ")
+            return new STR.STRTableCellFloat(null);
+          else if (varType == "ΧΑΡΑΚΤΗΡΕΣ")
+            return new STR.STRTableCellString(null);
+          else if (varType == "ΛΟΓΙΚΕΣ")
+            return new STR.STRTableCellBoolean(null);
           else throw new GE.GInternalError("Unknown variable type");
         }
 
@@ -1100,9 +1113,12 @@ class DefVariables {
         } else throw new GE.GError("Critical: Unsupported table dimensions");
       } else {
         if (varType == "ΑΚΕΡΑΙΕΣ") var ctype = new STR.STRVariableInt(null);
-        else if (varType == "ΠΡΑΓΜΑΤΙΚΕΣ") var ctype = new STR.STRVariableFloat(null);
-        else if (varType == "ΧΑΡΑΚΤΗΡΕΣ") var ctype = new STR.STRVariableString(null);
-        else if (varType == "ΛΟΓΙΚΕΣ") var ctype = new STR.STRVariableBoolean(null);
+        else if (varType == "ΠΡΑΓΜΑΤΙΚΕΣ")
+          var ctype = new STR.STRVariableFloat(null);
+        else if (varType == "ΧΑΡΑΚΤΗΡΕΣ")
+          var ctype = new STR.STRVariableString(null);
+        else if (varType == "ΛΟΓΙΚΕΣ")
+          var ctype = new STR.STRVariableBoolean(null);
         else throw new GE.GInternalError("Cannot detect variable type");
 
         scope.addSymbol(e.name, ctype);

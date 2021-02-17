@@ -11,6 +11,8 @@ const STR = require("./storage");
 const HP = require("./helper");
 const GLBF = require("./globalfunctions");
 
+const AST = require("./ast");
+
 const EventEmitter = require("events");
 
 class GlossaJS extends EventEmitter {
@@ -317,6 +319,12 @@ class GlossaJS extends EventEmitter {
       var result = sem(match).toAST();
       if (!result) throw new GE.GError(result);
 
+/*
+      var myasttree = new AST.ASTree(result);
+      var tree = myasttree.generate();
+
+      console.log(tree);
+*/
       this.app.postMessage("continuerunning");
       await result.resolve(this.app, this.scope);
     } catch (e) {

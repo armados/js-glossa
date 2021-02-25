@@ -63,15 +63,15 @@ pre,
 
 .gloMemory {
   font-family: "Fira Mono", monospace;
-  overflow-y: scroll;
+  overflow-y: auto;
   word-wrap: break-word !important;
   white-space: pre-wrap;
   margin: 0px;
   padding: 0px;
   width: 100%;
   height: 525px;
-  background-color: #252526;
-  border-left: 1px solid #333;
+  background-color: #1b1b1b;
+  border-left: 0px solid #333;
   color: #efefef;
   font-size: 75%;
 }

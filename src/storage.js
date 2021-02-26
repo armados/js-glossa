@@ -123,14 +123,6 @@ class SScope {
     this.lockedVariables.splice(index, 1);
   }
 
-  printMemory() {
-    console.log("\n============================[ Memory dump  ]");
-    console.log("RAM Global storage: ", this.globalStorage);
-    console.log("RAM  Local storage: ", this.localStorage);
-    console.log("Local Variables Locked: ", this.lockedVariables);
-    console.log("\n");
-  }
-
   getMemory() {
     var arr = [];
 
@@ -192,10 +184,13 @@ class SScope {
       } else throw new GE.GInternalError("01 Unknown symbol type" + value);
 
       var sym = value.get();
-      var symValue = sym != null ? sym.val : null;
 
-      if (sym instanceof Atom.MBoolean)
-        symValue = sym.getValue() ? "ΑΛΗΘΗΣ" : "ΨΕΥΔΗΣ";
+      if (sym == null) var symValue = null;
+      else if (sym instanceof Atom.MBoolean)
+        var symValue = sym.getValue() ? "ΑΛΗΘΗΣ" : "ΨΕΥΔΗΣ";
+      else if (sym instanceof Atom.MNumber)
+        var symValue = Math.round(sym.getValue() * 100) / 100;
+      else var symValue = sym.getValue();
 
       var ret = {
         id: key,
@@ -255,7 +250,6 @@ class SScope {
         "Το αναγνωριστικό " + name + " δεν μπορεί να χρησιμοποιηθεί.",
         this.cmdLineNo
       ); //FIXME:
-
 
     if (
       this.getSymbolObject(name) instanceof STRInt ||

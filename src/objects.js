@@ -57,13 +57,11 @@ class Stmt_Write {
           this.cmdLineNo
         );
 
-      var out = arg.getValue();
-
       if (arg instanceof Atom.MBoolean)
-        out = arg.getValue() ? "ΑΛΗΘΗΣ" : "ΨΕΥΔΗΣ";
+        var out = arg.getValue() ? "ΑΛΗΘΗΣ" : "ΨΕΥΔΗΣ";
       else if (arg instanceof Atom.MNumber)
-        out =  Math.round(arg.getValue() * 100) / 100;
-       
+        var out = Math.round(arg.getValue() * 100) / 100;
+      else var out = arg.getValue();
 
       output.push(out);
     }

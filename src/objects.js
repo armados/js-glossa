@@ -61,6 +61,9 @@ class Stmt_Write {
 
       if (arg instanceof Atom.MBoolean)
         out = arg.getValue() ? "ΑΛΗΘΗΣ" : "ΨΕΥΔΗΣ";
+      else if (arg instanceof Atom.MNumber)
+        out =  Math.round(arg.getValue() * 100) / 100;
+       
 
       output.push(out);
     }

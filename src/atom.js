@@ -21,7 +21,6 @@ class MNumber extends Atom {
     
     if (HP.isFloat(this.val)) {
       this.val = +parseFloat(this.val).toFixed(8);
-      this.val = Math.round(this.val * 100) / 100;
     }
   }
 }

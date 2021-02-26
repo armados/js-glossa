@@ -3,11 +3,11 @@
 const fs = require("fs");
 const path = require("path");
 
-const GLO = require("../src/main.js");
+const GLO = require("../../src/main.js");
 
 const prompt = require("prompt-sync")();
 
-const filename = "../samples-private/sample38.glo";
+const filename = "../../samples/sample38.glo";
 
 (async function main() {
   try {

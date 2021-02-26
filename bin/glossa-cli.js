@@ -3,7 +3,6 @@
 "use strict";
 
 var GLO = require("../src/main");
-var GE = require("../src/gclasses");
 
 var fs = require("fs");
 var minimist = require("minimist");
@@ -23,7 +22,6 @@ var args = minimist(process.argv.slice(2), {
   default: {},
   stopEarly: true /* populate _ with first non-option */,
   unknown: function () {
-    //throw new GE.GError("Invalid arguments");
     console.log("Invalid arguments");
     process.exit(1);
   },
@@ -35,7 +33,6 @@ if (args["version"]) {
 }
 
 if (!args["input"]) {
-  //throw new GE.GError("Missing input file");
   console.log("Σφάλμα. Δεν έχει δηλωθεί το πηγαίο πρόγραμμα.");
   process.exit(1);
 }
@@ -44,7 +41,6 @@ var sourceCode = null;
 try {
   sourceCode = fs.readFileSync(args["input"]).toString();
 } catch (e) {
-  //throw new GE.GError("Input file not found");
   console.log("Σφάλμα. Το αρχείο του πηγαίου προγράμματος δεν βρέθηκε.");
   process.exit(1);
 }
@@ -54,7 +50,6 @@ if (args["keyboard"]) {
   try {
     keyboardInput = fs.readFileSync(args["keyboard"]).toString();
   } catch (e) {
-    // throw new GE.GError("Keyboard input file not found");
     console.log("Σφάλμα. Το αρχείο εισόδου δεν βρέθηκε.");
     process.exit(1);
   }

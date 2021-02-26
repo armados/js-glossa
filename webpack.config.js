@@ -9,7 +9,7 @@ module.exports = {
         minimize: true
     },
     output: {
-        path: path.join(__dirname, 'dist'),
+        path: path.join(__dirname, 'dist/js'),
         filename: '[name].min.js',
         library: 'GLO',
     },

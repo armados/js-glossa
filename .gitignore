@@ -1,18 +1,11 @@
-.vscode/
 samples-private/
-
-
+samples/
 dist/binary/
-
-
+tests/www-datasets/
 
 cache/
-
+.vscode/
 debug.log
 npm-debug.log
-
-# Dependency directory
 node_modules
-
-# Optional npm cache directory
 .npm

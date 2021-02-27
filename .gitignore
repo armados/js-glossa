@@ -2,6 +2,7 @@ samples-private/
 samples/
 dist/binary/
 tests/www-datasets/
+dist/js/glossajs.min.js.LICENSE.txt
 
 cache/
 .vscode/

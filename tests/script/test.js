@@ -7,7 +7,7 @@ const GLO = require("../../src/main.js");
 
 const prompt = require("prompt-sync")();
 
-const filename = "../../samples/sample38.glo";
+const filename = "../../samples/sample30.glo";
 
 (async function main() {
   try {
@@ -22,16 +22,16 @@ const filename = "../../samples/sample38.glo";
   app.setDebugMode(false);
   app.setInputBuffer(null);
 
+  app.setReadInputFunction(function (name) {
+    return prompt();
+  });
+  
   app.on("outputappend", (data) => {
     console.log(data);
   });
 
   app.on("error", (data) => {
     console.log(data);
-  });
-
-  app.setReadInputFunction(function (name) {
-    return prompt();
   });
 
   try {

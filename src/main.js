@@ -46,8 +46,8 @@ class GlossaJS extends EventEmitter {
       outputData: [],
       outputDataDetails: [],
 
-      postMessage: async (msg, data = null) => {
-        this.emit(msg, data);
+      postMessage: async (msg, data1 = null, data2 = null) => {
+        this.emit(msg, data1, data2);
       },
 
       outputAdd: async (val) => {
@@ -122,7 +122,6 @@ class GlossaJS extends EventEmitter {
           this.app["config"]["runstep"] == true
         ) {
           this.app.postMessage("line", line);
-          this.app.postMessage("memory", scope.getMemory());
         }
 
         if (this.app.breakPoints.includes(line) == true) {
@@ -167,7 +166,6 @@ class GlossaJS extends EventEmitter {
           this.app["config"]["runstep"] == true
         ) {
           this.app.postMessage("line", line);
-          this.app.postMessage("memory", scope.getMemory());
         }
 
         await this.app.sleepFunc(40);
@@ -212,7 +210,7 @@ class GlossaJS extends EventEmitter {
     this.app["config"]["debugmode"] = false;
     this.app["config"]["slowrunflag"] = false;
     this.app["config"]["runspeed"] = 0;
-    this.app["config"]["slowrunspeed"] = 100;
+    this.app["config"]["slowrunspeed"] = 300;
     this.app["config"]["runstep"] = false;
     this.app["config"]["runstepflag"] = false;
 

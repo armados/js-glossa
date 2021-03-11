@@ -30,7 +30,11 @@ function renderMemory(data) {
   html += "<tbody>";
 
   for (const rec of data) {
-    html += "<tr>";
+    var idclass = rec.id.replaceAll("[", "-");
+    idclass = idclass.replaceAll("]", "");
+    idclass = idclass.replaceAll(",", "-");
+
+    html += '<tr class="symbol-' + idclass + '">';
     html += '<td scope="row" class="tdid">' + rec.id + "</td>";
     html += '<td class="tdvalue">';
     if (rec.value != null) html += rec.value;
@@ -237,6 +241,28 @@ function UIStateUpdateMemory(gloBoxID, data) {
   $("#" + gloBoxID)
     .find(".gloMemory")
     .html(renderMemory(data));
+}
+
+function UIStateUpdateMemorySymbol(gloBoxID, data1, data2) {
+  data1 = data1.replaceAll("[", "-");
+  data1 = data1.replaceAll("]", "");
+  data1 = data1.replaceAll(",", "-");
+
+  $("#" + gloBoxID)
+  .find(".gloMemory").find('tr').removeClass("highlightRow");
+
+  $("#" + gloBoxID)
+  .find(".gloMemory")
+  .find(".symbol-"+data1).addClass('highlightRow');
+
+
+
+    $("#" + gloBoxID)
+    .find(".gloMemory")
+    .find(".symbol-"+data1)
+    .find(".tdvalue")
+    .html(data2.val);
+  
 }
 
 function UIStateOutputAppend(gloBoxID, data) {
@@ -488,6 +514,9 @@ $(document).ready(function () {
     });
     app.on("memory", (data) => {
       UIStateUpdateMemory(gloBoxID, data);
+    });
+    app.on("memorysymbolupdate", (data1, data2) => {
+      UIStateUpdateMemorySymbol(gloBoxID, data1, data2);
     });
     app.on("outputappend", (data) => {
       UIStateOutputAppend(gloBoxID, data);

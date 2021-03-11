@@ -91,6 +91,10 @@ pre,
   color: #afafaf;
 }
 
+.gloMemory tr.highlightRow {
+  background-color: rgb(43, 43, 40);
+}
+
 .gloResultPre,
 .gloResultDetailsPre {
   overflow: auto;

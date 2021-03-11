@@ -28,6 +28,7 @@ class Stmt_Assignment {
     );
 
     scope.setSymbol(sym.name, valResolved);
+    app.postMessage("memorysymbolupdate", sym.name, valResolved);
 
     app.incrAssignCounter();
   }
@@ -150,6 +151,7 @@ class Stmt_Read {
       }
 
       scope.setSymbol(arg.name, sym);
+      app.postMessage("memorysymbolupdate", arg.name, sym);
 
       app.postMessage("inputread", data);
     }
@@ -507,6 +509,7 @@ class Stmt_For {
       variable = await variable.eval(app, scope);
 
     scope.setSymbol(variable.name, new Atom.MNumber(v_initial));
+    app.postMessage("memorysymbolupdate", variable.name, new Atom.MNumber(v_initial));
     scope.addLock(variable.name);
 
     if (v_initial <= v_final && v_step > 0) {
@@ -534,6 +537,8 @@ class Stmt_For {
           variable.name,
           new Atom.MNumber(scope.getSymbol(variable.name).val + v_step)
         );
+        app.postMessage("memorysymbolupdate", variable.name, new Atom.MNumber(scope.getSymbol(variable.name).val + v_step));
+
         scope.addLock(variable.name);
       } while (scope.getSymbol(variable.name).val <= v_final);
 
@@ -567,6 +572,7 @@ class Stmt_For {
           variable.name,
           new Atom.MNumber(scope.getSymbol(variable.name).val + v_step)
         );
+        app.postMessage("memorysymbolupdate", variable.name, new Atom.MNumber(scope.getSymbol(variable.name).val + v_step));
         scope.addLock(variable.name);
       } while (scope.getSymbol(variable.name).val >= v_final);
 
@@ -619,6 +625,8 @@ class FunctionCall {
 
     var valReturned = await fun.apply(this, sendData);
 
+    app.postMessage("memory", scope.getMemory());
+
     app.outputAddDetails(
       "Επιστροφή από την συνάρτηση " +
         this.fun.name +
@@ -670,6 +678,8 @@ class ProcedureCall {
 
     var recvData = await fun.apply(null, sendData);
 
+    app.postMessage("memory", scope.getMemory());
+
     await app.setActiveLine(scope, this.cmdLineNo);
 
     app.outputAddDetails(
@@ -694,6 +704,8 @@ class ProcedureCall {
               arg.name + "[" + j + "]",
               procScope.getSymbol(procParams[i].name + "[" + j + "]")
             );
+            app.postMessage("memorysymbolupdate", arg.name + "[" + j + "]", procScope.getSymbol(procParams[i].name + "[" + j + "]"));
+
           }
         } else if (tblDimensions == 2) {
           var tblsize1 = scope.getSymbol(arg.name).getSize()[0];
@@ -706,6 +718,10 @@ class ProcedureCall {
                   procParams[i].name + "[" + j + "," + l + "]"
                 )
               );
+              app.postMessage("memorysymbolupdate", arg.name + "[" + j + "," + l + "]", procScope.getSymbol(
+                procParams[i].name + "[" + j + "," + l + "]"
+              ));
+
             }
           }
         }
@@ -715,11 +731,13 @@ class ProcedureCall {
           scope.getSymbol(arg.name) != procScope.getSymbol(procParams[i].name)
         )
           scope.setSymbol(arg.name, procScope.getSymbol(procParams[i].name));
+          app.postMessage("memorysymbolupdate",arg.name, procScope.getSymbol(procParams[i].name));
       } else if (arg instanceof Atom.MSymbol) {
         if (
           scope.getSymbol(arg.name) != procScope.getSymbol(procParams[i].name)
         )
           scope.setSymbol(arg.name, procScope.getSymbol(procParams[i].name));
+          app.postMessage("memorysymbolupdate",arg.name, procScope.getSymbol(procParams[i].name));
       }
     });
   }
@@ -804,8 +822,10 @@ class UserFunction {
                 lineCalled //FIXME: not working
               );
 
-            if (!(args[i] instanceof STR.STRTableName))
+            if (!(args[i] instanceof STR.STRTableName)) {
               scope2.setSymbol(param.name, args[i]);
+              app.postMessage("memorysymbolupdate",param.name, args[i]);
+            }
             else {
               if (
                 scope2.getSymbol(param.name).constructor.name !=
@@ -838,6 +858,8 @@ class UserFunction {
                     param.name + "[" + k + "]",
                     parentScope.getSymbol(args[i].tblname + "[" + k + "]")
                   );
+                  app.postMessage("memorysymbolupdate",param.name + "[" + k + "]", parentScope.getSymbol(args[i].tblname + "[" + k + "]"));
+
                 }
               } else if (tblDimensions == 2) {
                 var tblsize1 = args[i].getSize()[0];
@@ -850,6 +872,10 @@ class UserFunction {
                         args[i].tblname + "[" + k + "," + l + "]"
                       )
                     );
+                    app.postMessage("memorysymbolupdate",param.name + "[" + k + "," + l + "]", parentScope.getSymbol(
+                      args[i].tblname + "[" + k + "," + l + "]"
+                    ));
+
                   }
                 }
               }
@@ -929,9 +955,10 @@ class UserProcedure {
                 this.cmdLineNo
               );
 
-            if (!(args[i] instanceof STR.STRTableName))
+            if (!(args[i] instanceof STR.STRTableName)) {
               scope2.setSymbol(param.name, args[i]);
-            else {
+              app.postMessage("memorysymbolupdate",param.name, args[i]);
+            } else {
               if (
                 scope2.getSymbol(param.name).constructor.name !=
                 args[i].constructor.name
@@ -956,6 +983,8 @@ class UserProcedure {
                     param.name + "[" + k + "]",
                     parentScope.getSymbol(args[i].tblname + "[" + k + "]")
                   );
+                  app.postMessage("memorysymbolupdate",param.name + "[" + k + "]",
+                  parentScope.getSymbol(args[i].tblname + "[" + k + "]"));
                 }
               } else if (tblDimensions == 2) {
                 var tblsize1 = args[i].getSize()[0];
@@ -968,6 +997,11 @@ class UserProcedure {
                         args[i].tblname + "[" + k + "][" + l + "]"
                       )
                     );
+                    app.postMessage("memorysymbolupdate",param.name + "[" + k + "][" + l + "]",
+                    parentScope.getSymbol(
+                      args[i].tblname + "[" + k + "][" + l + "]"
+                    ));
+  
                   }
                 }
               }
@@ -1000,6 +1034,8 @@ class Declaration_Block {
 
     if (this.variables[0])
       for (const a of this.variables[0]) await a.resolve(app, scope);
+
+    app.postMessage("memory", scope.getMemory());
   }
 }
 
@@ -1010,7 +1046,7 @@ class DefConstant {
     this.cmdLineNo = cmdLineNo;
   }
   async resolve(app, scope) {
-    await app.setActiveLine(scope, this.cmdLineNo);
+    //await app.setActiveLine(scope, this.cmdLineNo);
 
     var obj = await this.val.resolve(app, scope);
 
@@ -1034,7 +1070,7 @@ class DefVariables {
     this.cmdLineNo = cmdLineNo;
   }
   async resolve(app, scope) {
-    await app.setActiveLine(scope, this.cmdLineNo);
+    //await app.setActiveLine(scope, this.cmdLineNo);
 
     var varType = this.varType;
 

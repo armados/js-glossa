@@ -7,7 +7,7 @@ const GLO = require("../../src/main.js");
 
 const prompt = require("prompt-sync")();
 
-const filename = "../../samples/sample30.glo";
+const filename = "../../samples/sample20.glo";
 
 (async function main() {
   try {
@@ -18,6 +18,7 @@ const filename = "../../samples/sample30.glo";
   }
 
   var app = new GLO.GlossaJS();
+
   app.setSourceCode(sourceCode);
   app.setDebugMode(false);
   app.setInputBuffer(null);

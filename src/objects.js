@@ -1048,7 +1048,7 @@ class DefConstant {
     this.cmdLineNo = cmdLineNo;
   }
   async resolve(app, scope) {
-    //await app.setActiveLine(scope, this.cmdLineNo);
+    await app.setActiveLine(scope, this.cmdLineNo);
 
     var obj = await this.val.resolve(app, scope);
 
@@ -1072,7 +1072,7 @@ class DefVariables {
     this.cmdLineNo = cmdLineNo;
   }
   async resolve(app, scope) {
-    //await app.setActiveLine(scope, this.cmdLineNo);
+    await app.setActiveLine(scope, this.cmdLineNo);
 
     var varType = this.varType;
 

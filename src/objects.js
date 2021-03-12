@@ -267,7 +267,6 @@ class Stmt_Select {
     var elseBodyLine = this.elseBodyLine;
     var cmdLineNoTelosEpilogwn = this.cmdLineNoTelosEpilogwn;
 
-    //console.log(arrCond);
     var exprResult = await expr.resolve(app, scope);
 
     if (exprResult instanceof STR.STRTableName)
@@ -401,6 +400,7 @@ class Stmt_Do_While {
       );
 
       app.incrLogicalCounter();
+
     } while (condResult.val == false);
   }
 }
@@ -533,11 +533,11 @@ class Stmt_For {
 
         scope.removeLock(variable.name);
 
+        var newvarvalue = new Atom.MNumber(scope.getSymbol(variable.name).val + v_step);
         scope.setSymbol(
           variable.name,
-          new Atom.MNumber(scope.getSymbol(variable.name).val + v_step)
-        );
-        app.postMessage("memorysymbolupdate", variable.name, new Atom.MNumber(scope.getSymbol(variable.name).val + v_step));
+          newvarvalue);
+        app.postMessage("memorysymbolupdate", variable.name, newvarvalue);
 
         scope.addLock(variable.name);
       } while (scope.getSymbol(variable.name).val <= v_final);
@@ -548,6 +548,7 @@ class Stmt_For {
       );
 
       app.incrLogicalCounter();
+
     } else if (v_initial >= v_final && v_step < 0) {
       do {
         app.outputAddDetails(
@@ -568,12 +569,14 @@ class Stmt_For {
         await app.setActiveLine(scope, this.cmdLineNoGia);
 
         scope.removeLock(variable.name);
+
+        var newvarvalue = new Atom.MNumber(scope.getSymbol(variable.name).val + v_step);
         scope.setSymbol(
-          variable.name,
-          new Atom.MNumber(scope.getSymbol(variable.name).val + v_step)
-        );
-        app.postMessage("memorysymbolupdate", variable.name, new Atom.MNumber(scope.getSymbol(variable.name).val + v_step));
+          variable.name,newvarvalue);
+        app.postMessage("memorysymbolupdate", variable.name, newvarvalue);
+        
         scope.addLock(variable.name);
+
       } while (scope.getSymbol(variable.name).val >= v_final);
 
       app.outputAddDetails(
@@ -692,7 +695,6 @@ class ProcedureCall {
 
     this.args.map(async function (arg, i) {
       if (argsResolved[i] instanceof STR.STRTableName) {
-        //console.log('detected table arg is : ', arg);
 
         // Return symbol from arg cell name
         var tblDimensions = scope.getSymbol(arg.name).getSize().length;

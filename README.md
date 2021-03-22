@@ -14,8 +14,7 @@ npm run-script build
     var app = new GLO.GlossaJS();
 
     app.init();
-    app.setSourceCode(sourcecode);
-    app.setDebugMode(false);
+    app.setSourceCode(glocode);
 
     app.setReadInputFunction(function (name) {
       return prompt();

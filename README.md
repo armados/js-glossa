@@ -8,13 +8,21 @@ npm run-script build
 
 ```javascript
   var app = new GLO.GlossaJS();
-  
+
   app.init();
   app.setSourceCode(sourcecode);
   app.setDebugMode(false);
 
-  app.setReadInputFunction(function (varname) {
-    return prompt("Εισαγωγή τιμής στο αναγνωριστικό " + varname);
+  app.setReadInputFunction(function (name) {
+    return prompt();
+  });
+  
+  app.on("outputappend", (data) => {
+    console.log(data);
+  });
+
+  app.on("error", (data) => {
+    console.log(data);
   });
 
   app.run();

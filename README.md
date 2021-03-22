@@ -10,7 +10,7 @@ npm run-script build
 ```
 npm run-script binary
 ```
-Μετά την εκτέλεση της παραπάνω εντολής Θα δημιουργηθούν μέσα στον φάκελο `dist/binary` τα εκτελέσιμα αρχεία `glossa-cli-win.exe`, `glossa-cli-linux` και `glossa-cli-macos`
+Μετά την εκτέλεση της παραπάνω εντολής Θα δημιουργηθούν μέσα στον φάκελο `dist/binary` τα εκτελέσιμα standalone αρχεία `glossa-cli-win.exe`, `glossa-cli-linux` και `glossa-cli-macos`
 
 ## Online χρήση του διερμηνευτή 
 

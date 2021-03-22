@@ -6,6 +6,7 @@ npm run-script build
 ```
 Μετά την εκτέλεση της παραπάνω εντολής θα δημιουργηθεί στον φάκελο `dist/js` το τελικό αρχείο `glossajs.min.js` του διευρμηνευτή.
 
+### Παράδειγμα 
 ```javascript
   var app = new GLO.GlossaJS();
 

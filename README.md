@@ -6,7 +6,22 @@ npm run-script build
 ```
 Μετά την εκτέλεση της παραπάνω εντολής θα δημιουργηθεί στον φάκελο `dist/js` το τελικό αρχείο `glossajs.min.js` του διευρμηνευτή.
 
-## Δημιουργία εκτελέσιμων αρχείων για γραμμή εντολών σε Windows, Linux και MacOS
+```javascript
+  var app = new GLO.GlossaJS();
+  
+  app.init();
+  app.setSourceCode(sourcecode);
+  app.setDebugMode(false);
+
+  app.setReadInputFunction(function (varname) {
+    return prompt("Εισαγωγή τιμής στο αναγνωριστικό " + varname);
+  });
+
+  app.run();
+```
+
+
+## Δημιουργία εκτελέσιμων αρχείων για Windows, Linux και MacOS
 ```
 npm run-script binary
 ```

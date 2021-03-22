@@ -1,6 +1,6 @@
 # Διερμηνευτής ΓλώσσαJS
 
-## Συναρμολόγηση κώδικα Javascript 
+## Συναρμολόγηση κώδικα 
 ```
 npm run-script build
 ```
@@ -11,25 +11,25 @@ npm run-script build
   <script src="glossajs.min.js"></script>
 
   <script>
-  var app = new GLO.GlossaJS();
+    var app = new GLO.GlossaJS();
 
-  app.init();
-  app.setSourceCode(sourcecode);
-  app.setDebugMode(false);
+    app.init();
+    app.setSourceCode(sourcecode);
+    app.setDebugMode(false);
 
-  app.setReadInputFunction(function (name) {
-    return prompt();
-  });
-  
-  app.on("outputappend", (data) => {
-    console.log(data);
-  });
+    app.setReadInputFunction(function (name) {
+      return prompt();
+    });
+    
+    app.on("outputappend", (data) => {
+      console.log(data);
+    });
 
-  app.on("error", (data) => {
-    console.log(data);
-  });
+    app.on("error", (data) => {
+      console.log(data);
+    });
 
-  app.run();
+    app.run();
   </script>
 ```
 

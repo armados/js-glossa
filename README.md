@@ -7,7 +7,10 @@ npm run-script build
 Μετά την εκτέλεση της παραπάνω εντολής θα δημιουργηθεί στον φάκελο `dist/js` το τελικό αρχείο `glossajs.min.js`
 
 ### Παράδειγμα 
-```javascript
+```html
+  <script src="glossajs.min.js"></script>
+
+  <script>
   var app = new GLO.GlossaJS();
 
   app.init();
@@ -27,6 +30,7 @@ npm run-script build
   });
 
   app.run();
+  </script>
 ```
 
 

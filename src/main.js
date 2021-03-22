@@ -12,6 +12,7 @@ const HP = require("./helper");
 const GLBF = require("./globalfunctions");
 
 const AST = require("./ast");
+const AST2 = require("./ast2");
 
 const EventEmitter = require("events");
 
@@ -323,6 +324,13 @@ class GlossaJS extends EventEmitter {
 
       console.log(tree);
 */
+/*
+var myasttree = new AST2.ASTree(result);
+var tree = myasttree.generate();
+
+console.log(tree);
+*/
+
       this.app.postMessage("continuerunning");
       await result.resolve(this.app, this.scope);
     } catch (e) {

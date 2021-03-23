@@ -1,6 +1,17 @@
 # Διερμηνευτής ΓλώσσαJS
 Υλοποίηση της γλώσσας προγραμματισμού ΓΛΩΣΣΑ σε Javascript.
 
+## Δημιουργία εκτελέσιμων αρχείων για Windows, Linux και MacOS
+```
+npm run-script binary
+```
+Μετά την εκτέλεση της παραπάνω εντολής Θα δημιουργηθούν μέσα στον φάκελο `dist/binary` τα εκτελέσιμα standalone αρχεία `glossa-cli-win.exe`, `glossa-cli-linux` και `glossa-cli-macos`
+
+#### Παράδειγμα
+```dos
+glossa-cli-win.exe -i code.glo
+```
+
 ## Συναρμολόγηση κώδικα 
 ```
 npm run-script build
@@ -31,18 +42,6 @@ npm run-script build
 
     app.run();
   </script>
-```
-
-
-## Δημιουργία εκτελέσιμων αρχείων για Windows, Linux και MacOS
-```
-npm run-script binary
-```
-Μετά την εκτέλεση της παραπάνω εντολής Θα δημιουργηθούν μέσα στον φάκελο `dist/binary` τα εκτελέσιμα standalone αρχεία `glossa-cli-win.exe`, `glossa-cli-linux` και `glossa-cli-macos`
-
-#### Παράδειγμα
-```dos
-glossa-cli-win.exe -i code.glo
 ```
 
 ## Online χρήση του διερμηνευτή 

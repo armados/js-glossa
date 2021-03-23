@@ -404,13 +404,7 @@ $(document).ready(function () {
 
     var cookieData = Cookies.get("editorSourceCode");
 
-    const mycode = `ΠΡΟΓΡΑΜΜΑ Άσκηση
-
-ΑΡΧΗ
-
-    ΓΡΑΨΕ 'Καλημέρα κόσμε'
-
-ΤΕΛΟΣ_ΠΡΟΓΡΑΜΜΑΤΟΣ`;
+    const mycode = ``;
 
     if (typeof cookieData !== "undefined" && cookieData != "")
       editor.setValue(cookieData);

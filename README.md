@@ -53,7 +53,7 @@ npm run-script build
 
 ## Online Quiz στη ΓΛΩΣΣΑ στην πλατφόρμα Moodle 
 
-Ο διευρμηνευτής μπορεί να χρησιμοποιηθεί στην πλατφόρμα Moodle με το πρόσθετο Coderunner.
+Ο διευρμηνευτής μπορεί να αξιοποιηθεί στην πλατφόρμα Moodle με το πρόσθετο Coderunner για τη δημιουργία ερωτήσεων σε Quiz.
 
 ```python
 import subprocess, sys

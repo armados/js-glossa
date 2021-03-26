@@ -44,8 +44,42 @@ npm run-script build
   </script>
 ```
 
-## Online χρήση του διερμηνευτή 
+## Online περιβάλλον του διερμηνευτή 
 
 Ο φάκελος `tests/www-editor` περιέχει κώδικα για εκτέλεση του διερμηνευτή από φυλλομετρητή.
 
-Η δοκιμαστική online έκδοση του διερμηνευτή υπάρχει στην ιστοσελίδα http://armadosvm.sch.gr/glo 
+Η δοκιμαστική έκδοση του διερμηνευτή υπάρχει στην ιστοσελίδα http://armadosvm.sch.gr/glo 
+
+
+## Online Quiz στη ΓΛΩΣΣΑ στην πλατφόρμα Moodle 
+
+Ο διευρμηνευτής μπορεί να χρησιμοποιηθεί στην πλατφόρμα Moodle με το πρόσθετο Coderunner.
+
+```python
+import subprocess, sys
+# Write the student code to a file code.glo
+student_answer = """
+{{ STUDENT_ANSWER | e('py') }}
+"""
+with open("code.glo", "w") as src:
+    print(student_answer, file=src)
+try:
+    output = subprocess.check_output(["glossa-cli", "-i", "code.glo", "-k", "prog.in"], universal_newlines=True)
+    print(output)
+except subprocess.CalledProcessError as e:
+    if e.returncode > 0:
+        # Ignore non-zero positive return codes
+        if e.output:
+            print(e.output)
+    else:
+        # But negative return codes are signals - abort
+        if e.output:
+            print(e.output, file=sys.stderr)
+        if e.returncode < 0:
+            print("Task failed with signal", -e.returncode, file=sys.stderr)
+        print("** Further testing aborted **", file=sys.stderr)
+```
+
+#### Παράδειγμα 
+Quiz της ΓΛΩΣΣΑΣ στη διεύθυνση https://moodle.armados.org/course/view.php?id=12 (στοιχεία σύνδεσης χρήστης:testuser κωδικός:testpass)
+

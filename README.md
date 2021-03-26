@@ -81,5 +81,4 @@ except subprocess.CalledProcessError as e:
 ```
 
 #### Παράδειγμα 
-Quiz της ΓΛΩΣΣΑΣ στη διεύθυνση https://moodle.armados.org/course/view.php?id=12 (στοιχεία σύνδεσης χρήστης:testuser κωδικός:testpass)
-
+Moodle Quiz της ΓΛΩΣΣΑΣ  https://moodle.armados.org/course/view.php?id=12

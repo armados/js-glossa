@@ -25,11 +25,11 @@
   "homepage": "https://github.com/armados/js-glossa#readme",
   "dependencies": {
     "minimist": "^1.2.5",
-    "ohm-js": "^15.3.0",
+    "ohm-js": "^15.5.0",
     "perf_hooks": "0.0.1",
-    "pkg": "^4.4.9",
+    "pkg": "^5.3.1",
     "prompt-sync": "^4.2.0",
-    "webpack": "^5.11.1",
-    "webpack-cli": "^4.3.1"
+    "webpack": "^5.50.0",
+    "webpack-cli": "^4.8.0"
   }
 }

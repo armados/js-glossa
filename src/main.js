@@ -334,7 +334,7 @@ console.log(tree);
       this.app.postMessage("continuerunning");
       await result.resolve(this.app, this.scope);
     } catch (e) {
-      //console.log('GlossaJS: Main(): Error catch: ' + e);
+      console.log('Ooops... GlossaJS: Main(): Error catch: ' + e);
       if (e instanceof GE.GError) {
         this.app.postMessage("error", e.message);
       } else if (e instanceof GE.GInterrupt) {

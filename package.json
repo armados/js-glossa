@@ -25,7 +25,7 @@
   "homepage": "https://github.com/armados/js-glossa#readme",
   "dependencies": {
     "minimist": "^1.2.7",
-    "ohm-js": "^16.4.0",
+    "ohm-js": "^15.5.0",
     "perf_hooks": "0.0.1",
     "pkg": "^5.8.0",
     "prompt-sync": "^4.2.0",

@@ -387,6 +387,7 @@ $(document).ready(function () {
       .find(".gloAceEditor")
       .attr("id", "gloAceEditorID" + randomID);
 
+      ace.require("ace/ext/language_tools");
     var editor = ace.edit("gloAceEditorID" + randomID);
     editor.renderer.setDisplayIndentGuides(true);
     editor.renderer.setShowPrintMargin(false);
@@ -401,6 +402,88 @@ $(document).ready(function () {
 
     require("ace/config").setModuleUrl("ace/mode/glossa", "acemodeglo.js");
     editor.session.setMode("ace/mode/glossa");
+
+    editor.setOptions({
+      enableBasicAutocompletion: true,
+      enableSnippets: false,
+      enableLiveAutocompletion: false
+  });
+
+  editor.commands.on("afterExec", function(e){
+     if (e.command.name == "insertstring" && /^[\<_]$/.test(e.args)) {
+             editor.execCommand("startAutocomplete");
+         }
+     });
+
+     editor.commands.on("afterExec", function(e){
+      if (e.command.name == "insertstring" && (/^[\< ]$/.test(e.args) || /^[\<\n]$/.test(e.args)|| /^[\<:]$/.test(e.args))) {
+
+        var editor = e.editor;
+      var session = editor.session;
+    var  cursor = session.selection.cursor;
+     var line =  session.getLine(cursor.row).slice(0,  cursor.column);
+     var lineWords = line.trim().split(' ');
+     const lastWord = lineWords[lineWords.length - 1];
+     
+        //console.log('Last word: ' + lastWord);
+//const range = editor.selection.getRange();
+
+// Xalia kwdikas! Fix opoios mporei!
+
+replaceIfFound(editor, 'programma', 'ΠΡΟΓΡΑΜΜΑ');
+
+replaceIfFound(editor, 'metablhtes', 'ΜΕΤΑΒΛΗΤΕΣ');
+replaceIfFound(editor, 'staueres', 'ΣΤΑΘΕΡΕΣ');
+
+replaceIfFound(editor, 'akeraies', 'ΑΚΕΡΑΙΕΣ');
+replaceIfFound(editor, 'pragmatikes', 'ΠΡΑΓΜΑΤΙΚΕΣ');
+replaceIfFound(editor, 'xarakthres', 'ΧΑΡΑΚΤΗΡΕΣ');
+replaceIfFound(editor, 'logikes', 'ΛΟΓΙΚΕΣ');
+
+replaceIfFound(editor, 'arxh', 'ΑΡΧΗ');
+replaceIfFound(editor, 'telos_programmatos', 'ΤΕΛΟΣ_ΠΡΟΓΡΑΜΜΑΤΟΣ');
+
+replaceIfFound(editor, 'an', 'ΑΝ');
+replaceIfFound(editor, 'tote', 'ΤΟΤΕ');
+replaceIfFound(editor, 'allivs', 'ΑΛΛΙΩΣ');
+replaceIfFound(editor, 'allivs_an', 'ΑΛΛΙΩΣ_ΑΝ');
+replaceIfFound(editor, 'telos_an', 'ΤΕΛΟΣ_ΑΝ');
+replaceIfFound(editor, 'grace', 'ΓΡΑΨΕ');
+replaceIfFound(editor, 'diabase', 'ΔΙΑΒΑΣΕ');
+replaceIfFound(editor, 'oso', 'ΟΣΟ');
+replaceIfFound(editor, 'epanalabe', 'ΕΠΑΝΑΛΑΒΕ');
+replaceIfFound(editor, 'telos_epanalhchs', 'ΤΕΛΟΣ_ΕΠΑΝΑΛΗΨΗΣ');
+replaceIfFound(editor, 'arxh_epanalhchs', 'ΑΡΧΗ_ΕΠΑΝΑΛΗΨΗΣ');
+replaceIfFound(editor, 'mexris_otou', 'ΜΕΧΡΙΣ_ΟΤΟΥ');
+replaceIfFound(editor, 'gia', 'ΓΙΑ');
+replaceIfFound(editor, 'apo', 'ΑΠΟ');
+replaceIfFound(editor, 'mexri', 'ΜΕΧΡΙ');
+replaceIfFound(editor, 'me_bhma', 'ΜΕ_ΒΗΜΑ');
+
+replaceIfFound(editor, 'διβ', 'DIV');
+replaceIfFound(editor, 'μοδ', 'MOD');
+
+replaceIfFound(editor, 'oxi', 'ΟΧΙ');
+replaceIfFound(editor, 'kai', 'ΚΑΙ');
+replaceIfFound(editor, 'h', 'Η');
+
+
+
+          }
+      });
+
+function replaceIfFound(editor, key, ckey) {
+  var range = editor.find(key,
+  {wrap: true, 
+     caseSensitive: false, 
+      wholeWord: true,  
+      regExp: false, 
+       preventScroll: true})
+if (range!=null) editor.session.replace(range, ckey);
+
+
+}
+
 
     var cookieData = Cookies.get("editorSourceCode");
 

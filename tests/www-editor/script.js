@@ -110,7 +110,9 @@ function UIStateStarted(gloBoxID) {
 
   $("#" + gloBoxID)
     .find(".gloStop")
-    .removeClass("disabled");
+    .removeClass("disabled")
+    .removeClass("btn-secondary")
+    .addClass("btn-danger");
 
   $("#" + gloBoxID)
     .find(".gloStop")
@@ -166,8 +168,8 @@ function UIStateInputRead(gloBoxID, msg) {
 function UIStateContinueRunning(gloBoxID) {
   $("#" + gloBoxID)
     .find(".gloRun i")
-    .removeClass("fa-play")
-    .addClass("fa-pause");
+    .removeClass("bi-play-fill")
+    .addClass("bi-pause-fill");
 
   $("#" + gloBoxID).removeClass("paused");
 }
@@ -175,8 +177,8 @@ function UIStateContinueRunning(gloBoxID) {
 function UIStatePaused(gloBoxID) {
   $("#" + gloBoxID)
     .find(".gloRun i")
-    .removeClass("fa-pause")
-    .addClass("fa-play");
+    .removeClass("bi-pause-fill")
+    .addClass("bi-play-fill");
 
   $("#" + gloBoxID).addClass("paused");
 }
@@ -216,12 +218,14 @@ function UIStateFinished(gloBoxID) {
 
   $("#" + gloBoxID)
     .find(".gloRun i")
-    .removeClass("fa-pause")
-    .addClass("fa-play");
+    .removeClass("bi-pause-fill")
+    .addClass("bi-play-fill");
 
   $("#" + gloBoxID)
     .find(".gloStop")
-    .addClass("disabled");
+    .addClass("disabled")
+    .removeClass("btn-danger")
+    .addClass("btn-secondary");
 
   $("#" + gloBoxID)
     .find(".gloStop")

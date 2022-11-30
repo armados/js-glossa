@@ -4,7 +4,9 @@
 }
 
 .gloBox {
-  border: 0px solid #ddd;
+  border: 1px solid #ddd;
+  margin-top: 10px;
+  margin-bottom: 10px;
 }
 .gloBox .gloControls {
   border-bottom: 8px solid #ddd;
@@ -22,6 +24,9 @@
   font-size: 85%;
 }
 
+.gloIO {
+}
+
 .gloControls {
   padding: 8px 8px;
   background-color: #faf9f9;
@@ -35,15 +40,16 @@
 }
 
 .gloInputHeader {
-  background-color: rgba(91, 192, 222, 0.7);
+  background-color: #0c68ee;
 }
 
 .gloOutputHeader {
-  background-color: rgba(92, 184, 92, 0.7);
+  background-color: #198754;
 }
 
 .gloOutputHeaderDetails {
-  background-color: rgb(236, 154, 30);
+  background-color: #ffc107;
+  color: #111;
 }
 
 .gloEditorHeader {
@@ -51,9 +57,80 @@
   text-align: center;
 }
 
+.gloEntolesTab,
+.gloMemTab {
+  font-family: "Fira Mono", monospace;
+  font-size: 70%;
+  color: #fff;
+}
+
+.gloBox ::-webkit-scrollbar {
+  width: 0.9em;
+}
+
+.gloBox ::-webkit-scrollbar-thumb {
+  -webkit-border-radius: 0.7em;
+  background-color: rgb(85, 85, 85);
+}
+
+.gloBox ::-webkit-scrollbar-corner {
+  background: rgb(85, 85, 85);
+}
+
+.gloSidebarTabInner {
+  position: absolute; /* Added */
+  top: 28px;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  overflow: auto;
+}
+.gloSidebar {
+}
+
+.gloEntolesTab {
+  background-color: rgb(49, 49, 49);
+}
+.gloMemTab {
+  display: none;
+  background-color: rgb(61, 61, 61);
+}
+
 .gloError {
   display: none;
   color: #d63f3f;
+}
+
+.gloEntolesHeader,
+.gloMemHeader {
+  cursor: pointer;
+  padding: 5px 7px;
+  font-family: "Fira Mono", monospace;
+  font-size: 105%;
+  color: #fff;
+  margin-bottom: 6px;
+}
+.gloEntolesHeader {
+  background-color: rgb(49, 49, 49);
+}
+.gloMemHeader {
+  background-color: rgb(61, 61, 61);
+}
+
+.gloAllCommands {
+  line-height: 1.2;
+  padding: 7px;
+}
+
+.gloAllCommands span.gloCommandText {
+  cursor: pointer;
+  margin: 0 2px 0 0;
+  padding: 0px;
+  color: rgb(233, 230, 230);
+}
+
+span.gloCommandText:hover {
+  color: rgb(69, 140, 161);
 }
 
 pre,
@@ -63,20 +140,18 @@ pre,
 
 .gloMemory {
   font-family: "Fira Mono", monospace;
-  overflow-y: auto;
+  overflow: auto;
   word-wrap: break-word !important;
   white-space: pre-wrap;
   margin: 0px;
   padding: 0px;
-  width: 100%;
-  height: 525px;
-  background-color: #1b1b1b;
-  border-left: 0px solid #333;
   color: #efefef;
-  font-size: 75%;
 }
 .gloMemory table td {
   padding: 3px 5px;
+  text-overflow: ellipsis;
+  overflow-x: hidden;
+  white-space: nowrap;
 }
 .gloMemory table {
   color: #efefef;
@@ -86,13 +161,14 @@ pre,
 }
 .gloMemory table td.tdvalue {
   color: #f3e45c;
+  text-align: center;
 }
 .gloMemory table td.tdtype {
   color: #afafaf;
 }
 
 .gloMemory tr.highlightRow {
-  background-color: rgb(43, 43, 40);
+  background-color: rgb(88, 102, 71);
 }
 
 .gloResultPre,

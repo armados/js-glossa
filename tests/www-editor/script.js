@@ -19,12 +19,13 @@ function getGlossaApp(id) {
 // =================================
 
 function renderMemory(data) {
-  var html = '<table class="table table-sm table-borderless">';
-  html += "<thead>";
-  html += '<tr class="bg-info">';
+  var html =
+    '<table class="table table-striped-columns table-hover table-sm table-borderless">';
+  html += '<thead  class="table-dark">';
+  html += "<tr>";
   html += '<td scope="col">Όνομα</td>';
-  html += '<td scope="col">Τιμή</td>';
-  html += '<td scope="col">Τύπος</td>';
+  html += '<td scope="col" style="text-align: center;">Τιμή</td>';
+  html += '<td scope="col">Τύπος</th>';
   html += "</tr>";
   html += "</thead>";
   html += "<tbody>";
@@ -55,7 +56,6 @@ async function startProgramExecution(gloBoxID, runstep) {
     .attr("id");
   var aceeditor = ace.edit(editorid);
 
-
   // beautify
   //var beautify = ace.require("ace/ext/beautify");
   //const session = aceeditor.getSession();
@@ -69,8 +69,8 @@ async function startProgramExecution(gloBoxID, runstep) {
     .val();
 
   var slowrun = $("#" + gloBoxID)
-    .find(".gloSlowRun")
-    .is(":checked");
+    .find(".gloBtnToggleSlowSpeed")
+    .hasClass("active");
 
   var breakpointsArray = aceeditor.session.getBreakpoints();
 
@@ -249,20 +249,20 @@ function UIStateUpdateMemorySymbol(gloBoxID, data1, data2) {
   data1 = data1.replaceAll(",", "-");
 
   $("#" + gloBoxID)
-  .find(".gloMemory").find('tr').removeClass("highlightRow");
+    .find(".gloMemory")
+    .find("tr")
+    .removeClass("highlightRow");
 
   $("#" + gloBoxID)
-  .find(".gloMemory")
-  .find(".symbol-"+data1).addClass('highlightRow');
-
-
-
-    $("#" + gloBoxID)
     .find(".gloMemory")
-    .find(".symbol-"+data1)
+    .find(".symbol-" + data1)
+    .addClass("highlightRow");
+
+  $("#" + gloBoxID)
+    .find(".gloMemory")
+    .find(".symbol-" + data1)
     .find(".tdvalue")
     .html(data2.val);
-  
 }
 
 function UIStateOutputAppend(gloBoxID, data) {
@@ -287,6 +287,30 @@ function UIStateOutputDetailsAppend(gloBoxID, data) {
 // ==============================
 
 $(document).ready(function () {
+  $(".gloEntolesHeader").click(function (e) {
+    $(this).parent().parent().parent().find(".gloEntolesTab").show();
+    $(this).parent().parent().parent().find(".gloMemTab").hide();
+  });
+
+  $(".gloMemHeader").click(function (e) {
+    $(this).parent().parent().parent().find(".gloEntolesTab").hide();
+    $(this).parent().parent().parent().find(".gloMemTab").show();
+  });
+
+  $(".gloCommandText").click(function (e) {
+    var editorElement = $(this).closest(".gloEmbed").find(".gloAceEditor");
+
+    var editorid = editorElement.attr("id");
+
+    var aceeditor = ace.edit(editorid);
+    var session = aceeditor.session;
+    var cursor = session.selection.cursor;
+    var textToInsert = $(this).text();
+    session.insert(cursor, textToInsert + " ");
+
+    aceeditor.focus();
+  });
+
   $(".gloSpinner").hide();
 
   $(".gloBtnShowInput").click(function (e) {
@@ -308,6 +332,40 @@ $(document).ready(function () {
     $(this).closest(".gloBox").find(".gloInputTab").hide();
     $(this).closest(".gloBox").find(".gloOutputTab").hide();
     $(this).closest(".gloBox").find(".gloOutputTabDetails").show();
+  });
+
+  $(".gloBtnToggleSidebarDisplay").click(function (e) {
+    e.preventDefault();
+    if ($(this).hasClass("active")) {
+      $(this).removeClass("active");
+      $(this).removeClass("btn-primary");
+      $(this).addClass("btn-outline-primary");
+      $(this).attr("aria-pressed", "false");
+      $(this).closest(".gloBox").find(".gloEntolesTab").hide();
+      $(this).closest(".gloBox").find(".gloMemTab").hide();
+    } else {
+      $(this).addClass("active");
+      $(this).removeClass("btn-outline-primary");
+      $(this).addClass("btn-primary");
+      $(this).attr("aria-pressed", "true");
+      $(this).closest(".gloBox").find(".gloEntolesTab").show();
+      $(this).closest(".gloBox").find(".gloMemTab").hide();
+    }
+  });
+
+  $(".gloBtnToggleSlowSpeed").click(function (e) {
+    e.preventDefault();
+    if ($(this).hasClass("active")) {
+      $(this).removeClass("active");
+      $(this).removeClass("btn-primary");
+      $(this).addClass("btn-outline-primary");
+      $(this).attr("aria-pressed", "false");
+    } else {
+      $(this).addClass("active");
+      $(this).removeClass("btn-outline-primary");
+      $(this).addClass("btn-primary");
+      $(this).attr("aria-pressed", "true");
+    }
   });
 
   $(this)
@@ -357,7 +415,7 @@ $(document).ready(function () {
     });
 
   $(this)
-    .find(".gloSlowRun")
+    .find(".gloBtnToggleSlowSpeed")
     .click(function (e) {
       var gloBoxID = $(this).closest(".gloBox").attr("id");
 
@@ -365,7 +423,9 @@ $(document).ready(function () {
 
       if (!app.isrunning()) return;
 
-      if ($(this).is(":checked")) {
+      var slowrun = $(this).hasClass("active");
+
+      if (slowrun) {
         app.setSlowRun(true);
       } else {
         app.setSlowRun(false);
@@ -382,12 +442,11 @@ $(document).ready(function () {
       $(this).attr("id", gloBoxID);
     }
 
-
     $(this)
       .find(".gloAceEditor")
       .attr("id", "gloAceEditorID" + randomID);
 
-      ace.require("ace/ext/language_tools");
+    ace.require("ace/ext/language_tools");
     var editor = ace.edit("gloAceEditorID" + randomID);
     editor.renderer.setDisplayIndentGuides(true);
     editor.renderer.setShowPrintMargin(false);
@@ -406,18 +465,23 @@ $(document).ready(function () {
     editor.setOptions({
       enableBasicAutocompletion: true,
       enableSnippets: false,
-      enableLiveAutocompletion: false
-  });
+      enableLiveAutocompletion: false,
+    });
 
-  editor.commands.on("afterExec", function(e){
-     if (e.command.name == "insertstring" && /^[\<_]$/.test(e.args)) {
-             editor.execCommand("startAutocomplete");
-         }
-     });
+    editor.commands.on("afterExec", function (e) {
+      if (e.command.name == "insertstring" && /^[\<_]$/.test(e.args)) {
+        editor.execCommand("startAutocomplete");
+      }
+    });
 
-     editor.commands.on("afterExec", function(e){
-      if (e.command.name == "insertstring" && (/^[\< ]$/.test(e.args) || /^[\<\n]$/.test(e.args)|| /^[\<:]$/.test(e.args))) {
-
+    editor.commands.on("afterExec", function (e) {
+      if (
+        e.command.name == "insertstring" &&
+        (/^[\< ]$/.test(e.args) ||
+          /^[\<\n]$/.test(e.args) ||
+          /^[\<:]$/.test(e.args))
+      ) {
+        /*
         var editor = e.editor;
       var session = editor.session;
     var  cursor = session.selection.cursor;
@@ -466,24 +530,30 @@ replaceIfFound(editor, 'μοδ', 'MOD');
 replaceIfFound(editor, 'oxi', 'ΟΧΙ');
 replaceIfFound(editor, 'kai', 'ΚΑΙ');
 replaceIfFound(editor, 'h', 'Η');
+*/
+        /*
+editor.find('[ \t]+$',{
+  backwards: false,
+  wrap: true,
+  caseSensitive: false,
+  wholeWord: false,
+  regExp: true
+});
+editor.replaceAll('');
+*/
+      }
+    });
 
-
-
-          }
+    function replaceIfFound(editor, key, ckey) {
+      var range = editor.find(key, {
+        wrap: true,
+        caseSensitive: false,
+        wholeWord: true,
+        regExp: false,
+        preventScroll: true,
       });
-
-function replaceIfFound(editor, key, ckey) {
-  var range = editor.find(key,
-  {wrap: true, 
-     caseSensitive: false, 
-      wholeWord: true,  
-      regExp: false, 
-       preventScroll: true})
-if (range!=null) editor.session.replace(range, ckey);
-
-
-}
-
+      if (range != null) editor.session.replace(range, ckey);
+    }
 
     var cookieData = Cookies.get("editorSourceCode");
 

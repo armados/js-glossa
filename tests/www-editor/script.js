@@ -307,6 +307,11 @@ $(document).ready(function () {
     gloBoxElement.css("font-size", newFontSize);
   });
 
+  $(".gloBtnResetFontSize").click(function () {
+    var gloBoxElement = $(this).closest(".gloEmbed").find(".gloBox");
+    gloBoxElement.css("font-size", "82%");
+  });
+
   $(".gloBtnShowGloInfoModal").click(function (e) {
     $(this).parent().parent().find(".gloInfoModal").modal("show");
   });

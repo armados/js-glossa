@@ -59,6 +59,7 @@
 }
 
 .gloBox ::-webkit-scrollbar-thumb {
+  border-radius: 0.7em;
   -webkit-border-radius: 0.7em;
   background-color: rgb(85, 85, 85);
 }

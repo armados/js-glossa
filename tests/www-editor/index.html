@@ -29,7 +29,7 @@
 
   <body>
     <div class="container-fluid gloEmbed">
-      <div class="gloBox vh-80">
+      <div class="gloBox">
         <div class="row g-0">
           <div class="col g-0">
             <div class="gloControls">
@@ -53,47 +53,124 @@
                     type="button"
                     class="btn btn-success btn-sm gloBtnShowOutput"
                   >
-                    <i class="bi bi-display"></i> Οθόνη εκτέλεσης
+                    <i class="bi bi-display"></i>
                   </button>
                   <button
                     type="button"
                     class="btn btn-primary btn-sm gloBtnShowInput"
                   >
-                    <i class="bi bi-keyboard"></i> Τιμές εισόδου
+                    <i class="bi bi-keyboard"></i>
                   </button>
                   <button
                     type="button"
                     class="btn btn-warning btn-sm gloBtnShowOutputDetails"
                   >
-                    <i class="bi bi-text-paragraph"></i> Αναλυτική περιγραφή
+                    <i class="bi bi-text-paragraph"></i>
                   </button>
                 </div>
 
-                <button
-                  type="button"
-                  aria-pressed="true"
-                  class="mx-2 btn btn-primary btn-sm gloBtnToggleSidebarDisplay active"
-                >
-                  <i class="bi bi-layout-sidebar-inset-reverse"></i>
-                </button>
-
-                <button
-                  type="button"
-                  aria-pressed="true"
-                  class="mx-2 btn btn-primary btn-sm gloBtnToggleSlowSpeed active"
-                >
-                  <i class="bi bi-speedometer2"></i>
-                </button>
-
-                <div class="d-flex align-items-center">
-                  <div
-                    class="spinner-border spinner-border-sm text-primary gloSpinner"
-                    role="status"
-                    aria-hidden="true"
+                <div class="btn-group mx-2" role="group">
+                  <button
+                    type="button"
+                    aria-pressed="true"
+                    class="btn btn-primary btn-sm gloBtnToggleSidebarDisplay active"
                   >
-                    <span class="visually-hidden"
-                      >Εκτέλεση προγράμματος...</span
+                    <i class="bi bi-layout-sidebar-inset-reverse"></i>
+                  </button>
+
+                  <button
+                    type="button"
+                    aria-pressed="true"
+                    class="btn btn-primary btn-sm gloBtnToggleSlowSpeed active"
+                  >
+                    <i class="bi bi-speedometer2"></i>
+                  </button>
+                </div>
+
+                <div class="btn-group mx-2" role="group">
+                  <button
+                    type="button"
+                    class="btn btn-secondary btn-sm gloBtnIncFontSize"
+                  >
+                    <i class="bi bi-patch-plus"></i>
+                  </button>
+                  <button
+                    type="button"
+                    class="btn btn-secondary btn-sm gloBtnDecrFontSize"
+                  >
+                    <i class="bi bi-patch-minus"></i>
+                  </button>
+                  <button
+                    type="button"
+                    class="btn btn-secondary btn-sm gloBtnResetFontSize"
+                  >
+                    <i class="bi bi-x"></i>
+                  </button>
+                </div>
+
+                <div class="btn-group mx-2" role="group">
+                  <button
+                    type="button"
+                    class="btn btn-outline-secondary btn-sm gloBtnShowGloInfoModal"
+                  >
+                    <i class="bi bi-info"></i>
+                  </button>
+                </div>
+
+                <!-- Modal -->
+                <div
+                  class="modal fade gloInfoModal"
+                  role="dialog"
+                  aria-hidden="true"
+                >
+                  <div class="modal-dialog">
+                    <!-- Modal content-->
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h5 class="modal-title">Διερμηνευτής ΓλώσσαJS</h5>
+                        <button
+                          type="button"
+                          class="btn-close"
+                          data-bs-dismiss="modal"
+                          aria-label="Close"
+                        ></button>
+                      </div>
+                      <div class="modal-body">
+                        <p>
+                          Υλοποίηση της γλώσσας προγραμματισμού ΓΛΩΣΣΑ σε
+                          Javascript.
+                        </p>
+                        <p style="text-align: right">
+                          <a
+                            href="https://github.com/armados/js-glossa/"
+                            target="_blank"
+                            >https://github.com/armados/js-glossa/</a
+                          >
+                        </p>
+                        <p>Ζούνης Νίκος</p>
+                      </div>
+                      <div class="modal-footer">
+                        <button
+                          type="button"
+                          class="btn btn-primary"
+                          data-bs-dismiss="modal"
+                        >
+                          Κλείσιμο
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="d-flex align-items-center">
+                    <div
+                      class="spinner-border spinner-border-sm text-primary gloSpinner"
+                      role="status"
+                      aria-hidden="true"
                     >
+                      <span class="visually-hidden"
+                        >Εκτέλεση προγράμματος...</span
+                      >
+                    </div>
                   </div>
                 </div>
               </div>
@@ -118,13 +195,15 @@
                   <div class="gloTabHeader gloInputHeader">Τιμές εισόδου</div>
                   <textarea
                     class="gloCodeKeyboardInput"
+                    autocorrect="off"
+                    autocapitalize="off"
                     placeholder="Οι τιμές που θα εισαχθούν θα δoθούν ως είσοδος στο πρόγραμμα."
                   ></textarea>
                 </div>
 
                 <div class="tab-pane gloOutputTabDetails" role="tabpanel">
                   <div class="gloTabHeader gloOutputHeaderDetails">
-                    Αναλυτική περιγραφή των βημάτων που εκτελεί το πρόγραμμα
+                    Αναλυτική περιγραφή των ενεργειών που εκτελεί το πρόγραμμα
                   </div>
                   <pre
                     class="gloResultDetailsPre"
@@ -134,10 +213,10 @@
             </div>
           </div>
 
-          <div class="col-sm-4 g-0 gloEntolesTab position-relative">
+          <div class="col-4 col-sm-3 g-0 gloEntolesTab position-relative">
             <div class="row g-0">
-              <div class="col g-0 gloEntolesHeader">Εντολές</div>
-              <div class="col g-0 gloMemHeader">Μνήμη</div>
+              <div class="col-6 g-0 gloEntolesHeader">Εντολές</div>
+              <div class="col-6 g-0 gloMemHeader">Μνήμη</div>
             </div>
 
             <div class="gloSidebarTabInner">
@@ -209,7 +288,7 @@
                 <span class="gloCommandText">Α_Μ()</span>
                 <span class="gloCommandText">Α_Τ()</span>
                 <span class="gloCommandText">Ε()</span>
-                <span class="gloCommandText">ΕΦ()</span>
+                <span class="gloCommandText">ΕΦ()</span><br />
                 <span class="gloCommandText">ΗΜ()</span>
                 <span class="gloCommandText">ΛΟΓ()</span>
                 <span class="gloCommandText">ΣΥΝ()</span>
@@ -230,7 +309,7 @@
             </div>
           </div>
 
-          <div class="col-sm-4 g-0 gloMemTab position-relative">
+          <div class="col-4 col-sm-3 g-0 gloMemTab position-relative">
             <div class="row g-0">
               <div class="col g-0 gloEntolesHeader">Εντολές</div>
               <div class="col g-0 gloMemHeader">Μνήμη</div>
@@ -242,12 +321,6 @@
         </div>
       </div>
     </div>
-
-    <p style="text-align: right">
-      <a href="https://github.com/armados/js-glossa/"
-        >https://github.com/armados/js-glossa/</a
-      >
-    </p>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/js-cookie/3.0.0/js.cookie.min.js"></script>

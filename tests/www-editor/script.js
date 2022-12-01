@@ -291,6 +291,26 @@ function UIStateOutputDetailsAppend(gloBoxID, data) {
 // ==============================
 
 $(document).ready(function () {
+  $(".gloBtnIncFontSize").click(function () {
+    var gloBoxElement = $(this).closest(".gloEmbed").find(".gloBox");
+    var originalFontSize = gloBoxElement.css("font-size");
+    var originalFontNumber = parseFloat(originalFontSize, 10);
+    var newFontSize = originalFontNumber * 1.2;
+    gloBoxElement.css("font-size", newFontSize);
+  });
+
+  $(".gloBtnDecrFontSize").click(function () {
+    var gloBoxElement = $(this).closest(".gloEmbed").find(".gloBox");
+    var originalFontSize = gloBoxElement.css("font-size");
+    var originalFontNumber = parseFloat(originalFontSize, 10);
+    var newFontSize = originalFontNumber * 0.8;
+    gloBoxElement.css("font-size", newFontSize);
+  });
+
+  $(".gloBtnShowGloInfoModal").click(function (e) {
+    $(this).parent().parent().find(".gloInfoModal").modal("show");
+  });
+
   $(".gloEntolesHeader").click(function (e) {
     $(this).parent().parent().parent().find(".gloEntolesTab").show();
     $(this).parent().parent().parent().find(".gloMemTab").hide();
@@ -470,6 +490,8 @@ $(document).ready(function () {
       enableBasicAutocompletion: true,
       enableSnippets: false,
       enableLiveAutocompletion: false,
+      fontFamily: "Fira Mono, monospace",
+      fontSize: "100%",
     });
 
     editor.commands.on("afterExec", function (e) {

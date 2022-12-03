@@ -19,9 +19,8 @@ function getGlossaApp(id) {
 // =================================
 
 function renderMemory(data) {
-  var html =
-    '<table class="table table-striped-columns table-hover table-sm table-borderless">';
-  html += '<thead  class="table-dark">';
+  var html = '<table class="table table-hover table-sm table-borderless">';
+  html += '<thead class="table-dark">';
   html += "<tr>";
   html += '<td scope="col">Όνομα</td>';
   html += '<td scope="col" style="text-align: center;">Τιμή</td>';
@@ -56,12 +55,6 @@ async function startProgramExecution(gloBoxID, runstep) {
     .attr("id");
   var aceeditor = ace.edit(editorid);
 
-  // beautify
-  //var beautify = ace.require("ace/ext/beautify");
-  //const session = aceeditor.getSession();
-  //beautify.beautify(session);
-  // beautify end
-
   var sourcecode = aceeditor.getValue();
 
   var inputdata = $("#" + gloBoxID)
@@ -82,8 +75,12 @@ async function startProgramExecution(gloBoxID, runstep) {
 
   app.setDebugMode(true);
 
-  app.setReadInputFunction(function (name) {
-    return prompt("Εισαγωγή τιμής στο αναγνωριστικό " + name);
+  // app.setReadInputFunction(function (name) {
+  //   return prompt("Εισαγωγή τιμής στο αναγνωριστικό " + name);
+  // });
+
+  app.setReadInputFunction(function () {
+    return waitingKeypress(gloBoxID);
   });
 
   app.setSlowRun(slowrun);
@@ -94,12 +91,29 @@ async function startProgramExecution(gloBoxID, runstep) {
   app.run();
 }
 
+async function waitingKeypress(gloBoxID) {
+  return new Promise((resolve) => {
+    $("#" + gloBoxID + " .gloReadFromKeyboard")
+    .off("keyup")
+    .on('keyup', function (e) {
+      if (e.key == "Enter") {
+        $(this).off("keyup");
+        var inputVal = $(this).val();
+        //console.log('Keyboard value was: #' + inputVal + '#');
+        $(".gloReadFromKeyboard").val("");
+        resolve(inputVal);
+      }
+    });
+  });
+}
+
 // ======================================
 
 function UIStateStarted(gloBoxID) {
   var editorid = $("#" + gloBoxID)
     .find(".gloAceEditor")
     .attr("id");
+
   var aceeditor = ace.edit(editorid);
 
   aceeditor.setReadOnly(true);
@@ -133,6 +147,20 @@ function UIStateStarted(gloBoxID) {
   $("#" + gloBoxID)
     .find(".gloMemory")
     .html("");
+
+  if (
+    $("#" + gloBoxID)
+      .find(".gloBtnToggleSidebarDisplay")
+      .hasClass("active")
+  ) {
+    $("#" + gloBoxID)
+      .find(".gloEntolesTab")
+      .hide();
+
+    $("#" + gloBoxID)
+      .find(".gloMemTab")
+      .show();
+  }
 
   $("#" + gloBoxID).addClass("running");
 }
@@ -276,8 +304,14 @@ function UIStateOutputAppend(gloBoxID, data) {
       return value + data + "\n";
     });
 
-  var textBox = $("#" + gloBoxID).find(".gloResultPre");
-  textBox.scrollTop(textBox[0].scrollHeight);
+  if (
+    $("#" + gloBoxID)
+      .find(".gloOutputTab")
+      .is(":visible")
+  ) {
+    var textBox = $("#" + gloBoxID).find(".gloResultPre");
+    textBox.scrollTop(textBox[0].scrollHeight);
+  }
 }
 
 function UIStateOutputDetailsAppend(gloBoxID, data) {
@@ -286,13 +320,24 @@ function UIStateOutputDetailsAppend(gloBoxID, data) {
     .html(function (index, value) {
       return value + data + "\n";
     });
+
+  if (
+    $("#" + gloBoxID)
+      .find(".gloOutputTabDetails")
+      .is(":visible")
+  ) {
+    var element = $("#" + gloBoxID).find(".gloResultDetailsPre");
+    element.scrollTop(element[0].scrollHeight);
+  }
 }
 
 // ==============================
 
 $(document).ready(function () {
+  $(".gloSpinner").hide();
+
   $(".gloBtnIncFontSize").click(function () {
-    var gloBoxElement = $(this).closest(".gloEmbed").find(".gloBox");
+    var gloBoxElement = $(this).closest(".gloBox");
     var originalFontSize = gloBoxElement.css("font-size");
     var originalFontNumber = parseFloat(originalFontSize, 10);
     var newFontSize = originalFontNumber * 1.2;
@@ -300,7 +345,7 @@ $(document).ready(function () {
   });
 
   $(".gloBtnDecrFontSize").click(function () {
-    var gloBoxElement = $(this).closest(".gloEmbed").find(".gloBox");
+    var gloBoxElement = $(this).closest(".gloBox");
     var originalFontSize = gloBoxElement.css("font-size");
     var originalFontNumber = parseFloat(originalFontSize, 10);
     var newFontSize = originalFontNumber * 0.8;
@@ -308,26 +353,26 @@ $(document).ready(function () {
   });
 
   $(".gloBtnResetFontSize").click(function () {
-    var gloBoxElement = $(this).closest(".gloEmbed").find(".gloBox");
+    var gloBoxElement = $(this).closest(".gloBox");
     gloBoxElement.css("font-size", "82%");
   });
 
   $(".gloBtnShowGloInfoModal").click(function (e) {
-    $(this).parent().parent().find(".gloInfoModal").modal("show");
+    $(this).closest(".gloBox").find(".gloInfoModal").modal("show");
   });
 
   $(".gloEntolesHeader").click(function (e) {
-    $(this).parent().parent().parent().find(".gloEntolesTab").show();
-    $(this).parent().parent().parent().find(".gloMemTab").hide();
+    $(this).closest(".gloBox").find(".gloEntolesTab").show();
+    $(this).closest(".gloBox").find(".gloMemTab").hide();
   });
 
   $(".gloMemHeader").click(function (e) {
-    $(this).parent().parent().parent().find(".gloEntolesTab").hide();
-    $(this).parent().parent().parent().find(".gloMemTab").show();
+    $(this).closest(".gloBox").find(".gloEntolesTab").hide();
+    $(this).closest(".gloBox").find(".gloMemTab").show();
   });
 
   $(".gloCommandText").click(function (e) {
-    var editorElement = $(this).closest(".gloEmbed").find(".gloAceEditor");
+    var editorElement = $(this).closest(".gloBox").find(".gloAceEditor");
 
     var editorid = editorElement.attr("id");
 
@@ -339,8 +384,6 @@ $(document).ready(function () {
 
     aceeditor.focus();
   });
-
-  $(".gloSpinner").hide();
 
   $(".gloBtnShowInput").click(function (e) {
     e.preventDefault();
@@ -505,6 +548,49 @@ $(document).ready(function () {
       }
     });
 
+    var app = newGlossaApp(gloBoxID);
+
+    app.on("started", () => {
+      UIStateStarted(gloBoxID);
+    });
+    app.on("stopped", (data) => {
+      UIStateStopped(gloBoxID, data);
+    });
+    app.on("finished", () => {
+      UIStateFinished(gloBoxID);
+    });
+    app.on("error", (data) => {
+      UIStateError(gloBoxID, data);
+    });
+    app.on("line", (data) => {
+      UIStateUpdateCodeLine(gloBoxID, data);
+    });
+    app.on("memory", (data) => {
+      UIStateUpdateMemory(gloBoxID, data);
+    });
+    app.on("memorysymbolupdate", (data1, data2) => {
+      UIStateUpdateMemorySymbol(gloBoxID, data1, data2);
+    });
+    app.on("outputappend", (data) => {
+      UIStateOutputAppend(gloBoxID, data);
+    });
+    app.on("outputdetailsappend", (data) => {
+      UIStateOutputDetailsAppend(gloBoxID, data);
+    });
+    app.on("inputread", (data) => {
+      UIStateInputRead(gloBoxID, data);
+    });
+    app.on("paused", () => {
+      UIStatePaused(gloBoxID);
+    });
+    app.on("continuerunning", () => {
+      UIStateContinueRunning(gloBoxID);
+    });
+    app.on("reachbreakpoint", (data) => {
+      UIStateUpdateCodeLine(gloBoxID, data);
+    });
+
+    /*
     editor.commands.on("afterExec", function (e) {
       if (
         e.command.name == "insertstring" &&
@@ -512,8 +598,7 @@ $(document).ready(function () {
           /^[\<\n]$/.test(e.args) ||
           /^[\<:]$/.test(e.args))
       ) {
-        /*
-        var editor = e.editor;
+         var editor = e.editor;
       var session = editor.session;
     var  cursor = session.selection.cursor;
      var line =  session.getLine(cursor.row).slice(0,  cursor.column);
@@ -562,7 +647,7 @@ replaceIfFound(editor, 'oxi', 'ΟΧΙ');
 replaceIfFound(editor, 'kai', 'ΚΑΙ');
 replaceIfFound(editor, 'h', 'Η');
 */
-        /*
+    /*
 editor.find('[ \t]+$',{
   backwards: false,
   wrap: true,
@@ -571,7 +656,6 @@ editor.find('[ \t]+$',{
   regExp: true
 });
 editor.replaceAll('');
-*/
       }
     });
 
@@ -585,6 +669,7 @@ editor.replaceAll('');
       });
       if (range != null) editor.session.replace(range, ckey);
     }
+*/
 
     var cookieData = Cookies.get("editorSourceCode");
 
@@ -620,11 +705,12 @@ editor.replaceAll('');
       var breakpoints = e.editor.session.getBreakpoints(row, 0);
       var row = e.getDocumentPosition().row;
 
-      // If there's a breakpoint already defined, it should be removed, offering the toggle feature
       if (typeof breakpoints[row] === typeof undefined) {
         e.editor.session.setBreakpoint(row);
+        app.addBreakpoint(Number(row) + 1);
       } else {
         e.editor.session.clearBreakpoint(row);
+        app.removeBreakpoint(Number(row) + 1);
       }
 
       e.stop();
@@ -632,7 +718,8 @@ editor.replaceAll('');
 
     editor.on("change", function (e) {
       var breakpointsArray = editor.session.getBreakpoints();
-      if (Object.keys(editor.session.getBreakpoints()).length > 0) {
+
+      if (editor.session.getBreakpoints().length > 0) {
         if (e.lines.length > 1) {
           var breakpoint = parseInt(Object.keys(breakpointsArray)[0]);
           var lines = e.lines.length - 1;
@@ -659,48 +746,6 @@ editor.replaceAll('');
           }
         }
       }
-    });
-
-    var app = newGlossaApp(gloBoxID);
-
-    app.on("started", () => {
-      UIStateStarted(gloBoxID);
-    });
-    app.on("stopped", (data) => {
-      UIStateStopped(gloBoxID, data);
-    });
-    app.on("finished", () => {
-      UIStateFinished(gloBoxID);
-    });
-    app.on("error", (data) => {
-      UIStateError(gloBoxID, data);
-    });
-    app.on("line", (data) => {
-      UIStateUpdateCodeLine(gloBoxID, data);
-    });
-    app.on("memory", (data) => {
-      UIStateUpdateMemory(gloBoxID, data);
-    });
-    app.on("memorysymbolupdate", (data1, data2) => {
-      UIStateUpdateMemorySymbol(gloBoxID, data1, data2);
-    });
-    app.on("outputappend", (data) => {
-      UIStateOutputAppend(gloBoxID, data);
-    });
-    app.on("outputdetailsappend", (data) => {
-      UIStateOutputDetailsAppend(gloBoxID, data);
-    });
-    app.on("inputread", (data) => {
-      UIStateInputRead(gloBoxID, data);
-    });
-    app.on("paused", () => {
-      UIStatePaused(gloBoxID);
-    });
-    app.on("continuerunning", () => {
-      UIStateContinueRunning(gloBoxID);
-    });
-    app.on("reachbreakpoint", (data) => {
-      UIStateUpdateCodeLine(gloBoxID, data);
     });
   });
 });

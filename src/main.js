@@ -47,6 +47,10 @@ class GlossaJS extends EventEmitter {
       outputData: [],
       outputDataDetails: [],
 
+      isStopRunning: () => {
+        return this.stoprunning;
+      },
+
       postMessage: async (msg, data1 = null, data2 = null) => {
         this.emit(msg, data1, data2);
       },
@@ -169,7 +173,7 @@ class GlossaJS extends EventEmitter {
           this.app.postMessage("line", line);
         }
 
-        await this.app.sleepFunc(40);
+        await this.app.sleepFunc(30);
       },
 
       incrAssignCounter: () => {
@@ -211,7 +215,7 @@ class GlossaJS extends EventEmitter {
     this.app["config"]["debugmode"] = false;
     this.app["config"]["slowrunflag"] = false;
     this.app["config"]["runspeed"] = 0;
-    this.app["config"]["slowrunspeed"] = 300;
+    this.app["config"]["slowrunspeed"] = 200;
     this.app["config"]["runstep"] = false;
     this.app["config"]["runstepflag"] = false;
 
@@ -300,53 +304,85 @@ class GlossaJS extends EventEmitter {
     this.app.breakPoints.push(line);
   }
 
-  removeBreakpoint(line) {}
+  removeBreakpoint(line) {
+    console.log("remove line breakpoint");
+    var index = this.app.breakPoints.indexOf(line);
+    if (index > -1) {
+      console.log("line found in array and removed");
+      this.app.breakPoints.splice(index, 1);
+    }
+  }
 
   async run() {
     this.app.postMessage("started");
 
     this.running = true;
 
-    try {
-      var gram = ohm.grammar(Gram.getGrammar());
-      var sem = Semantics.load(gram);
+    var gram = ohm.grammar(Gram.getGrammar());
+    var sem = Semantics.load(gram);
 
-      var match = gram.match(this.sourceCode);
+    var match = gram.match(this.sourceCode);
 
-      if (!match.succeeded()) throw new GE.GError(match.message);
+    if (!match.succeeded()) throw new GE.GError(match.message);
 
-      var result = sem(match).toAST();
-      if (!result) throw new GE.GError(result);
+    var result = sem(match).toAST();
+    if (!result) throw new GE.GError(result);
 
-/*
-      var myasttree = new AST.ASTree(result);
-      var tree = myasttree.generate();
+    /*
+    var myasttree = new AST.ASTree(result);
+    var tree = myasttree.generate();
 
-      console.log(tree);
+    console.log(tree);
 */
-/*
+    /*
 var myasttree = new AST2.ASTree(result);
 var tree = myasttree.generate();
 
 console.log(tree);
 */
 
-      this.app.postMessage("continuerunning");
+    this.app.postMessage("continuerunning");
+
+    // await new Promise(async (resolve, reject) => {
+    try {
       await result.resolve(this.app, this.scope);
+      console.log("App terminated. (normal)");
+     // resolve("ok");
     } catch (e) {
-      console.log('Ooops... GlossaJS: Main(): Error catch: ' + e);
+      console.log("App terminated (abnormal)");
       if (e instanceof GE.GError) {
         this.app.postMessage("error", e.message);
+       // reject("error");
       } else if (e instanceof GE.GInterrupt) {
         this.app.postMessage("stopped", e.message);
+       // reject("stopped");
       } else {
-        console.log("=== unknown catch code");
+        console.log("===> unknown error code");
         console.log(e);
+       // reject("unknown-error");
       }
-    } finally {
-      this.running = false;
-      this.app.postMessage("finished");
     }
+    //  });
+
+    /*
+    const pro2 = new Promise(async (resolve, reject) => {
+      while (!this.stoprunning) {
+        await this.app.sleepFunc(50);
+      }
+      reject("user-interrupt");
+    });
+    */
+
+    /*await Promise.race([pro1])
+      .then((response) => {
+        //console.log("App terminated. Good response: " + response);
+      })
+      .catch((err) => {
+        //console.log("App terminated. Reject response: " + err);
+      });
+*/
+    this.running = false;
+    this.app.postMessage("finished");
   }
 }
 

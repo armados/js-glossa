@@ -1,3 +1,17 @@
+.gloBox input,
+.gloBox input[type="text"]:focus {
+  box-shadow: none !important;
+  -webkit-box-shadow: none !important;
+  outline: -webkit-focus-ring-color auto 0px !important;
+
+  border-radius: 0;
+  -webkit-border-radius: 0;
+
+  border: 0;
+  background-color: rgb(224, 186, 14);
+  color: rgb(0, 0, 0);
+}
+
 .gloBox {
   border: 1px solid #ddd;
   margin-top: 10px;
@@ -5,14 +19,20 @@
   font-family: "Fira Mono", monospace;
   font-size: 82%;
 }
+.gloBox.running {
+  border-color: rgb(92, 184, 64);
+}
+.gloBox.running.paused {
+  border-color: rgb(224, 193, 56);
+}
 .gloBox .gloControls {
   border-bottom: 8px solid #ddd;
 }
 .gloBox.running .gloControls {
-  border-bottom: 8px solid rgb(92, 184, 64);
+  border-color: rgb(92, 184, 64);
 }
 .gloBox.running.paused .gloControls {
-  border-bottom: 8px solid rgb(224, 193, 56);
+  border-color: rgb(224, 193, 56);
 }
 
 .gloBox .gloAceEditor {
@@ -50,7 +70,7 @@
 .gloBox .gloEntolesTab,
 .gloBox .gloMemTab {
   color: #fff;
-  min-height: 25em;
+  min-height: 10em;
 }
 
 .gloBox ::-webkit-scrollbar {

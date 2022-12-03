@@ -21,7 +21,7 @@ class GInterrupt extends Error {
     this.name = this.constructor.name;
     
     this.message =
-      "Τερματισμός." +
+      "Διακοπή εκτέλεσης." +
       (line != null ? " Γραμμή " + line + ". " : " ") +
       this.message;
   }

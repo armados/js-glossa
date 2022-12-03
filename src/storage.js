@@ -134,7 +134,7 @@ class SScope {
       var symTypeClass = null;
 
       if (value instanceof STRTableCellInt) {
-        symType = "ΑΚΕΡΑΙΑ (κελί πίνακα)";
+        symType = "ΑΚΕΡΑΙΑ (στοιχείο πίνακα)";
         symTypeClass = "STRTableCellInt";
       } else if (value instanceof STRFuncNameInt) {
         symType = "ΑΚΕΡΑΙΑ (όνομα συνάρτησης)";
@@ -143,43 +143,43 @@ class SScope {
         symType = "ΑΚΕΡΑΙΑ";
         symTypeClass = "STRVariableInt";
       } else if (value instanceof STRConstantInt) {
-        symType = "ΑΚΕΡΑΙΑ";
+        symType = "ΑΚΕΡΑΙΑ (σταθερά)";
         symTypeClass = "STRConstantInt";
       } else if (value instanceof STRFuncNameFloat) {
         symType = "ΠΡΑΓΜΑΤΙΚΗ (όνομα συνάρτησης)";
         symTypeClass = "STRFuncNameFloat";
       } else if (value instanceof STRTableCellFloat) {
-        symType = "ΠΡΑΓΜΑΤΙΚΗ (κελί πίνακα)";
+        symType = "ΠΡΑΓΜΑΤΙΚΗ (στοιχείο πίνακα)";
         symTypeClass = "STRTableCellFloat";
       } else if (value instanceof STRVariableFloat) {
         symType = "ΠΡΑΓΜΑΤΙΚΗ";
         symTypeClass = "STRVariableFloat";
       } else if (value instanceof STRConstantFloat) {
-        symType = "ΠΡΑΓΜΑΤΙΚΗ";
+        symType = "ΠΡΑΓΜΑΤΙΚΗ (σταθερά)";
         symTypeClass = "STRConstantFloat";
       } else if (value instanceof STRFuncNameString) {
         symType = "ΧΑΡΑΚΤΗΡΑΣ (όνομα συνάρτησης)";
         symTypeClass = "STRFuncNameString";
       } else if (value instanceof STRTableCellString) {
-        symType = "ΧΑΡΑΚΤΗΡΑΣ (κελί πίνακα)";
+        symType = "ΧΑΡΑΚΤΗΡΑΣ (στοιχείο πίνακα)";
         symTypeClass = "STRTableCellString";
       } else if (value instanceof STRVariableString) {
         symType = "ΧΑΡΑΚΤΗΡΑΣ";
         symTypeClass = "STRVariableString";
       } else if (value instanceof STRConstantString) {
-        symType = "ΧΑΡΑΚΤΗΡΑΣ";
+        symType = "ΧΑΡΑΚΤΗΡΑΣ (σταθερά)";
         symTypeClass = "STRConstantString";
       } else if (value instanceof STRFuncNameBoolean) {
         symType = "ΛΟΓΙΚΗ (όνομα συνάρτησης)";
         symTypeClass = "STRFuncNameBoolean";
       } else if (value instanceof STRTableCellBoolean) {
-        symType = "ΛΟΓΙΚΗ (κελί πίνακα)";
+        symType = "ΛΟΓΙΚΗ (στοιχείο πίνακα)";
         symTypeClass = "STRTableCellBoolean";
       } else if (value instanceof STRVariableBoolean) {
         symType = "ΛΟΓΙΚΗ";
         symTypeClass = "STRVariableBoolean";
       } else if (value instanceof STRConstantBoolean) {
-        symType = "ΛΟΓΙΚΗ";
+        symType = "ΛΟΓΙΚΗ (σταθερά)";
         symTypeClass = "STRConstantBoolean";
       } else throw new GE.GInternalError("01 Unknown symbol type" + value);
 

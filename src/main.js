@@ -318,16 +318,6 @@ class GlossaJS extends EventEmitter {
 
     this.running = true;
 
-    var gram = ohm.grammar(Gram.getGrammar());
-    var sem = Semantics.load(gram);
-
-    var match = gram.match(this.sourceCode);
-
-    if (!match.succeeded()) throw new GE.GError(match.message);
-
-    var result = sem(match).toAST();
-    if (!result) throw new GE.GError(result);
-
     /*
     var myasttree = new AST.ASTree(result);
     var tree = myasttree.generate();
@@ -341,46 +331,40 @@ var tree = myasttree.generate();
 console.log(tree);
 */
 
-    this.app.postMessage("continuerunning");
-
     // await new Promise(async (resolve, reject) => {
     try {
+
+      var gram = ohm.grammar(Gram.getGrammar());
+      var sem = Semantics.load(gram);
+  
+      var match = gram.match(this.sourceCode);
+  
+      if (!match.succeeded()) throw new GE.GErrorBeforeExec(match.message);
+  
+      var result = sem(match).toAST();
+      if (!result) throw new GE.GErrorBeforeExec(result);
+  
+      // ready to run
+      this.app.postMessage("continuerunning");
+
       await result.resolve(this.app, this.scope);
+
       console.log("App terminated. (normal)");
-     // resolve("ok");
+
     } catch (e) {
       console.log("App terminated (abnormal)");
-      if (e instanceof GE.GError) {
+      if (e instanceof GE.GErrorBeforeExec) {
         this.app.postMessage("error", e.message);
-       // reject("error");
+      } else if (e instanceof GE.GError) {
+        this.app.postMessage("error", e.message);
       } else if (e instanceof GE.GInterrupt) {
         this.app.postMessage("stopped", e.message);
-       // reject("stopped");
       } else {
         console.log("===> unknown error code");
         console.log(e);
-       // reject("unknown-error");
       }
     }
-    //  });
 
-    /*
-    const pro2 = new Promise(async (resolve, reject) => {
-      while (!this.stoprunning) {
-        await this.app.sleepFunc(50);
-      }
-      reject("user-interrupt");
-    });
-    */
-
-    /*await Promise.race([pro1])
-      .then((response) => {
-        //console.log("App terminated. Good response: " + response);
-      })
-      .catch((err) => {
-        //console.log("App terminated. Reject response: " + err);
-      });
-*/
     this.running = false;
     this.app.postMessage("finished");
   }

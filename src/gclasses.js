@@ -1,5 +1,18 @@
 "use strict";
 
+class GErrorBeforeExec extends Error {
+  constructor(message, line = null) {
+    super(message);
+
+    this.name = this.constructor.name;
+    
+    this.message =
+      "Σφάλμα." +
+      (line != null ? " Γραμμή " + line + ". " : " ") +
+      this.message;
+  }
+}
+
 class GError extends Error {
   constructor(message, line = null) {
     super(message);
@@ -42,6 +55,7 @@ class GInternalError extends Error {
 }
 
 module.exports = {
+  GErrorBeforeExec,
   GError,
   GInterrupt,
   GInternalError

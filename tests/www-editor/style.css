@@ -13,9 +13,7 @@
 }
 
 .gloBox {
-  border: 1px solid #ddd;
-  margin-top: 10px;
-  margin-bottom: 10px;
+  border: 0px solid #ddd;
   font-family: "Fira Mono", monospace;
   font-size: 82%;
 }
@@ -74,7 +72,7 @@
 }
 
 .gloBox ::-webkit-scrollbar {
-  width: 0.9em;
+  width: 12px;
 }
 
 .gloBox ::-webkit-scrollbar-thumb {

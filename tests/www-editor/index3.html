@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="el">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+
+    <title>Γλώσσα JS</title>
+
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.2.3/css/bootstrap.min.css"
+    />
+
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.2/font/bootstrap-icons.min.css"
+      rel="stylesheet"
+    />
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fira+Mono&display=swap"
+      rel="stylesheet"
+    />
+
+    <link rel="stylesheet" type="text/css" href="style.css" />
+
+    <style>
+        body {
+          margin: 0;
+          padding: 0;
+        }
+        
+        </style>
+  </head>
+
+  <body>
+    <div class="container-fluid g-0 gloEmbed">
+      <div class="gloBox">
+        <div class="row g-0">
+          <div class="col g-0">
+            <div class="gloControls">
+              <div class="btn-toolbar" role="toolbar">
+                <div class="btn-group m-2" role="group">
+                  <button class="btn btn-success btn-sm gloRun">
+                    <i class="bi bi-play-fill"></i>
+                  </button>
+
+                  <button class="btn btn-secondary btn-sm gloStop disabled">
+                    <i class="bi bi-stop-fill"></i>
+                  </button>
+
+                  <button class="btn btn-warning btn-sm gloRunStep">
+                    <i class="bi bi-bar-chart-steps"></i>
+                  </button>
+                </div>
+
+                <div class="btn-group m-2" role="group">
+                  <button
+                    type="button"
+                    class="btn btn-success btn-sm gloBtnShowOutput"
+                  >
+                    <i class="bi bi-display"></i>
+                  </button>
+                  <button
+                    type="button"
+                    class="btn btn-primary btn-sm gloBtnShowInput"
+                  >
+                    <i class="bi bi-keyboard"></i>
+                  </button>
+                  <button
+                    type="button"
+                    class="btn btn-warning btn-sm gloBtnShowOutputDetails"
+                  >
+                    <i class="bi bi-text-paragraph"></i>
+                  </button>
+                </div>
+
+                <div class="btn-group m-2" role="group">
+                  <button
+                    type="button"
+                    aria-pressed="true"
+                    class="btn btn-primary btn-sm gloBtnToggleSidebarDisplay active"
+                  >
+                    <i class="bi bi-layout-sidebar-inset-reverse"></i>
+                  </button>
+
+                  <button
+                    type="button"
+                    aria-pressed="true"
+                    class="btn btn-primary btn-sm gloBtnToggleSlowSpeed active"
+                  >
+                    <i class="bi bi-speedometer2"></i>
+                  </button>
+                </div>
+
+                <div class="btn-group m-2" role="group">
+                  <button
+                    type="button"
+                    class="btn btn-outline-secondary btn-sm gloBtnIncFontSize"
+                  >
+                    <i class="bi bi-fonts"></i>
+                    <i class="bi bi-plus"></i>
+                  </button>
+                  <button
+                    type="button"
+                    class="btn btn-outline-secondary btn-sm gloBtnDecrFontSize"
+                  >
+                    <i class="bi bi-fonts"></i>
+                    <i class="bi bi-dash"></i>
+                  </button>
+                  <button
+                    type="button"
+                    class="btn btn-outline-secondary btn-sm gloBtnResetFontSize"
+                  >
+                    <i class="bi bi-fonts"></i>
+                    <i class="bi bi-x"></i>
+                  </button>
+                </div>
+
+                <div class="btn-group m-2" role="group">
+                  <button
+                    type="button"
+                    class="btn btn-info btn-sm gloBtnShowGloInfoModal"
+                  >
+                    <i class="bi bi-info"></i>
+                  </button>
+                </div>
+
+                <div class="d-flex align-items-center">
+                  <div
+                    class="spinner-grow spinner-grow-sm text-success gloSpinner"
+                    role="status"
+                    aria-hidden="true"
+                  >
+                    <span class="visually-hidden"
+                      >Εκτέλεση προγράμματος...</span
+                    >
+                  </div>
+                </div>
+
+                <!-- Modal -->
+                <div
+                  class="modal fade gloInfoModal"
+                  role="dialog"
+                  aria-hidden="true"
+                >
+                  <div class="modal-dialog">
+                    <!-- Modal content-->
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h5 class="modal-title">Διερμηνευτής ΓλώσσαJS</h5>
+                        <button
+                          type="button"
+                          class="btn-close"
+                          data-bs-dismiss="modal"
+                          aria-label="Close"
+                        ></button>
+                      </div>
+                      <div class="modal-body">
+                        <p>
+                          Υλοποίηση της γλώσσας προγραμματισμού ΓΛΩΣΣΑ σε
+                          Javascript
+                        </p>
+                        <p>
+                          Αποθετήριο πηγαίου κώδικα στο GitHub<br />
+                          <a
+                            href="https://github.com/armados/js-glossa/"
+                            target="_blank"
+                            >https://github.com/armados/js-glossa/</a
+                          >
+                        </p>
+                        <p>Ζούνης Νίκος</p>
+                      </div>
+                      <div class="modal-footer">
+                        <button
+                          type="button"
+                          class="btn btn-primary"
+                          data-bs-dismiss="modal"
+                        >
+                          Κλείσιμο
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row g-0">
+          <div class="col g-0">
+            <div class="gloAceEditor"></div>
+
+            <div class="gloIO">
+              <div class="tab-content">
+                <div class="tab-pane show active gloOutputTab" role="tabpanel">
+                  <div class="gloTabHeader gloOutputHeader">
+                    Οθόνη εκτέλεσης
+                  </div>
+                  <pre class="gloResultPre"><div class="gloResult"></div></pre>
+
+                
+                  <input
+                  class="form-control form-control-sm gloReadFromKeyboard"
+                  type="text"
+                  autocomplete="false"
+                />
+
+                </div>
+
+                <div class="tab-pane gloInputTab" role="tabpanel">
+                  <div class="gloTabHeader gloInputHeader">Τιμές εισόδου</div>
+                  <textarea
+                    class="gloCodeKeyboardInput"
+                    autocorrect="off"
+                    autocapitalize="off"
+                    placeholder="Οι τιμές που θα εισαχθούν θα δoθούν ως είσοδος στο πρόγραμμα."
+                  ></textarea>
+                </div>
+
+                <div class="tab-pane gloOutputTabDetails" role="tabpanel">
+                  <div class="gloTabHeader gloOutputHeaderDetails">
+                    Αναλυτική περιγραφή των ενεργειών του προγράμματος
+                  </div>
+                  <pre
+                    class="gloResultDetailsPre"
+                  ><div class="gloResultDetails"></div></pre>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-5 col-sm-4 g-0 gloEntolesTab position-relative">
+            <div class="row g-0">
+              <div class="col-6 g-0 gloEntolesHeader">Εντολές</div>
+              <div class="col-6 g-0 gloMemHeader">Μνήμη</div>
+            </div>
+
+            <div class="gloSidebarTabInner">
+              <div class="gloAllCommands">
+                <span class="gloCommandText">ΠΡΟΓΡΑΜΜΑ</span><br />
+
+                <span class="gloCommandText">ΣΤΑΘΕΡΕΣ</span><br />
+
+                <span class="gloCommandText">ΜΕΤΑΒΛΗΤΕΣ</span><br />
+                &nbsp;&nbsp;<span class="gloCommandText">ΑΚΕΡΑΙΕΣ:</span><br />
+                &nbsp;&nbsp;<span class="gloCommandText">ΠΡΑΓΜΑΤΙΚΕΣ:</span
+                ><br />
+                &nbsp;&nbsp;<span class="gloCommandText">ΧΑΡΑΚΤΗΡΕΣ:</span
+                ><br />
+                &nbsp;&nbsp;<span class="gloCommandText">ΛΟΓΙΚΕΣ:</span><br />
+
+                <span class="gloCommandText">ΑΡΧΗ</span><br />
+
+                &nbsp;&nbsp;<span class="gloCommandText">ΓΡΑΨΕ</span><br />
+                &nbsp;&nbsp;<span class="gloCommandText">ΔΙΑΒΑΣΕ</span><br />
+
+                &nbsp;&nbsp;<span class="gloCommandText">ΑΝ</span>
+                <span class="gloCommandText">ΤΟΤΕ</span><br />
+                &nbsp;&nbsp;<span class="gloCommandText">ΑΛΛΙΩΣ_ΑΝ</span>
+                <span class="gloCommandText">ΤΟΤΕ</span><br />
+                &nbsp;&nbsp;<span class="gloCommandText">ΑΛΛΙΩΣ</span><br />
+                &nbsp;&nbsp;<span class="gloCommandText">ΤΕΛΟΣ_ΑΝ</span><br />
+
+                &nbsp;&nbsp;<span class="gloCommandText">ΕΠΙΛΕΞΕ</span><br />
+                &nbsp;&nbsp;<span class="gloCommandText">ΠΕΡΙΠΤΩΣΗ</span><br />
+                &nbsp;&nbsp;<span class="gloCommandText">ΠΕΡΙΠΤΩΣΗ ΑΛΛΙΩΣ</span
+                ><br />
+                &nbsp;&nbsp;<span class="gloCommandText">ΤΕΛΟΣ_ΕΠΙΛΟΓΩΝ</span
+                ><br />
+
+                &nbsp;&nbsp;<span class="gloCommandText">ΓΙΑ</span>
+                <span class="gloCommandText">ΑΠΟ</span>
+                <span class="gloCommandText">ΜΕΧΡΙ</span>
+                <span class="gloCommandText">ΜΕ_ΒΗΜΑ</span><br />
+                &nbsp;&nbsp;<span class="gloCommandText">ΤΕΛΟΣ_ΕΠΑΝΑΛΗΨΗΣ</span
+                ><br />
+
+                &nbsp;&nbsp;<span class="gloCommandText">ΟΣΟ</span>
+                <span class="gloCommandText">ΕΠΑΝΑΛΑΒΕ</span><br />
+                &nbsp;&nbsp;<span class="gloCommandText">ΤΕΛΟΣ_ΕΠΑΝΑΛΗΨΗΣ</span
+                ><br />
+
+                &nbsp;&nbsp;<span class="gloCommandText">ΑΡΧΗ_ΕΠΑΝΑΛΗΨΗΣ</span
+                ><br />
+                &nbsp;&nbsp;<span class="gloCommandText">ΜΕΧΡΙΣ_ΟΤΟΥ</span
+                ><br />
+
+                &nbsp;&nbsp;<span class="gloCommandText">ΚΑΛΕΣΕ</span><br />
+
+                <span class="gloCommandText">ΤΕΛΟΣ_ΠΡΟΓΡΑΜΜΑΤΟΣ</span><br />
+
+                <span class="gloCommandText">ΔΙΑΔΙΚΑΣΙΑ</span><br />
+                <span class="gloCommandText">ΤΕΛΟΣ_ΔΙΑΔΙΚΑΣΙΑΣ</span><br />
+
+                <span class="gloCommandText">ΣΥΝΑΡΤΗΣΗ</span><br />
+                &nbsp;&nbsp;<span class="gloCommandText">ΑΚΕΡΑΙΑ:</span><br />
+                &nbsp;&nbsp;<span class="gloCommandText">ΠΡΑΓΜΑΤΙΚΗ:</span
+                ><br />
+                &nbsp;&nbsp;<span class="gloCommandText">ΧΑΡΑΚΤΗΡΑΣ:</span
+                ><br />
+                &nbsp;&nbsp;<span class="gloCommandText">ΛΟΓΙΚΗ:</span><br />
+                <span class="gloCommandText">ΤΕΛΟΣ_ΣΥΝΑΡΤΗΣΗΣ</span><br />
+
+                <span class="gloCommandText">Α_Μ()</span>
+                <span class="gloCommandText">Α_Τ()</span>
+                <span class="gloCommandText">Ε()</span>
+                <span class="gloCommandText">ΕΦ()</span><br />
+                <span class="gloCommandText">ΗΜ()</span>
+                <span class="gloCommandText">ΛΟΓ()</span>
+                <span class="gloCommandText">ΣΥΝ()</span>
+                <span class="gloCommandText">Τ_Ρ()</span><br />
+
+                <span class="gloCommandText">ΑΛΗΘΗΣ</span>
+                <span class="gloCommandText">ΨΕΥΔΗΣ</span><br />
+
+                <span class="gloCommandText">DIV</span>
+                <span class="gloCommandText">MOD</span><br />
+
+                <span class="gloCommandText">ΟΧΙ</span>
+                <span class="gloCommandText">ΚΑΙ</span>
+                <span class="gloCommandText">Η</span><br />
+
+                <span class="gloCommandText">&#60;-</span><br />
+              </div>
+            </div>
+          </div>
+
+          <div class="col-5 col-sm-4 g-0 gloMemTab position-relative">
+            <div class="row g-0">
+              <div class="col-6 g-0 gloEntolesHeader">Εντολές</div>
+              <div class="col-6 g-0 gloMemHeader">Μνήμη</div>
+            </div>
+            <div class="gloSidebarTabInner">
+              <div class="gloMemory"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/js-cookie/3.0.0/js.cookie.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.2.3/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.13.1/ace.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.13.1/ext-beautify.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.13.1/ext-language_tools.min.js"></script>
+    <script src="../../dist/js/glossajs.min.js"></script>
+    <script src="script.js"></script>
+  </body>
+</html>

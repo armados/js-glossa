@@ -37,7 +37,9 @@ function renderMemory(data) {
     html += '<tr class="symbol-' + idclass + '">';
     html += '<td scope="row" class="tdid">' + rec.id + "</td>";
     html += '<td class="tdvalue">';
-    if (rec.value != null) html += rec.value;
+    if (rec.value != null) {
+      html += rec.value;
+    }
     html += "</td>";
     html += '<td class="tdtype">' + rec.description + "</td>";
     html += "</tr>";
@@ -94,16 +96,16 @@ async function startProgramExecution(gloBoxID, runstep) {
 async function waitingKeypress(gloBoxID) {
   return new Promise((resolve) => {
     $("#" + gloBoxID + " .gloReadFromKeyboard")
-    .off("keyup")
-    .on('keyup', function (e) {
-      if (e.key == "Enter") {
-        $(this).off("keyup");
-        var inputVal = $(this).val();
-        //console.log('Keyboard value was: #' + inputVal + '#');
-        $(".gloReadFromKeyboard").val("");
-        resolve(inputVal);
-      }
-    });
+      .off("keyup")
+      .on("keyup", function (e) {
+        if (e.key == "Enter") {
+          $(this).off("keyup");
+          var inputVal = $(this).val();
+          //console.log('Keyboard value was: #' + inputVal + '#');
+          $(".gloReadFromKeyboard").val("");
+          resolve(inputVal);
+        }
+      });
   });
 }
 

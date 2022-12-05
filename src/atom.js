@@ -18,7 +18,7 @@ class Atom {
 class MNumber extends Atom {
   constructor(val) {
     super(val);
-    
+
     if (HP.isFloat(this.val)) {
       this.val = +parseFloat(this.val).toFixed(8);
     }
@@ -26,6 +26,8 @@ class MNumber extends Atom {
 }
 class MString extends Atom {}
 class MBoolean extends Atom {}
+
+// ===================================
 
 class MathOperation {}
 
@@ -689,16 +691,6 @@ class MSelectSubrange {
         this.line
       );
 
-    if (!HP.isInt(a.val) || !HP.isInt(b.val))
-      throw new GE.GError(
-        "Δεν είναι δυνατή η πράξη της ακέραιας διαίρεσης (MOD) με τα δοθέντα ορίσματα." +
-          "\n" +
-          HP.valueTypeToString(a) +
-          "\n" +
-          HP.valueTypeToString(b),
-        this.line
-      );
-
     return this;
   }
 }
@@ -730,8 +722,6 @@ class MSymbol {
     this.line = line;
   }
   async resolve(app, scope) {
-    //scope.cmdLineNo = await this.line; //FIXME:
-
     return scope.getSymbol(this.name);
   }
 }
@@ -762,7 +752,7 @@ class MSymbolTableCell extends MSymbol {
             " πρέπει να είναι θετικός ακέραιος αριθμός." +
             "\n" +
             HP.valueTypeToString(a),
-            line
+          line
         );
 
       argsResolvedValue.push(a.val);

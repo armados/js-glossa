@@ -44,6 +44,8 @@ class Stmt_Write {
 
     var output = [];
 
+    var prevTypeStringOrBoolean = true;
+
     for (var i = 0, len = this.args.length; i < len; i++) {
       var argParam = this.args[i];
 
@@ -64,7 +66,21 @@ class Stmt_Write {
         var out = Math.round(arg.getValue() * 100) / 100;
       else var out = arg.getValue();
 
-      output.push(out);
+      // check to include or not space char at beginning
+      var addPreSpaceChar = true;
+      if (
+        arg instanceof Atom.MString ||
+        arg instanceof Atom.MBoolean ||
+        prevTypeStringOrBoolean == true
+      )
+        addPreSpaceChar = false;
+
+      if (arg instanceof Atom.MString || arg instanceof Atom.MBoolean)
+        prevTypeStringOrBoolean = true;
+      else prevTypeStringOrBoolean = false;
+
+      const fOut = addPreSpaceChar ? " " + out : out;
+      output.push(fOut);
     }
 
     var str = output.join("");
@@ -112,7 +128,10 @@ class Stmt_Read {
           })
           .catch((err) => {
             //console.log("App terminated. Reject response: " + err);
-            throw new GE.GInterrupt("Διακοπή της εκτέλεσης του προγράμματος από τον χρήστη.", this.cmdLineNo);
+            throw new GE.GInterrupt(
+              "Διακοπή της εκτέλεσης του προγράμματος από τον χρήστη.",
+              this.cmdLineNo
+            );
           });
 
         if (data != null) {
@@ -213,14 +232,14 @@ class Stmt_If {
 
       if (!(condResult instanceof Atom.MBoolean))
         throw new GE.GError(
-          "Η συνθήκη της ΑΝ δεν αποτελεί λογική έκφραση." +
+          "Η συνθήκη δεν αποτελεί λογική έκφραση." +
             "\n" +
             HP.valueTypeToString(condResult),
           arrLineNo[i]
         );
 
       app.outputAddDetails(
-        "Η συνθήκη της ΑΝ " +
+        "Η συνθήκη " +
           arrCondStr[i] +
           " έχει τιμή " +
           (condResult.val ? "ΑΛΗΘΗΣ" : "ΨΕΥΔΗΣ"),
@@ -238,12 +257,6 @@ class Stmt_If {
 
     if (elseBody != null) {
       await app.setActiveLine(scope, this.elseBodyLine);
-
-      app.outputAddDetails(
-        "Εκτέλεση του τμήματος εντολών της ΑΛΛΙΩΣ",
-        elseBodyLine
-      );
-
       await elseBody.resolve(app, scope);
       await app.setActiveLine(scope, this.telosAnLine);
       return;
@@ -304,38 +317,36 @@ class Stmt_Select {
 
         if (!(condResult instanceof Atom.MBoolean))
           throw new GE.GError(
-            "Η συνθήκη της ΕΠΙΛΕΞΕ δεν αποτελεί λογική έκφραση." +
+            "Η συνθήκη δεν αποτελεί λογική έκφραση." +
               "\n" +
               HP.valueTypeToString(condResult),
             arrLineNo[i]
           );
 
-        app.outputAddDetails(
-          "Η συνθήκη της ΕΠΙΛΕΞΕ " +
-            arrCondStr[i] +
-            " έχει τιμή " +
-            (condResult.val ? "ΑΛΗΘΗΣ" : "ΨΕΥΔΗΣ"),
-          arrLineNo[i]
-        );
-
         app.incrLogicalCounter();
 
         if (condResult.val == true) {
-          await arrBody[i].resolve(app, scope);
-          await app.setActiveLine(scope, cmdLineNoTelosEpilogwn);
-          return;
+          break;
         }
+      }
+
+      app.outputAddDetails(
+        "Η περίπτωση " +
+          arrCondStr[i] +
+          " έχει τιμή " +
+          (condResult.val ? "ΑΛΗΘΗΣ" : "ΨΕΥΔΗΣ"),
+        arrLineNo[i]
+      );
+
+      if (condResult.val == true) {
+        await arrBody[i].resolve(app, scope);
+        await app.setActiveLine(scope, cmdLineNoTelosEpilogwn);
+        return;
       }
     }
 
     if (elseBody != null) {
       await app.setActiveLine(scope, elseBodyLine);
-
-      app.outputAddDetails(
-        "Εκτέλεση του τμήματος εντολών της ΑΛΛΙΩΣ",
-        elseBodyLine
-      );
-
       await elseBody.resolve(app, scope);
       await app.setActiveLine(scope, cmdLineNoTelosEpilogwn);
       return;
@@ -361,14 +372,14 @@ class Stmt_While {
 
       if (!(condResult instanceof Atom.MBoolean))
         throw new GE.GError(
-          "Η συνθήκη της ΟΣΟ δεν αποτελεί λογική έκφραση." +
+          "Η συνθήκη δεν αποτελεί λογική έκφραση." +
             "\n" +
             HP.valueTypeToString(condResult),
           this.cmdLineNoOso
         );
 
       app.outputAddDetails(
-        "Η συνθήκη της ΟΣΟ " +
+        "Η συνθήκη " +
           this.condstr +
           " έχει τιμή " +
           (condResult.val ? "ΑΛΗΘΗΣ" : "ΨΕΥΔΗΣ"),
@@ -406,14 +417,14 @@ class Stmt_Do_While {
 
       if (!(condResult instanceof Atom.MBoolean))
         throw new GE.GError(
-          "Η συνθήκη της ΜΕΧΡΙΣ_ΟΤΟΥ δεν αποτελεί λογική έκφραση." +
+          "Η συνθήκη δεν αποτελεί λογική έκφραση." +
             "\n" +
             HP.valueTypeToString(condResult),
           this.cmdLineNoMexrisOtou
         );
 
       app.outputAddDetails(
-        "Η συνθήκη της ΜΕΧΡΙΣ_ΟΤΟΥ " +
+        "Η συνθήκη " +
           this.condstr +
           " έχει τιμή " +
           (condResult.val ? "ΑΛΗΘΗΣ" : "ΨΕΥΔΗΣ"),
@@ -469,7 +480,7 @@ class Stmt_For {
           );
         else
           throw new GE.GInternalError(
-            "Μη έγκυρη τιμή για το βήμα της ΓΙΑ.",
+            "Μη έγκυρη τιμή για το βήμα της εντολής ΓΙΑ.",
             this.cmdLineNoGia
           );
       }
@@ -479,7 +490,7 @@ class Stmt_For {
 
     if (v_step == 0)
       throw new GE.GError(
-        "Το βήμα της εντολή ΓΙΑ δεν μπορεί να λάβει την τιμή μηδέν.",
+        "Το βήμα της εντολής ΓΙΑ δεν μπορεί να λάβει την τιμή μηδέν.",
         this.cmdLineNoGia
       );
 
@@ -497,7 +508,7 @@ class Stmt_For {
         );
       else
         throw new GE.GInternalError(
-          "Μη έγκυρη τιμή για την αρχική τιμή της ΓΙΑ.",
+          "Μη έγκυρη τιμή για την αρχική τιμή της εντολής ΓΙΑ.",
           this.cmdLineNoGia
         );
     }
@@ -518,7 +529,7 @@ class Stmt_For {
         );
       else
         throw new GE.GInternalError(
-          "Μη έγκυρη τιμή για την τελική τιμή της ΓΙΑ.",
+          "Μη έγκυρη τιμή για την τελική τιμή της εντολής ΓΙΑ.",
           this.cmdLineNoGia
         );
     }
@@ -539,11 +550,7 @@ class Stmt_For {
     if (v_initial <= v_final && v_step > 0) {
       do {
         app.outputAddDetails(
-          "Η συνθήκη της ΓΙΑ " +
-            variable.name +
-            "<=" +
-            v_final +
-            " είναι ΑΛΗΘΗΣ",
+          "Η συνθήκη " + variable.name + "<=" + v_final + " είναι ΑΛΗΘΗΣ",
           this.cmdLineNoGia
         );
 
@@ -567,7 +574,7 @@ class Stmt_For {
       } while (scope.getSymbol(variable.name).val <= v_final);
 
       app.outputAddDetails(
-        "Η συνθήκη της ΓΙΑ " + variable.name + "<=" + v_final + " είναι ΨΕΥΔΗΣ",
+        "Η συνθήκη " + variable.name + "<=" + v_final + " είναι ΨΕΥΔΗΣ",
         this.cmdLineNoGia
       );
 
@@ -575,11 +582,7 @@ class Stmt_For {
     } else if (v_initial >= v_final && v_step < 0) {
       do {
         app.outputAddDetails(
-          "Η συνθήκη της ΓΙΑ " +
-            variable.name +
-            ">=" +
-            v_final +
-            " είναι ΑΛΗΘΗΣ",
+          "Η συνθήκη " + variable.name + ">=" + v_final + " είναι ΑΛΗΘΗΣ",
           this.cmdLineNoGia
         );
 
@@ -603,7 +606,7 @@ class Stmt_For {
       } while (scope.getSymbol(variable.name).val >= v_final);
 
       app.outputAddDetails(
-        "Η συνθήκη της ΓΙΑ " + variable.name + ">=" + v_final + " είναι ΨΕΥΔΗΣ",
+        "Η συνθήκη " + variable.name + ">=" + v_final + " είναι ΨΕΥΔΗΣ",
         this.cmdLineNoGia
       );
 
@@ -631,7 +634,7 @@ class FunctionCall {
       !(scope.getSymbolObject(this.fun.name) instanceof STR.STRFunctionMethod)
     )
       throw new GE.GError(
-        "Η συνάρτηση " + this.fun.name + " δεν βρέθηκε.",
+        "Η συνάρτηση με όνομα " + this.fun.name + " δεν βρέθηκε.",
         this.cmdLineNo
       );
 
@@ -684,7 +687,7 @@ class ProcedureCall {
       !(scope.getSymbolObject(this.fun.name) instanceof STR.STRProcedureMethod)
     )
       throw new GE.GError(
-        "Η διαδικασία " + this.fun.name + " δεν βρέθηκε.",
+        "Η διαδικασία με όνομα " + this.fun.name + " δεν βρέθηκε.",
         this.cmdLineNo
       );
 

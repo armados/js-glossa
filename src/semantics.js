@@ -281,18 +281,16 @@ var operation = {
                 throw new Error("Missing Rel Operation??");
             }
 
-            //console.log(newcond)
+            console.log(newcond);
           } else {
             var newcond = new Atom.MathOpRelEq(aAst, cond2ast[j], line);
           }
 
           newcond2.push(newcond);
         }
-        //console.log('====================================');
-        //console.log(cond2ast);
 
         arrCond.push(newcond2);
-        arrCondStr.push(line);
+        arrCondStr.push(cond2.sourceString);
         arrLineNo.push(getLineNo(cond2));
         arrBody.push(moreBody[i]);
       }

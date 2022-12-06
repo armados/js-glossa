@@ -13,26 +13,31 @@ class Stmt_Assignment {
     this.cmdStrB = cmdStrB;
     this.cmdLineNo = cmdLineNo;
   }
-  async resolve(app, scope) {
-    await app.setActiveLine(scope, this.cmdLineNo);
+  async resolve(runtimeEnv) {
+    await runtimeEnv.setActiveLine(runtimeEnv.getScope(), this.cmdLineNo);
 
     var sym = this.symbol;
 
-    if (sym instanceof Atom.MSymbolTableCell) sym = await sym.eval(app, scope);
+    if (sym instanceof Atom.MSymbolTableCell)
+      sym = await sym.eval(runtimeEnv, runtimeEnv.getScope());
 
-    var valResolved = await this.val.resolve(app, scope);
+    var valResolved = await this.val.resolve(runtimeEnv, runtimeEnv.getScope());
 
-    app.outputAddDetails(
+    runtimeEnv.outputAddDetails(
       "Εντολή εκχώρησης: " + this.cmdStrA + " <- " + this.cmdStrB,
       this.cmdLineNo
     );
 
-    scope.setSymbol(sym.name, valResolved);
+    runtimeEnv.getScope().setSymbol(sym.name, valResolved);
 
-    app.postMessage("memorysymbolupdate", sym.name, HP.formatValueForOutput(valResolved.getValue()));
+    runtimeEnv.postMessage(
+      "memorysymbolupdate",
+      sym.name,
+      HP.formatValueForOutput(valResolved.getValue())
+    );
 
-    app.incrAssignCounter();
-    app.getCounters().incrAssignCounter();
+    runtimeEnv.incrAssignCounter();
+    runtimeEnv.getCounters().incrAssignCounter();
   }
 }
 
@@ -41,8 +46,8 @@ class Stmt_Write {
     this.args = args;
     this.cmdLineNo = cmdLineNo;
   }
-  async resolve(app, scope) {
-    await app.setActiveLine(scope, this.cmdLineNo);
+  async resolve(runtimeEnv) {
+    await runtimeEnv.setActiveLine(runtimeEnv.getScope(), this.cmdLineNo);
 
     var output = [];
 
@@ -52,9 +57,9 @@ class Stmt_Write {
       var argParam = this.args[i];
 
       if (argParam instanceof Atom.MSymbolTableCell)
-        argParam = await argParam.eval(app, scope);
+        argParam = await argParam.eval(runtimeEnv, runtimeEnv.getScope());
 
-      var arg = await argParam.resolve(app, scope);
+      var arg = await argParam.resolve(runtimeEnv, runtimeEnv.getScope());
 
       if (arg == null)
         throw new GE.GError(
@@ -86,8 +91,8 @@ class Stmt_Write {
     }
 
     var str = output.join("");
-    app.outputAdd(str);
-    app.outputAddDetails("Εμφάνισε στην οθόνη: " + str, this.cmdLineNo);
+    runtimeEnv.outputAdd(str);
+    runtimeEnv.outputAddDetails("Εμφάνισε στην οθόνη: " + str, this.cmdLineNo);
   }
 }
 
@@ -96,28 +101,31 @@ class Stmt_Read {
     this.args = args;
     this.cmdLineNo = cmdLineNo;
   }
-  async resolve(app, scope) {
-    await app.setActiveLine(scope, this.cmdLineNo);
+  async resolve(runtimeEnv) {
+    await runtimeEnv.setActiveLine(runtimeEnv.getScope(), this.cmdLineNo);
 
     for (var i = 0, len = this.args.length; i < len; i++) {
-      await app.setActiveLineWithoutStep(scope, this.cmdLineNo);
+      await runtimeEnv.setActiveLineWithoutStep(
+        runtimeEnv.getScope(),
+        this.cmdLineNo
+      );
 
       var arg = this.args[i];
 
       if (arg instanceof Atom.MSymbolTableCell)
-        arg = await arg.eval(app, scope);
+        arg = await arg.eval(runtimeEnv, runtimeEnv.getScope());
 
-      var data = app.inputFetchValueFromBuffer();
+      var data = runtimeEnv.inputFetchValueFromBuffer();
 
-      if (data == null && typeof app["inputFunction"] === "function") {
+      if (data == null && typeof runtimeEnv.inputFunction === "function") {
         //data = await app["inputFunction"].apply(this, [arg.name]);
         var finishedPromise = false;
 
-        const pro1 = app["inputFunction"].apply(this, [arg.name]);
+        const pro1 = runtimeEnv.inputFunction.apply(this, [arg.name]);
 
         const pro2 = new Promise(async (resolve, reject) => {
-          while (!app.isStopRunning() && finishedPromise == false) {
-            await app.sleepFunc(100);
+          while (!runtimeEnv.isTerminationFlag() && finishedPromise == false) {
+            await runtimeEnv.sleepFunc(100);
           }
           reject("user-interrupt");
         });
@@ -138,13 +146,17 @@ class Stmt_Read {
 
         if (data != null) {
           if (
-            scope.getSymbolObject(arg.name) instanceof STR.STRVariableString ||
-            scope.getSymbolObject(arg.name) instanceof STR.STRTableCellString
+            runtimeEnv.getScope().getSymbolObject(arg.name) instanceof
+              STR.STRVariableString ||
+            runtimeEnv.getScope().getSymbolObject(arg.name) instanceof
+              STR.STRTableCellString
           ) {
             data = String(data);
           } else if (
-            scope.getSymbolObject(arg.name) instanceof STR.STRVariableInt ||
-            scope.getSymbolObject(arg.name) instanceof STR.STRTableCellInt
+            runtimeEnv.getScope().getSymbolObject(arg.name) instanceof
+              STR.STRVariableInt ||
+            runtimeEnv.getScope().getSymbolObject(arg.name) instanceof
+              STR.STRTableCellInt
           ) {
             if (HP.StringIsNumInt(data)) {
               data = parseInt(data);
@@ -152,8 +164,10 @@ class Stmt_Read {
               data = String(data);
             }
           } else if (
-            scope.getSymbolObject(arg.name) instanceof STR.STRVariableFloat ||
-            scope.getSymbolObject(arg.name) instanceof STR.STRTableCellFloat
+            runtimeEnv.getScope().getSymbolObject(arg.name) instanceof
+              STR.STRVariableFloat ||
+            runtimeEnv.getScope().getSymbolObject(arg.name) instanceof
+              STR.STRTableCellFloat
           ) {
             if (HP.StringIsNumFloat(data)) {
               data = parseFloat(data);
@@ -170,7 +184,7 @@ class Stmt_Read {
           this.cmdLineNo
         );
 
-      app.outputAddDetails(
+      runtimeEnv.outputAddDetails(
         "Εισαγωγή από το πληκτρολόγιο της τιμής " +
           data +
           " στο αναγνωριστικό " +
@@ -192,10 +206,14 @@ class Stmt_Read {
           throw new GE.GError("Critical: Unknown input value type: " + data);
       }
 
-      scope.setSymbol(arg.name, sym);
-      app.postMessage("memorysymbolupdate", arg.name, HP.formatValueForOutput(sym.getValue()));
+      runtimeEnv.getScope().setSymbol(arg.name, sym);
+      runtimeEnv.postMessage(
+        "memorysymbolupdate",
+        arg.name,
+        HP.formatValueForOutput(sym.getValue())
+      );
 
-      app.postMessage("inputread", data);
+      runtimeEnv.postMessage("inputread", data);
     }
   }
 }
@@ -219,7 +237,7 @@ class Stmt_If {
     this.telosAnLine = telosAnLine;
   }
 
-  async resolve(app, scope) {
+  async resolve(runtimeEnv) {
     var arrCond = this.arrCond;
     var arrCondStr = this.arrCondStr;
     var arrLineNo = this.arrLineNo;
@@ -228,9 +246,12 @@ class Stmt_If {
     var elseBodyLine = this.elseBodyLine;
 
     for (var i = 0; i < arrCond.length; ++i) {
-      await app.setActiveLine(scope, this.arrLineNo[i]);
+      await runtimeEnv.setActiveLine(runtimeEnv.getScope(), this.arrLineNo[i]);
 
-      var condResult = await arrCond[i].resolve(app, scope);
+      var condResult = await arrCond[i].resolve(
+        runtimeEnv,
+        runtimeEnv.getScope()
+      );
 
       if (!(condResult instanceof Atom.MBoolean))
         throw new GE.GError(
@@ -240,7 +261,7 @@ class Stmt_If {
           arrLineNo[i]
         );
 
-      app.outputAddDetails(
+      runtimeEnv.outputAddDetails(
         "Η συνθήκη " +
           arrCondStr[i] +
           " έχει τιμή " +
@@ -248,23 +269,23 @@ class Stmt_If {
         arrLineNo[i]
       );
 
-      app.incrLogicalCounter();
+      runtimeEnv.incrLogicalCounter();
 
       if (condResult.val == true) {
-        await arrBody[i].resolve(app, scope);
-        await app.setActiveLine(scope, this.telosAnLine);
+        await arrBody[i].resolve(runtimeEnv);
+        await runtimeEnv.setActiveLine(runtimeEnv.getScope(), this.telosAnLine);
         return;
       }
     }
 
     if (elseBody != null) {
-      await app.setActiveLine(scope, this.elseBodyLine);
-      await elseBody.resolve(app, scope);
-      await app.setActiveLine(scope, this.telosAnLine);
+      await runtimeEnv.setActiveLine(runtimeEnv.getScope(), this.elseBodyLine);
+      await elseBody.resolve(runtimeEnv);
+      await runtimeEnv.setActiveLine(runtimeEnv.getScope(), this.telosAnLine);
       return;
     }
 
-    await app.setActiveLine(scope, this.telosAnLine);
+    await runtimeEnv.setActiveLine(runtimeEnv.getScope(), this.telosAnLine);
   }
 }
 
@@ -291,8 +312,8 @@ class Stmt_Select {
     this.cmdLineNoTelosEpilogwn = cmdLineNoTelosEpilogwn;
   }
 
-  async resolve(app, scope) {
-    await app.setActiveLine(scope, this.cmdLineNo);
+  async resolve(runtimeEnv) {
+    await runtimeEnv.setActiveLine(runtimeEnv.getScope(), this.cmdLineNo);
 
     var expr = this.expr;
     var arrCond = this.arrCond;
@@ -303,7 +324,7 @@ class Stmt_Select {
     var elseBodyLine = this.elseBodyLine;
     var cmdLineNoTelosEpilogwn = this.cmdLineNoTelosEpilogwn;
 
-    var exprResult = await expr.resolve(app, scope);
+    var exprResult = await expr.resolve(runtimeEnv, runtimeEnv.getScope());
 
     if (exprResult instanceof STR.STRTableName)
       throw new GE.GError(
@@ -313,9 +334,12 @@ class Stmt_Select {
 
     for (var i = 0; i < arrCond.length; ++i) {
       for (var j = 0; j < arrCond[i].length; ++j) {
-        await app.setActiveLine(scope, arrLineNo[i]);
+        await runtimeEnv.setActiveLine(runtimeEnv.getScope(), arrLineNo[i]);
 
-        var condResult = await arrCond[i][j].resolve(app, scope);
+        var condResult = await arrCond[i][j].resolve(
+          runtimeEnv,
+          runtimeEnv.getScope()
+        );
 
         if (!(condResult instanceof Atom.MBoolean))
           throw new GE.GError(
@@ -325,14 +349,14 @@ class Stmt_Select {
             arrLineNo[i]
           );
 
-        app.incrLogicalCounter();
+        runtimeEnv.incrLogicalCounter();
 
         if (condResult.val == true) {
           break;
         }
       }
 
-      app.outputAddDetails(
+      runtimeEnv.outputAddDetails(
         "Η περίπτωση " +
           arrCondStr[i] +
           " έχει τιμή " +
@@ -341,20 +365,29 @@ class Stmt_Select {
       );
 
       if (condResult.val == true) {
-        await arrBody[i].resolve(app, scope);
-        await app.setActiveLine(scope, cmdLineNoTelosEpilogwn);
+        await arrBody[i].resolve(runtimeEnv);
+        await runtimeEnv.setActiveLine(
+          runtimeEnv.getScope(),
+          cmdLineNoTelosEpilogwn
+        );
         return;
       }
     }
 
     if (elseBody != null) {
-      await app.setActiveLine(scope, elseBodyLine);
-      await elseBody.resolve(app, scope);
-      await app.setActiveLine(scope, cmdLineNoTelosEpilogwn);
+      await runtimeEnv.setActiveLine(runtimeEnv.getScope(), elseBodyLine);
+      await elseBody.resolve(runtimeEnv);
+      await runtimeEnv.setActiveLine(
+        runtimeEnv.getScope(),
+        cmdLineNoTelosEpilogwn
+      );
       return;
     }
 
-    await app.setActiveLine(scope, cmdLineNoTelosEpilogwn);
+    await runtimeEnv.setActiveLine(
+      runtimeEnv.getScope(),
+      cmdLineNoTelosEpilogwn
+    );
   }
 }
 
@@ -366,11 +399,14 @@ class Stmt_While {
     this.cmdLineNoOso = cmdLineNoOso;
     this.cmdLineNoTelosEpanalhpshs = cmdLineNoTelosEpanalhpshs;
   }
-  async resolve(app, scope) {
+  async resolve(runtimeEnv) {
     while (true) {
-      await app.setActiveLine(scope, this.cmdLineNoOso);
+      await runtimeEnv.setActiveLine(runtimeEnv.getScope(), this.cmdLineNoOso);
 
-      var condResult = await this.cond.resolve(app, scope);
+      var condResult = await this.cond.resolve(
+        runtimeEnv,
+        runtimeEnv.getScope()
+      );
 
       if (!(condResult instanceof Atom.MBoolean))
         throw new GE.GError(
@@ -380,7 +416,7 @@ class Stmt_While {
           this.cmdLineNoOso
         );
 
-      app.outputAddDetails(
+      runtimeEnv.outputAddDetails(
         "Η συνθήκη " +
           this.condstr +
           " έχει τιμή " +
@@ -388,13 +424,16 @@ class Stmt_While {
         this.cmdLineNoOso
       );
 
-      app.incrLogicalCounter();
+      runtimeEnv.incrLogicalCounter();
 
       if (condResult.val == false) break;
 
-      await this.body.resolve(app, scope);
+      await this.body.resolve(runtimeEnv);
 
-      await app.setActiveLine(scope, this.cmdLineNoTelosEpanalhpshs);
+      await runtimeEnv.setActiveLine(
+        runtimeEnv.getScope(),
+        this.cmdLineNoTelosEpanalhpshs
+      );
     }
   }
 }
@@ -407,15 +446,20 @@ class Stmt_Do_While {
     this.cmdLineNoArxh = cmdLineNoArxh;
     this.cmdLineNoMexrisOtou = cmdLineNoMexrisOtou;
   }
-  async resolve(app, scope) {
+  async resolve(runtimeEnv) {
     do {
-      await app.setActiveLine(scope, this.cmdLineNoArxh);
+      await runtimeEnv.setActiveLine(runtimeEnv.getScope(), this.cmdLineNoArxh);
 
-      await this.body.resolve(app, scope);
+      await this.body.resolve(runtimeEnv);
 
-      await app.setActiveLine(scope, this.cmdLineNoMexrisOtou);
+      await runtimeEnv
+        .getScope()
+        .setActiveLine(runtimeEnv.getScope(), this.cmdLineNoMexrisOtou);
 
-      var condResult = await this.cond.resolve(app, scope);
+      var condResult = await this.cond.resolve(
+        runtimeEnv,
+        runtimeEnv.getScope()
+      );
 
       if (!(condResult instanceof Atom.MBoolean))
         throw new GE.GError(
@@ -425,7 +469,7 @@ class Stmt_Do_While {
           this.cmdLineNoMexrisOtou
         );
 
-      app.outputAddDetails(
+      runtimeEnv.outputAddDetails(
         "Η συνθήκη " +
           this.condstr +
           " έχει τιμή " +
@@ -433,7 +477,7 @@ class Stmt_Do_While {
         this.cmdLineNoMexrisOtou
       );
 
-      app.incrLogicalCounter();
+      runtimeEnv.incrLogicalCounter();
     } while (condResult.val == false);
   }
 }
@@ -456,8 +500,8 @@ class Stmt_For {
     this.cmdLineNoGia = cmdLineNoGia;
     this.cmdLineNoTelosEpanalhpshs = cmdLineNoTelosEpanalhpshs;
   }
-  async resolve(app, scope) {
-    await app.setActiveLine(scope, this.cmdLineNoGia);
+  async resolve(runtimeEnv) {
+    await runtimeEnv.setActiveLine(runtimeEnv.getScope(), this.cmdLineNoGia);
 
     var variable = this.variable;
     var initval = this.initval;
@@ -470,9 +514,9 @@ class Stmt_For {
     // step value FOR
     if (stepval != "") {
       if (stepval[0] instanceof Atom.MSymbolTableCell)
-        stepval[0] = await stepval[0].eval(app, scope);
+        stepval[0] = await stepval[0].eval(runtimeEnv, runtimeEnv.getScope());
 
-      var tmp = await stepval[0].resolve(app, scope);
+      var tmp = await stepval[0].resolve(runtimeEnv, runtimeEnv.getScope());
 
       if (tmp == null) {
         if (stepval[0] instanceof Atom.MSymbol)
@@ -498,9 +542,9 @@ class Stmt_For {
 
     // Init value FOR
     if (initval instanceof Atom.MSymbolTableCell)
-      initval = await initval.eval(app, scope);
+      initval = await initval.eval(runtimeEnv, runtimeEnv.getScope());
 
-    var tmp = await initval.resolve(app, scope);
+    var tmp = await initval.resolve(runtimeEnv, runtimeEnv.getScope());
 
     if (tmp == null) {
       if (initval instanceof Atom.MSymbol)
@@ -519,9 +563,9 @@ class Stmt_For {
 
     // final value FOR
     if (finalval instanceof Atom.MSymbolTableCell)
-      finalval = await finalval.eval(app, scope);
+      finalval = await finalval.eval(runtimeEnv, runtimeEnv.getScope());
 
-    var tmp = await finalval.resolve(app, scope);
+    var tmp = await finalval.resolve(runtimeEnv, runtimeEnv.getScope());
 
     if (tmp == null) {
       if (finalval instanceof Atom.MSymbol)
@@ -539,83 +583,100 @@ class Stmt_For {
     var v_final = tmp.val;
 
     if (variable instanceof Atom.MSymbolTableCell)
-      variable = await variable.eval(app, scope);
+      variable = await variable.eval(runtimeEnv, runtimeEnv.getScope());
 
-    scope.setSymbol(variable.name, new Atom.MNumber(v_initial));
-    app.postMessage(
+    runtimeEnv.getScope().setSymbol(variable.name, new Atom.MNumber(v_initial));
+    runtimeEnv.postMessage(
       "memorysymbolupdate",
       variable.name,
       HP.formatValueForOutput(new Atom.MNumber(v_initial))
     );
-    scope.addLock(variable.name);
+    runtimeEnv.getScope().addLock(variable.name);
 
     if (v_initial <= v_final && v_step > 0) {
       do {
-        app.outputAddDetails(
+        runtimeEnv.outputAddDetails(
           "Η συνθήκη " + variable.name + "<=" + v_final + " είναι ΑΛΗΘΗΣ",
           this.cmdLineNoGia
         );
 
-        app.incrLogicalCounter();
+        runtimeEnv.incrLogicalCounter();
 
-        await body.resolve(app, scope);
+        await body.resolve(runtimeEnv);
 
-        await app.setActiveLine(scope, this.cmdLineNoTelosEpanalhpshs);
+        await runtimeEnv.setActiveLine(
+          runtimeEnv.getScope(),
+          this.cmdLineNoTelosEpanalhpshs
+        );
 
-        await app.setActiveLine(scope, this.cmdLineNoGia);
+        await runtimeEnv.setActiveLine(
+          runtimeEnv.getScope(),
+          this.cmdLineNoGia
+        );
 
-        scope.removeLock(variable.name);
+        runtimeEnv.getScope().removeLock(variable.name);
 
         var newvarvalue = new Atom.MNumber(
-          scope.getSymbol(variable.name).val + v_step
+          runtimeEnv.getScope().getSymbol(variable.name).val + v_step
         );
-        scope.setSymbol(variable.name, newvarvalue);
-        app.postMessage("memorysymbolupdate", variable.name, HP.formatValueForOutput(newvarvalue.getValue()));
+        runtimeEnv.getScope().setSymbol(variable.name, newvarvalue);
+        runtimeEnv.postMessage(
+          "memorysymbolupdate",
+          variable.name,
+          HP.formatValueForOutput(newvarvalue.getValue())
+        );
 
-        scope.addLock(variable.name);
-      } while (scope.getSymbol(variable.name).val <= v_final);
+        runtimeEnv.getScope().addLock(variable.name);
+      } while (runtimeEnv.getScope().getSymbol(variable.name).val <= v_final);
 
-      app.outputAddDetails(
+      runtimeEnv.outputAddDetails(
         "Η συνθήκη " + variable.name + "<=" + v_final + " είναι ΨΕΥΔΗΣ",
         this.cmdLineNoGia
       );
 
-      app.incrLogicalCounter();
+      runtimeEnv.incrLogicalCounter();
     } else if (v_initial >= v_final && v_step < 0) {
       do {
-        app.outputAddDetails(
+        runtimeEnv.outputAddDetails(
           "Η συνθήκη " + variable.name + ">=" + v_final + " είναι ΑΛΗΘΗΣ",
           this.cmdLineNoGia
         );
 
-        app.incrLogicalCounter();
+        runtimeEnv.incrLogicalCounter();
 
-        await body.resolve(app, scope);
+        await body.resolve(runtimeEnv);
 
-        await app.setActiveLine(scope, this.cmdLineNoTelosEpanalhpshs);
+        await runtimeEnv.setActiveLine(
+          runtimeEnv.getScope(),
+          this.cmdLineNoTelosEpanalhpshs
+        );
 
-        await app.setActiveLine(scope, this.cmdLineNoGia);
+        await runtimeEnv.setActiveLine(runtimeEnv.getScope(), this.cmdLineNoGia);
 
-        scope.removeLock(variable.name);
+        runtimeEnv.getScope().removeLock(variable.name);
 
         var newvarvalue = new Atom.MNumber(
-          scope.getSymbol(variable.name).val + v_step
+          runtimeEnv.getScope().getSymbol(variable.name).val + v_step
         );
-        scope.setSymbol(variable.name, newvarvalue);
-        app.postMessage("memorysymbolupdate", variable.name, HP.formatValueForOutput(newvarvalue.getValue()));
+        runtimeEnv.getScope().setSymbol(variable.name, newvarvalue);
+        runtimeEnv.postMessage(
+          "memorysymbolupdate",
+          variable.name,
+          HP.formatValueForOutput(newvarvalue.getValue())
+        );
 
-        scope.addLock(variable.name);
-      } while (scope.getSymbol(variable.name).val >= v_final);
+        runtimeEnv.getScope().addLock(variable.name);
+      } while (runtimeEnv.getScope().getSymbol(variable.name).val >= v_final);
 
-      app.outputAddDetails(
+      runtimeEnv.outputAddDetails(
         "Η συνθήκη " + variable.name + ">=" + v_final + " είναι ΨΕΥΔΗΣ",
         this.cmdLineNoGia
       );
 
-      app.incrLogicalCounter();
+      runtimeEnv.incrLogicalCounter();
     }
 
-    scope.removeLock(variable.name);
+    runtimeEnv.getScope().removeLock(variable.name);
   }
 }
 
@@ -625,15 +686,18 @@ class FunctionCall {
     this.args = args;
     this.cmdLineNo = cmdLineNo;
   }
-  async resolve(app, scope) {
-    app.outputAddDetails(
+  async resolve(runtimeEnv) {
+    runtimeEnv.outputAddDetails(
       "Κλήση της Συνάρτησης " + this.fun.name,
       this.cmdLineNo
     );
 
     if (
-      !scope.hasSymbol(this.fun.name) &&
-      !(scope.getSymbolObject(this.fun.name) instanceof STR.STRFunctionMethod)
+      !runtimeEnv.getScope().hasSymbol(this.fun.name) &&
+      !(
+        runtimeEnv.getScope().getSymbolObject(this.fun.name) instanceof
+        STR.STRFunctionMethod
+      )
     )
       throw new GE.GError(
         "Η συνάρτηση με όνομα " + this.fun.name + " δεν βρέθηκε.",
@@ -642,23 +706,23 @@ class FunctionCall {
 
     var argsResolved = [];
     for (const arg of this.args) {
-      var argRes = await arg.resolve(app, scope);
+      var argRes = await arg.resolve(runtimeEnv, runtimeEnv.getScope());
       argsResolved.push(argRes);
     }
 
     var sendData = [];
     sendData[0] = argsResolved;
-    sendData[1] = app;
-    sendData[2] = scope;
+    sendData[1] = runtimeEnv;
+    sendData[2] = runtimeEnv.getScope();
     sendData[3] = this.cmdLineNo;
 
-    var fun = scope.getGlobalSymbol(this.fun.name);
+    var fun = runtimeEnv.getScope().getGlobalSymbol(this.fun.name);
 
     var valReturned = await fun.apply(this, sendData);
 
-    app.postMessage("memory", scope.getMemory());
+    runtimeEnv.postMessage("memory", runtimeEnv.getScope().getMemory());
 
-    app.outputAddDetails(
+    runtimeEnv.outputAddDetails(
       "Επιστροφή από την συνάρτηση " +
         this.fun.name +
         " με τιμή επιστροφής " +
@@ -676,17 +740,20 @@ class ProcedureCall {
     this.args = args;
     this.cmdLineNo = cmdLineNo;
   }
-  async resolve(app, scope) {
-    await app.setActiveLine(scope, this.cmdLineNo);
+  async resolve(runtimeEnv) {
+    await runtimeEnv.setActiveLine(runtimeEnv.getScope(), this.cmdLineNo);
 
-    app.outputAddDetails(
+    runtimeEnv.outputAddDetails(
       "Κλήση της Διαδικασίας " + this.fun.name,
       this.cmdLineNo
     );
 
     if (
-      !scope.hasSymbol(this.fun.name) &&
-      !(scope.getSymbolObject(this.fun.name) instanceof STR.STRProcedureMethod)
+      !runtimeEnv.getScope().hasSymbol(this.fun.name) &&
+      !(
+        runtimeEnv.getScope().getSymbolObject(this.fun.name) instanceof
+        STR.STRProcedureMethod
+      )
     )
       throw new GE.GError(
         "Η διαδικασία με όνομα " + this.fun.name + " δεν βρέθηκε.",
@@ -695,25 +762,25 @@ class ProcedureCall {
 
     var argsResolved = [];
     for (const arg of this.args) {
-      var argRes = await arg.resolve(app, scope);
+      var argRes = await arg.resolve(runtimeEnv, runtimeEnv.getScope());
       argsResolved.push(argRes);
     }
 
-    var fun = scope.getGlobalSymbol(this.fun.name);
+    var fun = runtimeEnv.getScope().getGlobalSymbol(this.fun.name);
 
     var sendData = [];
     sendData[0] = argsResolved;
-    sendData[1] = app;
-    sendData[2] = scope;
+    sendData[1] = runtimeEnv;
+    sendData[2] = runtimeEnv.getScope();
     sendData[3] = this.cmdLineNo;
 
     var recvData = await fun.apply(null, sendData);
 
-    app.postMessage("memory", scope.getMemory());
+    runtimeEnv.postMessage("memory", runtimeEnv.getScope().getMemory());
 
-    await app.setActiveLine(scope, this.cmdLineNo);
+    await runtimeEnv.setActiveLine(runtimeEnv.getScope(), this.cmdLineNo);
 
-    app.outputAddDetails(
+    runtimeEnv.outputAddDetails(
       "Επιστροφή από την διαδικασία " + this.fun.name,
       this.cmdLineNo
     );
@@ -724,62 +791,87 @@ class ProcedureCall {
     this.args.map(async function (arg, i) {
       if (argsResolved[i] instanceof STR.STRTableName) {
         // Return symbol from arg cell name
-        var tblDimensions = scope.getSymbol(arg.name).getSize().length;
+        var tblDimensions = runtimeEnv
+          .getScope()
+          .getSymbol(arg.name)
+          .getSize().length;
 
         if (tblDimensions == 1) {
-          var tblsize1 = scope.getSymbol(arg.name).getSize()[0];
+          var tblsize1 = runtimeEnv.getScope().getSymbol(arg.name).getSize()[0];
           for (var j = 1; j <= tblsize1; ++j) {
-            scope.setSymbol(
-              arg.name + "[" + j + "]",
-              procScope.getSymbol(procParams[i].name + "[" + j + "]")
-            );
-            app.postMessage(
+            runtimeEnv
+              .getScope()
+              .setSymbol(
+                arg.name + "[" + j + "]",
+                procScope.getSymbol(procParams[i].name + "[" + j + "]")
+              );
+            runtimeEnv.postMessage(
               "memorysymbolupdate",
               arg.name + "[" + j + "]",
-              HP.formatValueForOutput(procScope.getSymbol(procParams[i].name + "[" + j + "]").getValue())
+              HP.formatValueForOutput(
+                procScope
+                  .getSymbol(procParams[i].name + "[" + j + "]")
+                  .getValue()
+              )
             );
           }
         } else if (tblDimensions == 2) {
-          var tblsize1 = scope.getSymbol(arg.name).getSize()[0];
-          var tblsize2 = scope.getSymbol(arg.name).getSize()[1];
+          var tblsize1 = runtimeEnv.getScope().getSymbol(arg.name).getSize()[0];
+          var tblsize2 = runtimeEnv.getScope().getSymbol(arg.name).getSize()[1];
           for (var j = 1; j <= tblsize1; ++j) {
             for (var l = 1; l <= tblsize2; ++l) {
-              scope.setSymbol(
-                arg.name + "[" + j + "," + l + "]",
-                procScope.getSymbol(
-                  procParams[i].name + "[" + j + "," + l + "]"
-                )
-              );
-              app.postMessage(
+              runtimeEnv
+                .getScope()
+                .setSymbol(
+                  arg.name + "[" + j + "," + l + "]",
+                  procScope.getSymbol(
+                    procParams[i].name + "[" + j + "," + l + "]"
+                  )
+                );
+              runtimeEnv.postMessage(
                 "memorysymbolupdate",
                 arg.name + "[" + j + "," + l + "]",
-                HP.formatValueForOutput(procScope.getSymbol(
-                  procParams[i].name + "[" + j + "," + l + "]"
-                ).getValue())
+                HP.formatValueForOutput(
+                  procScope
+                    .getSymbol(procParams[i].name + "[" + j + "," + l + "]")
+                    .getValue()
+                )
               );
             }
           }
         }
       } else if (arg instanceof Atom.MSymbolTableCell) {
-        arg = await arg.eval(app, scope);
+        arg = await arg.eval(runtimeEnv, runtimeEnv.getScope());
+
         if (
-          scope.getSymbol(arg.name) != procScope.getSymbol(procParams[i].name)
-        )
-          scope.setSymbol(arg.name, procScope.getSymbol(procParams[i].name));
-        app.postMessage(
-          "memorysymbolupdate",
-          arg.name,
-          HP.formatValueForOutput(procScope.getSymbol(procParams[i].name).getValue())
-        );
+          runtimeEnv.getScope().getSymbol(arg.name) !=
+          procScope.getSymbol(procParams[i].name)
+        ) {
+          runtimeEnv
+            .getScope()
+            .setSymbol(arg.name, procScope.getSymbol(procParams[i].name));
+          runtimeEnv.postMessage(
+            "memorysymbolupdate",
+            arg.name,
+            HP.formatValueForOutput(
+              procScope.getSymbol(procParams[i].name).getValue()
+            )
+          );
+        }
       } else if (arg instanceof Atom.MSymbol) {
         if (
-          scope.getSymbol(arg.name) != procScope.getSymbol(procParams[i].name)
+          runtimeEnv.getScope().getSymbol(arg.name) !=
+          procScope.getSymbol(procParams[i].name)
         )
-          scope.setSymbol(arg.name, procScope.getSymbol(procParams[i].name));
-        app.postMessage(
+          runtimeEnv
+            .getScope()
+            .setSymbol(arg.name, procScope.getSymbol(procParams[i].name));
+        runtimeEnv.postMessage(
           "memorysymbolupdate",
           arg.name,
-          HP.formatValueForOutput(procScope.getSymbol(procParams[i].name).getValue())
+          HP.formatValueForOutput(
+            procScope.getSymbol(procParams[i].name).getValue()
+          )
         );
       }
     });
@@ -805,18 +897,19 @@ class UserFunction {
     this.cmdLineNoTelosSynartisis = cmdLineNoTelosSynartisis;
   }
 
-  async resolve(app, scope) {
+  async resolve(runtimeEnv) {
     var name = this.name.name;
     var params = this.params;
     var funType = this.funType;
     var declarations = this.declarations;
     var body = this.body;
 
-    scope.addSymbol(
+    runtimeEnv.getScope().addSymbol(
       name,
       new STR.STRUserFunction(
         async function (...arrargs) {
-          var scope2 = scope.makeSubScope();
+          var scope2 = runtimeEnv.getScope().makeSubScope();
+          runtimeEnv.pushScope(scope2);
 
           var args = arrargs[0];
           var app = arrargs[1];
@@ -851,13 +944,13 @@ class UserFunction {
           }
 
           // Add function name as variable
-          scope2.addSymbolFuncName(name, ftype);
+          runtimeEnv.getScope().addSymbolFuncName(name, ftype);
 
-          await declarations.resolve(app, scope2);
+          await declarations.resolve(runtimeEnv);
 
           params.forEach(function (param, i) {
             //FIXME:
-            if (!scope2.hasSymbol(param.name))
+            if (!runtimeEnv.getScope().hasSymbol(param.name))
               throw new GE.GError(
                 "Η παράμετρος " +
                   param.name +
@@ -866,11 +959,15 @@ class UserFunction {
               );
 
             if (!(args[i] instanceof STR.STRTableName)) {
-              scope2.setSymbol(param.name, args[i]);
-              app.postMessage("memorysymbolupdate", param.name, HP.formatValueForOutput(args[i].getValue()));
+              runtimeEnv.getScope().setSymbol(param.name, args[i]);
+              runtimeEnv.postMessage(
+                "memorysymbolupdate",
+                param.name,
+                HP.formatValueForOutput(args[i].getValue())
+              );
             } else {
               if (
-                scope2.getSymbol(param.name).constructor.name !=
+                runtimeEnv.getScope().getSymbol(param.name).constructor.name !=
                 args[i].constructor.name
               )
                 throw new GE.GError(
@@ -882,7 +979,12 @@ class UserFunction {
                   lineCalled
                 );
 
-              if (!scope2.getSymbol(param.name).arraySizeEquals(args[i]))
+              if (
+                !runtimeEnv
+                  .getScope()
+                  .getSymbol(param.name)
+                  .arraySizeEquals(args[i])
+              )
                 throw new GE.GError(
                   "Τα όρια της πραγματικής παραμέτρου - πίνακα " +
                     args[i].tblname +
@@ -891,19 +993,28 @@ class UserFunction {
                   lineCalled
                 );
 
-              var tblDimensions = scope2.getSymbol(param.name).getSize().length;
+              var tblDimensions = runtimeEnv
+                .getScope()
+                .getSymbol(param.name)
+                .getSize().length;
 
               if (tblDimensions == 1) {
                 var tblsize1 = args[i].getSize()[0];
                 for (var k = 1; k <= tblsize1; ++k) {
-                  scope2.setSymbol(
-                    param.name + "[" + k + "]",
-                    parentScope.getSymbol(args[i].tblname + "[" + k + "]")
-                  );
-                  app.postMessage(
+                  runtimeEnv
+                    .getScope()
+                    .setSymbol(
+                      param.name + "[" + k + "]",
+                      parentScope.getSymbol(args[i].tblname + "[" + k + "]")
+                    );
+                  runtimeEnv.postMessage(
                     "memorysymbolupdate",
                     param.name + "[" + k + "]",
-                    HP.formatValueForOutput(parentScope.getSymbol(args[i].tblname + "[" + k + "]").getValue())
+                    HP.formatValueForOutput(
+                      parentScope
+                        .getSymbol(args[i].tblname + "[" + k + "]")
+                        .getValue()
+                    )
                   );
                 }
               } else if (tblDimensions == 2) {
@@ -911,18 +1022,22 @@ class UserFunction {
                 var tblsize2 = args[i].getSize()[1];
                 for (var k = 1; k <= tblsize1; ++k) {
                   for (var l = 1; l <= tblsize2; ++l) {
-                    scope2.setSymbol(
-                      param.name + "[" + k + "," + l + "]",
-                      parentScope.getSymbol(
-                        args[i].tblname + "[" + k + "," + l + "]"
-                      )
-                    );
-                    app.postMessage(
+                    runtimeEnv
+                      .getScope()
+                      .setSymbol(
+                        param.name + "[" + k + "," + l + "]",
+                        parentScope.getSymbol(
+                          args[i].tblname + "[" + k + "," + l + "]"
+                        )
+                      );
+                    runtimeEnv.postMessage(
                       "memorysymbolupdate",
                       param.name + "[" + k + "," + l + "]",
-                      HP.formatValueForOutput(parentScope.getSymbol(
-                        args[i].tblname + "[" + k + "," + l + "]"
-                      ).getValue())
+                      HP.formatValueForOutput(
+                        parentScope
+                          .getSymbol(args[i].tblname + "[" + k + "," + l + "]")
+                          .getValue()
+                      )
                     );
                   }
                 }
@@ -930,19 +1045,26 @@ class UserFunction {
             }
           });
 
-          await app.setActiveLine(scope2, this.cmdLineNo);
+          await runtimeEnv.setActiveLine(runtimeEnv.getScope(), this.cmdLineNo);
 
-          await body.resolve(app, scope2);
+          await body.resolve(runtimeEnv);
 
-          await app.setActiveLine(scope2, this.cmdLineNoTelosSynartisis);
+          await runtimeEnv.setActiveLine(
+            runtimeEnv.getScope(),
+            this.cmdLineNoTelosSynartisis
+          );
 
-          if (!scope2.getSymbol(name))
+          if (!runtimeEnv.getScope().getSymbol(name))
             throw new GE.GError(
               "Η συνάρτηση δεν επέστρεψε τιμή με το όνομά της.",
               this.cmdLineNoTelosSynartisis
             );
 
-          return scope2.getSymbol(name);
+          var returnValue = runtimeEnv.getScope().getSymbol(name);
+
+          runtimeEnv.popScope();
+
+          return returnValue;
         }.bind(this)
       )
     );
@@ -966,18 +1088,20 @@ class UserProcedure {
     this.cmdLineNoTelosDiadikasias = cmdLineNoTelosDiadikasias;
   }
 
-  async resolve(app, scope) {
+  async resolve(runtimeEnv) {
     var name = this.name.name;
     var params = this.params;
 
     var declarations = this.declarations;
     var body = this.body;
 
-    scope.addSymbol(
+    runtimeEnv.getScope().addSymbol(
       name,
       new STR.STRUserProcedure(
         async function (...arrargs) {
-          var scope2 = scope.makeSubScope();
+          var scope2 = runtimeEnv.getScope().makeSubScope();
+
+          runtimeEnv.pushScope(scope2);
 
           var args = arrargs[0];
           var app = arrargs[1];
@@ -991,11 +1115,11 @@ class UserProcedure {
             );
 
           // Declare constants and variables
-          await declarations.resolve(app, scope2);
+          await declarations.resolve(runtimeEnv);
 
           // Sent values to procedure
           params.forEach(function (param, i) {
-            if (!scope2.hasSymbol(param.name))
+            if (!runtimeEnv.getScope().hasSymbol(param.name))
               throw new GE.GError(
                 "Η παράμετρος " +
                   param.name +
@@ -1004,11 +1128,16 @@ class UserProcedure {
               );
 
             if (!(args[i] instanceof STR.STRTableName)) {
-              scope2.setSymbol(param.name, args[i]);
-              app.postMessage("memorysymbolupdate", param.name, HP.formatValueForOutput(args[i].getValue()));
+              runtimeEnv.getScope().setSymbol(param.name, args[i]);
+              if (args[i] != null)
+                runtimeEnv.postMessage(
+                  "memorysymbolupdate",
+                  param.name,
+                  HP.formatValueForOutput(args[i].getValue())
+                );
             } else {
               if (
-                scope2.getSymbol(param.name).constructor.name !=
+                runtimeEnv.getScope().getSymbol(param.name).constructor.name !=
                 args[i].constructor.name
               )
                 throw new GE.GError(
@@ -1016,25 +1145,39 @@ class UserProcedure {
                   lineCalled
                 );
 
-              if (!scope2.getSymbol(param.name).arraySizeEquals(args[i]))
+              if (
+                !runtimeEnv
+                  .getScope()
+                  .getSymbol(param.name)
+                  .arraySizeEquals(args[i])
+              )
                 throw new GE.GError(
                   "Οι πίνακες έχουν διαφορετικό μέγεθος.",
                   lineCalled
                 );
 
-              var tblDimensions = scope2.getSymbol(param.name).getSize().length;
+              var tblDimensions = runtimeEnv
+                .getScope()
+                .getSymbol(param.name)
+                .getSize().length;
 
               if (tblDimensions == 1) {
                 var tblsize1 = args[i].getSize()[0];
                 for (var k = 1; k <= tblsize1; ++k) {
-                  scope2.setSymbol(
-                    param.name + "[" + k + "]",
-                    parentScope.getSymbol(args[i].tblname + "[" + k + "]")
-                  );
-                  app.postMessage(
+                  runtimeEnv
+                    .getScope()
+                    .setSymbol(
+                      param.name + "[" + k + "]",
+                      parentScope.getSymbol(args[i].tblname + "[" + k + "]")
+                    );
+                  runtimeEnv.postMessage(
                     "memorysymbolupdate",
                     param.name + "[" + k + "]",
-                    HP.formatValueForOutput(parentScope.getSymbol(args[i].tblname + "[" + k + "]").getValue())
+                    HP.formatValueForOutput(
+                      parentScope
+                        .getSymbol(args[i].tblname + "[" + k + "]")
+                        .getValue()
+                    )
                   );
                 }
               } else if (tblDimensions == 2) {
@@ -1042,18 +1185,22 @@ class UserProcedure {
                 var tblsize2 = args[i].getSize()[1];
                 for (var k = 1; k <= tblsize1; ++k) {
                   for (var l = 1; l <= tblsize2; ++l) {
-                    scope2.setSymbol(
-                      param.name + "[" + k + "][" + l + "]",
-                      parentScope.getSymbol(
-                        args[i].tblname + "[" + k + "][" + l + "]"
-                      )
-                    );
-                    app.postMessage(
+                    runtimeEnv
+                      .getScope()
+                      .setSymbol(
+                        param.name + "[" + k + "][" + l + "]",
+                        parentScope.getSymbol(
+                          args[i].tblname + "[" + k + "][" + l + "]"
+                        )
+                      );
+                    runtimeEnv.postMessage(
                       "memorysymbolupdate",
                       param.name + "[" + k + "][" + l + "]",
-                      HP.formatValueForOutput(parentScope.getSymbol(
-                        args[i].tblname + "[" + k + "][" + l + "]"
-                      ).getValue())
+                      HP.formatValueForOutput(
+                        parentScope
+                          .getSymbol(args[i].tblname + "[" + k + "][" + l + "]")
+                          .getValue()
+                      )
                     );
                   }
                 }
@@ -1061,13 +1208,20 @@ class UserProcedure {
             }
           });
 
-          await app.setActiveLine(scope2, this.cmdLineNo);
+          await runtimeEnv.setActiveLine(runtimeEnv.getScope(), this.cmdLineNo);
 
-          await body.resolve(app, scope2);
+          await body.resolve(runtimeEnv);
 
-          await app.setActiveLine(scope2, this.cmdLineNoTelosDiadikasias);
+          await runtimeEnv.setActiveLine(
+            runtimeEnv.getScope(),
+            this.cmdLineNoTelosDiadikasias
+          );
 
-          var procExecArr = [scope2, params];
+          var returnScope = runtimeEnv.getScope();
+
+          runtimeEnv.popScope();
+
+          var procExecArr = [returnScope, params];
 
           return procExecArr;
         }.bind(this)
@@ -1081,14 +1235,14 @@ class Declaration_Block {
     this.constants = constants;
     this.variables = variables;
   }
-  async resolve(app, scope) {
+  async resolve(runtimeEnv) {
     if (this.constants[0])
-      for (const a of this.constants[0]) await a.resolve(app, scope);
+      for (const a of this.constants[0]) await a.resolve(runtimeEnv);
 
     if (this.variables[0])
-      for (const a of this.variables[0]) await a.resolve(app, scope);
+      for (const a of this.variables[0]) await a.resolve(runtimeEnv);
 
-    app.postMessage("memory", scope.getMemory());
+    runtimeEnv.postMessage("memory", runtimeEnv.getScope().getMemory());
   }
 }
 
@@ -1098,10 +1252,10 @@ class DefConstant {
     this.val = val;
     this.cmdLineNo = cmdLineNo;
   }
-  async resolve(app, scope) {
-    await app.setActiveLine(scope, this.cmdLineNo);
+  async resolve(runtimeEnv) {
+    await runtimeEnv.setActiveLine(runtimeEnv.getScope(), this.cmdLineNo);
 
-    var obj = await this.val.resolve(app, scope);
+    var obj = await this.val.resolve(runtimeEnv);
 
     if (HP.isInt(obj.val)) var newObj = new STR.STRConstantInt(obj);
     else if (HP.isFloat(obj.val)) var newObj = new STR.STRConstantFloat(obj);
@@ -1110,9 +1264,9 @@ class DefConstant {
       var newObj = new STR.STRConstantBoolean(obj);
     else throw new GE.GInternalError("Unknown constant type");
 
-    scope.addSymbol(this.sym.name, newObj);
+    runtimeEnv.getScope().addSymbol(this.sym.name, newObj);
 
-    scope.addLock(this.sym.name);
+    runtimeEnv.getScope().addLock(this.sym.name);
   }
 }
 
@@ -1122,8 +1276,8 @@ class DefVariables {
     this.sym = sym;
     this.cmdLineNo = cmdLineNo;
   }
-  async resolve(app, scope) {
-    await app.setActiveLine(scope, this.cmdLineNo);
+  async resolve(runtimeEnv) {
+    await runtimeEnv.setActiveLine(runtimeEnv.getScope(), this.cmdLineNo);
 
     var varType = this.varType;
 
@@ -1137,7 +1291,7 @@ class DefVariables {
         var argsResolved = [];
         for (const arg of e.args) {
           //console.log('==> arg: ' + arg);
-          var argRes = await arg.resolve(app, scope);
+          var argRes = await arg.resolve(runtimeEnv, runtimeEnv.getScope());
           argsResolved.push(argRes.val);
         }
 
@@ -1152,7 +1306,7 @@ class DefVariables {
         else throw new GE.GInternalError("Unknown variable type");
 
         // Add to local STR symbol for table name
-        scope.addSymbol(e.name, ctype);
+        runtimeEnv.getScope().addSymbol(e.name, ctype);
 
         function helperCreateCellFromType(varType) {
           if (varType == "ΑΚΕΡΑΙΕΣ") return new STR.STRTableCellInt(null);
@@ -1183,10 +1337,12 @@ class DefVariables {
           var tblsize1 = argsResolved[0];
           for (var i = 1; i <= tblsize1; ++i) {
             //console.log('   Create table element : ', i);
-            scope.addSymbol(
-              e.name + "[" + i + "]",
-              helperCreateCellFromType(varType)
-            );
+            runtimeEnv
+              .getScope()
+              .addSymbol(
+                e.name + "[" + i + "]",
+                helperCreateCellFromType(varType)
+              );
           }
         } else if (tblDimensions == 2) {
           var tblsize1 = argsResolved[0];
@@ -1194,10 +1350,12 @@ class DefVariables {
           for (var i = 1; i <= tblsize1; ++i) {
             for (var j = 1; j <= tblsize2; ++j) {
               //console.log('   Create table element : ', i, ' ', j);
-              scope.addSymbol(
-                e.name + "[" + i + "," + j + "]",
-                helperCreateCellFromType(varType)
-              );
+              runtimeEnv
+                .getScope()
+                .addSymbol(
+                  e.name + "[" + i + "," + j + "]",
+                  helperCreateCellFromType(varType)
+                );
             }
           }
         } else throw new GE.GError("Critical: Unsupported table dimensions");
@@ -1211,7 +1369,7 @@ class DefVariables {
           var ctype = new STR.STRVariableBoolean(null);
         else throw new GE.GInternalError("Cannot detect variable type");
 
-        scope.addSymbol(e.name, ctype);
+        runtimeEnv.getScope().addSymbol(e.name, ctype);
       }
     }
   }
@@ -1221,8 +1379,8 @@ class Stmt_Block {
   constructor(block) {
     this.block = block;
   }
-  async resolve(app, scope) {
-    for (const stmt of this.block) await stmt.resolve(app, scope);
+  async resolve(runtimeEnv) {
+    for (const stmt of this.block) await stmt.resolve(runtimeEnv);
   }
 }
 
@@ -1245,7 +1403,7 @@ class MainProgram {
     this.cmdLineNoTelosProgrammatos = cmdLineNoTelosProgrammatos;
   }
 
-  async resolve(app, scope) {
+  async resolve(runtimeEnv) {
     if (
       this.prognameend.length > 0 &&
       this.progname.name != this.prognameend[0].name
@@ -1255,17 +1413,25 @@ class MainProgram {
         this.cmdLineNoTelosProgrammatos
       );
 
-    scope.addSymbol(this.progname.name, new STR.STRReservedName(null));
+    runtimeEnv
+      .getScope()
+      .addSymbol(this.progname.name, new STR.STRReservedName(null));
 
-    await app.setActiveLine(scope, this.cmdLineNoProgramma);
+    await runtimeEnv.setActiveLine(
+      runtimeEnv.getScope(),
+      this.cmdLineNoProgramma
+    );
 
-    await this.declarations.resolve(app, scope);
+    await this.declarations.resolve(runtimeEnv);
 
-    await app.setActiveLine(scope, this.cmdLineNoArxh);
+    await runtimeEnv.setActiveLine(runtimeEnv.getScope(), this.cmdLineNoArxh);
 
-    await this.body.resolve(app, scope);
+    await this.body.resolve(runtimeEnv);
 
-    await app.setActiveLine(scope, this.cmdLineNoTelosProgrammatos);
+    await runtimeEnv.setActiveLine(
+      runtimeEnv.getScope(),
+      this.cmdLineNoTelosProgrammatos
+    );
   }
 }
 
@@ -1273,10 +1439,10 @@ class CommentInlineInput {
   constructor(args) {
     this.args = args;
   }
-  async resolve(app, scope) {
+  async resolve(runtimeEnv) {
     for (const arg of this.args) {
-      var argResolved = await arg.resolve(app, scope);
-      app.inputAddToBuffer(argResolved.val);
+      var argResolved = await arg.resolve(runtimeEnv);
+      runtimeEnv.inputAddToBuffer(argResolved.val);
     }
   }
 }
@@ -1287,14 +1453,14 @@ class Application {
     this.program = program;
     this.subprograms = subprograms;
   }
-  async resolve(app, scope) {
-    if (app.inputIsEmptyBuffer())
-      for (const a of this.inputdata) await a.resolve(app, scope);
+  async resolve(runtimeEnv) {
+    if (runtimeEnv.inputIsEmptyBuffer())
+      for (const a of this.inputdata) await a.resolve(runtimeEnv);
 
     if (this.subprograms.length)
-      for (const a of this.subprograms) await a.resolve(app, scope);
+      for (const a of this.subprograms) await a.resolve(runtimeEnv);
 
-    await this.program.resolve(app, scope);
+    await this.program.resolve(runtimeEnv);
   }
 }
 

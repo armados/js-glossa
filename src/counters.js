@@ -4,8 +4,8 @@ const GE = require("./gclasses");
 
 class Counters {
 
-  constructor (config) {
-    this.config = config;
+  constructor () {
+    //this.config = config;
     this.reset();
   }
 
@@ -31,7 +31,7 @@ class Counters {
 
   incrAssignCounter() {
     this.totalAssignCmd += 1;
-
+/*
     if (this.getTotalAssignCmd() >= this.config["maxExecutionCmd"])
       throw new GE.GError(
         "Το πρόγραμμα έφτασε το μέγιστο επιτρεπτό όριο των " +
@@ -39,18 +39,20 @@ class Counters {
           " εντολών εκχώρησης.",
         this.cmdLineNo
       ); //FIXME:
+      */
   }
 
   incrLogicalCounter() {
     this.totalLogicalComp += 1;
 
-    if (this.getTotalLogicalComp() >= this.config["maxLogicalComp"])
+   /* if (this.getTotalLogicalComp() >= this.config["maxLogicalComp"])
       throw new GE.GError(
         "Το πρόγραμμα έφτασε το μέγιστο επιτρεπτό όριο των " +
           this.config["maxLogicalComp"] +
           " συνθηκών.",
         this.cmdLineNo
       ); //FIXME:
+      */
   }
 }
 

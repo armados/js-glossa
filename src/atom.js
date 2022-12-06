@@ -7,7 +7,7 @@ class Atom {
   constructor(val) {
     this.val = val;
   }
-  async resolve(app, scope) {
+  async resolve(runtimeEnv) {
     return this;
   }
   getValue() {
@@ -38,9 +38,9 @@ class MathOpPow extends MathOperation {
     this.B = B;
     this.line = line;
   }
-  async resolve(app, scope) {
-    var a = await this.A.resolve(app, scope);
-    var b = await this.B.resolve(app, scope);
+  async resolve(runtimeEnv) {
+    var a = await this.A.resolve(runtimeEnv);
+    var b = await this.B.resolve(runtimeEnv);
 
     if (a == null)
       throw new GE.GError(
@@ -75,9 +75,9 @@ class MathOpMul extends MathOperation {
     this.B = B;
     this.line = line;
   }
-  async resolve(app, scope) {
-    var a = await this.A.resolve(app, scope);
-    var b = await this.B.resolve(app, scope);
+  async resolve(runtimeEnv) {
+    var a = await this.A.resolve(runtimeEnv);
+    var b = await this.B.resolve(runtimeEnv);
 
     if (a == null)
       throw new GE.GError(
@@ -112,9 +112,9 @@ class MathOpDiv extends MathOperation {
     this.B = B;
     this.line = line;
   }
-  async resolve(app, scope) {
-    var a = await this.A.resolve(app, scope);
-    var b = await this.B.resolve(app, scope);
+  async resolve(runtimeEnv) {
+    var a = await this.A.resolve(runtimeEnv);
+    var b = await this.B.resolve(runtimeEnv);
 
     if (a == null)
       throw new GE.GError(
@@ -152,9 +152,9 @@ class MathOpDivInt extends MathOperation {
     this.B = B;
     this.line = line;
   }
-  async resolve(app, scope) {
-    var a = await this.A.resolve(app, scope);
-    var b = await this.B.resolve(app, scope);
+  async resolve(runtimeEnv) {
+    var a = await this.A.resolve(runtimeEnv);
+    var b = await this.B.resolve(runtimeEnv);
 
     if (a == null)
       throw new GE.GError(
@@ -202,9 +202,9 @@ class MathOpModInt extends MathOperation {
     this.B = B;
     this.line = line;
   }
-  async resolve(app, scope) {
-    var a = await this.A.resolve(app, scope);
-    var b = await this.B.resolve(app, scope);
+  async resolve(runtimeEnv) {
+    var a = await this.A.resolve(runtimeEnv);
+    var b = await this.B.resolve(runtimeEnv);
 
     if (a == null)
       throw new GE.GError(
@@ -252,9 +252,9 @@ class MathOpAdd extends MathOperation {
     this.B = B;
     this.line = line;
   }
-  async resolve(app, scope) {
-    var a = await this.A.resolve(app, scope);
-    var b = await this.B.resolve(app, scope);
+  async resolve(runtimeEnv) {
+    var a = await this.A.resolve(runtimeEnv);
+    var b = await this.B.resolve(runtimeEnv);
 
     if (a == null)
       throw new GE.GError(
@@ -289,9 +289,9 @@ class MathOpSub extends MathOperation {
     this.B = B;
     this.line = line;
   }
-  async resolve(app, scope) {
-    var a = await this.A.resolve(app, scope);
-    var b = await this.B.resolve(app, scope);
+  async resolve(runtimeEnv) {
+    var a = await this.A.resolve(runtimeEnv);
+    var b = await this.B.resolve(runtimeEnv);
 
     if (a == null)
       throw new GE.GError(
@@ -326,9 +326,9 @@ class MathOpRelLt extends MathOperation {
     this.B = B;
     this.line = line;
   }
-  async resolve(app, scope) {
-    var a = await this.A.resolve(app, scope);
-    var b = await this.B.resolve(app, scope);
+  async resolve(runtimeEnv) {
+    var a = await this.A.resolve(runtimeEnv);
+    var b = await this.B.resolve(runtimeEnv);
 
     if (a == null)
       throw new GE.GError(
@@ -368,9 +368,9 @@ class MathOpRelGt extends MathOperation {
     this.B = B;
     this.line = line;
   }
-  async resolve(app, scope) {
-    var a = await this.A.resolve(app, scope);
-    var b = await this.B.resolve(app, scope);
+  async resolve(runtimeEnv) {
+    var a = await this.A.resolve(runtimeEnv);
+    var b = await this.B.resolve(runtimeEnv);
 
     if (a == null)
       throw new GE.GError(
@@ -410,9 +410,9 @@ class MathOpRelLte extends MathOperation {
     this.B = B;
     this.line = line;
   }
-  async resolve(app, scope) {
-    var a = await this.A.resolve(app, scope);
-    var b = await this.B.resolve(app, scope);
+  async resolve(runtimeEnv) {
+    var a = await this.A.resolve(runtimeEnv);
+    var b = await this.B.resolve(runtimeEnv);
 
     if (a == null)
       throw new GE.GError(
@@ -452,9 +452,9 @@ class MathOpRelGte extends MathOperation {
     this.B = B;
     this.line = line;
   }
-  async resolve(app, scope) {
-    var a = await this.A.resolve(app, scope);
-    var b = await this.B.resolve(app, scope);
+  async resolve(runtimeEnv) {
+    var a = await this.A.resolve(runtimeEnv);
+    var b = await this.B.resolve(runtimeEnv);
 
     if (a == null)
       throw new GE.GError(
@@ -494,9 +494,9 @@ class MathOpRelEq extends MathOperation {
     this.B = B;
     this.line = line;
   }
-  async resolve(app, scope) {
-    var a = await this.A.resolve(app, scope);
-    var b = await this.B.resolve(app, scope);
+  async resolve(runtimeEnv) {
+    var a = await this.A.resolve(runtimeEnv);
+    var b = await this.B.resolve(runtimeEnv);
 
     if (a == null)
       throw new GE.GError(
@@ -535,9 +535,9 @@ class MathOpRelNeq extends MathOperation {
     this.B = B;
     this.line = line;
   }
-  async resolve(app, scope) {
-    var a = await this.A.resolve(app, scope);
-    var b = await this.B.resolve(app, scope);
+  async resolve(runtimeEnv) {
+    var a = await this.A.resolve(runtimeEnv);
+    var b = await this.B.resolve(runtimeEnv);
 
     if (a == null)
       throw new GE.GError(
@@ -575,9 +575,9 @@ class MathOpLogAnd extends MathOperation {
     this.B = B;
     this.line = line;
   }
-  async resolve(app, scope) {
-    var a = await this.A.resolve(app, scope);
-    var b = await this.B.resolve(app, scope);
+  async resolve(runtimeEnv) {
+    var a = await this.A.resolve(runtimeEnv);
+    var b = await this.B.resolve(runtimeEnv);
 
     if (a == null)
       throw new GE.GError(
@@ -612,9 +612,9 @@ class MathOpLogOr extends MathOperation {
     this.B = B;
     this.line = line;
   }
-  async resolve(app, scope) {
-    var a = await this.A.resolve(app, scope);
-    var b = await this.B.resolve(app, scope);
+  async resolve(runtimeEnv) {
+    var a = await this.A.resolve(runtimeEnv);
+    var b = await this.B.resolve(runtimeEnv);
 
     if (a == null)
       throw new GE.GError(
@@ -648,8 +648,8 @@ class MathOpLogNot extends MathOperation {
     this.A = A;
     this.line = line;
   }
-  async resolve(app, scope) {
-    var a = await this.A.resolve(app, scope);
+  async resolve(runtimeEnv) {
+    var a = await this.A.resolve(runtimeEnv);
 
     if (a.val == null)
       throw new GE.GError(
@@ -675,9 +675,9 @@ class MSelectSubrange {
     this.B = B;
     this.line = line;
   }
-  async resolve(app, scope) {
-    var a = await this.A.resolve(app, scope);
-    var b = await this.B.resolve(app, scope);
+  async resolve(runtimeEnv) {
+    var a = await this.A.resolve(runtimeEnv);
+    var b = await this.B.resolve(runtimeEnv);
 
     if (a == null)
       throw new GE.GError(
@@ -701,10 +701,10 @@ class MSelectExpr {
     this.A = A;
     this.line = line;
   }
-  async resolve(app, scope) {
-    scope.cmdLineNo = this.line; //FIXME:
+  async resolve(runtimeEnv) {
+    runtimeEnv.getScope().cmdLineNo = this.line; //FIXME:
 
-    var a = await this.A.resolve(app, scope);
+    var a = await this.A.resolve(runtimeEnv);
 
     if (a.val == null)
       throw new GE.GError(
@@ -721,8 +721,8 @@ class MSymbol {
     this.name = name;
     this.line = line;
   }
-  async resolve(app, scope) {
-    return scope.getSymbol(this.name);
+  async resolve(runtimeEnv) {
+    return runtimeEnv.getScope().getSymbol(this.name);
   }
 }
 
@@ -731,13 +731,13 @@ class MSymbolTableCell extends MSymbol {
     super(name, line);
     this.args = args;
   }
-  async calcTableIndex(app, scope) {
+  async calcTableIndex(runtimeEnv) {
     var name = this.name;
     var line = this.line;
 
     var argsResolvedValue = [];
     for (const arg of this.args) {
-      var a = await arg.resolve(app, scope);
+      var a = await arg.resolve(runtimeEnv);
 
       if (a == null)
         throw new GE.GError(
@@ -761,22 +761,22 @@ class MSymbolTableCell extends MSymbol {
     return this.name + "[" + argsResolvedValue.join(",") + "]";
   }
 
-  async eval(app, scope) {
+  async eval(runtimeEnv) {
     //scope.cmdLineNo = this.cmdLineNo; //FIXME:
 
-    var name = await this.calcTableIndex(app, scope);
+    var name = await this.calcTableIndex(runtimeEnv);
 
     // Check if symbol exist in scope
-    await scope.getSymbol(name);
+    await runtimeEnv.getScope().getSymbol(name);
 
     return new MSymbol(name);
   }
 
-  async resolve(app, scope) {
+  async resolve(runtimeEnv) {
     //scope.cmdLineNo = this.cmdLineNo; //FIXME:
 
-    var name = await this.calcTableIndex(app, scope);
-    return scope.getSymbol(name);
+    var name = await this.calcTableIndex(runtimeEnv);
+    return runtimeEnv.getScope().getSymbol(name);
   }
 }
 

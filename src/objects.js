@@ -19,7 +19,7 @@ class Stmt_Assignment {
     var sym = this.symbol;
 
     if (sym instanceof Atom.MSymbolTableCell)
-      sym = await sym.eval(runtimeEnv, runtimeEnv.getScope());
+      sym = await sym.eval(runtimeEnv);
 
     var valResolved = await this.val.resolve(runtimeEnv, runtimeEnv.getScope());
 
@@ -57,9 +57,9 @@ class Stmt_Write {
       var argParam = this.args[i];
 
       if (argParam instanceof Atom.MSymbolTableCell)
-        argParam = await argParam.eval(runtimeEnv, runtimeEnv.getScope());
+        argParam = await argParam.eval(runtimeEnv);
 
-      var arg = await argParam.resolve(runtimeEnv, runtimeEnv.getScope());
+      var arg = await argParam.resolve(runtimeEnv);
 
       if (arg == null)
         throw new GE.GError(
@@ -113,7 +113,7 @@ class Stmt_Read {
       var arg = this.args[i];
 
       if (arg instanceof Atom.MSymbolTableCell)
-        arg = await arg.eval(runtimeEnv, runtimeEnv.getScope());
+        arg = await arg.eval(runtimeEnv);
 
       var data = runtimeEnv.inputFetchValueFromBuffer();
 
@@ -324,7 +324,7 @@ class Stmt_Select {
     var elseBodyLine = this.elseBodyLine;
     var cmdLineNoTelosEpilogwn = this.cmdLineNoTelosEpilogwn;
 
-    var exprResult = await expr.resolve(runtimeEnv, runtimeEnv.getScope());
+    var exprResult = await expr.resolve(runtimeEnv);
 
     if (exprResult instanceof STR.STRTableName)
       throw new GE.GError(
@@ -337,7 +337,6 @@ class Stmt_Select {
         await runtimeEnv.setActiveLine(runtimeEnv.getScope(), arrLineNo[i]);
 
         var condResult = await arrCond[i][j].resolve(
-          runtimeEnv,
           runtimeEnv.getScope()
         );
 
@@ -404,7 +403,6 @@ class Stmt_While {
       await runtimeEnv.setActiveLine(runtimeEnv.getScope(), this.cmdLineNoOso);
 
       var condResult = await this.cond.resolve(
-        runtimeEnv,
         runtimeEnv.getScope()
       );
 
@@ -457,7 +455,6 @@ class Stmt_Do_While {
         .setActiveLine(runtimeEnv.getScope(), this.cmdLineNoMexrisOtou);
 
       var condResult = await this.cond.resolve(
-        runtimeEnv,
         runtimeEnv.getScope()
       );
 
@@ -514,9 +511,9 @@ class Stmt_For {
     // step value FOR
     if (stepval != "") {
       if (stepval[0] instanceof Atom.MSymbolTableCell)
-        stepval[0] = await stepval[0].eval(runtimeEnv, runtimeEnv.getScope());
+        stepval[0] = await stepval[0].eval(runtimeEnv);
 
-      var tmp = await stepval[0].resolve(runtimeEnv, runtimeEnv.getScope());
+      var tmp = await stepval[0].resolve(runtimeEnv);
 
       if (tmp == null) {
         if (stepval[0] instanceof Atom.MSymbol)
@@ -542,9 +539,9 @@ class Stmt_For {
 
     // Init value FOR
     if (initval instanceof Atom.MSymbolTableCell)
-      initval = await initval.eval(runtimeEnv, runtimeEnv.getScope());
+      initval = await initval.eval(runtimeEnv);
 
-    var tmp = await initval.resolve(runtimeEnv, runtimeEnv.getScope());
+    var tmp = await initval.resolve(runtimeEnv);
 
     if (tmp == null) {
       if (initval instanceof Atom.MSymbol)
@@ -563,9 +560,9 @@ class Stmt_For {
 
     // final value FOR
     if (finalval instanceof Atom.MSymbolTableCell)
-      finalval = await finalval.eval(runtimeEnv, runtimeEnv.getScope());
+      finalval = await finalval.eval(runtimeEnv);
 
-    var tmp = await finalval.resolve(runtimeEnv, runtimeEnv.getScope());
+    var tmp = await finalval.resolve(runtimeEnv);
 
     if (tmp == null) {
       if (finalval instanceof Atom.MSymbol)
@@ -583,7 +580,7 @@ class Stmt_For {
     var v_final = tmp.val;
 
     if (variable instanceof Atom.MSymbolTableCell)
-      variable = await variable.eval(runtimeEnv, runtimeEnv.getScope());
+      variable = await variable.eval(runtimeEnv);
 
     runtimeEnv.getScope().setSymbol(variable.name, new Atom.MNumber(v_initial));
     runtimeEnv.postMessage(
@@ -706,7 +703,7 @@ class FunctionCall {
 
     var argsResolved = [];
     for (const arg of this.args) {
-      var argRes = await arg.resolve(runtimeEnv, runtimeEnv.getScope());
+      var argRes = await arg.resolve(runtimeEnv);
       argsResolved.push(argRes);
     }
 
@@ -762,7 +759,7 @@ class ProcedureCall {
 
     var argsResolved = [];
     for (const arg of this.args) {
-      var argRes = await arg.resolve(runtimeEnv, runtimeEnv.getScope());
+      var argRes = await arg.resolve(runtimeEnv);
       argsResolved.push(argRes);
     }
 
@@ -841,7 +838,7 @@ class ProcedureCall {
           }
         }
       } else if (arg instanceof Atom.MSymbolTableCell) {
-        arg = await arg.eval(runtimeEnv, runtimeEnv.getScope());
+        arg = await arg.eval(runtimeEnv);
 
         if (
           runtimeEnv.getScope().getSymbol(arg.name) !=
@@ -1291,7 +1288,7 @@ class DefVariables {
         var argsResolved = [];
         for (const arg of e.args) {
           //console.log('==> arg: ' + arg);
-          var argRes = await arg.resolve(runtimeEnv, runtimeEnv.getScope());
+          var argRes = await arg.resolve(runtimeEnv);
           argsResolved.push(argRes.val);
         }
 

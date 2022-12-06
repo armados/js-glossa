@@ -26,6 +26,33 @@ function StringIsNumInt(val) {
   return !isNaN(parseInt(val)) && String(parseInt(val)) == val;
 }
 
+function displayValueInt(val) {
+  return val;
+}
+
+function displayValueFloat(val) {
+  return Math.round(val * 100) / 100;
+}
+
+function displayValueString(val) {
+  return val;
+}
+
+function displayValueBoolean(val) {
+  return val ? "ΑΛΗΘΗΣ" : "ΨΕΥΔΗΣ";
+}
+
+function formatValueForOutput(val) {
+ // console.log('Got: ' + val);
+
+  if (isInt(val)) return displayValueInt(val);
+    else if (isFloat(val)) return displayValueFloat(val);
+    else if (isString(val)) return displayValueString(val);
+    else if (isBoolean(val)) return displayValueBoolean(val);
+    
+
+}
+
 function valueTypeToString(obj) {
   const STR = require("./storage");
 
@@ -76,5 +103,6 @@ module.exports = {
   isBoolean,
   StringIsNumFloat,
   StringIsNumInt,
+  formatValueForOutput,
   valueTypeToString,
 };

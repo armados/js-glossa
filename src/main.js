@@ -8,6 +8,8 @@ const Semantics = require("./semantics");
 const GE = require("./gclasses");
 const STR = require("./storage");
 
+const CT = require("./counters");
+
 const HP = require("./helper");
 const GLBF = require("./globalfunctions");
 
@@ -46,6 +48,12 @@ class GlossaJS extends EventEmitter {
 
       outputData: [],
       outputDataDetails: [],
+
+      counters: new CT.Counters(this.config),
+
+      getCounters() {
+        return this.counters;
+      },
 
       isStopRunning: () => {
         return this.stoprunning;

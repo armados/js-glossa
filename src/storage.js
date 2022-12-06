@@ -185,12 +185,16 @@ class SScope {
 
       var sym = value.get();
 
+      /*
       if (sym == null) var symValue = null;
       else if (sym instanceof Atom.MBoolean)
         var symValue = sym.getValue() ? "ΑΛΗΘΗΣ" : "ΨΕΥΔΗΣ";
       else if (sym instanceof Atom.MNumber)
         var symValue = Math.round(sym.getValue() * 100) / 100;
       else var symValue = sym.getValue();
+      */
+      if (sym == null) var symValue = null;
+      else var symValue = HP.formatValueForOutput(sym.getValue());
 
       var ret = {
         id: key,

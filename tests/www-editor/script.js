@@ -296,7 +296,7 @@ function UIStateUpdateMemorySymbol(gloBoxID, data1, data2) {
     .find(".gloMemory")
     .find(".symbol-" + data1)
     .find(".tdvalue")
-    .html(data2.val);
+    .html(data2);
 }
 
 function UIStateOutputAppend(gloBoxID, data) {

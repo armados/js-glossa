@@ -28,9 +28,11 @@ class Stmt_Assignment {
     );
 
     scope.setSymbol(sym.name, valResolved);
-    app.postMessage("memorysymbolupdate", sym.name, valResolved);
+
+    app.postMessage("memorysymbolupdate", sym.name, HP.formatValueForOutput(valResolved.getValue()));
 
     app.incrAssignCounter();
+    app.getCounters().incrAssignCounter();
   }
 }
 
@@ -191,7 +193,7 @@ class Stmt_Read {
       }
 
       scope.setSymbol(arg.name, sym);
-      app.postMessage("memorysymbolupdate", arg.name, sym);
+      app.postMessage("memorysymbolupdate", arg.name, HP.formatValueForOutput(sym.getValue()));
 
       app.postMessage("inputread", data);
     }
@@ -543,7 +545,7 @@ class Stmt_For {
     app.postMessage(
       "memorysymbolupdate",
       variable.name,
-      new Atom.MNumber(v_initial)
+      HP.formatValueForOutput(new Atom.MNumber(v_initial))
     );
     scope.addLock(variable.name);
 
@@ -568,7 +570,7 @@ class Stmt_For {
           scope.getSymbol(variable.name).val + v_step
         );
         scope.setSymbol(variable.name, newvarvalue);
-        app.postMessage("memorysymbolupdate", variable.name, newvarvalue);
+        app.postMessage("memorysymbolupdate", variable.name, HP.formatValueForOutput(newvarvalue.getValue()));
 
         scope.addLock(variable.name);
       } while (scope.getSymbol(variable.name).val <= v_final);
@@ -600,7 +602,7 @@ class Stmt_For {
           scope.getSymbol(variable.name).val + v_step
         );
         scope.setSymbol(variable.name, newvarvalue);
-        app.postMessage("memorysymbolupdate", variable.name, newvarvalue);
+        app.postMessage("memorysymbolupdate", variable.name, HP.formatValueForOutput(newvarvalue.getValue()));
 
         scope.addLock(variable.name);
       } while (scope.getSymbol(variable.name).val >= v_final);
@@ -734,7 +736,7 @@ class ProcedureCall {
             app.postMessage(
               "memorysymbolupdate",
               arg.name + "[" + j + "]",
-              procScope.getSymbol(procParams[i].name + "[" + j + "]")
+              HP.formatValueForOutput(procScope.getSymbol(procParams[i].name + "[" + j + "]").getValue())
             );
           }
         } else if (tblDimensions == 2) {
@@ -751,9 +753,9 @@ class ProcedureCall {
               app.postMessage(
                 "memorysymbolupdate",
                 arg.name + "[" + j + "," + l + "]",
-                procScope.getSymbol(
+                HP.formatValueForOutput(procScope.getSymbol(
                   procParams[i].name + "[" + j + "," + l + "]"
-                )
+                ).getValue())
               );
             }
           }
@@ -767,7 +769,7 @@ class ProcedureCall {
         app.postMessage(
           "memorysymbolupdate",
           arg.name,
-          procScope.getSymbol(procParams[i].name)
+          HP.formatValueForOutput(procScope.getSymbol(procParams[i].name).getValue())
         );
       } else if (arg instanceof Atom.MSymbol) {
         if (
@@ -777,7 +779,7 @@ class ProcedureCall {
         app.postMessage(
           "memorysymbolupdate",
           arg.name,
-          procScope.getSymbol(procParams[i].name)
+          HP.formatValueForOutput(procScope.getSymbol(procParams[i].name).getValue())
         );
       }
     });
@@ -865,7 +867,7 @@ class UserFunction {
 
             if (!(args[i] instanceof STR.STRTableName)) {
               scope2.setSymbol(param.name, args[i]);
-              app.postMessage("memorysymbolupdate", param.name, args[i]);
+              app.postMessage("memorysymbolupdate", param.name, HP.formatValueForOutput(args[i].getValue()));
             } else {
               if (
                 scope2.getSymbol(param.name).constructor.name !=
@@ -901,7 +903,7 @@ class UserFunction {
                   app.postMessage(
                     "memorysymbolupdate",
                     param.name + "[" + k + "]",
-                    parentScope.getSymbol(args[i].tblname + "[" + k + "]")
+                    HP.formatValueForOutput(parentScope.getSymbol(args[i].tblname + "[" + k + "]").getValue())
                   );
                 }
               } else if (tblDimensions == 2) {
@@ -918,9 +920,9 @@ class UserFunction {
                     app.postMessage(
                       "memorysymbolupdate",
                       param.name + "[" + k + "," + l + "]",
-                      parentScope.getSymbol(
+                      HP.formatValueForOutput(parentScope.getSymbol(
                         args[i].tblname + "[" + k + "," + l + "]"
-                      )
+                      ).getValue())
                     );
                   }
                 }
@@ -1003,7 +1005,7 @@ class UserProcedure {
 
             if (!(args[i] instanceof STR.STRTableName)) {
               scope2.setSymbol(param.name, args[i]);
-              app.postMessage("memorysymbolupdate", param.name, args[i]);
+              app.postMessage("memorysymbolupdate", param.name, HP.formatValueForOutput(args[i].getValue()));
             } else {
               if (
                 scope2.getSymbol(param.name).constructor.name !=
@@ -1032,7 +1034,7 @@ class UserProcedure {
                   app.postMessage(
                     "memorysymbolupdate",
                     param.name + "[" + k + "]",
-                    parentScope.getSymbol(args[i].tblname + "[" + k + "]")
+                    HP.formatValueForOutput(parentScope.getSymbol(args[i].tblname + "[" + k + "]").getValue())
                   );
                 }
               } else if (tblDimensions == 2) {
@@ -1049,9 +1051,9 @@ class UserProcedure {
                     app.postMessage(
                       "memorysymbolupdate",
                       param.name + "[" + k + "][" + l + "]",
-                      parentScope.getSymbol(
+                      HP.formatValueForOutput(parentScope.getSymbol(
                         args[i].tblname + "[" + k + "][" + l + "]"
-                      )
+                      ).getValue())
                     );
                   }
                 }

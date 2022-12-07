@@ -46,6 +46,9 @@ class RuntimeEnvironment {
   }
 
   getScope() {
+   // for (var i = this.scopes.length-1; i >= 0; i--)
+   //   console.log('STOIVA:  ' + (i+1) + " " + this.scopes[i].title);
+    
     return this.scopes[this.scopes.length - 1];
   }
 

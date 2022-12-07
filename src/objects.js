@@ -868,7 +868,7 @@ class UserFunction {
       name,
       new STR.STRUserFunction(
         async function (...arrargs) {
-          var scope2 = env.getScope().makeSubScope();
+          var scope2 = env.getScope().makeSubScope("Συνάρτηση " + name);
           env.pushScope(scope2);
 
           var args = arrargs[0];
@@ -1052,7 +1052,7 @@ class UserProcedure {
       name,
       new STR.STRUserProcedure(
         async function (...arrargs) {
-          var scope2 = env.getScope().makeSubScope();
+          var scope2 = env.getScope().makeSubScope("Διαδικασία " + name);
 
           env.pushScope(scope2);
 
@@ -1362,6 +1362,8 @@ class MainProgram {
         "Το όνομα του κυρίως προγράμματος δεν είναι το ίδιο με αυτό που δηλώθηκε αρχικά.",
         this.cmdLineNoTelosProgrammatos
       );
+
+    env.getScope().setScopeTitle("Πρόγραμμα " + this.progname.name);
 
     env.getScope().addSymbol(this.progname.name, new STR.STRReservedName(null));
 

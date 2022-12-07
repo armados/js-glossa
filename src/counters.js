@@ -3,6 +3,9 @@
 const GE = require("./gclasses");
 
 class Counters {
+  
+  maxExecutionCmd = 100000;
+  maxLogicalComp = 100000;
 
   constructor () {
     //this.config = config;
@@ -10,8 +13,7 @@ class Counters {
   }
 
   reset() {
-    console.log('Resetting counters');
-    this.totalAssignCmd = 0;
+     this.totalAssignCmd = 0;
     this.totalLogicalComp = 0;
   }
 
@@ -23,36 +25,38 @@ class Counters {
     return this.totalLogicalComp;
   }
 
-  getStats() {
+  getAllCountersArray() {
     //return this.app["statistics"];
-    console.log('getTotalAssignCmd ' + this.getTotalAssignCmd());
-    console.log('getTotalLogicalComp ' + this.getTotalLogicalComp());
+    //console.log('getTotalAssignCmd ' + this.getTotalAssignCmd());
+    //console.log('getTotalLogicalComp ' + this.getTotalLogicalComp());
+
+    return this; //FIXME
   }
 
   incrAssignCounter() {
     this.totalAssignCmd += 1;
-/*
-    if (this.getTotalAssignCmd() >= this.config["maxExecutionCmd"])
+
+    if (this.getTotalAssignCmd() >= this.maxExecutionCmd)
       throw new GE.GError(
         "Το πρόγραμμα έφτασε το μέγιστο επιτρεπτό όριο των " +
-          this.config["maxExecutionCmd"] +
+          this.maxExecutionCmd +
           " εντολών εκχώρησης.",
         this.cmdLineNo
       ); //FIXME:
-      */
+    
   }
 
   incrLogicalCounter() {
     this.totalLogicalComp += 1;
 
-   /* if (this.getTotalLogicalComp() >= this.config["maxLogicalComp"])
+    if (this.getTotalLogicalComp() >= this.maxLogicalComp)
       throw new GE.GError(
         "Το πρόγραμμα έφτασε το μέγιστο επιτρεπτό όριο των " +
-          this.config["maxLogicalComp"] +
+          this.maxLogicalComp +
           " συνθηκών.",
         this.cmdLineNo
       ); //FIXME:
-      */
+      
   }
 }
 

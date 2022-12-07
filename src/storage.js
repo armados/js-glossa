@@ -110,14 +110,14 @@ class SScope {
 
   addLock(name) {
     if (this.isLocked(name))
-      throw new GE.GInternalError("addLock() Symbol already locked " + name);
+      throw new GE.GInternalError("addLock(): Symbol already locked " + name);
 
     this.lockedVariables.push(name);
   }
 
   removeLock(name) {
     if (!this.isLocked(name))
-      throw new GE.GInternalError("removeLock() Symbol not locked " + name);
+      throw new GE.GInternalError("removeLock(): Symbol not locked " + name);
 
     const index = this.lockedVariables.indexOf(name);
     this.lockedVariables.splice(index, 1);
@@ -127,7 +127,7 @@ class SScope {
     var arr = [];
 
     for (const [key, value] of Object.entries(this.localStorage)) {
-      //ignore table ref
+      //ignore table name ref
       if (value instanceof STRTableName) continue;
 
       var symType = null;
@@ -225,13 +225,13 @@ class SScope {
     if (obj instanceof STRLocalScope || obj instanceof STRTableName)
       return (this.localStorage[name] = obj);
 
-    throw new GE.GInternalError("Unknown storage type");
+    throw new GE.GInternalError("addSymbol(): Unknown storage");
   }
 
   addSymbolFuncName(name, obj) {
     if (obj instanceof STRLocalScope) return (this.localStorage[name] = obj);
 
-    throw new GE.GInternalError("addSymbolFuncName(): Unknown storage type");
+    throw new GE.GInternalError("addSymbolFuncName(): Unknown storage");
   }
 
   setSymbol(name, obj) {

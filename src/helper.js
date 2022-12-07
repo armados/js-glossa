@@ -94,6 +94,15 @@ function valueTypeToString(obj) {
     throw new GE.GInternalError("Άγνωστη τιμή: " + val);
   }
 }
+  
+   async function sleepFunc(ms) {
+    let promise = new Promise((resolve, reject) => {
+      setTimeout(() => resolve(), ms);
+    });
+
+    await promise;
+  }
+
 
 module.exports = {
   isFloat,
@@ -105,4 +114,5 @@ module.exports = {
   StringIsNumInt,
   formatValueForOutput,
   valueTypeToString,
+  sleepFunc
 };

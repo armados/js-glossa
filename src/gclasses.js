@@ -1,6 +1,6 @@
 "use strict";
 
-class GErrorBeforeExec extends Error {
+class GSyntaxError extends Error {
   constructor(message, line = null) {
     super(message);
 
@@ -55,7 +55,7 @@ class GInternalError extends Error {
 }
 
 module.exports = {
-  GErrorBeforeExec,
+  GSyntaxError,
   GError,
   GInterrupt,
   GInternalError

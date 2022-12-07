@@ -7,7 +7,7 @@ const GLO = require("../../src/main.js");
 
 const prompt = require("prompt-sync")();
 
-const filename = "../../samples/sample10.glo";
+const filename = "../../samples/sample22.glo";
 
 (async function main() {
   try {
@@ -26,7 +26,7 @@ const filename = "../../samples/sample10.glo";
   app.setReadInputFunction(function (name) {
     return prompt();
   });
-  
+
   app.on("outputappend", (data) => {
     console.log(data);
   });
@@ -35,10 +35,8 @@ const filename = "../../samples/sample10.glo";
     console.log(data);
   });
 
-  try {
-    await app.run();
-  } catch (e) {}
+  await app.run();
 
-  console.log("=======[ stats ] ========");
-  console.log("Total commands: ", app.getStats());
+  console.log("=======[ Μετρητές ] ========");
+  console.log("Total commands: ", app.getCounters().getAllCountersArray());
 })();

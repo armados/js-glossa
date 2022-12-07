@@ -23,7 +23,7 @@ class GlossaJS extends EventEmitter {
     this.init();
   }
 
-  getRuntime() {
+  getEnv() {
     return this.runtime;
   }
 
@@ -32,23 +32,22 @@ class GlossaJS extends EventEmitter {
   }
 
   setReadInputFunction(func) {
-    this.getRuntime().setReadInputFunc(func);
+    this.getEnv().setReadInputFunc(func);
   }
 
-  getStats() {
-    return this.getRuntime().getCounters();
+  getCounters() {
+    return this.getEnv().getCounters();
   }
 
   setSourceCode(data) {
     this.sourceCode = data;
   }
 
-  setInputBuffer(data) {
-    if (data != null && data.trim() != "") {
-      //console.log('Keyboard buffer argIOKeyboard: ', argIOKeyboard);
-      var arrKeyboard = data.split(",").map((item) => item.trim());
-      arrKeyboard.forEach((e) => this.getRuntime().inputAddToBuffer(e));
-    }
+  setInputBuffer(values) {
+    if (values == null || values.trim() == "") return;
+
+    var arr = values.split(",").map((item) => item.trim());
+    arr.forEach((e) => this.getEnv().inputAddToBuffer(e));
   }
 
   init() {
@@ -65,19 +64,19 @@ class GlossaJS extends EventEmitter {
   // =====================================
 
   setStepRun(flag) {
-    this.getRuntime().config["runstep"] = flag;
+    this.getEnv().config["runstep"] = flag;
   }
 
   setSlowRun(flag) {
-    this.getRuntime().config["slowrunflag"] = flag;
+    this.getEnv().config["slowrunflag"] = flag;
   }
 
   getSlowRun() {
-    return this.getRuntime().config["slowrunflag"];
+    return this.getEnv().config["slowrunflag"];
   }
 
   setDebugMode(flag) {
-    this.getRuntime().config["debugmode"] = flag;
+    this.getEnv().config["debugmode"] = flag;
   }
 
   isrunning() {
@@ -85,47 +84,46 @@ class GlossaJS extends EventEmitter {
   }
 
   terminate() {
-    this.getRuntime().enableTerminationFlag();
+    this.getEnv().enableTerminationFlag();
     this.runNextStatement();
   }
 
   runNextStatement() {
-    this.getRuntime().config["runstep"] = true; // switch to step mode
-    this.getRuntime().config["runstepflag"] = true;
+    this.getEnv().config["runstep"] = true; // switch to step mode
+    this.getEnv().config["runstepflag"] = true;
   }
 
   runPause() {
-    this.getRuntime().config["runstep"] = true;
-    this.getRuntime().config["runstepflag"] = false;
+    this.getEnv().config["runstep"] = true;
+    this.getEnv().config["runstepflag"] = false;
   }
 
   runContinue() {
-    this.getRuntime().config["runstep"] = false;
-    this.getRuntime().config["runstepflag"] = true;
+    this.getEnv().config["runstep"] = false;
+    this.getEnv().config["runstepflag"] = true;
   }
 
   runIsPaused() {
-    return this.getRuntime().config["runstep"];
+    return this.getEnv().config["runstep"];
   }
 
   getOutput() {
-    return this.getRuntime().getOutput().join("\n");
+    return this.getEnv().getOutput().join("\n");
   }
 
   getOutputDetails() {
-    return this.getRuntime().getOutputDetails().join("\n");
+    return this.getEnv().getOutputDetails().join("\n");
   }
 
   addBreakpoint(line) {
-    this.getRuntime().breakPoints.push(line);
+    this.getEnv().breakPoints.push(line);
   }
 
   removeBreakpoint(line) {
     console.log("remove line breakpoint");
-    var index = this.getRuntime().breakPoints.indexOf(line);
+    var index = this.getEnv().breakPoints.indexOf(line);
     if (index > -1) {
-      console.log("line found in array and removed");
-      this.getRuntime().breakPoints.splice(index, 1);
+      this.getEnv().breakPoints.splice(index, 1);
     }
   }
 
@@ -154,10 +152,10 @@ console.log(tree);
 
       var match = gram.match(this.sourceCode);
 
-      if (!match.succeeded()) throw new GE.GErrorBeforeExec(match.message);
+      if (!match.succeeded()) throw new GE.GSyntaxError(match.message);
 
       var result = sem(match).toAST();
-      if (!result) throw new GE.GErrorBeforeExec(result);
+      if (!result) throw new GE.GSyntaxError(result);
 
       // ready to run
       this.running = true;
@@ -168,7 +166,7 @@ console.log(tree);
       console.log("App terminated. (normal)");
     } catch (e) {
       console.log("App terminated (abnormal)");
-      if (e instanceof GE.GErrorBeforeExec) {
+      if (e instanceof GE.GSyntaxError) {
         this.postMessage("error", e.message);
       } else if (e instanceof GE.GError) {
         this.postMessage("error", e.message);

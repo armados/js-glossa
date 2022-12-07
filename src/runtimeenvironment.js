@@ -6,13 +6,14 @@ const CT = require("./counters");
 
 class RuntimeEnvironment {
   config = {};
-  statistics = {};
 
   scopes = [];
 
   inputData = [];
   inputFunction = null;
+
   breakPoints = [];
+
   outputData = [];
   outputDataDetails = [];
 
@@ -24,20 +25,12 @@ class RuntimeEnvironment {
     this._parent = parent;
     this.pushScope(scope);
 
-    console.log("constructor runtitme environment");
-
-    this.config["maxExecutionCmd"] = 100000;
-    this.config["maxLogicalComp"] = 100000;
-
     this.config["debugmode"] = false;
     this.config["slowrunflag"] = false;
     this.config["runspeed"] = 0;
     this.config["slowrunspeed"] = 200;
     this.config["runstep"] = false;
     this.config["runstepflag"] = false;
-
-    this.statistics["totalAssignCmd"] = 0;
-    this.statistics["totalLogicalComp"] = 0;
   }
 
   reset() {}
@@ -121,13 +114,6 @@ class RuntimeEnvironment {
     return this.counters;
   }
 
-  async sleepFunc(ms) {
-    let promise = new Promise((resolve, reject) => {
-      setTimeout(() => resolve(), ms);
-    });
-
-    await promise;
-  }
 
   async setActiveLine(scope, line) {
     scope.cmdLineNo = line;
@@ -153,9 +139,9 @@ class RuntimeEnvironment {
 
     if (this.config["runstep"] == false) {
       if (this.config["slowrunflag"] == false) {
-        await this.sleepFunc(this.config["runspeed"]);
+        await HP.sleepFunc(this.config["runspeed"]);
       } else {
-        await this.sleepFunc(this.config["slowrunspeed"]);
+        await HP.sleepFunc(this.config["slowrunspeed"]);
       }
     } else {
       this.postMessage("paused");
@@ -163,7 +149,7 @@ class RuntimeEnvironment {
         this.config["runstepflag"] == false &&
         this.config["runstep"] == true
       ) {
-        await this.sleepFunc(25);
+        await HP.sleepFunc(25);
       }
       this.config["runstepflag"] = false;
       this.postMessage("continuerunning");
@@ -186,33 +172,9 @@ class RuntimeEnvironment {
       this.postMessage("line", line);
     }
 
-    await this.sleepFunc(30);
+    await HP.sleepFunc(30);
   }
 
-  incrAssignCounter() {
-    this.statistics["totalAssignCmd"] = this.statistics["totalAssignCmd"] + 1;
-
-    if (this.statistics["totalAssignCmd"] >= this.config["maxExecutionCmd"])
-      throw new GE.GError(
-        "Το πρόγραμμα έφτασε το μέγιστο επιτρεπτό όριο των " +
-          this.app["config"]["maxExecutionCmd"] +
-          " εντολών εκχώρησης.",
-        this.cmdLineNo
-      ); //FIXME:
-  }
-
-  incrLogicalCounter() {
-    this.statistics["totalLogicalComp"] =
-      this.statistics["totalLogicalComp"] + 1;
-
-    if (this.statistics["totalLogicalComp"] >= this.config["maxLogicalComp"])
-      throw new GE.GError(
-        "Το πρόγραμμα έφτασε το μέγιστο επιτρεπτό όριο των " +
-          this.app["config"]["maxLogicalComp"] +
-          " συνθηκών.",
-        this.cmdLineNo
-      ); //FIXME:
-  }
 }
 
 module.exports = {

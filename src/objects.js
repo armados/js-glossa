@@ -35,7 +35,6 @@ class Stmt_Assignment {
       HP.formatValueForOutput(valResolved.getValue())
     );
 
-    env.incrAssignCounter();
     env.getCounters().incrAssignCounter();
   }
 }
@@ -120,7 +119,7 @@ class Stmt_Read {
 
         const pro2 = new Promise(async (resolve, reject) => {
           while (!env.isTerminationFlag() && finishedPromise == false) {
-            await env.sleepFunc(100);
+            await HP.sleepFunc(100);
           }
           reject("user-interrupt");
         });
@@ -261,7 +260,7 @@ class Stmt_If {
         arrLineNo[i]
       );
 
-      env.incrLogicalCounter();
+      env.getCounters().incrLogicalCounter();
 
       if (condResult.val == true) {
         await arrBody[i].resolve(env);
@@ -338,7 +337,7 @@ class Stmt_Select {
             arrLineNo[i]
           );
 
-        env.incrLogicalCounter();
+        env.getCounters().incrLogicalCounter();
 
         if (condResult.val == true) {
           break;
@@ -401,7 +400,7 @@ class Stmt_While {
         this.cmdLineNoOso
       );
 
-      env.incrLogicalCounter();
+      env.getCounters().incrLogicalCounter();
 
       if (condResult.val == false) break;
 
@@ -427,7 +426,6 @@ class Stmt_Do_While {
       await this.body.resolve(env);
 
       await env
-        .getScope()
         .setActiveLine(env.getScope(), this.cmdLineNoMexrisOtou);
 
       var condResult = await this.cond.resolve(env);
@@ -448,7 +446,7 @@ class Stmt_Do_While {
         this.cmdLineNoMexrisOtou
       );
 
-      env.incrLogicalCounter();
+      env.getCounters().incrLogicalCounter();
     } while (condResult.val == false);
   }
 }
@@ -571,7 +569,7 @@ class Stmt_For {
           this.cmdLineNoGia
         );
 
-        env.incrLogicalCounter();
+        env.getCounters().incrLogicalCounter();
 
         await body.resolve(env);
 
@@ -599,7 +597,7 @@ class Stmt_For {
         this.cmdLineNoGia
       );
 
-      env.incrLogicalCounter();
+      env.getCounters().incrLogicalCounter();
     } else if (v_initial >= v_final && v_step < 0) {
       do {
         env.outputAddDetails(
@@ -607,7 +605,7 @@ class Stmt_For {
           this.cmdLineNoGia
         );
 
-        env.incrLogicalCounter();
+        env.getCounters().incrLogicalCounter();
 
         await body.resolve(env);
 
@@ -635,7 +633,7 @@ class Stmt_For {
         this.cmdLineNoGia
       );
 
-      env.incrLogicalCounter();
+      env.getCounters().incrLogicalCounter();
     }
 
     env.getScope().removeLock(variable.name);

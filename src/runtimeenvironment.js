@@ -115,8 +115,8 @@ class RuntimeEnvironment {
   }
 
 
-  async setActiveLine(scope, line) {
-    scope.cmdLineNo = line;
+  async setActiveLine(line) {
+    this.getScope().cmdLineNo = line;
 
     if (!this.config["debugmode"]) return;
 
@@ -156,8 +156,8 @@ class RuntimeEnvironment {
     }
   }
 
-  async setActiveLineWithoutStep(scope, line) {
-    scope.cmdLineNo = line;
+  async setActiveLineWithoutStep(line) {
+    this.getScope().cmdLineNo = line;
 
     if (!this.config["debugmode"]) return;
 

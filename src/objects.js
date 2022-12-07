@@ -14,7 +14,7 @@ class Stmt_Assignment {
     this.cmdLineNo = cmdLineNo;
   }
   async resolve(env) {
-    await env.setActiveLine(env.getScope(), this.cmdLineNo);
+    await env.setActiveLine(this.cmdLineNo);
 
     var sym = this.symbol;
 
@@ -29,13 +29,13 @@ class Stmt_Assignment {
 
     env.getScope().setSymbol(sym.name, valResolved);
 
+    env.getCounters().incrAssignCounter();
+
     env.postMessage(
       "memorysymbolupdate",
       sym.name,
       HP.formatValueForOutput(valResolved.getValue())
     );
-
-    env.getCounters().incrAssignCounter();
   }
 }
 
@@ -45,7 +45,7 @@ class Stmt_Write {
     this.cmdLineNo = cmdLineNo;
   }
   async resolve(env) {
-    await env.setActiveLine(env.getScope(), this.cmdLineNo);
+    await env.setActiveLine(this.cmdLineNo);
 
     var output = [];
 
@@ -100,10 +100,10 @@ class Stmt_Read {
     this.cmdLineNo = cmdLineNo;
   }
   async resolve(env) {
-    await env.setActiveLine(env.getScope(), this.cmdLineNo);
+    await env.setActiveLine(this.cmdLineNo);
 
     for (var i = 0, len = this.args.length; i < len; i++) {
-      await env.setActiveLineWithoutStep(env.getScope(), this.cmdLineNo);
+      await env.setActiveLineWithoutStep(this.cmdLineNo);
 
       var arg = this.args[i];
 
@@ -112,7 +112,6 @@ class Stmt_Read {
       var data = env.inputFetchValueFromBuffer();
 
       if (data == null && typeof env.inputFunction === "function") {
-        //data = await app["inputFunction"].apply(this, [arg.name]);
         var finishedPromise = false;
 
         const pro1 = env.inputFunction.apply(this, [arg.name]);
@@ -128,10 +127,8 @@ class Stmt_Read {
           .then((response) => {
             data = response;
             finishedPromise = true;
-            //console.log("App terminated. Good response: " + response);
           })
           .catch((err) => {
-            //console.log("App terminated. Reject response: " + err);
             throw new GE.GInterrupt(
               "Διακοπή της εκτέλεσης του προγράμματος από τον χρήστη.",
               this.cmdLineNo
@@ -201,6 +198,9 @@ class Stmt_Read {
       }
 
       env.getScope().setSymbol(arg.name, sym);
+
+      env.getCounters().incrKeyboardInputCounter();
+
       env.postMessage(
         "memorysymbolupdate",
         arg.name,
@@ -240,7 +240,7 @@ class Stmt_If {
     var elseBodyLine = this.elseBodyLine;
 
     for (var i = 0; i < arrCond.length; ++i) {
-      await env.setActiveLine(env.getScope(), this.arrLineNo[i]);
+      await env.setActiveLine(this.arrLineNo[i]);
 
       var condResult = await arrCond[i].resolve(env);
 
@@ -264,19 +264,19 @@ class Stmt_If {
 
       if (condResult.val == true) {
         await arrBody[i].resolve(env);
-        await env.setActiveLine(env.getScope(), this.telosAnLine);
+        await env.setActiveLine(this.telosAnLine);
         return;
       }
     }
 
     if (elseBody != null) {
-      await env.setActiveLine(env.getScope(), this.elseBodyLine);
+      await env.setActiveLine(this.elseBodyLine);
       await elseBody.resolve(env);
-      await env.setActiveLine(env.getScope(), this.telosAnLine);
+      await env.setActiveLine(this.telosAnLine);
       return;
     }
 
-    await env.setActiveLine(env.getScope(), this.telosAnLine);
+    await env.setActiveLine(this.telosAnLine);
   }
 }
 
@@ -304,7 +304,7 @@ class Stmt_Select {
   }
 
   async resolve(env) {
-    await env.setActiveLine(env.getScope(), this.cmdLineNo);
+    await env.setActiveLine(this.cmdLineNo);
 
     var expr = this.expr;
     var arrCond = this.arrCond;
@@ -325,7 +325,7 @@ class Stmt_Select {
 
     for (var i = 0; i < arrCond.length; ++i) {
       for (var j = 0; j < arrCond[i].length; ++j) {
-        await env.setActiveLine(env.getScope(), arrLineNo[i]);
+        await env.setActiveLine(arrLineNo[i]);
 
         var condResult = await arrCond[i][j].resolve(env);
 
@@ -354,19 +354,19 @@ class Stmt_Select {
 
       if (condResult.val == true) {
         await arrBody[i].resolve(env);
-        await env.setActiveLine(env.getScope(), cmdLineNoTelosEpilogwn);
+        await env.setActiveLine(cmdLineNoTelosEpilogwn);
         return;
       }
     }
 
     if (elseBody != null) {
-      await env.setActiveLine(env.getScope(), elseBodyLine);
+      await env.setActiveLine(elseBodyLine);
       await elseBody.resolve(env);
-      await env.setActiveLine(env.getScope(), cmdLineNoTelosEpilogwn);
+      await env.setActiveLine(cmdLineNoTelosEpilogwn);
       return;
     }
 
-    await env.setActiveLine(env.getScope(), cmdLineNoTelosEpilogwn);
+    await env.setActiveLine(cmdLineNoTelosEpilogwn);
   }
 }
 
@@ -380,7 +380,7 @@ class Stmt_While {
   }
   async resolve(env) {
     while (true) {
-      await env.setActiveLine(env.getScope(), this.cmdLineNoOso);
+      await env.setActiveLine(this.cmdLineNoOso);
 
       var condResult = await this.cond.resolve(env);
 
@@ -406,7 +406,7 @@ class Stmt_While {
 
       await this.body.resolve(env);
 
-      await env.setActiveLine(env.getScope(), this.cmdLineNoTelosEpanalhpshs);
+      await env.setActiveLine(this.cmdLineNoTelosEpanalhpshs);
     }
   }
 }
@@ -421,12 +421,11 @@ class Stmt_Do_While {
   }
   async resolve(env) {
     do {
-      await env.setActiveLine(env.getScope(), this.cmdLineNoArxh);
+      await env.setActiveLine(this.cmdLineNoArxh);
 
       await this.body.resolve(env);
 
-      await env
-        .setActiveLine(env.getScope(), this.cmdLineNoMexrisOtou);
+      await env.setActiveLine(this.cmdLineNoMexrisOtou);
 
       var condResult = await this.cond.resolve(env);
 
@@ -470,7 +469,7 @@ class Stmt_For {
     this.cmdLineNoTelosEpanalhpshs = cmdLineNoTelosEpanalhpshs;
   }
   async resolve(env) {
-    await env.setActiveLine(env.getScope(), this.cmdLineNoGia);
+    await env.setActiveLine(this.cmdLineNoGia);
 
     var variable = this.variable;
     var initval = this.initval;
@@ -555,11 +554,13 @@ class Stmt_For {
       variable = await variable.eval(env);
 
     env.getScope().setSymbol(variable.name, new Atom.MNumber(v_initial));
+
     env.postMessage(
       "memorysymbolupdate",
       variable.name,
       HP.formatValueForOutput(new Atom.MNumber(v_initial))
     );
+
     env.getScope().addLock(variable.name);
 
     if (v_initial <= v_final && v_step > 0) {
@@ -573,16 +574,18 @@ class Stmt_For {
 
         await body.resolve(env);
 
-        await env.setActiveLine(env.getScope(), this.cmdLineNoTelosEpanalhpshs);
+        await env.setActiveLine(this.cmdLineNoTelosEpanalhpshs);
 
-        await env.setActiveLine(env.getScope(), this.cmdLineNoGia);
+        await env.setActiveLine(this.cmdLineNoGia);
 
         env.getScope().removeLock(variable.name);
 
         var newvarvalue = new Atom.MNumber(
           env.getScope().getSymbol(variable.name).val + v_step
         );
+
         env.getScope().setSymbol(variable.name, newvarvalue);
+
         env.postMessage(
           "memorysymbolupdate",
           variable.name,
@@ -609,16 +612,18 @@ class Stmt_For {
 
         await body.resolve(env);
 
-        await env.setActiveLine(env.getScope(), this.cmdLineNoTelosEpanalhpshs);
+        await env.setActiveLine(this.cmdLineNoTelosEpanalhpshs);
 
-        await env.setActiveLine(env.getScope(), this.cmdLineNoGia);
+        await env.setActiveLine(this.cmdLineNoGia);
 
         env.getScope().removeLock(variable.name);
 
         var newvarvalue = new Atom.MNumber(
           env.getScope().getSymbol(variable.name).val + v_step
         );
+
         env.getScope().setSymbol(variable.name, newvarvalue);
+
         env.postMessage(
           "memorysymbolupdate",
           variable.name,
@@ -648,7 +653,7 @@ class FunctionCall {
   }
   async resolve(env) {
     env.outputAddDetails(
-      "Κλήση της Συνάρτησης " + this.fun.name,
+      "Κλήση της συνάρτησης " + this.fun.name,
       this.cmdLineNo
     );
 
@@ -700,10 +705,10 @@ class ProcedureCall {
     this.cmdLineNo = cmdLineNo;
   }
   async resolve(env) {
-    await env.setActiveLine(env.getScope(), this.cmdLineNo);
+    await env.setActiveLine(this.cmdLineNo);
 
     env.outputAddDetails(
-      "Κλήση της Διαδικασίας " + this.fun.name,
+      "Κλήση της διαδικασίας " + this.fun.name,
       this.cmdLineNo
     );
 
@@ -736,7 +741,7 @@ class ProcedureCall {
 
     env.postMessage("memory", env.getScope().getMemory());
 
-    await env.setActiveLine(env.getScope(), this.cmdLineNo);
+    await env.setActiveLine(this.cmdLineNo);
 
     env.outputAddDetails(
       "Επιστροφή από την διαδικασία " + this.fun.name,
@@ -996,18 +1001,15 @@ class UserFunction {
             }
           });
 
-          await env.setActiveLine(env.getScope(), this.cmdLineNo);
+          await env.setActiveLine(this.cmdLineNo);
 
           await body.resolve(env);
 
-          await env.setActiveLine(
-            env.getScope(),
-            this.cmdLineNoTelosSynartisis
-          );
+          await env.setActiveLine(this.cmdLineNoTelosSynartisis);
 
           if (!env.getScope().getSymbol(name))
             throw new GE.GError(
-              "Η συνάρτηση δεν επέστρεψε τιμή με το όνομά της.",
+              "Η συνάρτηση " + name + " δεν επέστρεψε τιμή με το όνομά της.",
               this.cmdLineNoTelosSynartisis
             );
 
@@ -1132,32 +1134,29 @@ class UserProcedure {
                     var newValue = parentScope.getSymbol(
                       args[i].tblname + "[" + k + "][" + l + "]"
                     );
-                      env
+                    env
                       .getScope()
                       .setSymbol(
                         param.name + "[" + k + "][" + l + "]",
                         newValue
                       );
-                      if (newValue != null)
+                    if (newValue != null)
                       env.postMessage(
-                      "memorysymbolupdate",
-                      param.name + "[" + k + "][" + l + "]",
-                      HP.formatValueForOutput(newValue.getValue())
-                    );
+                        "memorysymbolupdate",
+                        param.name + "[" + k + "][" + l + "]",
+                        HP.formatValueForOutput(newValue.getValue())
+                      );
                   }
                 }
               }
             }
           });
 
-          await env.setActiveLine(env.getScope(), this.cmdLineNo);
+          await env.setActiveLine(this.cmdLineNo);
 
           await body.resolve(env);
 
-          await env.setActiveLine(
-            env.getScope(),
-            this.cmdLineNoTelosDiadikasias
-          );
+          await env.setActiveLine(this.cmdLineNoTelosDiadikasias);
 
           var returnScope = env.getScope();
 
@@ -1184,6 +1183,7 @@ class Declaration_Block {
     if (this.variables[0])
       for (const a of this.variables[0]) await a.resolve(env);
 
+    // Memory initialization completed
     env.postMessage("memory", env.getScope().getMemory());
   }
 }
@@ -1195,7 +1195,7 @@ class DefConstant {
     this.cmdLineNo = cmdLineNo;
   }
   async resolve(env) {
-    await env.setActiveLine(env.getScope(), this.cmdLineNo);
+    await env.setActiveLine(this.cmdLineNo);
 
     var obj = await this.val.resolve(env);
 
@@ -1204,7 +1204,7 @@ class DefConstant {
     else if (HP.isString(obj.val)) var newObj = new STR.STRConstantString(obj);
     else if (HP.isBoolean(obj.val))
       var newObj = new STR.STRConstantBoolean(obj);
-    else throw new GE.GInternalError("Unknown constant type");
+    else throw new GE.GInternalError("DefConstant(): Unknown constant type");
 
     env.getScope().addSymbol(this.sym.name, newObj);
 
@@ -1219,7 +1219,7 @@ class DefVariables {
     this.cmdLineNo = cmdLineNo;
   }
   async resolve(env) {
-    await env.setActiveLine(env.getScope(), this.cmdLineNo);
+    await env.setActiveLine(this.cmdLineNo);
 
     var varType = this.varType;
 
@@ -1245,7 +1245,8 @@ class DefVariables {
           var ctype = new STR.STRTableNameString(e.name, argsResolved);
         else if (varType == "ΛΟΓΙΚΕΣ")
           var ctype = new STR.STRTableNameBoolean(e.name, argsResolved);
-        else throw new GE.GInternalError("Unknown variable type");
+        else
+          throw new GE.GInternalError("DefVariables(): Unknown variable type");
 
         // Add to local STR symbol for table name
         env.getScope().addSymbol(e.name, ctype);
@@ -1258,7 +1259,10 @@ class DefVariables {
             return new STR.STRTableCellString(null);
           else if (varType == "ΛΟΓΙΚΕΣ")
             return new STR.STRTableCellBoolean(null);
-          else throw new GE.GInternalError("Unknown variable type");
+          else
+            throw new GE.GInternalError(
+              "DefVariables(): Unknown variable type"
+            );
         }
 
         // Initialize table cells
@@ -1300,7 +1304,8 @@ class DefVariables {
                 );
             }
           }
-        } else throw new GE.GError("Critical: Unsupported table dimensions");
+        } else
+          throw new GE.GError("DefVariables(): Unsupported table dimensions");
       } else {
         if (varType == "ΑΚΕΡΑΙΕΣ") var ctype = new STR.STRVariableInt(null);
         else if (varType == "ΠΡΑΓΜΑΤΙΚΕΣ")
@@ -1309,7 +1314,10 @@ class DefVariables {
           var ctype = new STR.STRVariableString(null);
         else if (varType == "ΛΟΓΙΚΕΣ")
           var ctype = new STR.STRVariableBoolean(null);
-        else throw new GE.GInternalError("Cannot detect variable type");
+        else
+          throw new GE.GInternalError(
+            "DefVariables(): Cannot detect variable type"
+          );
 
         env.getScope().addSymbol(e.name, ctype);
       }
@@ -1357,15 +1365,15 @@ class MainProgram {
 
     env.getScope().addSymbol(this.progname.name, new STR.STRReservedName(null));
 
-    await env.setActiveLine(env.getScope(), this.cmdLineNoProgramma);
+    await env.setActiveLine(this.cmdLineNoProgramma);
 
     await this.declarations.resolve(env);
 
-    await env.setActiveLine(env.getScope(), this.cmdLineNoArxh);
+    await env.setActiveLine(this.cmdLineNoArxh);
 
     await this.body.resolve(env);
 
-    await env.setActiveLine(env.getScope(), this.cmdLineNoTelosProgrammatos);
+    await env.setActiveLine(this.cmdLineNoTelosProgrammatos);
   }
 }
 

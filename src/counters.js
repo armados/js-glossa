@@ -7,6 +7,7 @@ class Counters {
   maxExecutionCmd = 100000;
   maxLogicalComp = 100000;
 
+
   constructor () {
     //this.config = config;
     this.reset();
@@ -15,6 +16,7 @@ class Counters {
   reset() {
      this.totalAssignCmd = 0;
     this.totalLogicalComp = 0;
+    this.totalKeyboardInputData = 0;
   }
 
   getTotalAssignCmd() {
@@ -58,6 +60,13 @@ class Counters {
       ); //FIXME:
       
   }
+
+  incrKeyboardInputCounter() {
+    this.totalKeyboardInputData += 1;
+  }
+
+
+  
 }
 
 module.exports = {

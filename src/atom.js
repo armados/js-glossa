@@ -19,9 +19,9 @@ class MNumber extends Atom {
   constructor(val) {
     super(val);
 
-    if (HP.isFloat(this.val)) {
+    if (HP.isFloat(this.val)) 
       this.val = +parseFloat(this.val).toFixed(8);
-    }
+    
   }
 }
 class MString extends Atom {}

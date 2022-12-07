@@ -7,7 +7,7 @@ const GLO = require("../../src/main.js");
 
 const prompt = require("prompt-sync")();
 
-const filename = "../../samples/sample6.glo";
+const filename = "../../samples/sample10.glo";
 
 (async function main() {
   try {

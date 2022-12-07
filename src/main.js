@@ -61,7 +61,7 @@ class GlossaJS extends EventEmitter {
 
     this.runtime = new RT.RuntimeEnvironment(this, scope);
   }
-  
+
   // =====================================
 
   setStepRun(flag) {

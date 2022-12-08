@@ -30,9 +30,9 @@ const filename = "../../samples/sample10.glo";
   app.on("outputappend", (data) => {
     console.log(data);
   });
-  app.on("inputread", (data) => {
-    console.log("\x1b[33m" + data + "\x1b[0m");
-  });
+//  app.on("inputread", (data) => {
+//    console.log("\x1b[33m" + data + "\x1b[0m");
+//  });
   app.on("error", (data) => {
     console.log(data);
   });

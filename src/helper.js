@@ -43,14 +43,11 @@ function displayValueBoolean(val) {
 }
 
 function formatValueForOutput(val) {
- // console.log('Got: ' + val);
-
   if (isInt(val)) return displayValueInt(val);
-    else if (isFloat(val)) return displayValueFloat(val);
-    else if (isString(val)) return displayValueString(val);
-    else if (isBoolean(val)) return displayValueBoolean(val);
-    
-
+  else if (isFloat(val)) return displayValueFloat(val);
+  else if (isString(val)) return displayValueString(val);
+  else if (isBoolean(val)) return displayValueBoolean(val);
+  else throw GE.GInternalError("Unknown value");
 }
 
 function valueTypeToString(obj) {
@@ -94,15 +91,14 @@ function valueTypeToString(obj) {
     throw new GE.GInternalError("Άγνωστη τιμή: " + val);
   }
 }
-  
-   async function sleepFunc(ms) {
-    let promise = new Promise((resolve, reject) => {
-      setTimeout(() => resolve(), ms);
-    });
 
-    await promise;
-  }
+async function sleepFunc(ms) {
+  let promise = new Promise((resolve, reject) => {
+    setTimeout(() => resolve(), ms);
+  });
 
+  await promise;
+}
 
 module.exports = {
   isFloat,
@@ -114,5 +110,5 @@ module.exports = {
   StringIsNumInt,
   formatValueForOutput,
   valueTypeToString,
-  sleepFunc
+  sleepFunc,
 };

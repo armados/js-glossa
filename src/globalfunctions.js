@@ -11,9 +11,7 @@ class GlobalFunctions {
       "Α_Μ",
       new STR.STRBuiltinFunction(function (...arrArgs) {
         var args = arrArgs[0];
-        var app = arrArgs[1];
-        var parentScope = arrArgs[2];
-        var lineCalled = arrArgs[3];
+        var lineCalled = arrArgs[2];
 
         var A = args[0];
 
@@ -46,9 +44,7 @@ class GlobalFunctions {
       "Α_Τ",
       new STR.STRBuiltinFunction(function (...arrArgs) {
         var args = arrArgs[0];
-        var app = arrArgs[1];
-        var parentScope = arrArgs[2];
-        var lineCalled = arrArgs[3];
+        var lineCalled = arrArgs[2];
 
         var A = args[0];
 
@@ -81,9 +77,7 @@ class GlobalFunctions {
       "Τ_Ρ",
       new STR.STRBuiltinFunction(function (...arrArgs) {
         var args = arrArgs[0];
-        var app = arrArgs[1];
-        var parentScope = arrArgs[2];
-        var lineCalled = arrArgs[3];
+        var lineCalled = arrArgs[2];
 
         var A = args[0];
 
@@ -121,9 +115,7 @@ class GlobalFunctions {
       "ΗΜ",
       new STR.STRBuiltinFunction(function (...arrArgs) {
         var args = arrArgs[0];
-        var app = arrArgs[1];
-        var parentScope = arrArgs[2];
-        var lineCalled = arrArgs[3];
+        var lineCalled = arrArgs[2];
 
         var A = args[0];
 
@@ -157,9 +149,7 @@ class GlobalFunctions {
       "ΣΥΝ",
       new STR.STRBuiltinFunction(function (...arrArgs) {
         var args = arrArgs[0];
-        var app = arrArgs[1];
-        var parentScope = arrArgs[2];
-        var lineCalled = arrArgs[3];
+        var lineCalled = arrArgs[2];
 
         var A = args[0];
 
@@ -193,9 +183,7 @@ class GlobalFunctions {
       "Ε",
       new STR.STRBuiltinFunction(function (...arrArgs) {
         var args = arrArgs[0];
-        var app = arrArgs[1];
-        var parentScope = arrArgs[2];
-        var lineCalled = arrArgs[3];
+        var lineCalled = arrArgs[2];
 
         var A = args[0];
 
@@ -227,9 +215,7 @@ class GlobalFunctions {
       "ΕΦ",
       new STR.STRBuiltinFunction(function (...arrArgs) {
         var args = arrArgs[0];
-        var app = arrArgs[1];
-        var parentScope = arrArgs[2];
-        var lineCalled = arrArgs[3];
+        var lineCalled = arrArgs[2];
 
         var A = args[0];
 
@@ -263,9 +249,7 @@ class GlobalFunctions {
       "ΛΟΓ",
       new STR.STRBuiltinFunction(function (...arrArgs) {
         var args = arrArgs[0];
-        var app = arrArgs[1];
-        var parentScope = arrArgs[2];
-        var lineCalled = arrArgs[3];
+        var lineCalled = arrArgs[2];
 
         var A = args[0];
 

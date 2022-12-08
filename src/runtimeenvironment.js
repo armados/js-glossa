@@ -36,12 +36,12 @@ class RuntimeEnvironment {
   reset() {}
 
   pushScope(element) {
-    return this.scopes.push(element);
+    this.scopes.push(element);
   }
 
   popScope() {
     if (this.scopes.length > 0) {
-      return this.scopes.pop();
+      this.scopes.pop();
     }
   }
 

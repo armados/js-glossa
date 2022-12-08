@@ -14,6 +14,9 @@ class Stmt_Assignment {
     this.cmdLineNo = cmdLineNo;
   }
   async resolve(env) {
+   
+    env.getCounters().incrStmt_Assignment();
+  
     await env.setActiveLine(this.cmdLineNo);
 
     var sym = this.symbol;
@@ -29,8 +32,6 @@ class Stmt_Assignment {
 
     env.getScope().setSymbol(sym.name, valResolved);
 
-    env.getCounters().incrAssignCounter();
-
     env.postMessage(
       "memorysymbolupdate",
       sym.name,
@@ -45,6 +46,9 @@ class Stmt_Write {
     this.cmdLineNo = cmdLineNo;
   }
   async resolve(env) {
+   
+    env.getCounters().incrStmt_Write();
+  
     await env.setActiveLine(this.cmdLineNo);
 
     var output = [];
@@ -100,6 +104,9 @@ class Stmt_Read {
     this.cmdLineNo = cmdLineNo;
   }
   async resolve(env) {
+   
+    env.getCounters().incrStmt_Read();
+
     await env.setActiveLine(this.cmdLineNo);
 
     for (var i = 0, len = this.args.length; i < len; i++) {
@@ -199,7 +206,7 @@ class Stmt_Read {
 
       env.getScope().setSymbol(arg.name, sym);
 
-      env.getCounters().incrKeyboardInputCounter();
+      env.getCounters().incrKeyboardValues();
 
       env.postMessage(
         "memorysymbolupdate",
@@ -239,6 +246,14 @@ class Stmt_If {
     var elseBody = this.elseBody;
     var elseBodyLine = this.elseBodyLine;
 
+    if (arrCond.length > 1) 
+    env.getCounters().incrStmt_If_Then_ElseIf();
+    else if (arrCond.length == 1 && elseBody == null)
+      env.getCounters().incrStmt_If_Then();
+    else if (arrCond.length == 1 && elseBody != null)
+      env.getCounters().incrStmt_If_Then_Else();
+    
+
     for (var i = 0; i < arrCond.length; ++i) {
       await env.setActiveLine(this.arrLineNo[i]);
 
@@ -260,7 +275,7 @@ class Stmt_If {
         arrLineNo[i]
       );
 
-      env.getCounters().incrLogicalCounter();
+      env.getCounters().incrConditionTests();
 
       if (condResult.val == true) {
         await arrBody[i].resolve(env);
@@ -280,7 +295,7 @@ class Stmt_If {
   }
 }
 
-class Stmt_Select {
+class Stmt_Case {
   constructor(
     expr,
     arrCond,
@@ -304,6 +319,9 @@ class Stmt_Select {
   }
 
   async resolve(env) {
+
+    env.getCounters().incrStmt_Case();
+
     await env.setActiveLine(this.cmdLineNo);
 
     var expr = this.expr;
@@ -337,7 +355,7 @@ class Stmt_Select {
             arrLineNo[i]
           );
 
-        env.getCounters().incrLogicalCounter();
+        env.getCounters().incrConditionTests();
 
         if (condResult.val == true) {
           break;
@@ -379,6 +397,9 @@ class Stmt_While {
     this.cmdLineNoTelosEpanalhpshs = cmdLineNoTelosEpanalhpshs;
   }
   async resolve(env) {
+
+    env.getCounters().incrStmt_While();
+
     while (true) {
       await env.setActiveLine(this.cmdLineNoOso);
 
@@ -400,7 +421,7 @@ class Stmt_While {
         this.cmdLineNoOso
       );
 
-      env.getCounters().incrLogicalCounter();
+      env.getCounters().incrConditionTests();
 
       if (condResult.val == false) break;
 
@@ -420,6 +441,9 @@ class Stmt_Do_While {
     this.cmdLineNoMexrisOtou = cmdLineNoMexrisOtou;
   }
   async resolve(env) {
+
+    env.getCounters().incrStmt_Do_While();
+
     do {
       await env.setActiveLine(this.cmdLineNoArxh);
 
@@ -445,7 +469,7 @@ class Stmt_Do_While {
         this.cmdLineNoMexrisOtou
       );
 
-      env.getCounters().incrLogicalCounter();
+      env.getCounters().incrConditionTests();
     } while (condResult.val == false);
   }
 }
@@ -469,6 +493,9 @@ class Stmt_For {
     this.cmdLineNoTelosEpanalhpshs = cmdLineNoTelosEpanalhpshs;
   }
   async resolve(env) {
+
+    env.getCounters().incrStmt_For();
+
     await env.setActiveLine(this.cmdLineNoGia);
 
     var variable = this.variable;
@@ -558,7 +585,7 @@ class Stmt_For {
     env.postMessage(
       "memorysymbolupdate",
       variable.name,
-      HP.formatValueForOutput(new Atom.MNumber(v_initial))
+      HP.formatValueForOutput(env.getScope().getSymbol(variable.name).getValue())
     );
 
     env.getScope().addLock(variable.name);
@@ -570,7 +597,7 @@ class Stmt_For {
           this.cmdLineNoGia
         );
 
-        env.getCounters().incrLogicalCounter();
+        env.getCounters().incrConditionTests();
 
         await body.resolve(env);
 
@@ -600,7 +627,7 @@ class Stmt_For {
         this.cmdLineNoGia
       );
 
-      env.getCounters().incrLogicalCounter();
+      env.getCounters().incrConditionTests();
     } else if (v_initial >= v_final && v_step < 0) {
       do {
         env.outputAddDetails(
@@ -608,7 +635,7 @@ class Stmt_For {
           this.cmdLineNoGia
         );
 
-        env.getCounters().incrLogicalCounter();
+        env.getCounters().incrConditionTests();
 
         await body.resolve(env);
 
@@ -638,7 +665,7 @@ class Stmt_For {
         this.cmdLineNoGia
       );
 
-      env.getCounters().incrLogicalCounter();
+      env.getCounters().incrConditionTests();
     }
 
     env.getScope().removeLock(variable.name);
@@ -652,6 +679,9 @@ class FunctionCall {
     this.cmdLineNo = cmdLineNo;
   }
   async resolve(env) {
+    
+    env.getCounters().incrFunctionCall();
+
     env.outputAddDetails(
       "Κλήση της συνάρτησης " + this.fun.name,
       this.cmdLineNo
@@ -705,6 +735,9 @@ class ProcedureCall {
     this.cmdLineNo = cmdLineNo;
   }
   async resolve(env) {
+    
+    env.getCounters().incrProcedureCall();
+    
     await env.setActiveLine(this.cmdLineNo);
 
     env.outputAddDetails(
@@ -858,6 +891,7 @@ class UserFunction {
   }
 
   async resolve(env) {
+  
     var name = this.name.name;
     var params = this.params;
     var funType = this.funType;
@@ -868,6 +902,9 @@ class UserFunction {
       name,
       new STR.STRUserFunction(
         async function (...arrargs) {
+    
+          env.getCounters().incrUserFunctionCall();
+  
           var scope2 = env.getScope().makeSubScope("Συνάρτηση " + name);
           env.pushScope(scope2);
 
@@ -1052,6 +1089,9 @@ class UserProcedure {
       name,
       new STR.STRUserProcedure(
         async function (...arrargs) {
+   
+          env.getCounters().incrUserProcedureCall();
+  
           var scope2 = env.getScope().makeSubScope("Διαδικασία " + name);
 
           env.pushScope(scope2);
@@ -1415,7 +1455,7 @@ module.exports = {
   Stmt_Read,
 
   Stmt_If,
-  Stmt_Select,
+  Stmt_Case,
 
   Stmt_While,
   Stmt_Do_While,

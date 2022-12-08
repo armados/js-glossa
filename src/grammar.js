@@ -42,7 +42,7 @@ function getGrammar() {
       
       Block = (InnerCommand nl+)*
 
-      InnerCommand         = AssignExpr | WhileExpr | DoWhileExpr | ForExpr | IfExpr | Stmt_Select | comment | ProcedureCall | Stmt_Write | Stmt_Read
+      InnerCommand         = AssignExpr | WhileExpr | DoWhileExpr | ForExpr | IfExpr | Stmt_Case | inlinecomment | ProcedureCall | Stmt_Write | Stmt_Read
 
       AssignExpr   = (IdTbl | id) "<-" Expr
 
@@ -58,7 +58,7 @@ function getGrammar() {
       SelectExpr    = "<" Expr | "<=" Expr | ">" Expr | ">=" Expr | "=" Expr | "<>" Expr
       SelectCase    = Subrange | SelectExpr | Expr 
       AtLeastOneSelectCase = NonemptyListOf<SelectCase, ",">
-      Stmt_Select   = "ΕΠΙΛΕΞΕ" Expr nl+ ("ΠΕΡΙΠΤΩΣΗ" ~"ΑΛΛΙΩΣ" AtLeastOneSelectCase nl+ Block)* ("ΠΕΡΙΠΤΩΣΗ" "ΑΛΛΙΩΣ" nl+ Block)? "ΤΕΛΟΣ_ΕΠΙΛΟΓΩΝ"
+      Stmt_Case   = "ΕΠΙΛΕΞΕ" Expr nl+ ("ΠΕΡΙΠΤΩΣΗ" ~"ΑΛΛΙΩΣ" AtLeastOneSelectCase nl+ Block)* ("ΠΕΡΙΠΤΩΣΗ" "ΑΛΛΙΩΣ" nl+ Block)? "ΤΕΛΟΣ_ΕΠΙΛΟΓΩΝ"
 
       FunctionCall          = id "(" Arguments ")"
       ProcedureCall         = "ΚΑΛΕΣΕ" id ("(" Arguments ")")? 
@@ -168,14 +168,14 @@ function getGrammar() {
       boollit       = true | false
 
       keyboardinput =  "!" whitespace* "KEYBOARD_INPUT:"
-      comment       = ~keyboardinput "!" (~nl any)*
+      inlinecomment       = ~keyboardinput "!" (~nl any)*
 
       nl            = "\\n" | "\\r"        
 
       whitespace    = "\t" | " "
       breakLine     = ("\\n" | "\\r")+ whitespace* "&"
 
-      space        := breakLine | whitespace | comment  
+      space        := breakLine | whitespace | inlinecomment  
 
 
   }`;

@@ -215,7 +215,7 @@ var operation = {
     return new Atom.MSelectExpr(a.sourceString, b.toAST(), getLineNo(a));
   },
 
-  Stmt_Select: function (
+  Stmt_Case: function (
     _EPILEXE,
     expr,
     _nl0,
@@ -299,7 +299,7 @@ var operation = {
     //console.log(arrCond);
 
     var elseBody = eb ? eb.toAST()[0] : null;
-    return new MO.Stmt_Select(
+    return new MO.Stmt_Case(
       aAst,
       arrCond,
       arrCondStr,

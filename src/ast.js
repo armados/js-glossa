@@ -73,7 +73,7 @@ return "";
 
   detailLine(node, index, entities) {
     let line = `id: ${index} object: ${node.constructor.name}`;
-
+//console.log(node);
 
    // if (node instanceof OBJ.Stmt_Write) console.log (node);
 

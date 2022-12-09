@@ -130,14 +130,6 @@ class GlossaJS extends EventEmitter {
   async run() {
     this.postMessage("started");
 
-    // this.running = true;
-
-    /*
-    var myasttree = new AST.ASTree(result);
-    var tree = myasttree.generate();
-
-    console.log(tree);
-*/
     /*
 var myasttree = new AST2.ASTree(result);
 var tree = myasttree.generate();
@@ -156,6 +148,11 @@ console.log(tree);
 
       var result = sem(match).toAST();
       if (!result) throw new GE.GSyntaxError(result);
+
+      /*       // test ast
+    var myasttree = new AST.ASTree(result);
+    var tree = myasttree.generate();
+    console.log(tree); */
 
       // ready to run
       this.running = true;

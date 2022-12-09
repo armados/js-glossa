@@ -386,7 +386,7 @@ var operation = {
     funType,
     _nl0,
     decl,
-    _7,
+    _Arxi,
     _nl1,
     mBlock,
     _TelosSynartisis,
@@ -399,6 +399,7 @@ var operation = {
       decl.toAST(),
       mBlock.toAST(),
       getLineNo(name),
+      getLineNo(_Arxi),
       getLineNo(_TelosSynartisis)
     );
   },
@@ -411,7 +412,7 @@ var operation = {
     _3,
     _nl0,
     decl,
-    _6,
+    _Arxi,
     _nl1,
     mBlock,
     _TelosDiadikasias,
@@ -425,6 +426,7 @@ var operation = {
       decl.toAST(),
       mBlock.toAST(),
       getLineNo(name),
+      getLineNo(_Arxi),
       getLineNo(_TelosDiadikasias)
     );
   },

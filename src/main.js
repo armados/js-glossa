@@ -160,9 +160,9 @@ console.log(tree);
 
       await result.resolve(this.runtime);
 
-      console.log("App terminated. (normal)");
+      //console.log("App terminated. (normal)");
     } catch (e) {
-      console.log("App terminated (abnormal)");
+      //console.log("App terminated (abnormal)");
       if (e instanceof GE.GSyntaxError) {
         this.postMessage("error", e.message);
       } else if (e instanceof GE.GError) {

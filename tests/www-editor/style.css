@@ -8,8 +8,8 @@
   -webkit-border-radius: 0;
 
   border: 0;
-  background-color: rgb(224, 186, 14);
-  color: rgb(0, 0, 0);
+  background-color: rgb(60, 60, 60);
+  color: rgb(250, 252, 145);
 }
 
 .gloBox {
@@ -181,12 +181,25 @@
   word-wrap: break-word !important;
   white-space: pre-wrap;
   margin: 0px;
-  padding: 15px;
+  padding: 10px;
   width: 100%;
   height: 150px;
   background-color: #333;
   border: 0px solid #ddd;
   color: #efefef;
+}
+
+.gloBox .gloResultPre ul,
+.gloBox .gloResultDetailsPre ul {
+  list-style: none;
+  margin: 0px;
+  padding: 0px;
+}
+
+.gloBox .gloResultPre ul li,
+.gloBox .gloResultDetailsPre ul li {
+  margin: 1px;
+  padding: 0px;
 }
 
 .gloBox textarea.gloCodeKeyboardInput {

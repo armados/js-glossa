@@ -95,7 +95,24 @@ async function startProgramExecution(gloBoxID, runstep) {
 
 async function waitingKeypress(gloBoxID) {
   return new Promise((resolve) => {
-    $("#" + gloBoxID + " .gloReadFromKeyboard")
+    var inputElement = `<input
+    class="form-control form-control-sm gloReadFromKeyboard"
+    type="text"
+    autocomplete="false"
+  />`;
+
+    $("#" + gloBoxID)
+      .find("ul.gloResult")
+      .append('<li class="keyboardInput">' + inputElement + "</li>");
+
+    var textBox = $("#" + gloBoxID).find(".gloResultPre");
+    textBox.scrollTop(textBox[0].scrollHeight);
+
+    $("#" + gloBoxID)
+      .find("ul.gloResult li.keyboardInput .gloReadFromKeyboard")
+      .focus();
+
+    $("#" + gloBoxID + " ul.gloResult li.keyboardInput .gloReadFromKeyboard")
       .off("keyup")
       .on("keyup", function (e) {
         if (e.key == "Enter") {
@@ -104,6 +121,7 @@ async function waitingKeypress(gloBoxID) {
           //console.log('Keyboard value was: #' + inputVal + '#');
           $(".gloReadFromKeyboard").val("");
           resolve(inputVal);
+          $(this).parent().remove();
         }
       });
   });
@@ -184,12 +202,14 @@ function UIStateError(gloBoxID, msg) {
     });
 }
 
-function UIStateInputRead(gloBoxID, msg) {
+function UIStateInputRead(gloBoxID, data) {
   $("#" + gloBoxID)
-    .find(".gloResult")
-    .html(function (index, value) {
-      return value + '<span class="readValue">' + msg + "</span>\n";
-    });
+    .find("ul.gloResult")
+    .append('<li><span class="readValue">' + data + "</span></li>");
+
+  //    .html(function (index, value) {
+  //      return value + '<span class="readValue">' + data + "</span>\n";
+  //    });
 
   var textBox = $("#" + gloBoxID).find(".gloResultPre");
   textBox.scrollTop(textBox[0].scrollHeight);
@@ -219,6 +239,9 @@ function UIStateStopped(gloBoxID, msg) {
     .html(function (index, value) {
       return value + '<span class="noticeMsg">' + msg + "</span>\n";
     });
+
+  // Remove keyboard if exists
+  $("#" + gloBoxID + " ul.gloResult li.keyboardInput").remove();
 
   var textBox = $("#" + gloBoxID).find(".gloResultPre");
   textBox.scrollTop(textBox[0].scrollHeight);
@@ -301,10 +324,11 @@ function UIStateUpdateMemorySymbol(gloBoxID, data1, data2) {
 
 function UIStateOutputAppend(gloBoxID, data) {
   $("#" + gloBoxID)
-    .find(".gloResult")
-    .html(function (index, value) {
-      return value + data + "\n";
-    });
+    .find("ul.gloResult")
+    .append("<li>" + data + "</li>");
+  // .html(function (index, value) {
+  //   return value + data + "\n";
+  // });
 
   if (
     $("#" + gloBoxID)

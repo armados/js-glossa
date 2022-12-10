@@ -589,14 +589,9 @@ class Stmt_For {
       (v_step < 0 &&
         env.getScope().getSymbol(variable.name).getValue() >= v_final)
     ) {
-      if (v_step > 0)
-        env.outputAddDetails(
-          "Η συνθήκη " + variable.name + "<=" + v_final + " είναι ΑΛΗΘΗΣ",
-          this.cmdLineNoGia
-        );
-      else
-        env.outputAddDetails(
-          "Η συνθήκη " + variable.name + ">=" + v_final + " είναι ΑΛΗΘΗΣ",
+
+      env.outputAddDetails(
+          "Η συνθήκη " + variable.name + (v_step>0 ? "<=" : ">=") + v_final + " είναι ΑΛΗΘΗΣ",
           this.cmdLineNoGia
         );
 
@@ -630,14 +625,8 @@ class Stmt_For {
       env.getScope().addLock(variable.name);
     }
 
-    if (v_step > 0)
       env.outputAddDetails(
-        "Η συνθήκη " + variable.name + "<=" + v_final + " είναι ΨΕΥΔΗΣ",
-        this.cmdLineNoGia
-      );
-    else
-      env.outputAddDetails(
-        "Η συνθήκη " + variable.name + ">=" + v_final + " είναι ΨΕΥΔΗΣ",
+        "Η συνθήκη " + variable.name + (v_step>0 ? "<=" : ">=") + v_final + " είναι ΨΕΥΔΗΣ",
         this.cmdLineNoGia
       );
 

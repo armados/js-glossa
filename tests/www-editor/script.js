@@ -22,7 +22,7 @@ function renderMemory(data) {
   var html = '<table class="table table-hover table-sm table-borderless">';
   html += '<thead class="table-dark">';
   html += "<tr>";
-  html += '<td scope="col">Όνομα</td>';
+  html += '<td scope="col">Αναγνωριστικό</td>';
   html += '<td scope="col" style="text-align: center;">Τιμή</td>';
   html += '<td scope="col">Τύπος</th>';
   html += "</tr>";

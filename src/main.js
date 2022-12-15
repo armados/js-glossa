@@ -181,5 +181,5 @@ console.log(tree);
 }
 
 module.exports = {
-  GlossaJS,
+  GlossaJS
 };

@@ -1,7 +1,7 @@
-# Διερμηνευτής ΓλώσσαJS
+# Διερμηνευτής της ΓΛΩΣΣΑΣ JS
 Υλοποίηση της γλώσσας προγραμματισμού ΓΛΩΣΣΑ σε Javascript.
 
-## Δημιουργία εκτελέσιμων αρχείων για Windows, Linux και MacOS
+## Δημιουργία εκτελέσιμων αρχείων για Windows, Linux και Mac
 ```
 npm run-script binary
 ```
@@ -84,6 +84,5 @@ except subprocess.CalledProcessError as e:
 Moodle Quiz της ΓΛΩΣΣΑΣ με το πρόσθετο Coderunner  https://moodle.armados.org/course/view.php?id=12
 
 Όνομα χρήστη:     testuser
-
 Κωδικός χρήστη:   testpass
 

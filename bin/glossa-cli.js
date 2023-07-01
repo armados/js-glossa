@@ -6,6 +6,7 @@ var GLO = require("../src/main");
 
 var fs = require("fs");
 var minimist = require("minimist");
+var chardet = require("chardet");
 
 var prompt = require("prompt-sync")({ echo: "yes" });
 
@@ -36,12 +37,12 @@ if (args["help"]) {
   console.log("");
   console.log("Χρήση: glossa-cli -i [όνομα αρχείου που περιέχει το πηγαίο πρόγραμμα]");
   console.log("");
-  console.log("Λίστα παραμέτρων εκτέλεσης του διερμηνευτή:");
-  console.log(" -h\tΑυτό το βοηθητικό μήνυμα");
-  console.log(" -i\tΌνομα αρχείου που περιέχει το πηγαίο πρόγραμμα (απαιτείται)");
-  console.log(" -ο\tΌνομα αρχείου για την αποθήκευση της εξόδου του προγράμματος");
-  console.log(" -k\tΌνομα αρχείου που περιέχει τις τιμές εισόδου του προγράμματος");
-  console.log(" -non\tΕκτέλεση του διερμηνευτή σε μη διαδραστική λειτουργία");
+  console.log("Παράμετροι εκτέλεσης:");
+  console.log(" -h, --help\tΑυτό το βοηθητικό μήνυμα");
+  console.log(" -i, --input\tΌνομα αρχείου που περιέχει το πηγαίο πρόγραμμα (υποχρεωτική παράμετρος)");
+  console.log(" -ο, --output\tΌνομα αρχείου για την αποθήκευση της εξόδου του προγράμματος");
+  console.log(" -k, --keyboard\tΌνομα αρχείου που περιέχει τις τιμές εισόδου του προγράμματος");
+  console.log(" -non, --noninteractive\tΕκτέλεση του διερμηνευτή σε μη διαδραστική λειτουργία");
   console.log("");
   console.log("Happy coding! :)");
   console.log("");
@@ -58,7 +59,15 @@ if (!args["input"]) {
 
 var sourceCode = null;
 try {
-  sourceCode = fs.readFileSync(args["input"]).toString(); //FIXME: UTF16LE
+
+  const encoding = chardet.detectFileSync(args["input"]);
+
+  sourceCode = fs.readFileSync(args["input"], {encoding: encoding}).toString();
+
+  if (sourceCode.charCodeAt(0) === 0xFEFF) {
+    sourceCode = sourceCode.substr(1);
+  }
+
 } catch (e) {
   console.log("Σφάλμα. Το αρχείο του πηγαίου προγράμματος που δηλώθηκε δεν βρέθηκε.");
   console.log("");
@@ -68,7 +77,15 @@ try {
 var keyboardInput = null;
 if (args["keyboard"]) {
   try {
-    keyboardInput = fs.readFileSync(args["keyboard"]).toString();
+    
+  const encoding = chardet.detectFileSync(args["keyboard"]);
+
+  keyboardInput = fs.readFileSync(args["keyboard"], {encoding: encoding}).toString();
+
+  if (keyboardInput.charCodeAt(0) === 0xFEFF) {
+    keyboardInput = keyboardInput.substr(1);
+  }
+
   } catch (e) {
     console.log("Σφάλμα. Το αρχείο που περιέχει τις τιμές εισόδου του προγράμματος δεν βρέθηκε.");
     console.log("");

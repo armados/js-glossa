@@ -24,6 +24,7 @@
   },
   "homepage": "https://github.com/armados/js-glossa#readme",
   "dependencies": {
+    "chardet": "^1.6.0",
     "minimist": "^1.2.7",
     "ohm-js": "^15.5.0",
     "perf_hooks": "0.0.1",

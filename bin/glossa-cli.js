@@ -11,9 +11,9 @@ var prompt = require("prompt-sync")({ echo: "yes" });
 
 var args = minimist(process.argv.slice(2), {
   string: ["input", "output", "keyboard"],
-  boolean: ["version", "noninteractive"],
+  boolean: ["help", "noninteractive"],
   alias: {
-    v: "version",
+    h: "help",
     i: "input",
     o: "output",
     k: "keyboard",
@@ -22,26 +22,46 @@ var args = minimist(process.argv.slice(2), {
   default: {},
   stopEarly: true /* populate _ with first non-option */,
   unknown: function () {
-    console.log("Invalid arguments");
+    console.log("Δεν δηλώθηκαν αποδεκτοί παράμετροι εκτέλεσης του διερμηνευτή.");
+    console.log("");
+    console.log("Εκτελέστε ξανά τον διερμηνευτή με την παράμετρο -h για προβολή του βοηθητικού μηνύματος χρήσης του διερμηνευτή.");
+    console.log("");
     process.exit(1);
   },
 });
 
-if (args["version"]) {
-  console.log("v0.1");
+
+if (args["help"]) {
+  console.log("Διερμηνευτής της ΓΛΩΣΣΑΣ JS");
+  console.log("");
+  console.log("Χρήση: glossa-cli -i [όνομα αρχείου που περιέχει το πηγαίο πρόγραμμα]");
+  console.log("");
+  console.log("Λίστα παραμέτρων εκτέλεσης του διερμηνευτή:");
+  console.log(" -h\tΑυτό το βοηθητικό μήνυμα");
+  console.log(" -i\tΌνομα αρχείου που περιέχει το πηγαίο πρόγραμμα (απαιτείται)");
+  console.log(" -ο\tΌνομα αρχείου για την αποθήκευση της εξόδου του προγράμματος");
+  console.log(" -k\tΌνομα αρχείου που περιέχει τις τιμές εισόδου του προγράμματος");
+  console.log(" -non\tΕκτέλεση του διερμηνευτή σε μη διαδραστική λειτουργία");
+  console.log("");
+  console.log("Happy coding! :)");
+  console.log("");
   process.exit(0);
 }
 
 if (!args["input"]) {
-  console.log("Σφάλμα. Δεν έχει δηλωθεί το πηγαίο πρόγραμμα.");
+  console.log("Σφάλμα. Δεν έχει δηλωθεί το όνομα του αρχείου που περιέχει το πηγαίο πρόγραμμα.");
+  console.log("");
+  console.log("Εκτελέστε ξανά τον διερμηνευτή με την παράμετρο -h για προβολή του βοηθητικού μηνύματος χρήσης του διερμηνευτή.");
+  console.log("");
   process.exit(1);
 }
 
 var sourceCode = null;
 try {
-  sourceCode = fs.readFileSync(args["input"]).toString();
+  sourceCode = fs.readFileSync(args["input"]).toString(); //FIXME: UTF16LE
 } catch (e) {
-  console.log("Σφάλμα. Το αρχείο του πηγαίου προγράμματος δεν βρέθηκε.");
+  console.log("Σφάλμα. Το αρχείο του πηγαίου προγράμματος που δηλώθηκε δεν βρέθηκε.");
+  console.log("");
   process.exit(1);
 }
 
@@ -50,7 +70,8 @@ if (args["keyboard"]) {
   try {
     keyboardInput = fs.readFileSync(args["keyboard"]).toString();
   } catch (e) {
-    console.log("Σφάλμα. Το αρχείο εισόδου δεν βρέθηκε.");
+    console.log("Σφάλμα. Το αρχείο που περιέχει τις τιμές εισόδου του προγράμματος δεν βρέθηκε.");
+    console.log("");
     process.exit(1);
   }
 }
@@ -86,6 +107,7 @@ var errorMsg = "";
     if (args["output"]) {
       await fs.writeFileSync(args["output"], app.app.getOutput() + errorMsg);
     }
+
   } catch (e) {
     //console.log(e);
     process.exit(1);

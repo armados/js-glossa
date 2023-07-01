@@ -76,8 +76,14 @@ try {
 
 var keyboardInput = null;
 if (args["keyboard"]) {
-  try {
-    
+
+  if (!fs.existsSync(args["keyboard"])) {
+    console.log("Σφάλμα. Το αρχείο που περιέχει τις τιμές εισόδου του προγράμματος δεν βρέθηκε.");
+    console.log("");
+    process.exit(1);
+  }
+
+  try {  
   const encoding = chardet.detectFileSync(args["keyboard"]);
 
   keyboardInput = fs.readFileSync(args["keyboard"], {encoding: encoding}).toString();
@@ -87,9 +93,7 @@ if (args["keyboard"]) {
   }
 
   } catch (e) {
-    console.log("Σφάλμα. Το αρχείο που περιέχει τις τιμές εισόδου του προγράμματος δεν βρέθηκε.");
-    console.log("");
-    process.exit(1);
+    keyboardInput=null;
   }
 }
 

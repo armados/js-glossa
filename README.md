@@ -48,7 +48,7 @@ npm run-script build
 
 Ο φάκελος `tests/www-editor` περιέχει κώδικα για εκτέλεση του διερμηνευτή από φυλλομετρητή.
 
-Η δοκιμαστική έκδοση του διερμηνευτή υπάρχει στην ιστοσελίδα http://armadosvm.sch.gr/glo 
+Η τελευταία έκδοση του διερμηνευτή ΓΛΩΣΣΑ JS υπάρχει στην ιστοσελίδα http://armadosvm.sch.gr/glo 
 
 
 ## Online Quiz στη ΓΛΩΣΣΑ στην πλατφόρμα Moodle 
@@ -84,5 +84,6 @@ except subprocess.CalledProcessError as e:
 Moodle Quiz της ΓΛΩΣΣΑΣ με το πρόσθετο Coderunner  https://moodle.armados.org/course/view.php?id=12
 
 Όνομα χρήστη:     testuser
+
 Κωδικός χρήστη:   testpass
 

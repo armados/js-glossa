@@ -35,16 +35,17 @@ var args = minimist(process.argv.slice(2), {
 if (args["help"]) {
   console.log("Διερμηνευτής της ΓΛΩΣΣΑΣ JS");
   console.log("");
-  console.log("Χρήση: glossa-cli -i [όνομα αρχείου που περιέχει το πηγαίο πρόγραμμα]");
+  console.log("Χρήση: glossa-cli -i <όνομα αρχείου που περιέχει το πηγαίο πρόγραμμα>");
   console.log("");
-  console.log("Παράμετροι εκτέλεσης:");
-  console.log(" -h, --help\tΑυτό το βοηθητικό μήνυμα");
-  console.log(" -i, --input\tΌνομα αρχείου που περιέχει το πηγαίο πρόγραμμα (υποχρεωτική παράμετρος)");
-  console.log(" -ο, --output\tΌνομα αρχείου για την αποθήκευση της εξόδου του προγράμματος");
-  console.log(" -k, --keyboard\tΌνομα αρχείου που περιέχει τις τιμές εισόδου του προγράμματος");
-  console.log(" -n, --noninteractive\tΕκτέλεση του διερμηνευτή σε μη διαδραστική λειτουργία");
+  console.log("  Παράμετροι:");
   console.log("");
-  console.log("Happy coding! :)");
+  console.log("  -h, --help\t\t\tΑυτό το βοηθητικό μήνυμα");
+  console.log("  -i, --input\t\t\tΌνομα αρχείου που περιέχει το πηγαίο πρόγραμμα (υποχρεωτική παράμετρος)");
+  console.log("  -ο, --output\t\t\tΌνομα αρχείου για την αποθήκευση της εξόδου του προγράμματος");
+  console.log("  -k, --keyboard\t\tΌνομα αρχείου που περιέχει τις τιμές εισόδου του προγράμματος");
+  console.log("  -n, --noninteractive\t\tΕκτέλεση του διερμηνευτή σε μη διαδραστική λειτουργία");
+  console.log("");
+  console.log("  Happy Coding! :)");
   console.log("");
   process.exit(0);
 }

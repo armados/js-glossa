@@ -2,6 +2,7 @@
 
 "use strict";
 
+
 var GLO = require("../src/main");
 
 var fs = require("fs");

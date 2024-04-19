@@ -79,11 +79,11 @@ try {
 var keyboardInput = null;
 if (args["keyboard"]) {
 
-  if (!fs.existsSync(args["keyboard"])) {
+ /* if (!fs.existsSync(args["keyboard"])) {
     console.log("Σφάλμα. Το αρχείο που περιέχει τις τιμές εισόδου του προγράμματος δεν βρέθηκε.");
     console.log("");
     process.exit(1);
-  }
+  }*/
 
   try {  
   const encoding = chardet.detectFileSync(args["keyboard"]);

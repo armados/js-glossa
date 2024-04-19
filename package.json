@@ -30,7 +30,7 @@
     "perf_hooks": "0.0.1",
     "pkg": "^5.8.0",
     "prompt-sync": "^4.2.0",
-    "webpack": "^5.75.0",
+    "webpack": "^5.90.1",
     "webpack-cli": "^5.0.0"
   }
 }

@@ -48,7 +48,7 @@ npm run-script build
 
 Ο φάκελος `tests/www-editor` περιέχει κώδικα για εκτέλεση του διερμηνευτή από φυλλομετρητή.
 
-Η τελευταία έκδοση του διερμηνευτή ΓΛΩΣΣΑ JS υπάρχει στην ιστοσελίδα [http://armadosvm.sch.gr/glo](https://glossa.armados.org/editor) 
+Η τελευταία έκδοση του διερμηνευτή ΓΛΩΣΣΑ JS υπάρχει στην ιστοσελίδα [https://glossa.armados.org/editor](https://glossa.armados.org/editor) 
 
 
 ## Online Quiz στη ΓΛΩΣΣΑ στην πλατφόρμα Moodle 
